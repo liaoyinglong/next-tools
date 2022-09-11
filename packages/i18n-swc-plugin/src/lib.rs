@@ -1,9 +1,9 @@
-use swc_core::{
+use swc_core::ecma::{
     ast::Program,
-    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
-    testing_transform::test,
+    transforms::testing::test,
     visit::{as_folder, FoldWith, VisitMut},
 };
+use swc_core::plugin::{plugin_transform, proxies::TransformPluginProgramMetadata};
 
 pub struct TransformVisitor;
 

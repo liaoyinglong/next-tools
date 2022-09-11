@@ -1,11 +1,11 @@
 {
-    "name": "lingui-swc-plugin",
+    "name": "i18n-swc-plugin",
     "version": "0.1.0",
     "description": "",
     "author": "",
     "license": "ISC",
     "keywords": ["swc-plugin"],
-    "main": "target/wasm32-wasi/release/lingui-swc-plugin.wasm",
+    "main": "target/wasm32-wasi/release/i18n-swc-plugin.wasm",
     "scripts": {
         "prepublishOnly": "cargo build-wasi --release"
     },

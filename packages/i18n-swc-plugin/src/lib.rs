@@ -1,9 +1,17 @@
-use swc_core::ecma::{
-    ast::Program,
-    transforms::testing::test,
-    visit::{as_folder, FoldWith, VisitMut},
+use swc_core::common::util::take::Take;
+use swc_core::ecma::ast::Tpl;
+use swc_core::{
+    common::DUMMY_SP,
+    ecma::{
+        ast::{CallExpr, Expr, ExprOrSpread, Ident, Program, TaggedTpl},
+        visit::{as_folder, FoldWith, VisitMut},
+    },
+    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
-use swc_core::plugin::{plugin_transform, proxies::TransformPluginProgramMetadata};
+use swc_ecma_utils::ExprFactory;
+
+static PLUGIN_NAME: &str = "i18n_swc_plugin";
+static T_FUNCTION_NAME: &str = "t";
 
 pub struct TransformVisitor;
 
@@ -11,6 +19,26 @@ impl VisitMut for TransformVisitor {
     // Implement necessary visit_mut_* methods for actual custom transform.
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
+    fn visit_mut_tagged_tpl(&mut self, n: &mut TaggedTpl) {
+        if let Some(ident) = n.tag.as_ident() {
+            if &ident.sym != T_FUNCTION_NAME {
+                return;
+            }
+            let args = n
+                .tpl
+                .quasis
+                .iter()
+                .map(|quasi| quasi.raw.clone().as_arg())
+                .collect();
+
+            n.tag = Box::new(Expr::Call(CallExpr {
+                args,
+                callee: n.tag.clone().as_callee(),
+                span: DUMMY_SP,
+                type_args: None,
+            }));
+        }
+    }
 }
 
 /// An example plugin function with macro support.
@@ -32,17 +60,3 @@ impl VisitMut for TransformVisitor {
 pub fn process_transform(program: Program, _metadata: TransformPluginProgramMetadata) -> Program {
     program.fold_with(&mut as_folder(TransformVisitor))
 }
-
-// An example to test plugin transform.
-// Recommended strategy to test plugin's transform is verify
-// the Visitor's behavior, instead of trying to run `process_transform` with mocks
-// unless explicitly required to do so.
-test!(
-    Default::default(),
-    |_| as_folder(TransformVisitor),
-    boo,
-    // Input codes
-    r#"console.log("transform");"#,
-    // Output codes after transformed with plugin
-    r#"console.log("transform");"#
-);

@@ -410,11 +410,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
-name = "i18n-swc-plugin"
+name = "i18n_swc_plugin"
 version = "0.1.0"
 dependencies = [
  "serde",
  "swc_core",
+ "swc_ecma_utils",
+ "testing",
 ]
 
 [[package]]
@@ -1310,6 +1312,7 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
+ "swc_ecma_parser",
  "swc_ecma_transforms_base",
  "swc_ecma_transforms_testing",
  "swc_ecma_visit",

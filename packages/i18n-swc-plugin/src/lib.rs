@@ -37,8 +37,8 @@ impl VisitMut for TransformVisitor {
                 let args_len = tpl.exprs.len() + tpl.quasis.len();
                 let mut args = Vec::with_capacity(args_len);
 
-                // case normal tagged template, not have variable in template
-                // and it should only has one argument
+                // case normal tagged template, not have variable in template,
+                // and it should only have one argument
                 if tpl.exprs.is_empty() {
                     if let Some(q) = tpl.quasis.get(0) {
                         args.push(q.raw.clone().as_arg())
@@ -46,6 +46,7 @@ impl VisitMut for TransformVisitor {
                 } else {
                     let mut first_arg = String::from("");
                     let mut props = Vec::with_capacity(tpl.exprs.len());
+                    let mut propstrs = vec![];
                     for index in 0..args_len {
                         let i = index / 2;
                         if index % 2 == 0 {
@@ -60,6 +61,12 @@ impl VisitMut for TransformVisitor {
                             first_arg.push_str("}");
 
                             if let Some(ident) = e.as_ident() {
+                                let ident_name = ident.sym.to_string();
+                                if propstrs.contains(&ident_name) {
+                                    // already have current name, should not add it again
+                                    continue;
+                                }
+                                propstrs.push(ident_name);
                                 props.push(PropOrSpread::Prop(Box::new(Prop::Shorthand(
                                     ident.clone(),
                                 ))));

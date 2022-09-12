@@ -4,7 +4,9 @@ t("Refresh inbox");
 t("Attachment {name} saved", {
     name
 });
-// t`Attachment ${name} saved ${name}`;
+t("Attachment {name} saved {name}", {
+    name
+});
 t("Attachment {name} saved {name2}", {
     name,
     name2

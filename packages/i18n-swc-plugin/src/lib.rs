@@ -1,16 +1,14 @@
-use swc_core::common::util::take::Take;
-use swc_core::ecma::ast::Tpl;
 use swc_core::{
     common::DUMMY_SP,
     ecma::{
-        ast::{CallExpr, Expr, ExprOrSpread, Ident, Program, TaggedTpl},
+        ast::{CallExpr, Expr, ExprStmt, Program},
         visit::{as_folder, FoldWith, VisitMut},
     },
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 use swc_ecma_utils::ExprFactory;
 
-static PLUGIN_NAME: &str = "i18n_swc_plugin";
+// static PLUGIN_NAME: &str = "i18n_swc_plugin";
 static T_FUNCTION_NAME: &str = "t";
 
 pub struct TransformVisitor;
@@ -19,24 +17,27 @@ impl VisitMut for TransformVisitor {
     // Implement necessary visit_mut_* methods for actual custom transform.
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
-    fn visit_mut_tagged_tpl(&mut self, n: &mut TaggedTpl) {
-        if let Some(ident) = n.tag.as_ident() {
-            if &ident.sym != T_FUNCTION_NAME {
-                return;
-            }
-            let args = n
-                .tpl
-                .quasis
-                .iter()
-                .map(|quasi| quasi.raw.clone().as_arg())
-                .collect();
 
-            n.tag = Box::new(Expr::Call(CallExpr {
-                args,
-                callee: n.tag.clone().as_callee(),
-                span: DUMMY_SP,
-                type_args: None,
-            }));
+    fn visit_mut_expr_stmt(&mut self, n: &mut ExprStmt) {
+        if let Expr::TaggedTpl(tagged_tpl) = &mut *n.expr {
+            if let Some(ident) = tagged_tpl.tag.as_ident() {
+                if &ident.sym != T_FUNCTION_NAME {
+                    return;
+                }
+                let args = tagged_tpl
+                    .tpl
+                    .quasis
+                    .iter()
+                    .map(|quasi| quasi.raw.clone().as_arg())
+                    .collect();
+
+                n.expr = Box::new(Expr::Call(CallExpr {
+                    args,
+                    callee: tagged_tpl.tag.clone().as_callee(),
+                    span: DUMMY_SP,
+                    type_args: None,
+                }));
+            }
         }
     }
 }

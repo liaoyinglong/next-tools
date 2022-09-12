@@ -1,7 +1,7 @@
 use swc_core::{
     common::DUMMY_SP,
     ecma::{
-        ast::{CallExpr, Expr, ExprStmt, Program},
+        ast::{CallExpr, Expr, ExprStmt, Program, TaggedTpl},
         visit::{as_folder, FoldWith, VisitMut},
     },
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
@@ -24,8 +24,9 @@ impl VisitMut for TransformVisitor {
                 if &ident.sym != T_FUNCTION_NAME {
                     return;
                 }
-                let args = tagged_tpl
-                    .tpl
+
+                let TaggedTpl { tpl, tag, .. } = tagged_tpl;
+                let args = tpl
                     .quasis
                     .iter()
                     .map(|quasi| quasi.raw.clone().as_arg())
@@ -33,7 +34,7 @@ impl VisitMut for TransformVisitor {
 
                 n.expr = Box::new(Expr::Call(CallExpr {
                     args,
-                    callee: tagged_tpl.tag.clone().as_callee(),
+                    callee: tag.clone().as_callee(),
                     span: DUMMY_SP,
                     type_args: None,
                 }));

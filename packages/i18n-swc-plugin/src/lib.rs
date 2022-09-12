@@ -1,3 +1,4 @@
+use swc_core::common::util::take::Take;
 use swc_core::common::DUMMY_SP;
 use swc_core::ecma::ast::CallExpr;
 use swc_core::ecma::ast::Expr;
@@ -13,7 +14,6 @@ use swc_core::ecma::visit::VisitMut;
 use swc_core::plugin::plugin_transform;
 use swc_core::plugin::proxies::TransformPluginProgramMetadata;
 use swc_ecma_utils::ExprFactory;
-
 // static PLUGIN_NAME: &str = "i18n_swc_plugin";
 static T_FUNCTION_NAME: &str = "t";
 
@@ -55,22 +55,24 @@ impl VisitMut for TransformVisitor {
                                 first_arg.push_str(q.raw.to_string().as_str());
                             }
                         } else if let Some(e) = tpl.exprs.get_mut(i) {
+                            let e = &**e;
                             // variable in temple
                             first_arg.push_str("{");
-                            first_arg.push_str(e.as_ident().unwrap().sym.to_string().as_str());
-                            first_arg.push_str("}");
-
-                            if let Some(ident) = e.as_ident() {
-                                let ident_name = ident.sym.to_string();
-                                if propstrs.contains(&ident_name) {
-                                    // already have current name, should not add it again
-                                    continue;
+                            match e {
+                                Expr::Ident(ident) => {
+                                    first_arg.push_str(ident.sym.to_string().as_str());
+                                    let ident_name = ident.sym.to_string();
+                                    // if already have current name, should not add it again
+                                    if !propstrs.contains(&ident_name) {
+                                        propstrs.push(ident_name);
+                                        props.push(PropOrSpread::Prop(Box::new(Prop::Shorthand(
+                                            ident.clone(),
+                                        ))));
+                                    }
                                 }
-                                propstrs.push(ident_name);
-                                props.push(PropOrSpread::Prop(Box::new(Prop::Shorthand(
-                                    ident.clone(),
-                                ))));
+                                _ => {}
                             }
+                            first_arg.push_str("}");
                         }
                     }
                     // case: first arg like : Attachment {name} saved

@@ -26,12 +26,16 @@ impl VisitMut for TransformVisitor {
                 }
 
                 let TaggedTpl { tpl, tag, .. } = tagged_tpl;
-                let args = tpl
-                    .quasis
-                    .iter()
-                    .map(|quasi| quasi.raw.clone().as_arg())
-                    .collect();
 
+                let mut args = vec![];
+
+                // case normal tagged template, not have variable in template
+                // and it should only has one argument
+                if tpl.exprs.is_empty() {
+                    if let Some(q) = tpl.quasis.get(0) {
+                        args.push(q.raw.clone().as_arg())
+                    }
+                }
                 n.expr = Box::new(Expr::Call(CallExpr {
                     args,
                     callee: tag.clone().as_callee(),

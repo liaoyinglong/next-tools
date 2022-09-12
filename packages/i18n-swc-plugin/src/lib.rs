@@ -1,13 +1,12 @@
-use swc_core::common::util::take::Take;
 use swc_core::common::DUMMY_SP;
-use swc_core::ecma::ast::CallExpr;
-use swc_core::ecma::ast::Expr;
 use swc_core::ecma::ast::ExprStmt;
 use swc_core::ecma::ast::ObjectLit;
 use swc_core::ecma::ast::Program;
 use swc_core::ecma::ast::Prop;
 use swc_core::ecma::ast::PropOrSpread;
 use swc_core::ecma::ast::TaggedTpl;
+use swc_core::ecma::ast::{CallExpr, KeyValueProp};
+use swc_core::ecma::ast::{Expr, PropName};
 use swc_core::ecma::visit::as_folder;
 use swc_core::ecma::visit::FoldWith;
 use swc_core::ecma::visit::VisitMut;
@@ -69,6 +68,15 @@ impl VisitMut for TransformVisitor {
                                             ident.clone(),
                                         ))));
                                     }
+                                }
+                                Expr::Member(member) => {
+                                    first_arg.push_str(i.to_string().as_str());
+                                    props.push(PropOrSpread::Prop(Box::new(Prop::KeyValue(
+                                        KeyValueProp {
+                                            key: PropName::Num(i.into()),
+                                            value: Box::new(member.clone().into()),
+                                        },
+                                    ))));
                                 }
                                 _ => {}
                             }

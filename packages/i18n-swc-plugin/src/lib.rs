@@ -1,3 +1,4 @@
+use swc_core::common::util::take::Take;
 use swc_core::{
     common::DUMMY_SP,
     ecma::{
@@ -6,6 +7,7 @@ use swc_core::{
     },
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
+
 use swc_ecma_utils::ExprFactory;
 
 // static PLUGIN_NAME: &str = "i18n_swc_plugin";
@@ -27,7 +29,9 @@ impl VisitMut for TransformVisitor {
 
                 let TaggedTpl { tpl, tag, .. } = tagged_tpl;
 
-                let mut args = vec![];
+                // initial args vec
+                let args_len = tpl.exprs.len() + tpl.quasis.len();
+                let mut args = Vec::with_capacity(args_len);
 
                 // case normal tagged template, not have variable in template
                 // and it should only has one argument
@@ -35,6 +39,22 @@ impl VisitMut for TransformVisitor {
                     if let Some(q) = tpl.quasis.get(0) {
                         args.push(q.raw.clone().as_arg())
                     }
+                } else {
+                    let mut first_arg = String::from("");
+                    for index in 0..args_len {
+                        let i = index / 2;
+                        if index % 2 == 0 {
+                            if let Some(q) = tpl.quasis.get_mut(i) {
+                                first_arg.push_str(q.raw.to_string().as_str());
+                            }
+                        } else if let Some(e) = tpl.exprs.get_mut(i) {
+                            first_arg.push_str("{");
+                            first_arg
+                                .push_str(e.take().as_ident().unwrap().sym.to_string().as_str());
+                            first_arg.push_str("}");
+                        }
+                    }
+                    args.push(first_arg.as_arg());
                 }
                 n.expr = Box::new(Expr::Call(CallExpr {
                     args,

@@ -4,8 +4,8 @@ import { t } from '@lyl/i18next';
 t`Refresh inbox`;
 t("Refresh inbox");
 
-// t`Attachment ${name} saved`
-// t(`Attachment ${name} saved`)
+t`Attachment ${name} saved`;
+// t(`Attachment ${name} saved`);
 
 // should not transform
 raw`Refresh inbox`;

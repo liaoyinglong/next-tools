@@ -105,6 +105,34 @@ impl VisitMut for TransformVisitor {
                     type_args: None,
                 }));
             }
+            Expr::Call(call_expr) => {
+                if !is_t_function_call(call_expr.callee.as_ident()) {
+                    return;
+                }
+
+                // more args
+                if call_expr.args.len() != 1 {
+                    return;
+                }
+
+                // if have template literal, should replace it
+                let should_transform = call_expr.args.iter().any(|arg| match *arg.expr {
+                    Expr::Tpl(tpl) => true,
+                    _ => false,
+                });
+                if !should_transform {
+                    return;
+                }
+
+                // replace with new call expression
+                n.expr = Box::new(Expr::Call(CallExpr {
+                    args: call_expr.args.clone(),
+                    callee: call_expr.callee.clone().as_callee(),
+                    span: DUMMY_SP,
+                    type_args: None,
+                }));
+            }
+
             _ => {}
         }
     }

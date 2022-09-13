@@ -1,11 +1,11 @@
 use swc_core::common::DUMMY_SP;
-use swc_core::ecma::ast::ExprStmt;
 use swc_core::ecma::ast::ObjectLit;
 use swc_core::ecma::ast::Prop;
 use swc_core::ecma::ast::PropOrSpread;
 use swc_core::ecma::ast::TaggedTpl;
 use swc_core::ecma::ast::{CallExpr, KeyValueProp};
 use swc_core::ecma::ast::{Expr, PropName};
+use swc_core::ecma::ast::{ExprStmt, Ident};
 use swc_core::ecma::visit::VisitMut;
 use swc_ecma_utils::ExprFactory;
 
@@ -19,9 +19,15 @@ impl VisitMut for TransformVisitor {
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
 
     fn visit_mut_expr_stmt(&mut self, n: &mut ExprStmt) {
-        if let Expr::TaggedTpl(tagged_tpl) = &mut *n.expr {
-            if let Some(ident) = tagged_tpl.tag.as_ident() {
-                if &ident.sym != T_FUNCTION_NAME {
+        // check that the expression is a t function call
+        let is_t_function_call = |ident: Option<&Ident>| match ident {
+            Some(ident) => &ident.sym == T_FUNCTION_NAME,
+            None => false,
+        };
+
+        match &mut *n.expr {
+            Expr::TaggedTpl(tagged_tpl) => {
+                if !is_t_function_call(tagged_tpl.tag.as_ident()) {
                     return;
                 }
 
@@ -99,6 +105,7 @@ impl VisitMut for TransformVisitor {
                     type_args: None,
                 }));
             }
+            _ => {}
         }
     }
 }

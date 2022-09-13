@@ -57,28 +57,30 @@ impl VisitMut for TransformVisitor {
                             let e = &**e;
                             // variable in temple
                             first_arg.push_str("{");
+
+                            let key;
+                            let mut can_add_to_props = true;
                             match e {
                                 Expr::Ident(ident) => {
+                                    key = PropName::Ident(ident.clone());
                                     first_arg.push_str(ident.sym.to_string().as_str());
                                     let ident_name = ident.sym.to_string();
                                     // if already have current name, should not add it again
-                                    if !propstrs.contains(&ident_name) {
-                                        propstrs.push(ident_name);
-                                        props.push(PropOrSpread::Prop(Box::new(Prop::Shorthand(
-                                            ident.clone(),
-                                        ))));
-                                    }
+                                    can_add_to_props = !propstrs.contains(&ident_name);
+                                    propstrs.push(ident_name);
                                 }
-                                Expr::Member(member) => {
+                                _ => {
+                                    key = PropName::Num(i.into());
                                     first_arg.push_str(i.to_string().as_str());
-                                    props.push(PropOrSpread::Prop(Box::new(Prop::KeyValue(
-                                        KeyValueProp {
-                                            key: PropName::Num(i.into()),
-                                            value: Box::new(member.clone().into()),
-                                        },
-                                    ))));
                                 }
-                                _ => {}
+                            }
+                            if can_add_to_props {
+                                props.push(PropOrSpread::Prop(Box::new(Prop::KeyValue(
+                                    KeyValueProp {
+                                        key,
+                                        value: Box::new(e.clone()),
+                                    },
+                                ))));
                             }
                             first_arg.push_str("}");
                         }

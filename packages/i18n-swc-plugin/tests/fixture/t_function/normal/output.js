@@ -4,14 +4,14 @@ import { t } from '@lyl/i18next';
 t("Refresh inbox");
 // template string
 t("Attachment {name} saved", {
-    name
+    name: name
 });
 t("Attachment {name} saved {name}", {
-    name
+    name: name
 });
 t("Attachment {name} saved {name2}", {
-    name,
-    name2
+    name: name,
+    name2: name2
 });
 // object
 t("Attachment {0} saved", {
@@ -20,6 +20,13 @@ t("Attachment {0} saved", {
 t("Attachment {0} saved {1}", {
     0: props.firstName,
     1: props.secondName
+});
+// complex expression
+t("Attachment {0} saved", {
+    0: props.firstName || props.secondName
+});
+t("Attachment {0} saved", {
+    0: props.age + 1
 });
 // ====================
 // should not transform

@@ -10,6 +10,10 @@ t`Attachment ${name} saved ${name2}`;
 // object
 t`Attachment ${props.name} saved`;
 t`Attachment ${props.firstName} saved ${props.secondName}`;
+// complex expression
+t`Attachment ${props.firstName || props.secondName} saved`;
+t`Attachment ${props.age + 1} saved`;
+
 
 // ====================
 // should not transform

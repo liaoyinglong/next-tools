@@ -106,7 +106,7 @@ impl VisitMut for TransformVisitor {
                     }));
                 }
                 Expr::Call(call_expr) => {
-                    let callee_ident = call_expr.callee.as_expr().and_then(|e| e.as_ident());
+                    let callee_ident = call_expr.callee.as_expr()?.as_ident();
                     // more args should ignore
                     if !is_t_function_call(callee_ident) || call_expr.args.len() != 1 {
                         return None;

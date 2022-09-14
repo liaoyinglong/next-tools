@@ -9,9 +9,9 @@ use i18n_swc_plugin::TransformVisitor;
 use testing::fixture;
 
 //use std::env;
-#[fixture("tests/fixture/**/code.js")]
+#[fixture("tests/fixture/**/input.js")]
 fn fixture(input: PathBuf) {
-    env_logger::init();
+    let _ = env_logger::try_init();
 
     let output = input.with_file_name("output.js");
 

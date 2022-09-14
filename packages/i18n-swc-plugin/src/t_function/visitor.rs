@@ -1,9 +1,9 @@
 use swc_core::common::DUMMY_SP;
-use swc_core::ecma::ast::Prop;
 use swc_core::ecma::ast::PropOrSpread;
 use swc_core::ecma::ast::TaggedTpl;
 use swc_core::ecma::ast::{CallExpr, KeyValueProp};
 use swc_core::ecma::ast::{Expr, PropName};
+use swc_core::ecma::ast::{ExprOrSpread, Prop};
 use swc_core::ecma::ast::{ExprStmt, Ident};
 use swc_core::ecma::ast::{ObjectLit, Tpl};
 use swc_core::ecma::visit::VisitMut;
@@ -57,19 +57,33 @@ fn transform_tpl(tpl: Tpl) -> (String, Vec<PropOrSpread>) {
     }
     (msg_id, props)
 }
+fn transform_tpl_to_args(tpl: Tpl) -> Vec<ExprOrSpread> {
+    let (msg_id, props) = transform_tpl(tpl);
+    // case: first arg like : Attachment {name} saved
+    // case: second arg like : { name }
+    vec![
+        msg_id.as_arg(),
+        Expr::Object(ObjectLit {
+            span: DUMMY_SP,
+            props,
+        })
+        .as_arg(),
+    ]
+}
 
+// check that the expression is a t function call
+fn is_t_function_call(ident: Option<&Ident>) -> bool {
+    match ident {
+        Some(ident) => &ident.sym == T_FUNCTION_NAME,
+        None => false,
+    }
+}
 impl VisitMut for TransformVisitor {
     // Implement necessary visit_mut_* methods for actual custom transform.
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
 
     fn visit_mut_expr_stmt(&mut self, n: &mut ExprStmt) {
-        // check that the expression is a t function call
-        let is_t_function_call = |ident: Option<&Ident>| match ident {
-            Some(ident) => &ident.sym == T_FUNCTION_NAME,
-            None => false,
-        };
-
         let mut work = || -> Option<()> {
             match &mut *n.expr {
                 Expr::TaggedTpl(tagged_tpl) if is_t_function_call(tagged_tpl.tag.as_ident()) => {
@@ -77,17 +91,7 @@ impl VisitMut for TransformVisitor {
                     // initial args vec
                     let mut args = vec![];
                     if !(tpl.exprs.is_empty()) {
-                        let (msg_id, props) = transform_tpl(tpl.clone());
-                        // case: first arg like : Attachment {name} saved
-                        args.push(msg_id.as_arg());
-                        // case: second arg like : { name }
-                        args.push(
-                            Expr::Object(ObjectLit {
-                                span: DUMMY_SP,
-                                props,
-                            })
-                            .as_arg(),
-                        );
+                        args = transform_tpl_to_args(tpl.clone());
                     } else if let Some(q) = tpl.quasis.get(0) {
                         // case normal tagged template, not have variable in template,
                         // and it should only have one argument
@@ -103,34 +107,19 @@ impl VisitMut for TransformVisitor {
                 }
                 Expr::Call(call_expr) => {
                     let callee_ident = call_expr.callee.as_expr().and_then(|e| e.as_ident());
-                    if !is_t_function_call(callee_ident) {
-                        return None;
-                    }
-
                     // more args should ignore
-                    if call_expr.args.len() != 1 {
+                    if !is_t_function_call(callee_ident) || call_expr.args.len() != 1 {
                         return None;
                     }
-
                     let tpl = call_expr.args.first()?.expr.clone().tpl()?;
-
                     if tpl.exprs.is_empty() {
                         return None;
                     }
-                    let (msg_id, props) = transform_tpl(tpl.clone());
-                    let mut args = vec![];
-                    args.push(msg_id.as_arg());
-                    args.push(
-                        Expr::Object(ObjectLit {
-                            span: DUMMY_SP,
-                            props,
-                        })
-                        .as_arg(),
-                    );
 
+                    let &mut args = transform_tpl_to_args(tpl.clone());
                     // clear old args with new args
                     call_expr.args.clear();
-                    call_expr.args.append(&mut args);
+                    call_expr.args.append(args);
                 }
                 _ => {}
             }

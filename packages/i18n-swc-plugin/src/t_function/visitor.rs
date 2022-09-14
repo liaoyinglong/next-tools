@@ -13,7 +13,7 @@ use crate::TransformVisitor;
 
 static T_FUNCTION_NAME: &str = "t";
 
-fn transform_tpl(tpl: &mut Tpl) -> (String, Vec<PropOrSpread>) {
+fn transform_tpl(tpl: Tpl) -> (String, Vec<PropOrSpread>) {
     let args_len = tpl.exprs.len() + tpl.quasis.len();
     let mut msg_id = String::from("");
     let mut msg_ids = vec![];
@@ -21,11 +21,11 @@ fn transform_tpl(tpl: &mut Tpl) -> (String, Vec<PropOrSpread>) {
     for index in 0..args_len {
         let i = index / 2;
         if index % 2 == 0 {
-            if let Some(q) = tpl.quasis.get_mut(i) {
+            if let Some(q) = tpl.quasis.get(i) {
                 // normal string in temple
                 msg_id.push_str(q.raw.to_string().as_str());
             }
-        } else if let Some(e) = tpl.exprs.get_mut(i) {
+        } else if let Some(e) = tpl.exprs.get(i) {
             let e = &**e;
             // variable in temple
             msg_id.push_str("{");
@@ -79,7 +79,7 @@ impl VisitMut for TransformVisitor {
                 // initial args vec
                 let mut args = vec![];
                 if !(tpl.exprs.is_empty()) {
-                    let (msg_id, props) = transform_tpl(tpl);
+                    let (msg_id, props) = transform_tpl(tpl.clone());
                     // case: first arg like : Attachment {name} saved
                     args.push(msg_id.as_arg());
                     // case: second arg like : { name }
@@ -103,34 +103,41 @@ impl VisitMut for TransformVisitor {
                     type_args: None,
                 }));
             }
-            // Expr::Call(call_expr) => {
-            //     if !is_t_function_call(call_expr.callee.as_ident()) {
-            //         return;
-            //     }
-            //
-            //     // more args should ignore
-            //     if call_expr.args.len() != 1 {
-            //         return;
-            //     }
-            //     if let Expr::Tpl(tpl) = call_expr.args.first() {}
-            //
-            //     // if have template literal, should replace it
-            //     let should_transform = call_expr.args.iter().any(|arg| match *arg.expr {
-            //         Expr::Tpl(tpl) => true,
-            //         _ => false,
-            //     });
-            //     if !should_transform {
-            //         return;
-            //     }
-            //
-            //     // replace with new call expression
-            //     n.expr = Box::new(Expr::Call(CallExpr {
-            //         args: call_expr.args.clone(),
-            //         callee: call_expr.callee.clone().as_callee(),
-            //         span: DUMMY_SP,
-            //         type_args: None,
-            //     }));
-            // }
+            Expr::Call(call_expr) => {
+                let callee_ident = call_expr.callee.as_expr().and_then(|e| e.as_ident());
+                if !is_t_function_call(callee_ident) {
+                    return;
+                }
+
+                // more args should ignore
+                if call_expr.args.len() != 1 {
+                    return;
+                }
+
+                if let Some(tpl) = call_expr
+                    .args
+                    .first()
+                    .and_then(|arg| arg.expr.clone().tpl())
+                {
+                    if tpl.exprs.is_empty() {
+                        return;
+                    }
+                    let (msg_id, props) = transform_tpl(tpl.clone());
+                    let mut args = vec![];
+                    args.push(msg_id.as_arg());
+                    args.push(
+                        Expr::Object(ObjectLit {
+                            span: DUMMY_SP,
+                            props,
+                        })
+                        .as_arg(),
+                    );
+
+                    // clear old args with new args
+                    call_expr.args.clear();
+                    call_expr.args.append(&mut args);
+                }
+            }
             _ => {}
         }
     }

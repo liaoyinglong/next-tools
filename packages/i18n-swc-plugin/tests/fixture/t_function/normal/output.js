@@ -31,5 +31,7 @@ t("Attachment {0} saved", {
 // ====================
 // should not transform
 t("Refresh inbox");
-t(`Attachment ${name} saved`);
+t("Attachment {name} saved", {
+    name: name
+});
 raw`Refresh inbox`;

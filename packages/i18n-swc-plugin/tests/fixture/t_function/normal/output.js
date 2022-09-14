@@ -1,3 +1,4 @@
+
 import { t } from '@lyl/i18next';
 // should transform
 // normal string
@@ -28,10 +29,13 @@ t("Attachment {0} saved", {
 t("Attachment {0} saved", {
     0: props.age + 1
 });
-// ====================
-// should not transform
-t("Refresh inbox");
+// function call with template string
 t("Attachment {name} saved", {
     name: name
 });
+// ====================
+// should not transform
+t("Refresh inbox");
 raw`Refresh inbox`;
+obj.t("Refresh inbox");
+obj.t(`Refresh inbox ${name}`);

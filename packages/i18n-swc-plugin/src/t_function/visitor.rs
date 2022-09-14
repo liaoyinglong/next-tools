@@ -116,7 +116,7 @@ impl VisitMut for TransformVisitor {
                         return None;
                     }
 
-                    let &mut args = transform_tpl_to_args(tpl.clone());
+                    let args = &mut transform_tpl_to_args(tpl.clone());
                     // clear old args with new args
                     call_expr.args.clear();
                     call_expr.args.append(args);

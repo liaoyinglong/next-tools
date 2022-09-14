@@ -14,9 +14,12 @@ t`Attachment ${props.firstName} saved ${props.secondName}`;
 t`Attachment ${props.firstName || props.secondName} saved`;
 t`Attachment ${props.age + 1} saved`;
 
+// function call with template string
+t(`Attachment ${name} saved`);
 
 // ====================
 // should not transform
 t("Refresh inbox");
-t(`Attachment ${name} saved`);
 raw`Refresh inbox`;
+obj.t("Refresh inbox");
+obj.t(`Refresh inbox ${name}`);

@@ -70,57 +70,52 @@ impl VisitMut for TransformVisitor {
             None => false,
         };
 
-        match &mut *n.expr {
-            Expr::TaggedTpl(tagged_tpl) => {
-                if !is_t_function_call(tagged_tpl.tag.as_ident()) {
-                    return;
+        let mut work = || -> Option<()> {
+            match &mut *n.expr {
+                Expr::TaggedTpl(tagged_tpl) if is_t_function_call(tagged_tpl.tag.as_ident()) => {
+                    let TaggedTpl { tpl, tag, .. } = tagged_tpl;
+                    // initial args vec
+                    let mut args = vec![];
+                    if !(tpl.exprs.is_empty()) {
+                        let (msg_id, props) = transform_tpl(tpl.clone());
+                        // case: first arg like : Attachment {name} saved
+                        args.push(msg_id.as_arg());
+                        // case: second arg like : { name }
+                        args.push(
+                            Expr::Object(ObjectLit {
+                                span: DUMMY_SP,
+                                props,
+                            })
+                            .as_arg(),
+                        );
+                    } else if let Some(q) = tpl.quasis.get(0) {
+                        // case normal tagged template, not have variable in template,
+                        // and it should only have one argument
+                        args.push(q.raw.clone().as_arg())
+                    }
+                    // replace with new call expression
+                    n.expr = Box::new(Expr::Call(CallExpr {
+                        args,
+                        callee: tag.clone().as_callee(),
+                        span: DUMMY_SP,
+                        type_args: None,
+                    }));
                 }
-                let TaggedTpl { tpl, tag, .. } = tagged_tpl;
-                // initial args vec
-                let mut args = vec![];
-                if !(tpl.exprs.is_empty()) {
-                    let (msg_id, props) = transform_tpl(tpl.clone());
-                    // case: first arg like : Attachment {name} saved
-                    args.push(msg_id.as_arg());
-                    // case: second arg like : { name }
-                    args.push(
-                        Expr::Object(ObjectLit {
-                            span: DUMMY_SP,
-                            props,
-                        })
-                        .as_arg(),
-                    );
-                } else if let Some(q) = tpl.quasis.get(0) {
-                    // case normal tagged template, not have variable in template,
-                    // and it should only have one argument
-                    args.push(q.raw.clone().as_arg())
-                }
-                // replace with new call expression
-                n.expr = Box::new(Expr::Call(CallExpr {
-                    args,
-                    callee: tag.clone().as_callee(),
-                    span: DUMMY_SP,
-                    type_args: None,
-                }));
-            }
-            Expr::Call(call_expr) => {
-                let callee_ident = call_expr.callee.as_expr().and_then(|e| e.as_ident());
-                if !is_t_function_call(callee_ident) {
-                    return;
-                }
+                Expr::Call(call_expr) => {
+                    let callee_ident = call_expr.callee.as_expr().and_then(|e| e.as_ident());
+                    if !is_t_function_call(callee_ident) {
+                        return None;
+                    }
 
-                // more args should ignore
-                if call_expr.args.len() != 1 {
-                    return;
-                }
+                    // more args should ignore
+                    if call_expr.args.len() != 1 {
+                        return None;
+                    }
 
-                if let Some(tpl) = call_expr
-                    .args
-                    .first()
-                    .and_then(|arg| arg.expr.clone().tpl())
-                {
+                    let tpl = call_expr.args.first()?.expr.clone().tpl()?;
+
                     if tpl.exprs.is_empty() {
-                        return;
+                        return None;
                     }
                     let (msg_id, props) = transform_tpl(tpl.clone());
                     let mut args = vec![];
@@ -137,8 +132,10 @@ impl VisitMut for TransformVisitor {
                     call_expr.args.clear();
                     call_expr.args.append(&mut args);
                 }
+                _ => {}
             }
-            _ => {}
-        }
+            None
+        };
+        work();
     }
 }

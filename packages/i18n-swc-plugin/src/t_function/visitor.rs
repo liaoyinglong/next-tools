@@ -1,3 +1,4 @@
+use log::debug;
 use swc_core::common::DUMMY_SP;
 use swc_core::ecma::ast::PropOrSpread;
 use swc_core::ecma::ast::TaggedTpl;
@@ -55,6 +56,7 @@ fn transform_tpl(tpl: Tpl) -> (String, Vec<PropOrSpread>) {
             msg_id.push_str("}");
         }
     }
+    debug!("find msg_id: {}", msg_id);
     (msg_id, props)
 }
 fn transform_tpl_to_args(tpl: Tpl) -> Vec<ExprOrSpread> {

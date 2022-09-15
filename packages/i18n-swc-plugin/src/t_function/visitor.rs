@@ -10,8 +10,6 @@ use swc_core::ecma::ast::{ObjectLit, Tpl};
 use swc_core::ecma::visit::VisitMut;
 use swc_ecma_utils::ExprFactory;
 
-use crate::TransformVisitor;
-
 static T_FUNCTION_NAME: &str = "t";
 
 fn transform_tpl(tpl: Tpl) -> (String, Vec<PropOrSpread>) {
@@ -80,7 +78,10 @@ fn is_t_function_call(ident: Option<&Ident>) -> bool {
         None => false,
     }
 }
-impl VisitMut for TransformVisitor {
+
+pub struct TFunctionVisitor;
+
+impl VisitMut for TFunctionVisitor {
     // Implement necessary visit_mut_* methods for actual custom transform.
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html

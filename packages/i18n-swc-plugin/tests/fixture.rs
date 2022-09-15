@@ -5,7 +5,7 @@ use swc_core::ecma::{
     visit::as_folder,
 };
 
-use i18n_swc_plugin::TransformVisitor;
+use i18n_swc_plugin::get_visitor;
 use testing::fixture;
 
 //use std::env;
@@ -23,7 +23,7 @@ fn fixture(input: PathBuf) {
             jsx: true,
             ..Default::default()
         }),
-        &|_| as_folder(TransformVisitor),
+        &|_| as_folder(get_visitor()),
         &input,
         &output,
     );

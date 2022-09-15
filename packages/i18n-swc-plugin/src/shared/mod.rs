@@ -1,14 +1,15 @@
 use std::collections::HashSet;
 use swc_core::common::DUMMY_SP;
 use swc_core::ecma::ast::{
-    Expr, ExprOrSpread, KeyValueProp, ObjectLit, Prop, PropName, PropOrSpread,
+    Expr, ExprOrSpread, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXExpr,
+    JSXExprContainer, KeyValueProp, ObjectLit, Prop, PropName, PropOrSpread,
 };
-use swc_ecma_utils::ExprFactory;
+use swc_ecma_utils::{quote_ident, ExprFactory};
 use tracing::debug;
 
 #[derive(Default)]
 pub struct Normalizer {
-    msg_id: String,
+    pub msg_id: String,
     msg_vars: HashSet<String>,
     props: Vec<PropOrSpread>,
 }
@@ -20,11 +21,11 @@ impl Normalizer {
         }
     }
 
-    pub fn str(&mut self, str: &str) {
+    pub fn str_work(&mut self, str: &str) {
         self.msg_id.push_str(str);
     }
 
-    pub fn expr(&mut self, expr: Expr, index: usize) {
+    pub fn expr_work(&mut self, expr: Expr, index: usize) {
         self.msg_id.push_str("{");
         let key;
         let msg_var;
@@ -62,6 +63,31 @@ impl Normalizer {
                 props: self.props,
             })
             .as_arg(),
+        ]
+    }
+
+    /// 转换成jsx_attr
+    pub fn to_jsx_attr(self) -> Vec<JSXAttrOrSpread> {
+        debug!("find msg_id: {}", self.msg_id);
+        vec![
+            // id={msg_id}
+            JSXAttrOrSpread::JSXAttr(JSXAttr {
+                span: Default::default(),
+                name: JSXAttrName::Ident(quote_ident!("id")),
+                value: Some(JSXAttrValue::Lit(self.msg_id.into())),
+            }),
+            // values={values}
+            JSXAttrOrSpread::JSXAttr(JSXAttr {
+                span: Default::default(),
+                name: JSXAttrName::Ident(quote_ident!("values")),
+                value: Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
+                    span: Default::default(),
+                    expr: JSXExpr::Expr(Box::new(Expr::Object(ObjectLit {
+                        span: DUMMY_SP,
+                        props: self.props,
+                    }))),
+                })),
+            }),
         ]
     }
 }

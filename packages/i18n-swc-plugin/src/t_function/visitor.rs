@@ -20,11 +20,11 @@ fn transform_tpl_to_args(tpl: Tpl) -> Vec<ExprOrSpread> {
         if index % 2 == 0 {
             if let Some(q) = tpl.quasis.get(i) {
                 // normal string in temple
-                normalizer.str(q.raw.to_string().as_str());
+                normalizer.str_work(q.raw.to_string().as_str());
             }
         } else if let Some(e) = tpl.exprs.get(i) {
             let e = &**e;
-            normalizer.expr(e.clone(), i);
+            normalizer.expr_work(e.clone(), i);
         }
     }
     normalizer.to_args()

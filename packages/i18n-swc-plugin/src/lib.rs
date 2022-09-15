@@ -9,6 +9,7 @@ use swc_core::plugin::proxies::TransformPluginProgramMetadata;
 use swc_ecma_utils::swc_common::chain;
 
 // static PLUGIN_NAME: &str = "i18n_swc_plugin";
+mod shared;
 mod t_function;
 mod trans;
 

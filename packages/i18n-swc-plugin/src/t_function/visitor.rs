@@ -1,21 +1,25 @@
+use std::collections::HashSet;
+
 use swc_core::common::DUMMY_SP;
+use swc_core::ecma::ast::CallExpr;
+use swc_core::ecma::ast::Expr;
+use swc_core::ecma::ast::ExprOrSpread;
 use swc_core::ecma::ast::PropOrSpread;
 use swc_core::ecma::ast::TaggedTpl;
-use swc_core::ecma::ast::{CallExpr, KeyValueProp};
-use swc_core::ecma::ast::{Expr, PropName};
-use swc_core::ecma::ast::{ExprOrSpread, Prop};
 use swc_core::ecma::ast::{ExprStmt, Ident};
 use swc_core::ecma::ast::{ObjectLit, Tpl};
 use swc_core::ecma::visit::VisitMut;
 use swc_ecma_utils::ExprFactory;
 use tracing::debug;
 
+use crate::shared::normalize_expr;
+
 static T_FUNCTION_NAME: &str = "t";
 
 fn transform_tpl(tpl: Tpl) -> (String, Vec<PropOrSpread>) {
     let args_len = tpl.exprs.len() + tpl.quasis.len();
     let mut msg_id = String::from("");
-    let mut msg_ids = vec![];
+    let mut msg_ids = HashSet::new();
     let mut props = Vec::with_capacity(tpl.exprs.len());
     for index in 0..args_len {
         let i = index / 2;
@@ -27,31 +31,12 @@ fn transform_tpl(tpl: Tpl) -> (String, Vec<PropOrSpread>) {
         } else if let Some(e) = tpl.exprs.get(i) {
             let e = &**e;
             // variable in temple
-            msg_id.push_str("{");
-
-            let key;
-            let mut should_push = true;
-            match e {
-                Expr::Ident(ident) => {
-                    key = PropName::Ident(ident.clone());
-                    msg_id.push_str(ident.sym.to_string().as_str());
-                    let ident_name = ident.sym.to_string();
-                    // if already have current name, should not add it again
-                    should_push = !msg_ids.contains(&ident_name);
-                    msg_ids.push(ident_name);
-                }
-                _ => {
-                    key = PropName::Num(i.into());
-                    msg_id.push_str(i.to_string().as_str());
-                }
+            let (msg_var, prop) = normalize_expr(e.clone(), i);
+            msg_id.push_str(msg_var.as_str());
+            if !msg_ids.contains(&msg_var) {
+                props.push(prop);
             }
-            if should_push {
-                props.push(PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
-                    key,
-                    value: Box::new(e.clone()),
-                }))));
-            }
-            msg_id.push_str("}");
+            msg_ids.insert(msg_var);
         }
     }
     debug!("find msg_id: {}", msg_id);

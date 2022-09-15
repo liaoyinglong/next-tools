@@ -42,7 +42,6 @@ impl VisitMut for TransVisitor {
             }
 
             let mut normalizer = Normalizer::new();
-            let mut i = 0;
 
             n.children.iter().for_each(|child| match child {
                 JSXElementChild::JSXText(js_text) => {
@@ -51,8 +50,7 @@ impl VisitMut for TransVisitor {
                 }
                 JSXElementChild::JSXExprContainer(item) => {
                     if let JSXExpr::Expr(expr) = &item.expr {
-                        normalizer.expr_work(*expr.clone(), i);
-                        i = i + 1;
+                        normalizer.expr_work(*expr.clone());
                     }
                 }
                 _ => {}

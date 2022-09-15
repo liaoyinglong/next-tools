@@ -12,6 +12,7 @@ pub struct Normalizer {
     pub msg_id: String,
     msg_vars: HashSet<String>,
     props: Vec<PropOrSpread>,
+    expr_index: usize,
 }
 
 impl Normalizer {
@@ -25,7 +26,7 @@ impl Normalizer {
         self.msg_id.push_str(str);
     }
 
-    pub fn expr_work(&mut self, expr: Expr, index: usize) {
+    pub fn expr_work(&mut self, expr: Expr) {
         self.msg_id.push_str("{");
         let key;
         let msg_var;
@@ -35,8 +36,9 @@ impl Normalizer {
                 msg_var = ident.sym.to_string();
             }
             _ => {
-                key = PropName::Num(index.into());
-                msg_var = index.to_string();
+                key = PropName::Num(self.expr_index.into());
+                msg_var = self.expr_index.to_string();
+                self.expr_index = self.expr_index + 1;
             }
         }
         if !self.msg_vars.contains(&*msg_var) {

@@ -24,7 +24,7 @@ fn transform_tpl_to_args(tpl: Tpl) -> Vec<ExprOrSpread> {
             }
         } else if let Some(e) = tpl.exprs.get(i) {
             let e = &**e;
-            normalizer.expr_work(e.clone(), i);
+            normalizer.expr_work(e.clone());
         }
     }
     normalizer.to_args()

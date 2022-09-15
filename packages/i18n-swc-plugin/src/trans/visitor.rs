@@ -28,18 +28,6 @@ impl VisitMut for TransVisitor {
                 return None;
             }
             let attrs = &mut n.opening.attrs;
-            let is_has_id_prop = attrs.iter().any(|attr| {
-                if let JSXAttrOrSpread::JSXAttr(attr) = attr {
-                    if let JSXAttrName::Ident(ident) = &attr.name {
-                        return ident.sym == JsWord::from("id");
-                    }
-                }
-                false
-            });
-            if is_has_id_prop {
-                error!("already has id prop");
-                return None;
-            }
 
             let mut normalizer = Normalizer::new();
 
@@ -57,7 +45,15 @@ impl VisitMut for TransVisitor {
             });
             n.children.clear();
 
-            attrs.extend_from_slice(&normalizer.to_jsx_attr());
+            let exist_id_prop = attrs.iter().any(|attr| {
+                if let JSXAttrOrSpread::JSXAttr(attr) = attr {
+                    if let JSXAttrName::Ident(ident) = &attr.name {
+                        return ident.sym == JsWord::from("id");
+                    }
+                }
+                false
+            });
+            attrs.extend_from_slice(&normalizer.to_jsx_attr(exist_id_prop));
 
             None
         };

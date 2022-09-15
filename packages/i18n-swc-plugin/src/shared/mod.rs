@@ -69,27 +69,37 @@ impl Normalizer {
     }
 
     /// 转换成jsx_attr
-    pub fn to_jsx_attr(self) -> Vec<JSXAttrOrSpread> {
+    pub fn to_jsx_attr(self, exist_id_prop: bool) -> Vec<JSXAttrOrSpread> {
         debug!("find msg_id: {}", self.msg_id);
-        vec![
-            // id={msg_id}
+        let mut attrs = vec![
+            // id={msg_id} || messages={msg_id}
             JSXAttrOrSpread::JSXAttr(JSXAttr {
                 span: Default::default(),
-                name: JSXAttrName::Ident(quote_ident!("id")),
+                name: JSXAttrName::Ident(quote_ident!(if exist_id_prop {
+                    "messages"
+                } else {
+                    "id"
+                })),
                 value: Some(JSXAttrValue::Lit(self.msg_id.into())),
             }),
-            // values={values}
-            JSXAttrOrSpread::JSXAttr(JSXAttr {
-                span: Default::default(),
-                name: JSXAttrName::Ident(quote_ident!("values")),
-                value: Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
+        ];
+        if !self.props.is_empty() {
+            attrs.push(
+                // values={values}
+                JSXAttrOrSpread::JSXAttr(JSXAttr {
                     span: Default::default(),
-                    expr: JSXExpr::Expr(Box::new(Expr::Object(ObjectLit {
-                        span: DUMMY_SP,
-                        props: self.props,
-                    }))),
-                })),
-            }),
-        ]
+                    name: JSXAttrName::Ident(quote_ident!("values")),
+                    value: Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
+                        span: Default::default(),
+                        expr: JSXExpr::Expr(Box::new(Expr::Object(ObjectLit {
+                            span: DUMMY_SP,
+                            props: self.props,
+                        }))),
+                    })),
+                }),
+            );
+        }
+
+        attrs
     }
 }

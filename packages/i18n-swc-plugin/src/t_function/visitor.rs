@@ -1,4 +1,3 @@
-use log::debug;
 use swc_core::common::DUMMY_SP;
 use swc_core::ecma::ast::PropOrSpread;
 use swc_core::ecma::ast::TaggedTpl;
@@ -9,6 +8,7 @@ use swc_core::ecma::ast::{ExprStmt, Ident};
 use swc_core::ecma::ast::{ObjectLit, Tpl};
 use swc_core::ecma::visit::VisitMut;
 use swc_ecma_utils::ExprFactory;
+use tracing::debug;
 
 static T_FUNCTION_NAME: &str = "t";
 

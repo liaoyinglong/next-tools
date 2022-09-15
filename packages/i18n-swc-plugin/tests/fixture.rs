@@ -11,8 +11,6 @@ use testing::fixture;
 //use std::env;
 #[fixture("tests/fixture/**/input.js")]
 fn fixture(input: PathBuf) {
-    let _ = env_logger::try_init();
-
     let output = input.with_file_name("output.js");
 
     //env::set_var("UPDATE", "1");

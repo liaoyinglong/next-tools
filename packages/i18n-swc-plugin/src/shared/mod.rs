@@ -3,8 +3,8 @@ use std::collections::HashSet;
 use swc_core::common::DUMMY_SP;
 use swc_core::ecma::ast::{
     Expr, ExprOrSpread, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElement,
-    JSXElementChild, JSXElementName, JSXExpr, JSXExprContainer, KeyValueProp, ObjectLit, Prop,
-    PropName, PropOrSpread,
+    JSXElementChild, JSXExpr, JSXExprContainer, KeyValueProp, ObjectLit, Prop, PropName,
+    PropOrSpread,
 };
 use swc_ecma_utils::{quote_ident, ExprFactory};
 use tracing::debug;
@@ -48,12 +48,6 @@ impl Normalizer {
         Self {
             ..Default::default()
         }
-    }
-    pub fn get_jsx_element_name(element: &mut JSXElement) -> Option<&str> {
-        if let JSXElementName::Ident(ident) = &element.opening.name {
-            return Some(&ident.sym);
-        }
-        None
     }
 }
 

@@ -6,5 +6,10 @@
 <Trans>Attachment {props.name ?? defaultName} saved.</Trans>;
 // Custom id is preserved:
 <Trans id="message.attachment_saved">Attachment {name} saved.</Trans>;
+
 //  inline markup
-<Trans>Read the <a href="/docs">docs</a>.</Trans>;
+// simple inline markup
+<Trans>Hello <br/> Mike</Trans>;
+<Trans>Hello <strong>{name}</strong>.</Trans>;
+<Trans>Hello <strong>{name}</strong>. <Link to="/inbox">See my profile</Link></Trans>;
+

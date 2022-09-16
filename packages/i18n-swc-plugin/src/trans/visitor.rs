@@ -1,9 +1,6 @@
-use swc_core::ecma::ast::{
-    Ident, JSXAttrName, JSXAttrOrSpread, JSXElement, JSXElementName, JSXExpr,
-};
+use swc_core::ecma::ast::{JSXAttrName, JSXAttrOrSpread, JSXElement};
 use swc_core::ecma::atoms::JsWord;
 use swc_core::ecma::visit::VisitMut;
-use swc_ecma_utils::swc_ecma_ast::JSXElementChild;
 use tracing::error;
 
 use crate::shared::Normalizer;
@@ -18,7 +15,7 @@ impl VisitMut for TransVisitor {
     fn visit_mut_jsx_element(&mut self, n: &mut JSXElement) {
         let mut work = || -> Option<()> {
             let mut normalizer = Normalizer::new();
-            let is_trans_component = normalizer.get_jsx_element_name(n)? == TRANS_COMMENT_NAME;
+            let is_trans_component = Normalizer::get_jsx_element_name(n)? == TRANS_COMMENT_NAME;
             if !is_trans_component {
                 return None;
             }
@@ -28,21 +25,7 @@ impl VisitMut for TransVisitor {
             }
             let attrs = &mut n.opening.attrs;
 
-            n.children.iter().for_each(|mut child| match &mut child {
-                JSXElementChild::JSXText(js_text) => {
-                    // case normal text
-                    normalizer.str_work(&js_text.raw);
-                }
-                JSXElementChild::JSXExprContainer(item) => {
-                    if let JSXExpr::Expr(expr) = &item.expr {
-                        normalizer.expr_work(*expr.clone());
-                    }
-                }
-                JSXElementChild::JSXElement(el) => {
-                    normalizer.jsx_element_work(el);
-                }
-                _ => {}
-            });
+            normalizer.jsx_children_work(n.children.clone());
             n.children.clear();
 
             let exist_id_prop = attrs.iter().any(|attr| {

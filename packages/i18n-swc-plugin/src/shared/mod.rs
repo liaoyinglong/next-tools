@@ -2,11 +2,10 @@ use std::collections::HashSet;
 
 use swc_core::common::DUMMY_SP;
 use swc_core::ecma::ast::{
-    Expr, ExprOrSpread, Ident, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElement,
-    JSXElementName, JSXExpr, JSXExprContainer, KeyValueProp, ObjectLit, Prop, PropName,
-    PropOrSpread,
+    Expr, ExprOrSpread, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElement,
+    JSXElementChild, JSXElementName, JSXExpr, JSXExprContainer, KeyValueProp, ObjectLit, Prop,
+    PropName, PropOrSpread,
 };
-use swc_core::ecma::atoms::JsWord;
 use swc_ecma_utils::{quote_ident, ExprFactory};
 use tracing::debug;
 
@@ -25,13 +24,20 @@ impl Normalizer {
             ..Default::default()
         }
     }
+    pub fn get_jsx_element_name(element: &mut JSXElement) -> Option<&str> {
+        if let JSXElementName::Ident(ident) = &element.opening.name {
+            return Some(&ident.sym);
+        }
+        None
+    }
+}
 
+impl Normalizer {
     pub fn str_work(&mut self, str: &str) {
         self.msg_id.push_str(str);
     }
 
     pub fn expr_work(&mut self, expr: Expr) {
-        self.msg_id.push_str("{");
         let key;
         let msg_var;
         match expr.clone() {
@@ -52,31 +58,49 @@ impl Normalizer {
             })));
             self.props.push(prop);
         }
+
+        self.msg_id.push_str("{");
         self.msg_id.push_str(&*msg_var);
         self.msg_id.push_str("}");
 
         self.msg_vars.insert(msg_var.clone());
     }
 
-    pub fn get_jsx_element_name(self, element: &mut JSXElement) -> Option<&str> {
-        if let JSXElementName::Ident(ident) = &element.opening.name {
-            return Some(&ident.sym);
-        }
-        None
-    }
-
-    pub fn jsx_element_work(&mut self, element: &mut JSXElement) {
+    fn jsx_element_work(&mut self, element: JSXElement) {
         let component = PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
             key: PropName::Num(self.expr_index.into()),
             value: Box::new(Expr::JSXElement(Box::new(element.clone()))),
         })));
         self.components.push(component);
 
-        self.msg_id.push_str("{");
-        self.msg_id.push_str(self.expr_index.to_string().as_str());
-        self.msg_id.push_str("}");
+        // not have children
+        if element.children.is_empty() {
+            self.msg_id.push_str(&*format!("<{}/>", self.expr_index));
+        } else {
+            self.msg_id.push_str(&*format!("<{}>", self.expr_index));
+            self.jsx_children_work(element.children);
+            self.msg_id.push_str(&*format!("</{}>", self.expr_index));
+        }
 
         self.expr_index = self.expr_index + 1;
+    }
+
+    pub fn jsx_children_work(&mut self, children: Vec<JSXElementChild>) {
+        children.iter().for_each(|mut child| match &mut child {
+            JSXElementChild::JSXText(js_text) => {
+                // case normal text
+                self.str_work(&js_text.raw);
+            }
+            JSXElementChild::JSXExprContainer(item) => {
+                if let JSXExpr::Expr(expr) = &item.expr {
+                    self.expr_work(*expr.clone());
+                }
+            }
+            JSXElementChild::JSXElement(el) => {
+                self.jsx_element_work(*el.clone());
+            }
+            _ => {}
+        })
     }
 
     /// case: first arg like : Attachment {name} saved
@@ -129,7 +153,7 @@ impl Normalizer {
                 // components={{0: <div></div> }}
                 JSXAttrOrSpread::JSXAttr(JSXAttr {
                     span: Default::default(),
-                    name: JSXAttrName::Ident(quote_ident!("values")),
+                    name: JSXAttrName::Ident(quote_ident!("components")),
                     value: Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
                         span: Default::default(),
                         expr: JSXExpr::Expr(Box::new(Expr::Object(ObjectLit {

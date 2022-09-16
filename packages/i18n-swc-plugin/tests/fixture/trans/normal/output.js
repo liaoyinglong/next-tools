@@ -13,4 +13,18 @@
     name: name
 }}></Trans>;
 //  inline markup
-<Trans id="Read the <0>docs</0>." components={{0: <a href="/docs" />}}></Trans>;
+// simple inline markup
+<Trans id="Hello <0/> Mike" components={{
+    0: <br />
+}}></Trans>;
+<Trans id="Hello <0>{name}</0>." values={{
+    name: name
+}} components={{
+    0: <strong >{name}</strong>
+}}></Trans>;
+<Trans id="Hello <0>{name}</0>. <1>See my profile</1>" values={{
+    name: name
+}} components={{
+    0: <strong >{name}</strong>,
+    1: <Link to="/inbox">See my profile</Link>
+}}></Trans>;

@@ -5,9 +5,9 @@
     "author": "",
     "license": "ISC",
     "keywords": ["swc-plugin"],
-    "main": "target/wasm32-wasi/release/i18n-swc-plugin.wasm",
+    "main": "./dist/i18n_swc_plugin.wasm",
     "scripts": {
-        "prepublishOnly": "cargo build-wasi --release"
+        "prepublishOnly": "cargo build-wasi --release && cp ./target/wasm32-wasi/release/i18n_swc_plugin.wasm ./dist/i18n_swc_plugin.wasm"
     },
     "files": []
 }

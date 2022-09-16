@@ -1,13 +1,17 @@
 {
-    "name": "i18n-swc-plugin",
-    "version": "0.1.0",
-    "description": "",
-    "author": "",
-    "license": "ISC",
-    "keywords": ["swc-plugin"],
-    "main": "./dist/i18n_swc_plugin.wasm",
-    "scripts": {
-        "prepublishOnly": "cargo build-wasi --release && cp ./target/wasm32-wasi/release/i18n_swc_plugin.wasm ./dist/i18n_swc_plugin.wasm"
-    },
-    "files": []
+  "name": "@scope/i18n-swc-plugin",
+  "version": "0.1.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "keywords": [
+    "swc-plugin"
+  ],
+  "main": "./dist/swc_plugin.wasm",
+  "scripts": {
+    "prepublishOnly": "cargo build-wasi --release && cp ./target/wasm32-wasi/release/i18n_swc_plugin.wasm ./dist/swc_plugin.wasm"
+  },
+  "files": [],
+  "devDependencies": {},
+  "dependencies": {}
 }

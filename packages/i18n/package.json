@@ -1,0 +1,21 @@
+{
+  "name": "@scope/i18n",
+  "version": "0.1.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "keywords": [
+    "i18n"
+  ],
+  "main": "./src/index.ts",
+  "scripts": {},
+  "files": [],
+  "devDependencies": {
+    "@types/react": "^18",
+    "react": "^18"
+  },
+  "dependencies": {
+    "@lingui/core": "^3",
+    "@lingui/react": "^3"
+  }
+}

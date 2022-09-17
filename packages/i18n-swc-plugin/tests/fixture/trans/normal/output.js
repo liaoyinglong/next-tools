@@ -1,4 +1,5 @@
 // normal
+import { t, Trans } from "@scope/i18n";
 <Trans id="Refresh inbox"></Trans>;
 // with variable
 <Trans id="Attachment {name} saved." values={{

@@ -1,5 +1,3 @@
-import { t } from '@lyl/i18next';
-
 // should transform
 // normal string
 t`Refresh inbox`;

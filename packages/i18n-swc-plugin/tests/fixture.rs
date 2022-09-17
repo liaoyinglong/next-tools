@@ -1,12 +1,12 @@
 use std::path::PathBuf;
+
 use swc_core::ecma::{
     parser::{EsConfig, Syntax},
     transforms::testing::test_fixture,
-    visit::as_folder,
 };
-
-use i18n_swc_plugin::get_visitor;
 use testing::fixture;
+
+use i18n_swc_plugin::get_folder;
 
 //use std::env;
 #[fixture("tests/fixture/**/input.js")]
@@ -21,7 +21,7 @@ fn fixture(input: PathBuf) {
             jsx: true,
             ..Default::default()
         }),
-        &|_| as_folder(get_visitor()),
+        &|_| get_folder(),
         &input,
         &output,
     );

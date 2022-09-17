@@ -14,7 +14,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "@scope/i18n": "workspace:*",
-    "@scope/i18n-swc-plugin": "workspace:*"
+    "@scope/swc-plugin": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "18.7.18",

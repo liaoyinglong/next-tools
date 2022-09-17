@@ -33,7 +33,7 @@ importers:
   packages/i18n-swc-plugin/example/next-js:
     specifiers:
       '@scope/i18n': workspace:*
-      '@scope/i18n-swc-plugin': workspace:*
+      '@scope/swc-plugin': workspace:*
       '@types/node': 18.7.18
       '@types/react': ^18
       '@types/react-dom': 18.0.6
@@ -46,7 +46,7 @@ importers:
       typescript: 4.8.3
     dependencies:
       '@scope/i18n': link:../../../i18n
-      '@scope/i18n-swc-plugin': link:../..
+      '@scope/swc-plugin': link:../..
       classnames: 2.3.2
       next: 12.3.0_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0

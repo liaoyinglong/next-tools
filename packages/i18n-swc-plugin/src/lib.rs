@@ -1,20 +1,23 @@
-use crate::t_function::visitor::TFunctionVisitor;
-use crate::trans::visitor::TransVisitor;
-use swc_core::common::pass::AndThen;
 use swc_core::ecma::ast::Program;
 use swc_core::ecma::visit::as_folder;
+use swc_core::ecma::visit::Fold;
 use swc_core::ecma::visit::FoldWith;
 use swc_core::plugin::plugin_transform;
 use swc_core::plugin::proxies::TransformPluginProgramMetadata;
 use swc_ecma_utils::swc_common::chain;
 
+use crate::auto_import::AutoImport;
+use crate::t_function::visitor::TFunctionVisitor;
+use crate::trans::visitor::TransVisitor;
+
 // static PLUGIN_NAME: &str = "i18n_swc_plugin";
+mod auto_import;
 mod shared;
 mod t_function;
 mod trans;
 
-pub fn get_visitor() -> AndThen<TFunctionVisitor, TransVisitor> {
-    chain!(TFunctionVisitor {}, TransVisitor {})
+pub fn get_folder() -> impl Fold {
+    as_folder(chain!(TFunctionVisitor {}, TransVisitor {}, AutoImport {}))
 }
 
 /// An example plugin function with macro support.
@@ -34,5 +37,5 @@ pub fn get_visitor() -> AndThen<TFunctionVisitor, TransVisitor> {
 /// Refer swc_plugin_macro to see how does it work internally.
 #[plugin_transform]
 pub fn process_transform(program: Program, _metadata: TransformPluginProgramMetadata) -> Program {
-    program.fold_with(&mut as_folder(get_visitor()))
+    program.fold_with(&mut get_folder())
 }

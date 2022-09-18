@@ -11,7 +11,7 @@ lto = true
 
 [dependencies]
 serde = "1"
-swc_core = { version = "0.23.*", features = ["plugin_transform","ecma_parser"] }
+swc_core = { version = "0.23.*", features = ["plugin_transform","ecma_parser", "ecma_quote"] }
 swc_ecma_utils= "0.*.*"
 tracing = "0.1.32"
 

@@ -10,6 +10,7 @@ export function Layout({ title = null, className = "", children }) {
   // is rendered.
   if (title == null) {
     title = t`Example project using LinguiJS`;
+    console.log(t`what is this?`);
   }
 
   return (

@@ -18,7 +18,7 @@ const nextConfig = {
      * @see https://nextjs.org/docs/advanced-features/compiler#swc-plugins-experimental
      */
     swcPlugins: [
-      [require.resolve("@scope/swc-plugin/dist/swc_plugin.wasm"), {}],
+      // [require.resolve("@scope/swc-plugin"), {}]
     ],
   },
 };

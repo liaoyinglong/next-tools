@@ -410,17 +410,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
-name = "i18n_swc_plugin"
-version = "0.1.0"
-dependencies = [
- "serde",
- "swc_core",
- "swc_ecma_utils",
- "testing",
- "tracing",
-]
-
-[[package]]
 name = "ident_case"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1059,6 +1048,17 @@ name = "ryu"
 version = "1.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4501abdff3ae82a1c1b477a17252eb69cee9e66eb915c1abaa4f44d873df9f09"
+
+[[package]]
+name = "s_swc_plugin"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "swc_core",
+ "swc_ecma_utils",
+ "testing",
+ "tracing",
+]
 
 [[package]]
 name = "scoped-tls"

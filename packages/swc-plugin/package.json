@@ -9,7 +9,7 @@
   ],
   "main": "./dist/swc_plugin.wasm",
   "scripts": {
-    "prepublishOnly": "cargo build-wasi --release && cp ./target/wasm32-wasi/release/i18n_swc_plugin.wasm ./dist/swc_plugin.wasm"
+    "prepublishOnly": "node ./scripts/build.mjs"
   },
   "files": [],
   "devDependencies": {},

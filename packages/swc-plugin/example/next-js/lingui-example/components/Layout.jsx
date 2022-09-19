@@ -32,7 +32,6 @@ export function Layout({ title = null, className = "", children }) {
             Powered by
             <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
           </Trans>
-          <Trans></Trans>
         </a>
         &nbsp;{" | "}
         <button className={styles.link} onClick={() => activate("en")}>

@@ -1,9 +1,13 @@
-import { I18nProvider, i18n } from "@scope/i18n";
+import { I18nProvider, i18n, t, Trans } from "@scope/i18n";
 
 import { activate } from "lingui-example/i18n";
 import "lingui-example/styles.css";
 import { AppProps } from "next/app";
 import { useEffect } from "react";
+
+// fixme: auto import
+global.t = t;
+global.Trans = Trans;
 
 export default function Page({ Component, pageProps }: AppProps) {
   useEffect(() => {

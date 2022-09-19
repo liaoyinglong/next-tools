@@ -40,6 +40,7 @@ importers:
       classnames: ^2.3.2
       eslint: 8.23.1
       eslint-config-next: 12.3.0
+      make-plural: ^7.1.0
       next: 12.3.1-canary.3
       react: 18.2.0
       react-dom: 18.2.0
@@ -48,6 +49,7 @@ importers:
       '@scope/i18n': link:../../../i18n
       '@scope/swc-plugin': link:../..
       classnames: 2.3.2
+      make-plural: 7.1.0
       next: 12.3.1-canary.3_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -1937,6 +1939,10 @@ packages:
 
   /make-plural/6.2.2:
     resolution: {integrity: sha512-8iTuFioatnTTmb/YJjywkVIHLjcwkFD9Ms0JpxjEm9Mo8eQYkh1z+55dwv4yc1jQ8ftVBxWQbihvZL1DfzGGWA==}
+    dev: false
+
+  /make-plural/7.1.0:
+    resolution: {integrity: sha512-PKkwVlAxYVo98NrbclaQIT4F5Oy+X58PZM5r2IwUSCe3syya6PXkIRCn2XCdz7p58Scgpp50PBeHmepXVDG3hg==}
     dev: false
 
   /map-stream/0.1.0:

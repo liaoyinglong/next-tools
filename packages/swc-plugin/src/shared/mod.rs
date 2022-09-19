@@ -6,7 +6,7 @@ use swc_core::ecma::ast::{
     JSXElementChild, JSXExpr, JSXExprContainer, KeyValueProp, ObjectLit, Prop, PropName,
     PropOrSpread,
 };
-use swc_ecma_utils::{quote_ident, ExprFactory};
+use swc_core::ecma::utils::{quote_ident, ExprFactory};
 use tracing::debug;
 
 macro_rules! jsx_attr {

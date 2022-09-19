@@ -5,9 +5,9 @@ use swc_core::ecma::ast::ExprStmt;
 use swc_core::ecma::ast::TaggedTpl;
 use swc_core::ecma::ast::Tpl;
 use swc_core::ecma::ast::{CallExpr, Ident};
+use swc_core::ecma::utils::ExprFactory;
 use swc_core::ecma::visit::VisitMut;
 use swc_core::ecma::visit::VisitMutWith;
-use swc_ecma_utils::ExprFactory;
 
 use crate::shared::Normalizer;
 

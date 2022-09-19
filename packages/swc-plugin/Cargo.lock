@@ -1055,7 +1055,6 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "swc_core",
- "swc_ecma_utils",
  "testing",
  "tracing",
 ]
@@ -1317,6 +1316,7 @@ dependencies = [
  "swc_ecma_quote_macros",
  "swc_ecma_transforms_base",
  "swc_ecma_transforms_testing",
+ "swc_ecma_utils",
  "swc_ecma_visit",
  "swc_plugin",
  "swc_plugin_macro",

@@ -1,8 +1,9 @@
-use swc_core::ecma::ast::{ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, Str};
+use swc_core::ecma::ast::{
+    ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, ModuleDecl, ModuleItem, Str,
+};
+use swc_core::ecma::utils::quote_ident;
 use swc_core::ecma::visit::VisitMut;
 use swc_core::ecma::visit::VisitMutWith;
-use swc_ecma_utils::quote_ident;
-use swc_ecma_utils::swc_ecma_ast::{ModuleDecl, ModuleItem};
 
 pub struct AutoImport;
 

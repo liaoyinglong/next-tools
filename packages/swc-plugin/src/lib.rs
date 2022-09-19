@@ -1,3 +1,4 @@
+use swc_core::common::chain;
 use swc_core::ecma::ast::Program;
 use swc_core::ecma::visit::as_folder;
 use swc_core::ecma::visit::Fold;
@@ -5,7 +6,6 @@ use swc_core::ecma::visit::FoldWith;
 use swc_core::plugin::metadata::TransformPluginMetadataContextKind;
 use swc_core::plugin::plugin_transform;
 use swc_core::plugin::proxies::TransformPluginProgramMetadata;
-use swc_ecma_utils::swc_common::chain;
 
 use crate::auto_import::AutoImport;
 use crate::t_function::visitor::TFunctionVisitor;
@@ -37,10 +37,20 @@ pub fn get_folder() -> impl Fold {
 /// This requires manual handling of serialization / deserialization from ptrs.
 /// Refer swc_plugin_macro to see how does it work internally.
 #[plugin_transform]
-pub fn process_transform(program: Program, _metadata: TransformPluginProgramMetadata) -> Program {
-    println!(
-        "\nswc plugin: process_transform2, {:?}",
-        _metadata.get_context(&TransformPluginMetadataContextKind::Filename)
-    );
-    program.fold_with(&mut get_folder())
+pub fn process_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
+    let file_name = metadata
+        .get_context(&TransformPluginMetadataContextKind::Filename)
+        .unwrap_or("unknown file_name".to_string());
+
+    println!("===================================");
+    println!("file_name: {}", file_name);
+
+    let should_transform = file_name.contains("@scope/") || !file_name.contains("node_modules");
+    if should_transform {
+        println!("swc plugin: should_transform, {}", file_name);
+        program.fold_with(&mut get_folder())
+    } else {
+        println!("swc plugin: skip, {}", file_name);
+        program
+    }
 }

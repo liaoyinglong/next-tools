@@ -11,4 +11,4 @@ await fs.copyFile(
   `./dist/swc_plugin.wasm`
 );
 
-echo(`Copied swc_plugin_bg.wasm to dist`);
+echo(`Copied swc_plugin.wasm to dist`);

@@ -1,5 +1,6 @@
-use swc_core::common::chain;
+use swc_core::common::{chain, Mark};
 use swc_core::ecma::ast::Program;
+use swc_core::ecma::transforms::base::resolver;
 use swc_core::ecma::visit::as_folder;
 use swc_core::ecma::visit::Fold;
 use swc_core::ecma::visit::FoldWith;
@@ -18,7 +19,12 @@ mod t_function;
 mod trans;
 
 pub fn get_folder() -> impl Fold {
-    as_folder(chain!(TFunctionVisitor {}, TransVisitor {}, AutoImport {}))
+    as_folder(chain!(
+        resolver(Mark::new(), Mark::new(), false),
+        TFunctionVisitor {},
+        TransVisitor {},
+        AutoImport {}
+    ))
 }
 
 /// An example plugin function with macro support.

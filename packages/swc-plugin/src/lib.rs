@@ -2,6 +2,7 @@ use swc_core::ecma::ast::Program;
 use swc_core::ecma::visit::as_folder;
 use swc_core::ecma::visit::Fold;
 use swc_core::ecma::visit::FoldWith;
+use swc_core::plugin::metadata::TransformPluginMetadataContextKind;
 use swc_core::plugin::plugin_transform;
 use swc_core::plugin::proxies::TransformPluginProgramMetadata;
 use swc_ecma_utils::swc_common::chain;
@@ -37,5 +38,9 @@ pub fn get_folder() -> impl Fold {
 /// Refer swc_plugin_macro to see how does it work internally.
 #[plugin_transform]
 pub fn process_transform(program: Program, _metadata: TransformPluginProgramMetadata) -> Program {
+    println!(
+        "\nswc plugin: process_transform2, {:?}",
+        _metadata.get_context(&TransformPluginMetadataContextKind::Filename)
+    );
     program.fold_with(&mut get_folder())
 }

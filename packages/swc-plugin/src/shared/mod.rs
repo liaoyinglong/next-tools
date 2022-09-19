@@ -78,9 +78,9 @@ impl Normalizer {
             self.props.push(prop);
         }
 
-        self.msg_id.push_str("{");
-        self.msg_id.push_str(&*msg_var);
-        self.msg_id.push_str("}");
+        self.str_work("{");
+        self.str_work(&*msg_var);
+        self.str_work("}");
 
         self.msg_vars.insert(msg_var.clone());
     }
@@ -94,11 +94,11 @@ impl Normalizer {
 
         // not have children
         if element.children.is_empty() {
-            self.msg_id.push_str(&*format!("<{}/>", self.expr_index));
+            self.str_work(&*format!("<{}/>", self.expr_index));
         } else {
-            self.msg_id.push_str(&*format!("<{}>", self.expr_index));
+            self.str_work(&*format!("<{}>", self.expr_index));
             self.jsx_children_work(element.children);
-            self.msg_id.push_str(&*format!("</{}>", self.expr_index));
+            self.str_work(&*format!("</{}>", self.expr_index));
         }
 
         self.expr_index = self.expr_index + 1;
@@ -107,8 +107,21 @@ impl Normalizer {
     pub fn jsx_children_work(&mut self, children: Vec<JSXElementChild>) {
         children.iter().for_each(|mut child| match &mut child {
             JSXElementChild::JSXText(js_text) => {
+                let str = {
+                    let start_with_white_space = js_text.raw.starts_with(" ");
+                    let end_with_white_space = js_text.raw.ends_with(" ");
+                    let mut s = js_text.raw.trim().to_string();
+                    // should keep whitespace at start and end
+                    if start_with_white_space {
+                        s.insert_str(0, " ");
+                    }
+                    if end_with_white_space {
+                        s.push_str(" ");
+                    }
+                    s
+                };
                 // case normal text
-                self.str_work(&js_text.raw);
+                self.str_work(str.as_str());
             }
             JSXElementChild::JSXExprContainer(item) => {
                 if let JSXExpr::Expr(expr) = &item.expr {
@@ -125,7 +138,7 @@ impl Normalizer {
     /// case: first arg like : Attachment {name} saved
     /// case: second arg like : { name }
     pub fn to_args(self) -> Vec<ExprOrSpread> {
-        debug!("find msg_id: {}", self.msg_id);
+        debug!("t function msg_id: {}", self.msg_id);
         vec![
             self.msg_id.as_arg(),
             Expr::Object(ObjectLit {
@@ -138,13 +151,13 @@ impl Normalizer {
 
     /// 转换成jsx_attr
     pub fn to_jsx_attr(self, exist_id_prop: bool) -> Vec<JSXAttrOrSpread> {
-        debug!("find msg_id: {}", self.msg_id);
+        debug!("trans component msg_id: {}", self.msg_id);
 
         let mut attrs = vec![
             // id={"msg_id"} || messages={"msg_id"}
             jsx_attr!(
                 if exist_id_prop { "messages" } else { "id" },
-                JSXAttrValue::Lit(self.msg_id.into())
+                JSXAttrValue::Lit(self.msg_id.trim().into())
             ),
         ];
         if !self.props.is_empty() {

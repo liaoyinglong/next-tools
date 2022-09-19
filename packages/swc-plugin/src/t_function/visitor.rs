@@ -6,6 +6,7 @@ use swc_core::ecma::ast::TaggedTpl;
 use swc_core::ecma::ast::Tpl;
 use swc_core::ecma::ast::{CallExpr, Ident};
 use swc_core::ecma::visit::VisitMut;
+use swc_core::ecma::visit::VisitMutWith;
 use swc_ecma_utils::ExprFactory;
 
 use crate::shared::Normalizer;
@@ -48,6 +49,8 @@ impl VisitMut for TFunctionVisitor {
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
 
     fn visit_mut_expr_stmt(&mut self, n: &mut ExprStmt) {
+        n.visit_mut_children_with(self);
+
         let mut work = || -> Option<()> {
             match &mut *n.expr {
                 Expr::TaggedTpl(tagged_tpl)

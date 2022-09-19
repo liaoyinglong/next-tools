@@ -6,7 +6,7 @@ use swc_core::ecma::{
 };
 use testing::fixture;
 
-use i18n_swc_plugin::get_folder;
+use s_swc_plugin::get_folder;
 
 //use std::env;
 #[fixture("tests/fixture/**/input.js")]

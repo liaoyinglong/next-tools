@@ -1,5 +1,6 @@
 use swc_core::ecma::ast::{ImportDecl, ImportNamedSpecifier, ImportSpecifier, Module, Str};
 use swc_core::ecma::visit::VisitMut;
+use swc_core::ecma::visit::VisitMutWith;
 use swc_ecma_utils::quote_ident;
 use swc_ecma_utils::swc_ecma_ast::{ModuleDecl, ModuleItem};
 
@@ -34,6 +35,7 @@ impl VisitMut for AutoImport {
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
     fn visit_mut_module(&mut self, module: &mut Module) {
+        module.visit_mut_children_with(self);
         //  TODO: optimize
         // 1. find @scope/i18n ImportDeclaration
         // 2. check has t/Trans ImportSpecifier

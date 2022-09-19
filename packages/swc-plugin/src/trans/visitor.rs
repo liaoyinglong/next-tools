@@ -1,6 +1,7 @@
 use swc_core::ecma::ast::{JSXAttrName, JSXAttrOrSpread, JSXElement, JSXElementName};
 use swc_core::ecma::atoms::JsWord;
 use swc_core::ecma::visit::VisitMut;
+use swc_core::ecma::visit::VisitMutWith;
 use tracing::error;
 
 use crate::shared::Normalizer;
@@ -25,6 +26,8 @@ impl VisitMut for TransVisitor {
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
     fn visit_mut_jsx_element(&mut self, n: &mut JSXElement) {
+        n.visit_mut_children_with(self);
+
         if !Self::is_trans_component(n) {
             return;
         }

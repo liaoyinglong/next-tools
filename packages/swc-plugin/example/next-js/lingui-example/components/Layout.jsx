@@ -28,7 +28,7 @@ export function Layout({ title = null, className = "", children }) {
           rel="noopener noreferrer"
         >
           <Trans>
-            Powered by{" "}
+            Powered by
             <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
           </Trans>
           <Trans></Trans>

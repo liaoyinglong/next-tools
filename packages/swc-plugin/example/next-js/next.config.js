@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  swcMinify: true,
+  swcMinify: false,
   eslint: {
     // Warning: This allows production builds to successfully complete even if
     // your project has ESLint errors.
@@ -13,12 +13,17 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
+  webpack: (config, { isServer }) => {
+    config.optimization.minimizer = [];
+    return config;
+  },
   experimental: {
     /**
      * @see https://nextjs.org/docs/advanced-features/compiler#swc-plugins-experimental
      */
     swcPlugins: [
-      // [require.resolve("@scope/swc-plugin"), {}]
+      [require.resolve("@scope/swc-plugin"), {}],
+      // ["css-variable/swc", { "basePath": __dirname },]
     ],
   },
 };

@@ -1,6 +1,5 @@
 // should transform
 // normal string
-import { t, Trans } from "@scope/i18n";
 t("Refresh inbox");
 // template string
 t("Attachment {name} saved", {

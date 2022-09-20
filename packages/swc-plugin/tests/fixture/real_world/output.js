@@ -1,4 +1,3 @@
-import { t, Trans } from "@scope/i18n";
 import { Layout } from "lingui-example/components/Layout";
 import styles from "./index.module.css";
 export default function Home() {

@@ -34,7 +34,8 @@ impl TFunctionVisitor {
     }
 
     // if ident is t function, return the call expression
-    fn create_new_callee(ident: Option<&Ident>) -> Option<Callee> {
+    // if that can't find t function, return None
+    fn resolve_t_fn_callee(ident: Option<&Ident>) -> Option<Callee> {
         let ident = ident?;
         if ident.sym == JsWord::from("t") {
             return Some(quote_ident!(ident.sym.to_string()).as_callee());
@@ -55,7 +56,7 @@ impl VisitMut for TFunctionVisitor {
             match &mut *n.expr {
                 Expr::TaggedTpl(tagged_tpl) => {
                     let TaggedTpl { tpl, tag, .. } = tagged_tpl;
-                    let callee = Self::create_new_callee(tag.as_ident())?;
+                    let callee = Self::resolve_t_fn_callee(tag.as_ident())?;
                     // initial args vec
                     let mut args = vec![];
                     if !(tpl.exprs.is_empty()) {
@@ -75,8 +76,7 @@ impl VisitMut for TFunctionVisitor {
                 }
                 Expr::Call(call_expr) => {
                     let callee_ident = call_expr.callee.as_expr()?.as_ident();
-                    call_expr.callee = Self::create_new_callee(callee_ident)?;
-
+                    call_expr.callee = Self::resolve_t_fn_callee(callee_ident)?;
                     let tpl = call_expr.args.first()?.expr.clone().tpl()?;
                     // more args should ignore
                     if tpl.exprs.is_empty() || call_expr.args.len() != 1 {

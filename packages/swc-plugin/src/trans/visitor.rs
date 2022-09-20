@@ -1,6 +1,5 @@
 use swc_core::ecma::ast::{JSXAttrName, JSXAttrOrSpread, JSXElement, JSXElementName};
 use swc_core::ecma::atoms::JsWord;
-use swc_core::ecma::utils::quote_ident;
 use swc_core::ecma::visit::VisitMut;
 use swc_core::ecma::visit::VisitMutWith;
 use tracing::error;
@@ -14,7 +13,7 @@ impl TransVisitor {
         if let JSXElementName::Ident(ident) = &element.opening.name {
             if ident.sym == JsWord::from("Trans") {
                 // re-create new ident to make same syntaxContext
-                element.opening.name = JSXElementName::Ident(quote_ident!(ident.sym.to_string()));
+                // element.opening.name = JSXElementName::Ident(quote_ident!(ident.sym.to_string()));
                 return true;
             }
         }

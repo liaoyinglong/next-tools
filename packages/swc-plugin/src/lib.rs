@@ -7,18 +7,16 @@ use swc_core::plugin::metadata::TransformPluginMetadataContextKind;
 use swc_core::plugin::plugin_transform;
 use swc_core::plugin::proxies::TransformPluginProgramMetadata;
 
-use crate::auto_import::AutoImport;
 use crate::t_function::visitor::TFunctionVisitor;
 use crate::trans::visitor::TransVisitor;
 
 // static PLUGIN_NAME: &str = "i18n_swc_plugin";
-mod auto_import;
 mod shared;
 mod t_function;
 mod trans;
 
 pub fn get_folder() -> impl Fold {
-    as_folder(chain!(TFunctionVisitor {}, TransVisitor {}, AutoImport {}))
+    as_folder(chain!(TFunctionVisitor {}, TransVisitor {}))
 }
 
 /// An example plugin function with macro support.
@@ -42,15 +40,16 @@ pub fn process_transform(program: Program, metadata: TransformPluginProgramMetad
         .get_context(&TransformPluginMetadataContextKind::Filename)
         .unwrap_or("unknown file_name".to_string());
 
-    println!("===================================");
-    println!("file_name: {}", file_name);
+    // println!("===================================");
+    // println!("file_name: {}", file_name);
 
+    // FIXME: only transform expected files now, should make it configurable
     let should_transform = file_name.contains("@scope/") || !file_name.contains("node_modules");
     if should_transform {
-        println!("swc plugin: should_transform, {}", file_name);
+        // println!("swc plugin: should_transform, {}", file_name);
         program.fold_with(&mut get_folder())
     } else {
-        println!("swc plugin: skip, {}", file_name);
+        // println!("swc plugin: skip, {}", file_name);
         program
     }
 }

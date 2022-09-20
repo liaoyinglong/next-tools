@@ -15,6 +15,16 @@ const nextConfig = {
   },
   webpack: (config, { isServer }) => {
     config.optimization.minimizer = [];
+    config.plugins.unshift(
+      require("unplugin-auto-import/webpack")({
+        imports: [
+          "react",
+          {
+            "@scope/i18n": ["t", "Trans"],
+          },
+        ],
+      })
+    );
     return config;
   },
   experimental: {

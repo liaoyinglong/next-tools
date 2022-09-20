@@ -16,8 +16,8 @@
     "incremental": true,
     "paths": {
       "lingui-example/*": ["./lingui-example/*"]
-    },
+    }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "auto-imports.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }

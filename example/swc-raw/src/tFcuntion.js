@@ -38,8 +38,9 @@
 //     console.log(output.code);
 //   });
 
-let code = `console.log(Trans,t);`;
-
+let code = "";
+// code += 'import fs from "fs";\n';
+// code += `console.log(Trans,t);`;
 code += " <Trans>Attachment  saved.</Trans>;";
 code += "\n t`work`";
 const swc = require("@swc/core");
@@ -47,12 +48,18 @@ const swc = require("@swc/core");
 swc
   .transform(code, {
     filename: "input.jsx",
+    module: {
+      type: "commonjs",
+    },
     jsc: {
       parser: {
         syntax: "ecmascript",
         jsx: true,
       },
-      target: "es2015",
+      target: "es5",
+      transform: {
+        react: { runtime: "automatic", development: true },
+      },
       experimental: {
         plugins: [[require.resolve("@scope/swc-plugin"), {}]],
       },

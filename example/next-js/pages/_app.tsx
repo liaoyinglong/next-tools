@@ -5,10 +5,6 @@ import "lingui-example/styles.css";
 import { AppProps } from "next/app";
 import { useEffect } from "react";
 
-// fixme: auto import
-global.t = t;
-global.Trans = Trans;
-
 export default function Page({ Component, pageProps }: AppProps) {
   useEffect(() => {
     // Activate the default locale on page load

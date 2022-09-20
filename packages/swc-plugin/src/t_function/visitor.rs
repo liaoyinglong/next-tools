@@ -1,17 +1,16 @@
 use swc_core::common::DUMMY_SP;
-use swc_core::ecma::ast::Expr;
 use swc_core::ecma::ast::ExprOrSpread;
 use swc_core::ecma::ast::ExprStmt;
 use swc_core::ecma::ast::TaggedTpl;
 use swc_core::ecma::ast::Tpl;
 use swc_core::ecma::ast::{CallExpr, Ident};
-use swc_core::ecma::utils::ExprFactory;
+use swc_core::ecma::ast::{Callee, Expr};
+use swc_core::ecma::atoms::JsWord;
+use swc_core::ecma::utils::{quote_ident, ExprFactory};
 use swc_core::ecma::visit::VisitMut;
 use swc_core::ecma::visit::VisitMutWith;
 
 use crate::shared::Normalizer;
-
-static T_FUNCTION_NAME: &str = "t";
 
 pub struct TFunctionVisitor;
 
@@ -34,12 +33,13 @@ impl TFunctionVisitor {
         normalizer.to_args()
     }
 
-    // check that the expression is a t function call
-    fn is_t_function_call(ident: Option<&Ident>) -> bool {
-        match ident {
-            Some(ident) => &ident.sym == T_FUNCTION_NAME,
-            None => false,
+    // if ident is t function, return the call expression
+    fn create_new_callee(ident: Option<&Ident>) -> Option<Callee> {
+        let ident = ident?;
+        if ident.sym == JsWord::from("t") {
+            return Some(quote_ident!(ident.sym.to_string()).as_callee());
         }
+        None
     }
 }
 
@@ -53,10 +53,9 @@ impl VisitMut for TFunctionVisitor {
 
         let mut work = || -> Option<()> {
             match &mut *n.expr {
-                Expr::TaggedTpl(tagged_tpl)
-                    if Self::is_t_function_call(tagged_tpl.tag.as_ident()) =>
-                {
+                Expr::TaggedTpl(tagged_tpl) => {
                     let TaggedTpl { tpl, tag, .. } = tagged_tpl;
+                    let callee = Self::create_new_callee(tag.as_ident())?;
                     // initial args vec
                     let mut args = vec![];
                     if !(tpl.exprs.is_empty()) {
@@ -69,22 +68,20 @@ impl VisitMut for TFunctionVisitor {
                     // replace with new call expression
                     n.expr = Box::new(Expr::Call(CallExpr {
                         args,
-                        callee: tag.clone().as_callee(),
+                        callee,
                         span: DUMMY_SP,
                         type_args: None,
                     }));
                 }
                 Expr::Call(call_expr) => {
                     let callee_ident = call_expr.callee.as_expr()?.as_ident();
-                    // more args should ignore
-                    if !Self::is_t_function_call(callee_ident) || call_expr.args.len() != 1 {
-                        return None;
-                    }
-                    let tpl = call_expr.args.first()?.expr.clone().tpl()?;
-                    if tpl.exprs.is_empty() {
-                        return None;
-                    }
+                    call_expr.callee = Self::create_new_callee(callee_ident)?;
 
+                    let tpl = call_expr.args.first()?.expr.clone().tpl()?;
+                    // more args should ignore
+                    if tpl.exprs.is_empty() || call_expr.args.len() != 1 {
+                        return None;
+                    }
                     let args = &mut Self::transform_tpl_to_args(tpl.clone());
                     // clear old args with new args
                     call_expr.args.clear();

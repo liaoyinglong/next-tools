@@ -1,23 +1,24 @@
 use swc_core::ecma::ast::{JSXAttrName, JSXAttrOrSpread, JSXElement, JSXElementName};
 use swc_core::ecma::atoms::JsWord;
+use swc_core::ecma::utils::quote_ident;
 use swc_core::ecma::visit::VisitMut;
 use swc_core::ecma::visit::VisitMutWith;
 use tracing::error;
 
 use crate::shared::Normalizer;
 
-static TRANS_COMMENT_NAME: Option<&str> = Some("Trans");
 pub struct TransVisitor;
 
 impl TransVisitor {
-    fn get_jsx_element_name(element: &mut JSXElement) -> Option<&str> {
-        if let JSXElementName::Ident(ident) = &element.opening.name {
-            return Some(&ident.sym);
-        }
-        None
-    }
     fn is_trans_component(element: &mut JSXElement) -> bool {
-        Self::get_jsx_element_name(element) == TRANS_COMMENT_NAME
+        if let JSXElementName::Ident(ident) = &element.opening.name {
+            if ident.sym == JsWord::from("Trans") {
+                // re-create new ident to make same syntaxContext
+                element.opening.name = JSXElementName::Ident(quote_ident!(ident.sym.to_string()));
+                return true;
+            }
+        }
+        false
     }
 }
 
@@ -35,6 +36,7 @@ impl VisitMut for TransVisitor {
             error!("Trans component must have at least one child");
             return;
         }
+
         let attrs = &mut n.opening.attrs;
 
         let mut normalizer = Normalizer::new();

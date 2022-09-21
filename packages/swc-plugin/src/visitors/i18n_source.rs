@@ -1,5 +1,7 @@
+use regex::Regex;
+use swc_core::common::sync::Lazy;
 use swc_core::ecma::ast::{Expr, KeyValueProp, Lit};
-use swc_core::ecma::utils::quote_str;
+use swc_core::ecma::atoms::JsWord;
 use swc_core::ecma::visit::VisitMut;
 use swc_core::ecma::visit::VisitMutWith;
 use tracing::debug;
@@ -29,9 +31,7 @@ impl VisitMut for I18nSourceVisitor {
             let lit = n.value.as_lit()?;
             match lit {
                 Lit::Str(item) => {
-                    let new_value = compile(item.value.to_string());
-                    let value = Lit::Str(quote_str!(item.span, new_value));
-                    n.value = Box::new(Expr::Lit(value));
+                    n.value = Box::new(compile(item.value.clone())?);
                 }
                 _ => {}
             }
@@ -41,6 +41,39 @@ impl VisitMut for I18nSourceVisitor {
     }
 }
 
-fn compile(str: String) -> String {
-    str
+static RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"\{\w+}").unwrap());
+
+fn compile(str: JsWord) -> Option<Expr> {
+    let str = str.to_string();
+
+    let mut res = vec![];
+    let mut left_index = 0;
+
+    RE.captures_iter(&str).for_each(|item| {
+        if let Some(item) = item.get(0) {
+            let outer = item.as_str();
+            if let Some(index) = str.find(outer) {
+                res.push(&str[left_index..index]);
+                res.push(outer);
+                left_index = index + outer.len();
+            }
+        }
+    });
+    dbg!(res);
+    None
+}
+
+#[cfg(test)]
+mod tests {
+    use swc_core::ecma::atoms::JsWord;
+
+    use crate::visitors::i18n_source::compile;
+
+    #[test]
+    fn compile_test() {
+        assert_eq!(
+            compile(JsWord::from("hello {name}, welcome to {city}")),
+            None
+        );
+    }
 }

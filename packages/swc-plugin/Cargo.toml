@@ -13,6 +13,8 @@ lto = true
 serde = "1"
 swc_core = { version = "0.23.29", features = ["plugin_transform","ecma_parser", "ecma_quote","ecma_utils"] }
 tracing = "0.1.32"
+regex     = "1"
+
 
 [dev-dependencies]
 testing = "0.30.1"

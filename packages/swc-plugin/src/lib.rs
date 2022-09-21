@@ -1,3 +1,4 @@
+use crate::visitors::{t_fn_visitor::*, trans_visitor::*};
 use swc_core::common::chain;
 use swc_core::ecma::ast::Program;
 use swc_core::ecma::visit::as_folder;
@@ -7,13 +8,9 @@ use swc_core::plugin::metadata::TransformPluginMetadataContextKind;
 use swc_core::plugin::plugin_transform;
 use swc_core::plugin::proxies::TransformPluginProgramMetadata;
 
-use crate::t_function::visitor::TFunctionVisitor;
-use crate::trans::visitor::TransVisitor;
-
 // static PLUGIN_NAME: &str = "i18n_swc_plugin";
 mod shared;
-mod t_function;
-mod trans;
+mod visitors;
 
 pub fn get_folder() -> impl Fold {
     as_folder(chain!(TFunctionVisitor {}, TransVisitor {}))

@@ -1,10 +1,9 @@
+use crate::shared::Normalizer;
 use swc_core::ecma::ast::{JSXAttrName, JSXAttrOrSpread, JSXElement, JSXElementName};
 use swc_core::ecma::atoms::JsWord;
 use swc_core::ecma::visit::VisitMut;
 use swc_core::ecma::visit::VisitMutWith;
 use tracing::error;
-
-use crate::shared::Normalizer;
 
 pub struct TransVisitor;
 

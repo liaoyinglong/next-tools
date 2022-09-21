@@ -4,12 +4,15 @@ import { Layout } from "lingui-example/components/Layout";
 import styles from "./index.module.css";
 
 export default function Home() {
+  const name = new Date().toLocaleTimeString();
   return (
     <Layout className={styles.main}>
       <h1 className={styles.title}>
         <Trans>
           Welcome to <a href="https://lingui.js.org">LinguiJS!</a>
         </Trans>
+        <br />
+        {t`Hello ${name}`}
       </h1>
       <p className={styles.description}>
         <Trans>

@@ -28,6 +28,7 @@ const nextConfig = {
     return config;
   },
   experimental: {
+    externalDir: !!1,
     /**
      * @see https://nextjs.org/docs/advanced-features/compiler#swc-plugins-experimental
      */

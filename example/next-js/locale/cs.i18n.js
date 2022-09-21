@@ -12,4 +12,5 @@ export default {
   Plurals: "Mno\u017En\xE9 \u010D\xEDslo",
   "Powered by <0/>": "Pou\u017E\xEDv\xE1 <0/>",
   "Welcome to <0>LinguiJS!</0>": "V\xEDt\xE1 t\u011B <0>LinguiJS!</0>",
+  "Hello {name}": "Hello {name} cs",
 };

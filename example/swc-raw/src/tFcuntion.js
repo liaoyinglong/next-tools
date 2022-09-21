@@ -41,22 +41,29 @@
 let code = "";
 // code += 'import fs from "fs";\n';
 // code += `console.log(Trans,t);`;
-code += " <Trans>Attachment  saved.</Trans>;";
-code += "\n t`work`";
-const swc = require("@swc/core");
+
+code = [
+  "<Trans>Attachment  saved.</Trans>;",
+  "var name = Date.now();",
+  "t`hello ${name}`;",
+  "<div>{t`hello ${name}`}</div>",
+].join("\n");
+
+const swc = require("@swc/core");“
+const { json } = require("stream/consumers");
 
 swc
   .transform(code, {
     filename: "input.jsx",
-    module: {
-      type: "commonjs",
-    },
+    // module: {
+    //   type: "commonjs",
+    // },
     jsc: {
       parser: {
         syntax: "ecmascript",
         jsx: true,
       },
-      target: "es5",
+      target: "es3",
       transform: {
         react: { runtime: "automatic", development: true },
       },

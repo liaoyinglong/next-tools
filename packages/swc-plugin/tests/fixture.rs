@@ -13,6 +13,17 @@ use s_swc_plugin::get_folder;
 fn fixture(input: PathBuf) {
     let output = input.with_file_name("output.js");
 
+    let file_name = match input.to_str() {
+        Some(file_name) => {
+            if file_name.contains("i18n_sources") {
+                return file_name.replace(".js", "i18n.js");
+            }
+            file_name
+        }
+        None => "unknown.js",
+    }
+    .to_string();
+
     //env::set_var("UPDATE", "1");
 
     test_fixture(
@@ -21,7 +32,7 @@ fn fixture(input: PathBuf) {
             jsx: true,
             ..Default::default()
         }),
-        &|_| get_folder(),
+        &|_| get_folder(file_name),
         &input,
         &output,
     );

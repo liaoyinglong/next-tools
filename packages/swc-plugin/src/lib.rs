@@ -1,4 +1,4 @@
-use crate::visitors::{t_fn_visitor::*, trans_visitor::*};
+use crate::visitors::{i18n_source::*, t_fn::*, trans::*};
 use swc_core::common::chain;
 use swc_core::ecma::ast::Program;
 use swc_core::ecma::visit::as_folder;
@@ -12,8 +12,12 @@ use swc_core::plugin::proxies::TransformPluginProgramMetadata;
 mod shared;
 mod visitors;
 
-pub fn get_folder() -> impl Fold {
-    as_folder(chain!(TFunctionVisitor {}, TransVisitor {}))
+pub fn get_folder(file_name: String) -> impl Fold {
+    as_folder(chain!(
+        TFunctionVisitor {},
+        TransVisitor {},
+        I18nSourceVisitor { file_name }
+    ))
 }
 
 /// An example plugin function with macro support.
@@ -44,7 +48,7 @@ pub fn process_transform(program: Program, metadata: TransformPluginProgramMetad
     let should_transform = file_name.contains("@scope/") || !file_name.contains("node_modules");
     if should_transform {
         // println!("swc plugin: should_transform, {}", file_name);
-        program.fold_with(&mut get_folder())
+        program.fold_with(&mut get_folder(file_name))
     } else {
         // println!("swc plugin: skip, {}", file_name);
         program

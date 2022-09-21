@@ -1,6 +1,6 @@
 use regex::Regex;
 use swc_core::common::sync::Lazy;
-use swc_core::ecma::ast::{Expr, KeyValueProp, Lit};
+use swc_core::ecma::ast::{ArrayLit, Expr, ExprOrSpread, KeyValueProp, Lit};
 use swc_core::ecma::atoms::JsWord;
 use swc_core::ecma::visit::VisitMut;
 use swc_core::ecma::visit::VisitMutWith;
@@ -31,7 +31,7 @@ impl VisitMut for I18nSourceVisitor {
             let lit = n.value.as_lit()?;
             match lit {
                 Lit::Str(item) => {
-                    n.value = Box::new(compile(item.value.clone())?);
+                    n.value = compile(item.value.clone())?;
                 }
                 _ => {}
             }
@@ -43,24 +43,52 @@ impl VisitMut for I18nSourceVisitor {
 
 static RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"\{\w+}").unwrap());
 
-fn compile(str: JsWord) -> Option<Expr> {
+fn compile(str: JsWord) -> Option<Box<Expr>> {
     let str = str.to_string();
 
-    let mut res = vec![];
+    let mut elems = vec![];
     let mut left_index = 0;
 
     RE.captures_iter(&str).for_each(|item| {
         if let Some(item) = item.get(0) {
-            let outer = item.as_str();
-            if let Some(index) = str.find(outer) {
-                res.push(&str[left_index..index]);
-                res.push(outer);
-                left_index = index + outer.len();
+            let variable = item.as_str();
+            if let Some(index) = str.find(variable) {
+                //region 处理普通字符串
+                let normal_str = &str[left_index..index];
+                let normal_item = Some(ExprOrSpread {
+                    spread: None,
+                    expr: Box::new(Expr::Lit(Lit::Str(normal_str.into()))),
+                });
+                elems.push(normal_item);
+                //endregion
+
+                //region 处理变量
+                let variable_item = Some(ExprOrSpread {
+                    spread: None,
+                    expr: Box::new(Expr::Array(ArrayLit {
+                        span: Default::default(),
+                        elems: vec![Some(ExprOrSpread {
+                            spread: None,
+                            expr: Box::new(Expr::Lit(Lit::Str(
+                                variable.replace("{", "").replace("}", "").into(),
+                            ))),
+                        })],
+                    })),
+                });
+                elems.push(variable_item);
+                //endregion
+                left_index = index + variable.len();
             }
         }
     });
-    dbg!(res);
-    None
+    if elems.len() > 0 {
+        Some(Box::new(Expr::Array(ArrayLit {
+            span: Default::default(),
+            elems,
+        })))
+    } else {
+        None
+    }
 }
 
 #[cfg(test)]

@@ -42,6 +42,57 @@ impl TFunctionVisitor {
         }
         None
     }
+
+    //
+    fn tagged_tpl_to_expr(&mut self, tagged_tpl: &mut TaggedTpl) -> Option<Expr> {
+        let TaggedTpl { tpl, tag, .. } = tagged_tpl;
+        let callee = Self::resolve_t_fn_callee(tag.as_ident())?;
+        // initial args vec
+        let mut args = vec![];
+        if !(tpl.exprs.is_empty()) {
+            args = Self::transform_tpl_to_args(tpl.clone());
+        } else if let Some(q) = tpl.quasis.get(0) {
+            // case normal tagged template, not have variable in template,
+            // and it should only have one argument
+            args.push(q.raw.clone().as_arg())
+        }
+
+        Some(Expr::Call(CallExpr {
+            args,
+            callee,
+            span: DUMMY_SP,
+            type_args: None,
+        }))
+    }
+
+    fn modify_call_expr(&mut self, call_expr: &mut CallExpr) -> Option<Expr> {
+        let callee_ident = call_expr.callee.as_expr()?.as_ident();
+        call_expr.callee = Self::resolve_t_fn_callee(callee_ident)?;
+        let tpl = call_expr.args.first()?.expr.clone().tpl()?;
+        // more args should ignore
+        if tpl.exprs.is_empty() || call_expr.args.len() != 1 {
+            return None;
+        }
+        let args = &mut Self::transform_tpl_to_args(tpl.clone());
+        // clear old args with new args
+        call_expr.args.clear();
+        call_expr.args.append(args);
+        None
+    }
+
+    fn handle_expr(&mut self, expr: &mut Expr) {
+        match expr {
+            Expr::TaggedTpl(tagged_tpl) => {
+                if let Some(new_expr) = self.tagged_tpl_to_expr(tagged_tpl) {
+                    *expr = new_expr
+                }
+            }
+            Expr::Call(call_expr) => {
+                self.modify_call_expr(call_expr);
+            }
+            _ => {}
+        }
+    }
 }
 
 impl VisitMut for TFunctionVisitor {
@@ -51,46 +102,8 @@ impl VisitMut for TFunctionVisitor {
 
     fn visit_mut_expr_stmt(&mut self, n: &mut ExprStmt) {
         n.visit_mut_children_with(self);
-
-        let mut work = || -> Option<()> {
-            match &mut *n.expr {
-                Expr::TaggedTpl(tagged_tpl) => {
-                    let TaggedTpl { tpl, tag, .. } = tagged_tpl;
-                    let callee = Self::resolve_t_fn_callee(tag.as_ident())?;
-                    // initial args vec
-                    let mut args = vec![];
-                    if !(tpl.exprs.is_empty()) {
-                        args = Self::transform_tpl_to_args(tpl.clone());
-                    } else if let Some(q) = tpl.quasis.get(0) {
-                        // case normal tagged template, not have variable in template,
-                        // and it should only have one argument
-                        args.push(q.raw.clone().as_arg())
-                    }
-                    // replace with new call expression
-                    n.expr = Box::new(Expr::Call(CallExpr {
-                        args,
-                        callee,
-                        span: DUMMY_SP,
-                        type_args: None,
-                    }));
-                }
-                Expr::Call(call_expr) => {
-                    let callee_ident = call_expr.callee.as_expr()?.as_ident();
-                    call_expr.callee = Self::resolve_t_fn_callee(callee_ident)?;
-                    let tpl = call_expr.args.first()?.expr.clone().tpl()?;
-                    // more args should ignore
-                    if tpl.exprs.is_empty() || call_expr.args.len() != 1 {
-                        return None;
-                    }
-                    let args = &mut Self::transform_tpl_to_args(tpl.clone());
-                    // clear old args with new args
-                    call_expr.args.clear();
-                    call_expr.args.append(args);
-                }
-                _ => {}
-            }
-            None
-        };
-        work();
+        self.handle_expr(&mut n.expr);
     }
+
+    // fn visit_mut_jsx_expr_container(&mut self, n: &mut JSXExprContainer) {}
 }

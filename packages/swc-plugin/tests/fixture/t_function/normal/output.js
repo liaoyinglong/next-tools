@@ -31,6 +31,42 @@ t("Attachment {0} saved", {
 t("Attachment {name} saved", {
     name: name
 });
+// other cases
+<div >{t("hello {name}", {
+    name: name
+})}</div>;
+<div title={t("hello {name}", {
+    name: name
+})}></div>;
+var a = t("hello {name}", {
+    name: name
+});
+var obj = {
+    a: t("hello {name}", {
+        name: name
+    })
+};
+var obj = {
+    [t("hello {name}", {
+        name: name
+    })]: 'string'
+};
+var arr = [
+    t("hello {name}", {
+        name: name
+    })
+];
+var a = Math.random() ? t("hello {name}", {
+    name: name
+}) : t("hello {name2}", {
+    name2: name2
+});
+var a = Math.random() && t("hello {name}", {
+    name: name
+});
+console.log(t("hello {name}", {
+    name: name
+}));
 // ====================
 // should not transform
 t("Refresh inbox");

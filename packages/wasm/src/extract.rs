@@ -1,31 +1,31 @@
+use std::borrow::Borrow;
+use std::sync::Arc;
+
 use anyhow::Error;
 use once_cell::sync::Lazy;
-use s_swc_plugin::visitors::{t_fn::*, trans::*};
 use serde::Deserialize;
-use std::sync::Arc;
-use swc_core::base::TransformOutput;
-use swc_core::common::chain;
+use swc_core::base::config::ParseOptions;
 use swc_core::ecma::visit::as_folder;
+use swc_core::ecma::visit::FoldWith;
 use swc_core::{
     base::{try_with_handler, Compiler},
     common::{errors::ColorConfig, FileName, FilePathMapping, SourceMap},
-    ecma::transforms::base::pass::noop,
 };
 use wasm_bindgen::prelude::*;
+
+use s_swc_plugin::get_folder;
+
+use crate::extract_visitor::ExtractVisitor;
 
 fn convert_err(err: Error) -> JsValue {
     format!("{:?}", err).into()
 }
 
-#[derive(Clone, Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct TransformOptions {
-    #[serde(flatten)]
-    pub swc: swc_core::base::config::Options,
-}
-pub fn extract(source: String, opts: TransformOptions) -> Result<TransformOutput, JsValue> {
+pub fn extract(source: String, opts: ParseOptions) -> Result<(), Error> {
     let c = compiler();
-
+    let visitor = ExtractVisitor {
+        msgs: Default::default(),
+    };
     try_with_handler(
         c.cm.clone(),
         swc_core::base::HandlerOpts {
@@ -33,28 +33,16 @@ pub fn extract(source: String, opts: TransformOptions) -> Result<TransformOutput
             skip_filename: false,
         },
         |handler| {
-            let fm = c.cm.new_source_file(
-                if opts.swc.filename.is_empty() {
-                    FileName::Anon
-                } else {
-                    FileName::Real(opts.swc.filename.clone().into())
-                },
-                source,
-            );
-
-            let out = c.process_js_with_custom_pass(
-                fm,
-                None,
-                handler,
-                &opts.swc,
-                |_, _comments| as_folder(chain!(TFunctionVisitor {}, TransVisitor {})),
-                |_, _| noop(),
-            )?;
-            dbg!(&out);
-            Ok(out)
+            let fm = c.cm.new_source_file(FileName::Anon, source);
+            let program =
+                c.parse_js(fm, handler, opts.target, opts.syntax, opts.is_module, None)?;
+            let program = program.fold_with(&mut get_folder("unknown".to_string()));
+            program.fold_with(&mut as_folder(visitor));
+            dbg!(&visitor.msgs);
+            Ok(())
         },
-    )
-    .map_err(convert_err)
+    )?;
+    Ok(())
 }
 
 /// Get global sourcemap
@@ -70,11 +58,13 @@ fn compiler() -> Arc<Compiler> {
 
 #[cfg(test)]
 mod tests {
+    use swc_core::ecma::parser::Syntax;
+
     use super::*;
 
     #[test]
     fn test_transform_sync() {
-        let source = r#"t`hello ${name}`"#;
+        let source = r#"t`hello ${name}`;<Trans id="hello ${name2}" />"#;
         let opts = r#"{
     "filename": "input.jsx",
     "jsc": {
@@ -86,8 +76,11 @@ mod tests {
   }"#;
         extract(
             source.into(),
-            TransformOptions {
-                swc: serde_json::from_str(opts).unwrap(),
+            ParseOptions {
+                comments: false,
+                syntax: Syntax::Typescript(Default::default()),
+                is_module: Default::default(),
+                target: Default::default(),
             },
         )
         .unwrap();

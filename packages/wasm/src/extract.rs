@@ -1,30 +1,22 @@
-use std::borrow::Borrow;
 use std::sync::Arc;
 
 use anyhow::Error;
 use once_cell::sync::Lazy;
-use serde::Deserialize;
+use s_swc_plugin::get_folder;
 use swc_core::base::config::ParseOptions;
-use swc_core::ecma::visit::as_folder;
 use swc_core::ecma::visit::FoldWith;
+use swc_core::ecma::visit::VisitMutWith;
 use swc_core::{
     base::{try_with_handler, Compiler},
     common::{errors::ColorConfig, FileName, FilePathMapping, SourceMap},
 };
-use wasm_bindgen::prelude::*;
-
-use s_swc_plugin::get_folder;
 
 use crate::extract_visitor::ExtractVisitor;
 
-fn convert_err(err: Error) -> JsValue {
-    format!("{:?}", err).into()
-}
-
 pub fn extract(source: String, opts: ParseOptions) -> Result<(), Error> {
     let c = compiler();
-    let visitor = ExtractVisitor {
-        msgs: Default::default(),
+    let mut visitor = ExtractVisitor {
+        data: Default::default(),
     };
     try_with_handler(
         c.cm.clone(),
@@ -36,12 +28,13 @@ pub fn extract(source: String, opts: ParseOptions) -> Result<(), Error> {
             let fm = c.cm.new_source_file(FileName::Anon, source);
             let program =
                 c.parse_js(fm, handler, opts.target, opts.syntax, opts.is_module, None)?;
-            let program = program.fold_with(&mut get_folder("unknown".to_string()));
-            program.fold_with(&mut as_folder(visitor));
-            dbg!(&visitor.msgs);
+            let mut program = program.fold_with(&mut get_folder("unknown".to_string()));
+            program.visit_mut_with(&mut visitor);
             Ok(())
         },
     )?;
+    println!("msgs = {:?}", visitor.data);
+
     Ok(())
 }
 
@@ -58,27 +51,24 @@ fn compiler() -> Arc<Compiler> {
 
 #[cfg(test)]
 mod tests {
-    use swc_core::ecma::parser::Syntax;
+    use swc_core::ecma::parser::{Syntax, TsConfig};
 
     use super::*;
 
     #[test]
     fn test_transform_sync() {
         let source = r#"t`hello ${name}`;<Trans id="hello ${name2}" />"#;
-        let opts = r#"{
-    "filename": "input.jsx",
-    "jsc": {
-      "parser": {
-        "syntax": "ecmascript",
-        "jsx": true
-      }
-    }
-  }"#;
+
         extract(
             source.into(),
             ParseOptions {
                 comments: false,
-                syntax: Syntax::Typescript(Default::default()),
+                syntax: Syntax::Typescript(TsConfig {
+                    tsx: true,
+                    decorators: false,
+                    dts: false,
+                    no_early_errors: false,
+                }),
                 is_module: Default::default(),
                 target: Default::default(),
             },

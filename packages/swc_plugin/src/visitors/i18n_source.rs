@@ -2,8 +2,8 @@ use regex::Regex;
 use swc_core::common::sync::Lazy;
 use swc_core::ecma::ast::{ArrayLit, Expr, ExprOrSpread, KeyValueProp, Lit};
 use swc_core::ecma::atoms::JsWord;
-use swc_core::ecma::visit::VisitMut;
 use swc_core::ecma::visit::VisitMutWith;
+use swc_core::ecma::visit::{noop_visit_mut_type, VisitMut};
 use tracing::debug;
 
 pub struct I18nSourceVisitor {
@@ -20,6 +20,8 @@ impl VisitMut for I18nSourceVisitor {
     // Implement necessary visit_mut_* methods for actual custom transform.
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
+
+    noop_visit_mut_type!();
 
     fn visit_mut_key_value_prop(&mut self, n: &mut KeyValueProp) {
         n.visit_mut_children_with(self);

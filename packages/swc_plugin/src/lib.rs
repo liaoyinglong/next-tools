@@ -10,7 +10,7 @@ use swc_core::plugin::proxies::TransformPluginProgramMetadata;
 
 // static PLUGIN_NAME: &str = "i18n_swc_plugin";
 mod shared;
-mod visitors;
+pub mod visitors;
 
 pub fn get_folder(file_name: String) -> impl Fold {
     as_folder(chain!(

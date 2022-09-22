@@ -1,8 +1,8 @@
 use crate::shared::Normalizer;
 use swc_core::ecma::ast::{JSXAttrName, JSXAttrOrSpread, JSXElement, JSXElementName};
 use swc_core::ecma::atoms::JsWord;
-use swc_core::ecma::visit::VisitMut;
 use swc_core::ecma::visit::VisitMutWith;
+use swc_core::ecma::visit::{noop_visit_mut_type, VisitMut};
 use tracing::error;
 
 pub struct TransVisitor;
@@ -24,6 +24,8 @@ impl VisitMut for TransVisitor {
     // Implement necessary visit_mut_* methods for actual custom transform.
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
+    noop_visit_mut_type!();
+
     fn visit_mut_jsx_element(&mut self, n: &mut JSXElement) {
         n.visit_mut_children_with(self);
 

@@ -7,8 +7,8 @@ use swc_core::ecma::ast::{KeyValueProp, Tpl};
 use swc_core::ecma::ast::{TaggedTpl, VarDeclarator};
 use swc_core::ecma::atoms::JsWord;
 use swc_core::ecma::utils::{quote_ident, ExprFactory};
-use swc_core::ecma::visit::VisitMut;
 use swc_core::ecma::visit::VisitMutWith;
+use swc_core::ecma::visit::{noop_visit_mut_type, VisitMut};
 
 use crate::shared::Normalizer;
 
@@ -99,6 +99,7 @@ impl VisitMut for TFunctionVisitor {
     // Implement necessary visit_mut_* methods for actual custom transform.
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
+    noop_visit_mut_type!();
 
     // case: t`hello ${name}`
     fn visit_mut_expr_stmt(&mut self, n: &mut ExprStmt) {

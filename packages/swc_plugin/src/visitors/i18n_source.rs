@@ -93,17 +93,3 @@ fn compile(str: JsWord) -> Option<Box<Expr>> {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use swc_core::ecma::atoms::JsWord;
-
-    use crate::visitors::i18n_source::compile;
-
-    #[test]
-    fn compile_test() {
-        assert_eq!(
-            compile(JsWord::from("hello {name}, welcome to {city}")),
-            None
-        );
-    }
-}

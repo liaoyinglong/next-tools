@@ -49,8 +49,7 @@ code = [
   "<div>{t`hello ${name}`}</div>",
 ].join("\n");
 
-const swc = require("@swc/core");“
-const { json } = require("stream/consumers");
+const swc = require("@swc/core");
 
 swc
   .transform(code, {

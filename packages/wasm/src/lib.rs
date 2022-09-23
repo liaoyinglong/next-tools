@@ -1,7 +1,6 @@
 use crate::extract::*;
 use anyhow::Error;
 use js_sys::JsString;
-use swc_core::base::config::ParseOptions;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::prelude::JsValue;
 
@@ -13,11 +12,9 @@ fn convert_err(err: Error) -> JsValue {
 }
 
 #[wasm_bindgen(js_name = "extractSync")]
-pub fn extract_sync(source: JsString, opts: JsValue) -> Result<JsValue, JsValue> {
+pub fn extract_sync(source: JsString) -> Result<JsValue, JsValue> {
     console_error_panic_hook::set_once();
-    let opts = serde_wasm_bindgen::from_value::<ParseOptions>(opts).unwrap();
-
-    let res = extract(source.into(), opts)
+    let res = extract(ExtractOptions::new(source.into()))
         .map(|res| res.data)
         .map_err(convert_err)?;
 

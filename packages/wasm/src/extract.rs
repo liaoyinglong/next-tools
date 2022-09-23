@@ -4,6 +4,7 @@ use anyhow::Error;
 use once_cell::sync::Lazy;
 use s_swc_plugin::get_folder;
 use swc_core::base::config::ParseOptions;
+use swc_core::ecma::parser::{Syntax, TsConfig};
 use swc_core::ecma::visit::FoldWith;
 use swc_core::ecma::visit::VisitMutWith;
 use swc_core::{
@@ -13,7 +14,27 @@ use swc_core::{
 
 use crate::extract_visitor::ExtractVisitor;
 
-pub fn extract(source: String, opts: ParseOptions) -> Result<ExtractVisitor, Error> {
+pub struct ExtractOptions {
+    pub parse: ParseOptions,
+    pub source: String,
+}
+
+impl ExtractOptions {
+    pub fn new(source: String) -> Self {
+        Self {
+            parse: ParseOptions {
+                syntax: Syntax::Typescript(TsConfig {
+                    tsx: true,
+                    ..Default::default()
+                }),
+                ..Default::default()
+            },
+            source,
+        }
+    }
+}
+
+pub fn extract(opts: ExtractOptions) -> Result<ExtractVisitor, Error> {
     let c = compiler();
     let mut visitor = ExtractVisitor::new();
     try_with_handler(
@@ -23,9 +44,15 @@ pub fn extract(source: String, opts: ParseOptions) -> Result<ExtractVisitor, Err
             skip_filename: false,
         },
         |handler| {
-            let fm = c.cm.new_source_file(FileName::Anon, source);
-            let program =
-                c.parse_js(fm, handler, opts.target, opts.syntax, opts.is_module, None)?;
+            let fm = c.cm.new_source_file(FileName::Anon, opts.source);
+            let program = c.parse_js(
+                fm,
+                handler,
+                opts.parse.target,
+                opts.parse.syntax,
+                opts.parse.is_module,
+                None,
+            )?;
             let mut program = program.fold_with(&mut get_folder("unknown".to_string()));
             program.visit_mut_with(&mut visitor);
             Ok(())
@@ -50,7 +77,6 @@ fn compiler() -> Arc<Compiler> {
 mod tests {
     use crate::extract_visitor::Item;
     use swc_core::common::collections::AHashMap;
-    use swc_core::ecma::parser::{Syntax, TsConfig};
 
     use super::*;
 
@@ -58,21 +84,7 @@ mod tests {
     fn test_transform_sync() {
         let source = r#"t`hello ${name}`;<Trans>hello {name2}</Trans>"#;
 
-        let res = extract(
-            source.into(),
-            ParseOptions {
-                comments: false,
-                syntax: Syntax::Typescript(TsConfig {
-                    tsx: true,
-                    decorators: false,
-                    dts: false,
-                    no_early_errors: false,
-                }),
-                is_module: Default::default(),
-                target: Default::default(),
-            },
-        )
-        .expect("failed to extract");
+        let res = extract(ExtractOptions::new(source.into())).expect("failed to extract");
 
         assert_eq!(res.data.len(), 2);
         assert_eq!(res.data, {

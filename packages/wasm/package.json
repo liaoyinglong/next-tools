@@ -2,8 +2,9 @@
   "name": "@scope/wasm",
   "version": "1.0.0",
   "main": "./pkg/s_wasm.js",
+  "types": "./pkg/s_wasm.d.ts",
   "scripts": {
-    "build": "rm -rf ./pkg && wasm-pack build --target nodejs",
+    "build": "rm -rf ./pkg && wasm-pack build --target nodejs && vitest run",
     "test": "vitest"
   },
   "dependencies": {}

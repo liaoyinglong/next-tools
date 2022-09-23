@@ -3,3 +3,6 @@
 # Alias to build actual plugin binary for the specified target.
 build-wasi = "build --target wasm32-wasi"
 build-wasm32 = "build --target wasm32-unknown-unknown"
+
+[build]
+target-dir = "target"         # 存放编译输出结果的目录

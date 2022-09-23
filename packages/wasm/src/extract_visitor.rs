@@ -10,7 +10,7 @@ use swc_core::ecma::visit::{noop_visit_mut_type, VisitMut};
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Item {
-    #[serde(default)]
+    #[serde(default, skip_deserializing)]
     pub id: String,
     #[serde(default)]
     pub defaults: String,

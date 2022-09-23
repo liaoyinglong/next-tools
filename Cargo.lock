@@ -1385,10 +1385,18 @@ checksum = "4501abdff3ae82a1c1b477a17252eb69cee9e66eb915c1abaa4f44d873df9f09"
 name = "s_swc_plugin"
 version = "0.1.0"
 dependencies = [
- "regex",
- "serde",
+ "s_swc_visitor",
  "swc_core",
  "testing",
+ "tracing",
+]
+
+[[package]]
+name = "s_swc_visitor"
+version = "0.1.0"
+dependencies = [
+ "regex",
+ "swc_core",
  "tracing",
 ]
 
@@ -1401,7 +1409,7 @@ dependencies = [
  "getrandom",
  "js-sys",
  "once_cell",
- "s_swc_plugin",
+ "s_swc_visitor",
  "serde",
  "serde-wasm-bindgen",
  "serde_json",

@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "packages/swc_plugin",
+    "packages/swc_visitor",
     "packages/wasm"
 ]
 [profile.release]

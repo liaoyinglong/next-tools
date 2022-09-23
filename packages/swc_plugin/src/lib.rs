@@ -1,24 +1,11 @@
-use crate::visitors::{i18n_source::*, t_fn::*, trans::*};
-use swc_core::common::chain;
+use s_swc_visitor::get_folder;
 use swc_core::ecma::ast::Program;
-use swc_core::ecma::visit::as_folder;
-use swc_core::ecma::visit::Fold;
 use swc_core::ecma::visit::FoldWith;
 use swc_core::plugin::metadata::TransformPluginMetadataContextKind;
 use swc_core::plugin::plugin_transform;
 use swc_core::plugin::proxies::TransformPluginProgramMetadata;
 
 // static PLUGIN_NAME: &str = "i18n_swc_plugin";
-mod shared;
-pub mod visitors;
-
-pub fn get_folder(file_name: String) -> impl Fold {
-    as_folder(chain!(
-        TFunctionVisitor {},
-        TransVisitor {},
-        I18nSourceVisitor { file_name }
-    ))
-}
 
 /// An example plugin function with macro support.
 /// `plugin_transform` macro interop pointers into deserialized structs, as well

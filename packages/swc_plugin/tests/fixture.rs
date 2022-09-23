@@ -1,12 +1,10 @@
+use s_swc_visitor::get_folder;
 use std::path::PathBuf;
-
 use swc_core::ecma::{
     parser::{EsConfig, Syntax},
     transforms::testing::test_fixture,
 };
 use testing::fixture;
-
-use s_swc_plugin::get_folder;
 
 //use std::env;
 #[fixture("tests/fixture/**/input.js")]

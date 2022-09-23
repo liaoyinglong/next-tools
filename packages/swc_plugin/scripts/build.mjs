@@ -12,3 +12,9 @@ await fs.copyFile(
 );
 
 echo(`Copied swc_plugin.wasm to dist`);
+
+echo("run js side test");
+
+await $`vitest run`;
+
+echo("Done");

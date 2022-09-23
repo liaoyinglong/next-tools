@@ -9,9 +9,13 @@
   ],
   "main": "./dist/swc_plugin.wasm",
   "scripts": {
-    "prepublishOnly": "node ./scripts/build.mjs"
+    "prepublishOnly": "node ./scripts/build.mjs",
+    "test": "vitest",
+    "test:watch": "vitest watch -u"
   },
   "files": [],
-  "devDependencies": {},
+  "devDependencies": {
+    "@swc/core": "^1.3.2"
+  },
   "dependencies": {}
 }

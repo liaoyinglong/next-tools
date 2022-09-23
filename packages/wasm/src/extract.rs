@@ -4,7 +4,6 @@ use anyhow::Error;
 use once_cell::sync::Lazy;
 use s_swc_plugin::get_folder;
 use swc_core::base::config::ParseOptions;
-use swc_core::common::collections::AHashMap;
 use swc_core::ecma::visit::FoldWith;
 use swc_core::ecma::visit::VisitMutWith;
 use swc_core::{
@@ -12,7 +11,7 @@ use swc_core::{
     common::{errors::ColorConfig, FileName, FilePathMapping, SourceMap},
 };
 
-use crate::extract_visitor::{ExtractVisitor, Item};
+use crate::extract_visitor::ExtractVisitor;
 
 pub fn extract(source: String, opts: ParseOptions) -> Result<ExtractVisitor, Error> {
     let c = compiler();
@@ -49,6 +48,8 @@ fn compiler() -> Arc<Compiler> {
 
 #[cfg(test)]
 mod tests {
+    use crate::extract_visitor::Item;
+    use swc_core::common::collections::AHashMap;
     use swc_core::ecma::parser::{Syntax, TsConfig};
 
     use super::*;

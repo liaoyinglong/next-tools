@@ -26,4 +26,10 @@ swc_core = { version = "0.25", features = [
     "ecma_utils",
     "ecma_visit"
 ] }
+serde-wasm-bindgen="0.4.3"
+
 s_swc_plugin = { path = "../swc_plugin"  }
+
+
+[profile.release]
+lto = true

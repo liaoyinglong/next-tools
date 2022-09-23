@@ -1,0 +1,10 @@
+{
+  "name": "@scope/wasm",
+  "version": "1.0.0",
+  "main": "./pkg",
+  "scripts": {
+    "build": "wasm-pack build --target nodejs"
+  },
+  "dependencies": {
+  }
+}

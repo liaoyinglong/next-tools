@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use swc_core::common::collections::AHashMap;
 use swc_core::ecma::ast::{
     CallExpr, ExprOrSpread, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName,
@@ -6,9 +7,12 @@ use swc_core::ecma::ast::{
 use swc_core::ecma::visit::VisitMutWith;
 use swc_core::ecma::visit::{noop_visit_mut_type, VisitMut};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Item {
+    #[serde(default)]
     pub id: String,
+    #[serde(default)]
     pub defaults: String,
 }
 

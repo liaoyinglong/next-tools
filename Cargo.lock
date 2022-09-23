@@ -1403,6 +1403,7 @@ dependencies = [
  "once_cell",
  "s_swc_plugin",
  "serde",
+ "serde-wasm-bindgen",
  "serde_json",
  "swc_core",
  "tracing",

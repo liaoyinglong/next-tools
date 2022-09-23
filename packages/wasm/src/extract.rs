@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use anyhow::Error;
 use once_cell::sync::Lazy;
-use s_swc_plugin::get_folder;
+use s_swc_visitor::get_folder;
 use swc_core::base::config::ParseOptions;
 use swc_core::ecma::parser::{Syntax, TsConfig};
 use swc_core::ecma::visit::FoldWith;

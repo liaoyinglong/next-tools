@@ -15,9 +15,7 @@ use crate::extract_visitor::ExtractVisitor;
 
 pub fn extract(source: String, opts: ParseOptions) -> Result<(), Error> {
     let c = compiler();
-    let mut visitor = ExtractVisitor {
-        data: Default::default(),
-    };
+    let mut visitor = ExtractVisitor::new();
     try_with_handler(
         c.cm.clone(),
         swc_core::base::HandlerOpts {
@@ -57,7 +55,7 @@ mod tests {
 
     #[test]
     fn test_transform_sync() {
-        let source = r#"t`hello ${name}`;<Trans id="hello ${name2}" />"#;
+        let source = r#"t`hello ${name}`;<Trans>hello {name2}</Trans>"#;
 
         extract(
             source.into(),
@@ -73,6 +71,6 @@ mod tests {
                 target: Default::default(),
             },
         )
-        .unwrap();
+        .expect("failed to extract");
     }
 }

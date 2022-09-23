@@ -6,7 +6,7 @@ use swc_core::ecma::ast::{
 use swc_core::ecma::visit::VisitMutWith;
 use swc_core::ecma::visit::{noop_visit_mut_type, VisitMut};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Item {
     pub id: String,
     pub defaults: String,

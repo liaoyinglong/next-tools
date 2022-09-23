@@ -4,6 +4,7 @@ use anyhow::Error;
 use once_cell::sync::Lazy;
 use s_swc_plugin::get_folder;
 use swc_core::base::config::ParseOptions;
+use swc_core::common::collections::AHashMap;
 use swc_core::ecma::visit::FoldWith;
 use swc_core::ecma::visit::VisitMutWith;
 use swc_core::{
@@ -11,9 +12,9 @@ use swc_core::{
     common::{errors::ColorConfig, FileName, FilePathMapping, SourceMap},
 };
 
-use crate::extract_visitor::ExtractVisitor;
+use crate::extract_visitor::{ExtractVisitor, Item};
 
-pub fn extract(source: String, opts: ParseOptions) -> Result<(), Error> {
+pub fn extract(source: String, opts: ParseOptions) -> Result<ExtractVisitor, Error> {
     let c = compiler();
     let mut visitor = ExtractVisitor::new();
     try_with_handler(
@@ -31,9 +32,8 @@ pub fn extract(source: String, opts: ParseOptions) -> Result<(), Error> {
             Ok(())
         },
     )?;
-    println!("msgs = {:?}", visitor.data);
-
-    Ok(())
+    dbg!(&visitor.data);
+    Ok(visitor)
 }
 
 /// Get global sourcemap
@@ -57,7 +57,7 @@ mod tests {
     fn test_transform_sync() {
         let source = r#"t`hello ${name}`;<Trans>hello {name2}</Trans>"#;
 
-        extract(
+        let res = extract(
             source.into(),
             ParseOptions {
                 comments: false,
@@ -72,5 +72,25 @@ mod tests {
             },
         )
         .expect("failed to extract");
+
+        assert_eq!(res.data.len(), 2);
+        assert_eq!(res.data, {
+            let mut map = AHashMap::default();
+            map.insert(
+                "hello {name}".into(),
+                Item {
+                    defaults: "".to_string(),
+                    id: "hello {name}".into(),
+                },
+            );
+            map.insert(
+                "hello {name2}".into(),
+                Item {
+                    defaults: "".to_string(),
+                    id: "hello {name2}".into(),
+                },
+            );
+            map
+        })
     }
 }

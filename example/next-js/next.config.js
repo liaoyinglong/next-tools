@@ -1,3 +1,6 @@
+const pluginPath = require.resolve("@scope/swc-plugin");
+console.log("use pluginPath", pluginPath);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   swcMinify: false,
@@ -33,8 +36,8 @@ const nextConfig = {
      * @see https://nextjs.org/docs/advanced-features/compiler#swc-plugins-experimental
      */
     swcPlugins: [
-      [require.resolve("@scope/swc-plugin"), {}],
-      // ["css-variable/swc", { "basePath": __dirname },]
+      ["next-superjson-plugin", {}],
+      [pluginPath, {}],
     ],
   },
 };

@@ -1,6 +1,7 @@
 import { i18n } from "@scope/i18n";
 import { en, cs } from "make-plural/plurals";
 
+
 i18n.loadLocaleData("en", { plurals: en });
 i18n.loadLocaleData("cs", { plurals: cs });
 
@@ -11,6 +12,7 @@ i18n.loadLocaleData("cs", { plurals: cs });
  */
 export async function activate(locale: string) {
   const messages = await import(`../locale/${locale}.locale.json`);
+  console.log(messages.default);
   i18n.load(locale, messages.default);
   i18n.activate(locale);
 }

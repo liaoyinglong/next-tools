@@ -46,3 +46,10 @@ export default function Home() {
     </Layout>
   );
 }
+export const getServerSideProps = () => {
+  return {
+    props: {
+      date: new Date()
+    }
+  }
+}

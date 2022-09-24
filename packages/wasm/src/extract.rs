@@ -53,7 +53,7 @@ pub fn extract(opts: ExtractOptions) -> Result<ExtractVisitor, Error> {
                 opts.parse.is_module,
                 None,
             )?;
-            let mut program = program.fold_with(&mut get_folder("unknown".to_string()));
+            let mut program = program.fold_with(&mut get_folder());
             program.visit_mut_with(&mut visitor);
             Ok(())
         },

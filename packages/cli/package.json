@@ -11,9 +11,15 @@
   },
   "dependencies": {
     "cac": "^6.7.14",
-    "enquirer": "^2.3.6"
+    "debug": "^4.3.4",
+    "prompts": "^2.4.2",
+    "@scope/wasm": "workspace:*",
+    "fs-extra": "^10.1.0",
+    "globby": "^13.1.2"
   },
   "devDependencies": {
+    "@types/debug": "^4.1.7",
+    "@types/prompts": "^2.4.0",
     "tsup": "^6.2.3"
   }
 }

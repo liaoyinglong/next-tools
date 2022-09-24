@@ -5,7 +5,9 @@
     "sourceMap": true,
     "declaration": true,
     "outDir": "dist",
-    "noEmit": true
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

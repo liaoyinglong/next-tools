@@ -4,6 +4,17 @@ import classnames from "classnames";
 import { activate } from "lingui-example/i18n";
 import styles from "./Layout.module.css";
 
+import styled from '@emotion/styled'
+
+const unitNormal = '1rem'
+const unitLarge = '2rem'
+
+const Example = styled.div`
+  margin: ${unitNormal} ${unitLarge};
+`
+console.log(Example);
+
+
 export function Layout({ title = null, className = "", children }) {
   // Default props can't be translated at module level because active locale
   // isn't known when module is imported, but rather when component

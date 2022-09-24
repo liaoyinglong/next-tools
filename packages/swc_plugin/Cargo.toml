@@ -8,16 +8,16 @@ crate-type = ["cdylib", "rlib"]
 
 
 [dependencies]
-swc_core = {version = "0.23.*", features = [
+swc_core = { version = "0.24.*", features = [
     "plugin_transform",
-]}
-tracing = "0.1.32"
+] }
+tracing = { version = "0.1.32", features = ["release_max_level_info"] }
 s_swc_visitor = { path = "../swc_visitor" }
 
 
 [dev-dependencies]
-testing = "0.31"
-swc_core = { version = "0.23.*", features = [
+testing = "0.30"
+swc_core = { version = "0.24.*", features = [
     "plugin_transform",
     "ecma_parser",
 ] }

@@ -35,7 +35,7 @@ pub fn process_transform(program: Program, metadata: TransformPluginProgramMetad
     let should_transform = file_name.contains("@scope/") || !file_name.contains("node_modules");
     if should_transform {
         // println!("swc plugin: should_transform, {}", file_name);
-        program.fold_with(&mut get_folder(file_name))
+        program.fold_with(&mut get_folder())
     } else {
         // println!("swc plugin: skip, {}", file_name);
         program

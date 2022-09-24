@@ -7,18 +7,16 @@ let code = [
   "t`hello ${name}`",
   "<div>{t`hello ${name}`}</div>",
 ].join(";\n");
-
 const transform = (source: string) => {
   return swc.transform(source, {
-    filename: "input.jsx",
+    filename: "input.tsx",
     jsc: {
-      transform: {},
       parser: {
         syntax: "typescript",
         tsx: true,
       },
       experimental: {
-        plugins: [[require.resolve("../"), {}]],
+        plugins: [[require.resolve('../'), {}]],
       },
     },
   });

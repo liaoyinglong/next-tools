@@ -1,5 +1,7 @@
 import { $, echo, fs } from "zx";
 
+await $`cargo test`;
+
 await fs.emptyDir("./dist");
 echo("Building...");
 

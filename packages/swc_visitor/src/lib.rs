@@ -9,5 +9,5 @@ use swc_core::ecma::visit::Fold;
 use crate::{t_fn::TFunctionVisitor, trans::TransVisitor};
 
 pub fn get_folder() -> impl Fold {
-    as_folder(chain!(TFunctionVisitor {}, TransVisitor {},))
+    as_folder(chain!(TFunctionVisitor {}, TransVisitor {}))
 }

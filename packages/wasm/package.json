@@ -4,8 +4,9 @@
   "main": "./pkg/s_wasm.js",
   "types": "./pkg/s_wasm.d.ts",
   "scripts": {
-    "build": "rm -rf ./pkg && wasm-pack build --target nodejs && vitest run",
-    "test": "vitest"
+    "build": "cargo test && rm -rf ./pkg && wasm-pack build --target nodejs && vitest run",
+    "test": "vitest",
+    "test:u": "vitest -u"
   },
   "dependencies": {}
 }

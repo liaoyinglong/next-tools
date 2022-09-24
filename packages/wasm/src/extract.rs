@@ -1,82 +1,54 @@
-use std::sync::Arc;
-
 use anyhow::Error;
-use once_cell::sync::Lazy;
-use s_swc_visitor::get_folder;
-use swc_core::base::config::ParseOptions;
+use swc_core::common::{FileName, FilePathMapping, SourceMap};
+use swc_core::ecma::parser::parse_file_as_program;
 use swc_core::ecma::parser::{Syntax, TsConfig};
 use swc_core::ecma::visit::FoldWith;
 use swc_core::ecma::visit::VisitMutWith;
-use swc_core::{
-    base::{try_with_handler, Compiler},
-    common::{errors::ColorConfig, FileName, FilePathMapping, SourceMap},
-};
+
+use s_swc_visitor::get_folder;
 
 use crate::extract_visitor::ExtractVisitor;
 
 pub struct ExtractOptions {
-    pub parse: ParseOptions,
     pub source: String,
 }
 
 impl ExtractOptions {
     pub fn new(source: String) -> Self {
-        Self {
-            parse: ParseOptions {
-                syntax: Syntax::Typescript(TsConfig {
-                    tsx: true,
-                    ..Default::default()
-                }),
-                ..Default::default()
-            },
-            source,
-        }
+        Self { source }
     }
 }
 
 pub fn extract(opts: ExtractOptions) -> Result<ExtractVisitor, Error> {
-    let c = compiler();
+    let source_map = SourceMap::new(FilePathMapping::empty());
     let mut visitor = ExtractVisitor::new();
-    try_with_handler(
-        c.cm.clone(),
-        swc_core::base::HandlerOpts {
-            color: ColorConfig::Never,
-            skip_filename: false,
-        },
-        |handler| {
-            let fm = c.cm.new_source_file(FileName::Anon, opts.source);
-            let program = c.parse_js(
-                fm,
-                handler,
-                opts.parse.target,
-                opts.parse.syntax,
-                opts.parse.is_module,
-                None,
-            )?;
+    let fm = source_map.new_source_file(FileName::Anon, opts.source);
+    let program = parse_file_as_program(
+        &*fm,
+        Syntax::Typescript(TsConfig {
+            tsx: true,
+            ..Default::default()
+        }),
+        Default::default(),
+        None,
+        &mut vec![],
+    );
+    match program {
+        Ok(program) => {
             let mut program = program.fold_with(&mut get_folder());
             program.visit_mut_with(&mut visitor);
-            Ok(())
-        },
-    )?;
+        }
+        Err(e) => return Err(Error::msg(format!(" {:?}", e)).context("Failed to parse file")),
+    }
     dbg!(&visitor.data);
     Ok(visitor)
 }
 
-/// Get global sourcemap
-fn compiler() -> Arc<Compiler> {
-    static C: Lazy<Arc<Compiler>> = Lazy::new(|| {
-        let cm = Arc::new(SourceMap::new(FilePathMapping::empty()));
-
-        Arc::new(Compiler::new(cm))
-    });
-
-    C.clone()
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::extract_visitor::Item;
     use swc_core::common::collections::AHashMap;
+
+    use crate::extract_visitor::Item;
 
     use super::*;
 

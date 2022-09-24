@@ -8,13 +8,13 @@ describe("extract", () => {
     const result = await extract(str);
     expect(result).toMatchInlineSnapshot(`
       Map {
-        "hello {name}" => {
-          "defaults": "",
-          "id": "hello {name}",
-        },
         "hello {name2}" => {
           "defaults": "",
           "id": "hello {name2}",
+        },
+        "hello {name}" => {
+          "defaults": "",
+          "id": "hello {name}",
         },
       }
     `);

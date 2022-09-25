@@ -1,5 +1,6 @@
 import { createLogger } from "./index";
 import fs from "fs-extra";
+import pc from "picocolors";
 const log = createLogger("i18nData");
 export type ExtractedMap = Map<string, { id: string; defaults: string }>;
 
@@ -18,8 +19,8 @@ export class I18nData {
     } catch (e) {
       log.error(
         "Error loading i18n data for locale '%s' from file '%s'",
-        this.locale,
-        this.filePath
+        pc.yellow(this.locale),
+        pc.yellow(this.filePath)
       );
       log.error("Error: %s", e.message);
     }
@@ -49,24 +50,24 @@ export class I18nData {
     await this.updateData(shouldUseDefault);
     log.info(
       "Saving i18n data for locale '%s' to file '%s'",
-      this.locale,
-      this.filePath
+      pc.green(this.locale),
+      pc.dim(this.filePath)
     );
     try {
       await fs.ensureFile(this.filePath);
       await fs.writeJson(this.filePath, this.data, { spaces: 2 });
       log.info(
         "Saved i18n data for locale '%s' to file '%s'",
-        this.locale,
-        this.filePath
+        pc.green(this.locale),
+        pc.dim(this.filePath)
       );
     } catch (e) {
       log.error(
         "Error saving i18n data for locale '%s' to file '%s'",
-        this.locale,
-        this.filePath
+        pc.green(this.locale),
+        pc.dim(this.filePath)
       );
-      log.error("Error: %s", e.message);
+      log.error("Error: %s", pc.red(e.message));
     }
   }
 

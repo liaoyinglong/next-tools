@@ -11,14 +11,14 @@
   },
   "type": "module",
   "bin": {
-    "sq": "./dist/cli.mjs"
+    "sq": "./dist/cli.js"
   },
   "exports": {
     ".": {
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.js"
     },
     "./cli": {
-      "import": "./dist/cli.mjs"
+      "import": "./dist/cli.js"
     }
   },
   "dependencies": {
@@ -29,7 +29,8 @@
     "fs-extra": "^10.1.0",
     "globby": "^13.1.2",
     "p-map": "^5.5.0",
-    "prompts": "^2.4.2"
+    "prompts": "^2.4.2",
+    "picocolors": "^1.0.0"
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",

@@ -26,7 +26,7 @@ export class I18nData {
     return this.data;
   }
 
-  async saveToDisk(shouldUseDefault = false) {
+  private async updateData(shouldUseDefault = false) {
     await this.loadData();
     this.extractedData.forEach((value, key) => {
       this.data[key] = shouldUseDefault
@@ -43,7 +43,10 @@ export class I18nData {
     });
     this.data = newData;
     //endregion
+  }
 
+  async saveToDisk(shouldUseDefault = false) {
+    await this.updateData(shouldUseDefault);
     log.info(
       "Saving i18n data for locale '%s' to file '%s'",
       this.locale,
@@ -65,5 +68,16 @@ export class I18nData {
       );
       log.error("Error: %s", e.message);
     }
+  }
+
+  async statistic() {
+    const total = Object.keys(this.data).length;
+    const missing = Object.values(this.data).filter((v) => !v).length;
+
+    return {
+      locale: this.locale,
+      total,
+      missing,
+    };
   }
 }

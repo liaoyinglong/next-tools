@@ -4,6 +4,7 @@ import pMap from "p-map";
 import { createLogger } from "../shared";
 import { getConfig } from "../shared/config";
 import { I18nData, ExtractedMap } from "../shared/i18nData";
+import Table from "cli-table3";
 
 const log = createLogger("extract");
 
@@ -38,8 +39,27 @@ export async function extract() {
     extractedI18nDataMap.size,
     extractedI18nDataMap
   );
-  await pMap(["zh", "en", "cs"], async (locale, index) => {
+
+  const statistics = await pMap(["zh", "en", "cs"], async (locale, index) => {
     const i18nData = new I18nData(locale, extractedI18nDataMap);
     await i18nData.saveToDisk(index === 0);
+    return await i18nData.statistic();
   });
+
+  //region 打印统计信息
+  const table = new Table({
+    head: ["Language", "Total count", "Missing"],
+    colAligns: ["left", "center", "center"],
+    style: {
+      head: ["green"],
+      border: [],
+      compact: true,
+    },
+  });
+  statistics.forEach((statistic) => {
+    table.push([statistic.locale, statistic.total, statistic.missing]);
+  });
+  console.log("提取结果: ");
+  console.log(table.toString());
+  //endregion
 }

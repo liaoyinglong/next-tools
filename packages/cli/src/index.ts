@@ -1,4 +1,1 @@
-export type AA = {
-  a: string;
-};
-export default {};
+export { Config, defineConfig } from "./shared/config";

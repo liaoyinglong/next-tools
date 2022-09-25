@@ -6,8 +6,8 @@
   "Examples →": "Ukázky →",
   "Find in-depth information about LinguiJS features and API.": "Vyhledej podrobné informace o funkcích LinguiJS",
   "Get started by editing <0>locale/en/messages.po</0>": "Začni úpravou <0>locale/cs/messages.po</0>",
+  "Hello {name}": "Hello {name} cs",
   "Plurals": "Množné číslo",
   "Powered by <0/>": "Používá <0/>",
-  "Welcome to <0>LinguiJS!</0>": "Vítá tě <0>LinguiJS!</0>",
-  "Hello {name}": "Hello {name} cs"
+  "Welcome to <0>LinguiJS!</0>": "Vítá tě <0>LinguiJS!</0>"
 }

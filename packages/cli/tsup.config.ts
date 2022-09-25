@@ -5,6 +5,7 @@ export default defineConfig({
   target: "node16",
   sourcemap: true,
   tsconfig: "./tsconfig.json",
+  format: ["esm"],
   dts: {
     resolve: true,
     // build types for `src/index.ts` only

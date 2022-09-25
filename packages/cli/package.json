@@ -9,13 +9,26 @@
     "test-only": "vitest run",
     "build-fast": "npm run build -- --no-dts"
   },
+  "type": "module",
+  "bin": {
+    "sq": "./dist/cli.mjs"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs"
+    },
+    "./cli": {
+      "import": "./dist/cli.mjs"
+    }
+  },
   "dependencies": {
     "cac": "^6.7.14",
     "debug": "^4.3.4",
     "prompts": "^2.4.2",
     "@scope/wasm": "workspace:*",
     "fs-extra": "^10.1.0",
-    "globby": "^13.1.2"
+    "globby": "^13.1.2",
+    "p-map": "^5.5.0"
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",

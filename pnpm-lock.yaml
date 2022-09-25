@@ -28,7 +28,6 @@ importers:
       classnames: ^2.3.2
       eslint: 8.23.1
       eslint-config-next: 12.3.0
-      make-plural: ^7.1.0
       next: 12.3.1
       next-superjson-plugin: ^0.4.2
       react: 18.2.0
@@ -40,7 +39,6 @@ importers:
       '@scope/i18n': link:../../packages/i18n
       '@scope/swc-plugin': link:../../packages/swc_plugin
       classnames: 2.3.2
-      make-plural: 7.1.0
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
       next-superjson-plugin: 0.4.2_qc67pa6ck677udaroeig4oejby
       react: 18.2.0
@@ -83,10 +81,12 @@ importers:
       '@lingui/core': ^3
       '@lingui/react': ^3
       '@types/react': ^18
+      make-plural: ^7
       react: ^18
     dependencies:
       '@lingui/core': 3.14.0
       '@lingui/react': 3.14.0_react@18.2.0
+      make-plural: 7.1.0
     devDependencies:
       '@types/react': 18.0.20
       react: 18.2.0

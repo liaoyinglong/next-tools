@@ -4,6 +4,10 @@ import { FC } from "react";
 
 export { I18nProvider } from "@lingui/react";
 export * from "@lingui/core";
+import { en, cs } from "make-plural/plurals";
+
+i18n.loadLocaleData("en", { plurals: en });
+i18n.loadLocaleData("cs", { plurals: cs });
 
 /**
  * Translates a template string using the global I18n instance

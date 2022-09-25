@@ -9,8 +9,6 @@ export class I18nData {
   constructor(
     public locale: string,
     public extractedData: ExtractedMap,
-    // 是否是默认语言 中文是默认语言
-    public isDefault = false,
     public filePath: string = `./i18n/${locale}.i18n.json`
   ) {}
 
@@ -28,13 +26,12 @@ export class I18nData {
     return this.data;
   }
 
-  async saveToDisk() {
+  async saveToDisk(shouldUseDefault = false) {
     await this.loadData();
     this.extractedData.forEach((value, key) => {
-      if (this.data[key] || !this.isDefault) {
-        return;
-      }
-      this.data[key] = this.isDefault ? value.defaults || key : value.defaults;
+      this.data[key] = shouldUseDefault
+        ? value.defaults || key
+        : this.data[key] || "";
     });
     //region 语言key按一定规则排序
     const keys = Object.keys(this.data).sort((a, b) => {

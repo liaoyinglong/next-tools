@@ -9,5 +9,6 @@
   "Hello {name}": "Hello {name} cs",
   "Plurals": "Množné číslo",
   "Powered by <0/>": "Používá <0/>",
-  "Welcome to <0>LinguiJS!</0>": "Vítá tě <0>LinguiJS!</0>"
+  "Welcome to <0>LinguiJS!</0>": "Vítá tě <0>LinguiJS!</0>",
+  "what is this?": ""
 }

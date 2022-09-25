@@ -16,7 +16,7 @@ export default function Home() {
       </h1>
       <p className={styles.description}>
         <Trans>
-          Get started by editing{" "}
+          Get started by editing
           <code className={styles.code}>locale/en/messages.po</code>
         </Trans>
       </p>
@@ -49,7 +49,7 @@ export default function Home() {
 export const getServerSideProps = () => {
   return {
     props: {
-      date: new Date()
-    }
-  }
-}
+      date: new Date(),
+    },
+  };
+};

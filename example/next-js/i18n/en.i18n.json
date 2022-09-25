@@ -9,5 +9,6 @@
   "Hello {name}": "Hello {name}",
   "Plurals": "Plurals",
   "Powered by <0/>": "Powered by <0/>",
-  "Welcome to <0>LinguiJS!</0>": "Welcome to <0>LinguiJS!</0>"
+  "Welcome to <0>LinguiJS!</0>": "Welcome to <0>LinguiJS!</0>",
+  "what is this?": ""
 }

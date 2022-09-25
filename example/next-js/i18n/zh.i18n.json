@@ -4,7 +4,7 @@
   "Examples": "Examples",
   "Examples →": "Examples →",
   "Find in-depth information about LinguiJS features and API.": "Find in-depth information about LinguiJS features and API.",
-  "Get started by editing{0} <1>locale/en/messages.po</1>": "Get started by editing{0} <1>locale/en/messages.po</1>",
+  "Get started by editing <0>locale/en/messages.po</0>": "Get started by editing <0>locale/en/messages.po</0>",
   "Hello {name}": "Hello {name}",
   "Plurals": "Plurals",
   "Powered by <0/>": "Powered by <0/>",

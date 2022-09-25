@@ -6,6 +6,7 @@ import { i18n } from "@scope/i18n";
  */
 export async function activate(locale: string) {
   const messages = await import(`../i18n/${locale}.i18n.json`);
+  console.log(messages.default);
   i18n.load(locale, messages.default);
   i18n.activate(locale);
 }

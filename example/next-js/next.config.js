@@ -26,7 +26,8 @@ const nextConfig = {
             "@scope/i18n": ["t", "Trans"],
           },
         ],
-      })
+      }),
+      require("@scope/unplugin").i18nResourcePlugin.webpack()
     );
     return config;
   },

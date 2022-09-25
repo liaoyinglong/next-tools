@@ -8,7 +8,9 @@
     "i18n"
   ],
   "main": "./src/index.ts",
-  "scripts": {},
+  "scripts": {
+    "build": "echo 'not need build'"
+  },
   "files": [
     "src"
   ],

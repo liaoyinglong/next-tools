@@ -2,12 +2,12 @@
   "name": "@scope/cli",
   "version": "1.0.0",
   "scripts": {
-    "dev": "npm run build-fast -- --watch",
+    "dev": "pnpm run build-fast --watch",
     "build": "tsup src/cli.ts src/index.ts --clean --splitting",
-    "prepublishOnly": "npm run build",
-    "test": "npm run build && npm run test-only",
+    "prepublishOnly": "pnpm run build",
+    "test": "pnpm run build && npm run test-only",
     "test-only": "vitest run",
-    "build-fast": "npm run build -- --no-dts"
+    "build-fast": "pnpm run build --no-dts"
   },
   "type": "module",
   "types": "dist/index.d.ts",

@@ -12,7 +12,8 @@
     "dist"
   ],
   "scripts": {
-    "prepublishOnly": "node ./scripts/build.mjs",
+    "prepublishOnly": "pnpm build",
+    "build": "node ./scripts/build.mjs",
     "test": "vitest",
     "test:watch": "vitest watch -u"
   },

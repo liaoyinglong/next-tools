@@ -9,7 +9,9 @@
   ],
   "main": "./src/index.ts",
   "scripts": {},
-  "files": [],
+  "files": [
+    "src"
+  ],
   "devDependencies": {
     "@types/react": "^18",
     "react": "^18"

@@ -10,9 +10,13 @@
     "build-fast": "npm run build -- --no-dts"
   },
   "type": "module",
+  "types": "dist/index.d.ts",
   "bin": {
     "sq": "./dist/cli.js"
   },
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.js"

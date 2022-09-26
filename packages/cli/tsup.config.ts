@@ -1,7 +1,7 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  name: "qwer",
+  name: "dune",
   target: "node16",
   sourcemap: true,
   tsconfig: "./tsconfig.json",

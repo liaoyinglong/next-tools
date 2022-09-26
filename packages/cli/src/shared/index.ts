@@ -1,7 +1,7 @@
 import cac from "cac";
 import debug from "debug";
 
-export const cli = cac("qwer");
+export const cli = cac("dune");
 
 export const createLogger = (name: string) => {
   const info = debug(`${cli.name}:${name}`);

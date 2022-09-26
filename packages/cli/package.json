@@ -12,7 +12,7 @@
   "type": "module",
   "types": "dist/index.d.ts",
   "bin": {
-    "sq": "./dist/cli.js"
+    "dune": "./dist/cli.js"
   },
   "files": [
     "dist"

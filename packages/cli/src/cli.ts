@@ -7,7 +7,10 @@ cli.command("").action(() => {
   cli.outputHelp();
 });
 
-cli.command("extract", "提取代码中的文案").action(extract);
+cli
+  .command("extract", "提取代码中的文案")
+  .example("dune extract")
+  .action(extract);
 
 cli.version(version);
 cli.help();

@@ -20,7 +20,6 @@
   },
   "dependencies": {
     "@lingui/core": "^3",
-    "@lingui/react": "^3",
-    "make-plural": "^7"
+    "@lingui/react": "^3"
   }
 }

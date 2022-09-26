@@ -5,8 +5,8 @@
     "dev": "pnpm run build-fast --watch",
     "build": "tsup src/cli.ts src/index.ts --clean --splitting",
     "prepublishOnly": "pnpm run build",
-    "test": "pnpm run build && npm run test-only",
-    "test-only": "vitest run",
+    "test:u": "vitest -u",
+    "test": "vitest run",
     "build-fast": "pnpm run build --no-dts"
   },
   "type": "module",

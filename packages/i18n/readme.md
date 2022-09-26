@@ -1,5 +1,12 @@
 ## @dune/i18n
 
+基于 [lingui](https://lingui.js.org/ref/macro.html) 包装的 i18n 工具。
+
+由于`next.js 12`默认使用 `swc`编译，所以`lingui`的`babel`插件有些过时，这里提供了一系列基于`swc`的工具来对齐`lingui`部分功能。
+
+- 支持`lingui`的`macro`插件中的`t`/`Trans`
+- 支持提取翻译
+
 ### features
 
 **需要启用`@dune/swc-plugin`来编译**

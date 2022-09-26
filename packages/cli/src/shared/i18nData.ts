@@ -10,7 +10,7 @@ export class I18nData {
   constructor(
     public locale: string,
     public extractedData: ExtractedMap,
-    public filePath: string = `./i18n/${locale}.i18n.json`
+    public filePath: string
   ) {}
 
   private async loadData() {

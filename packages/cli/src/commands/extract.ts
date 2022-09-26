@@ -1,6 +1,7 @@
 import fs from "fs-extra";
 import { globby } from "globby";
 import pMap from "p-map";
+import path from "path";
 import { createLogger } from "../shared";
 import { getConfig } from "../shared/config";
 import { I18nData, ExtractedMap } from "../shared/i18nData";
@@ -18,7 +19,7 @@ export async function extract() {
     }
   );
   log.info("预计共解析 %s 个文件", pc.green(files.length));
-  const { extract } = await import("@scope/wasm");
+  const { extract } = await import("@dune/wasm");
   const extractedI18nDataMap: ExtractedMap = new Map();
   await pMap(
     files,
@@ -45,8 +46,13 @@ export async function extract() {
     extractedI18nDataMap
   );
 
-  const statistics = await pMap(["zh", "en", "cs"], async (locale, index) => {
-    const i18nData = new I18nData(locale, extractedI18nDataMap);
+  const statistics = await pMap(config.locales, async (locale, index) => {
+    const filePath = path.join(
+      config.cwd,
+      config.i18nDir,
+      config.i18nFileName.replace("{locale}", locale)
+    );
+    const i18nData = new I18nData(locale, extractedI18nDataMap, filePath);
     await i18nData.saveToDisk(index === 0);
     return await i18nData.statistic();
   });

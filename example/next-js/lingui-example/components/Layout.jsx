@@ -4,9 +4,6 @@ import classnames from "classnames";
 import { activate } from "lingui-example/i18n";
 import styles from "./Layout.module.css";
 
-
-
-
 export function Layout({ title = null, className = "", children }) {
   // Default props can't be translated at module level because active locale
   // isn't known when module is imported, but rather when component
@@ -41,7 +38,7 @@ export function Layout({ title = null, className = "", children }) {
           English
         </button>
         {" | "}
-        <button className={styles.link} onClick={() => activate("cs")}>
+        <button className={styles.link} onClick={() => activate("in")}>
           Česky
         </button>
       </footer>

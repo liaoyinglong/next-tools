@@ -1,5 +1,5 @@
 {
-  "name": "@scope/wasm",
+  "name": "@dune/wasm",
   "version": "1.0.0",
   "main": "./pkg/s_wasm.js",
   "types": "./pkg/s_wasm.d.ts",

@@ -1,4 +1,4 @@
-const pluginPath = require.resolve("@scope/swc-plugin");
+const pluginPath = require.resolve("@dune/swc-plugin");
 console.log("use pluginPath", pluginPath);
 
 /** @type {import('next').NextConfig} */
@@ -23,11 +23,11 @@ const nextConfig = {
         imports: [
           "react",
           {
-            "@scope/i18n": ["t", "Trans"],
+            "@dune/i18n": ["t", "Trans"],
           },
         ],
       }),
-      require("@scope/unplugin").i18nResourcePlugin.webpack()
+      require("@dune/unplugin").i18nResourcePlugin.webpack()
     );
     return config;
   },

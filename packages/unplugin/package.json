@@ -1,5 +1,5 @@
 {
-  "name": "@scope/unplugin",
+  "name": "@dune/unplugin",
   "version": "1.0.0",
   "scripts": {
     "dev": "pnpm run build-fast --watch",

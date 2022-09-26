@@ -1,1 +1,1 @@
-## @scope/i18n
+## @dune/i18n

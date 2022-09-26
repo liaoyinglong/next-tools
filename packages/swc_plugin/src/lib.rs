@@ -32,7 +32,7 @@ pub fn process_transform(program: Program, metadata: TransformPluginProgramMetad
     // println!("file_name: {}", file_name);
 
     // FIXME: only transform expected files now, should make it configurable
-    let should_transform = file_name.contains("@scope/") || !file_name.contains("node_modules");
+    let should_transform = file_name.contains("@dune/") || !file_name.contains("node_modules");
     if should_transform {
         // println!("swc plugin: should_transform, {}", file_name);
         program.fold_with(&mut get_folder())

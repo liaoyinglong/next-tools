@@ -1,5 +1,5 @@
 {
-  "name": "@scope/cli",
+  "name": "@dune/cli",
   "version": "1.0.0",
   "scripts": {
     "dev": "pnpm run build-fast --watch",
@@ -26,7 +26,7 @@
     }
   },
   "dependencies": {
-    "@scope/wasm": "workspace:*",
+    "@dune/wasm": "workspace:*",
     "cac": "^6.7.14",
     "cli-table3": "^0.6.3",
     "debug": "^4.3.4",
@@ -34,7 +34,8 @@
     "globby": "^13.1.2",
     "p-map": "^5.5.0",
     "prompts": "^2.4.2",
-    "picocolors": "^1.0.0"
+    "picocolors": "^1.0.0",
+    "joycon": "^3.1.1"
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",

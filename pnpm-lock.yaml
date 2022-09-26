@@ -69,6 +69,7 @@ importers:
       debug: ^4.3.4
       fs-extra: ^10.1.0
       globby: ^13.1.2
+      joycon: ^3.1.1
       p-map: ^5.5.0
       picocolors: ^1.0.0
       prompts: ^2.4.2
@@ -80,6 +81,7 @@ importers:
       debug: 4.3.4
       fs-extra: 10.1.0
       globby: 13.1.2
+      joycon: 3.1.1
       p-map: 5.5.0
       picocolors: 1.0.0
       prompts: 2.4.2
@@ -2070,7 +2072,6 @@ packages:
   /joycon/3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
     engines: {node: '>=10'}
-    dev: true
 
   /js-sdsl/4.1.4:
     resolution: {integrity: sha512-Y2/yD55y5jteOAmY50JbUZYwk3CP3wnLPEZnlR1w9oKhITrBEtAxwuWKebFf8hMrPMgbYwFoWK/lH2sBkErELw==}

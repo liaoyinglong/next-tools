@@ -10,8 +10,8 @@
     "extract": "sq extract"
   },
   "dependencies": {
-    "@scope/i18n": "workspace:*",
-    "@scope/swc-plugin": "workspace:*",
+    "@dune/i18n": "workspace:*",
+    "@dune/swc-plugin": "workspace:*",
     "classnames": "^2.3.2",
     "next": "12.3.1",
     "next-superjson-plugin": "^0.4.2",
@@ -20,7 +20,7 @@
     "superjson": "^1.10.0"
   },
   "devDependencies": {
-    "@scope/cli": "workspace:*",
+    "@dune/cli": "workspace:*",
     "@types/node": "18.7.18",
     "@types/react": "^18",
     "@types/react-dom": "18.0.6",
@@ -28,6 +28,6 @@
     "eslint-config-next": "12.3.0",
     "typescript": "4.8.3",
     "unplugin-auto-import": "^0.11.2",
-    "@scope/unplugin": "workspace:*"
+    "@dune/unplugin": "workspace:*"
   }
 }

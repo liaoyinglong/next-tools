@@ -1,4 +1,4 @@
-import { i18n } from "@dune/i18n";
+import { i18n } from "@dune2/i18n";
 /**
  * Load messages for requested locale and activate it.
  * This function isn't part of the LinguiJS library because there are

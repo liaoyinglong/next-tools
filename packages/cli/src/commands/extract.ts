@@ -10,7 +10,7 @@ const log = createLogger("extract");
 
 export async function extract() {
   const config = await getConfig();
-  const { extract } = await import("@dune/wasm");
+  const { extract } = await import("@dune2/wasm");
 
   // 这是使得任务串行，方便看日志
   for (const configItem of config) {

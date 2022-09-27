@@ -7,7 +7,7 @@
 ```js
 const name = "dune";
 
-// 启用 `@dune/swc-plugin` 可以使用以下方式
+// 启用 `@dune2/swc-plugin` 可以使用以下方式
 t`hello ${name}`; // hello dune
 // 编译成，也可以直接写成下面的代码
 t("hello {name}", { name }); // hello dune

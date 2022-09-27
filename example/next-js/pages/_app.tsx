@@ -1,4 +1,4 @@
-import { I18nProvider, i18n } from "@dune/i18n";
+import { I18nProvider, i18n } from "@dune2/i18n";
 
 import { activate } from "lingui-example/i18n";
 import "lingui-example/styles.css";

@@ -22,10 +22,10 @@ importers:
 
   example/next-js:
     specifiers:
-      '@dune/cli': workspace:*
-      '@dune/i18n': workspace:*
-      '@dune/swc-plugin': workspace:*
-      '@dune/unplugin': workspace:*
+      '@dune2/cli': workspace:*
+      '@dune2/i18n': workspace:*
+      '@dune2/swc-plugin': workspace:*
+      '@dune2/unplugin': workspace:*
       '@types/node': 18.7.18
       '@types/react': ^18
       '@types/react-dom': 18.0.6
@@ -40,8 +40,8 @@ importers:
       typescript: 4.8.3
       unplugin-auto-import: ^0.11.2
     dependencies:
-      '@dune/i18n': link:../../packages/i18n
-      '@dune/swc-plugin': link:../../packages/swc_plugin
+      '@dune2/i18n': link:../../packages/i18n
+      '@dune2/swc-plugin': link:../../packages/swc_plugin
       classnames: 2.3.2
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
       next-superjson-plugin: 0.4.2_qc67pa6ck677udaroeig4oejby
@@ -49,8 +49,8 @@ importers:
       react-dom: 18.2.0_react@18.2.0
       superjson: 1.10.0
     devDependencies:
-      '@dune/cli': link:../../packages/cli
-      '@dune/unplugin': link:../../packages/unplugin
+      '@dune2/cli': link:../../packages/cli
+      '@dune2/unplugin': link:../../packages/unplugin
       '@types/node': 18.7.18
       '@types/react': 18.0.20
       '@types/react-dom': 18.0.6
@@ -61,7 +61,7 @@ importers:
 
   packages/cli:
     specifiers:
-      '@dune/wasm': workspace:*
+      '@dune2/wasm': workspace:*
       '@types/debug': ^4.1.7
       '@types/prompts': ^2.4.0
       cac: ^6.7.14
@@ -81,7 +81,7 @@ importers:
       prompts: ^2.4.2
       tsup: ^6.2.3
     dependencies:
-      '@dune/wasm': link:../wasm
+      '@dune2/wasm': link:../wasm
       cac: 6.7.14
       cli-table3: 0.6.3
       connect: 3.7.0

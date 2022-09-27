@@ -1,4 +1,5 @@
 import JoyCon from "joycon";
+import { resolveSheetId } from "./resolveSheetId";
 
 const joycon = new JoyCon();
 
@@ -9,10 +10,20 @@ export interface Config {
   i18nDir?: string;
   // 语言文件名，默认为 "{locale}.i18n.json"，其中 {locale} 会被替换为 locales 中的语言
   i18nFileName?: string;
+
+  /**
+   * 可以是 id 或者 url，如果是 url 则会自动解析出 id
+   * id:  1C9-Dol3oO20W9_FhiVlxNsDhOaaejJIgAZYRkonGmfk
+   * url: https://docs.google.com/spreadsheets/d/1C9-Dol3oO20W9_FhiVlxNsDhOaaejJIgAZYRkonGmfk/edit#gid=1740568548
+   */
+  sheetId?: string;
+  // google sheets 工作表名称
+  sheetRange?: string;
+}
+export interface InternalConfig extends Config {
   // 默认是 命令运行的目录，一般是项目根目录
   cwd?: string;
 }
-export interface InternalConfig extends Config {}
 
 export function defineConfig(config: Config | Config[]) {
   return config;
@@ -35,7 +46,11 @@ export async function getConfig(): Promise<InternalConfig[]> {
       ? res.data
       : [res.data];
     return config.map((item) => {
-      return Object.assign({}, defaultConfig, item);
+      item = Object.assign({}, defaultConfig, item);
+
+      item.sheetId = resolveSheetId(item.sheetId);
+
+      return item;
     });
   }
 

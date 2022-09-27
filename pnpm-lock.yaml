@@ -76,6 +76,7 @@ importers:
       joycon: ^3.1.1
       open: ^8.4.0
       p-map: ^5.5.0
+      path-to-regexp: ^6.2.1
       picocolors: ^1.0.0
       prompts: ^2.4.2
       tsup: ^6.2.3
@@ -91,6 +92,7 @@ importers:
       joycon: 3.1.1
       open: 8.4.0
       p-map: 5.5.0
+      path-to-regexp: 6.2.1
       picocolors: 1.0.0
       prompts: 2.4.2
     devDependencies:
@@ -2727,6 +2729,10 @@ packages:
   /path-parse/1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
     dev: true
+
+  /path-to-regexp/6.2.1:
+    resolution: {integrity: sha512-JLyh7xT1kizaEvcaXOQwOc2/Yhw6KZOvPf1S8401UyLk86CU79LN3vl7ztXGm/pZ+YjoyAJ4rxmHwbkBXJX+yw==}
+    dev: false
 
   /path-type/4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}

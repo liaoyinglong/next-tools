@@ -1,5 +1,4 @@
-const pluginPath = require.resolve("@dune2/swc-plugin");
-console.log("use pluginPath", pluginPath);
+const { withDunePresets } = require("@dune2/next-plugin");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -16,31 +15,12 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
-  webpack: (config, { isServer }) => {
-    config.optimization.minimizer = [];
-    config.plugins.unshift(
-      require("unplugin-auto-import/webpack")({
-        imports: [
-          "react",
-          {
-            "@dune2/i18n": ["t", "Trans"],
-          },
-        ],
-      }),
-      require("@dune2/unplugin").i18nResourcePlugin.webpack()
-    );
-    return config;
-  },
   experimental: {
-    externalDir: !!1,
     /**
      * @see https://nextjs.org/docs/advanced-features/compiler#swc-plugins-experimental
      */
-    swcPlugins: [
-      ["next-superjson-plugin", {}],
-      [pluginPath, {}],
-    ],
+    swcPlugins: [["next-superjson-plugin", {}]],
   },
 };
 
-module.exports = nextConfig;
+module.exports = withDunePresets()(nextConfig);

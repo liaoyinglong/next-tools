@@ -22,7 +22,8 @@
     },
     "./cli": {
       "import": "./dist/cli.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "dependencies": {
     "@dune2/wasm": "workspace:*",

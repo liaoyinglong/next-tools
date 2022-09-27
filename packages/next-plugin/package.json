@@ -1,0 +1,29 @@
+{
+  "name": "@dune2/next-plugin",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "pnpm run build --watch",
+    "build": "tsup --clean --splitting"
+  },
+  "dependencies": {
+    "@dune2/swc-plugin": "workspace:*",
+    "@dune2/unplugin": "workspace:*",
+    "unplugin-auto-import": "^0.11.2",
+    "next-transpile-modules": "^9.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^6.2.3"
+  },
+  "files": [
+    "dist"
+  ],
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  }
+}

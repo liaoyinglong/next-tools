@@ -15,7 +15,11 @@ export class I18nData {
 
   private async loadData() {
     try {
-      this.data = await fs.readJSON(this.filePath);
+      if (await fs.pathExists(this.filePath)) {
+        this.data = await fs.readJSON(this.filePath);
+      } else {
+        log.info("File '%s' does not exist", pc.dim(this.filePath));
+      }
     } catch (e) {
       log.error(
         "Error loading i18n data for locale '%s' from file '%s'",

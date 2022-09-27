@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "extract": "sq extract"
+    "extract": "dune extract",
+    "dune": "dune"
   },
   "dependencies": {
     "@dune/i18n": "workspace:*",

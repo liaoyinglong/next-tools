@@ -2,12 +2,11 @@
   "name": "@dune/cli",
   "version": "1.0.0",
   "scripts": {
-    "dev": "pnpm run build-fast --watch",
+    "dev": "pnpm run build --watch",
     "build": "tsup src/cli.ts src/index.ts --clean --splitting",
     "prepublishOnly": "pnpm run build",
     "test:u": "vitest -u",
-    "test": "vitest run",
-    "build-fast": "pnpm run build --no-dts"
+    "test": "vitest run"
   },
   "type": "module",
   "types": "dist/index.d.ts",

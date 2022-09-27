@@ -1,9 +1,17 @@
 #!/usr/bin/env node
 import { extract } from "./commands/extract";
+import { generate } from "./commands/generate";
 import { initConfig } from "./commands/initConfig";
 import { cli } from "./shared";
 import { version } from "../package.json";
 import { interactive } from "./commands/interactive";
+
+cli
+  .command("generate", "生成翻译文件")
+  .alias("gen")
+  .example("dune generate")
+  .example("dune gen")
+  .action(generate);
 
 cli
   .command("extract", "提取代码中的文案")

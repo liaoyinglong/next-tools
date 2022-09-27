@@ -30,7 +30,7 @@ class GoogleSheet {
     await this.initPromise;
   }
 
-  get = async (options: sheets_v4.Params$Resource$Spreadsheets$Get) => {
+  get = async (options: sheets_v4.Params$Resource$Spreadsheets$Values$Get) => {
     await this.init();
     return this.sheets.spreadsheets.values.get(options);
   };

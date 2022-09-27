@@ -3,6 +3,8 @@ import { createLogger } from "./index";
 import fs from "fs-extra";
 import pc from "picocolors";
 import path from "path";
+import Table from "cli-table3";
+
 const log = createLogger("i18nData");
 export type ExtractedMap = Map<string, { id: string; defaults: string }>;
 
@@ -47,6 +49,11 @@ export class I18nData {
         ? value.defaults || key
         : this.data[key] || "";
     });
+  }
+
+  async updateFromSheetData(sheetData: Record<string, string>) {
+    await this.loadData();
+    this.data = { ...this.data, ...sheetData };
   }
 
   private sortData() {
@@ -96,5 +103,29 @@ export class I18nData {
       total,
       missing,
     };
+  }
+
+  static printStatistic(
+    label: string,
+    statistics: { locale: string; total: number; missing: number }[]
+  ) {
+    const table = new Table({
+      head: ["Language", "Total count", "Missing"],
+      colAligns: ["left", "center", "center"],
+      style: {
+        head: ["green"],
+        border: [],
+        compact: true,
+      },
+    });
+    statistics.forEach((statistic) => {
+      table.push([
+        statistic.locale,
+        statistic.total,
+        statistic.missing > 0 ? pc.red(statistic.missing) : statistic.missing,
+      ]);
+    });
+    console.log(pc.bold(label));
+    console.log(table.toString());
   }
 }

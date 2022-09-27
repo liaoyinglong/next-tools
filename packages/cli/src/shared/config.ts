@@ -18,8 +18,10 @@ export function defineConfig(config: Config) {
   return config;
 }
 
+export const configName = "dune.config.js";
+
 export async function getConfig(): Promise<InternalConfig> {
-  const res = await joycon.load(["dune.config.js"]);
+  const res = await joycon.load([configName]);
   const config = (res.data ?? {}) as InternalConfig;
   config.cwd ??= process.cwd();
   config.locales ??= ["zh", "en", "in"];

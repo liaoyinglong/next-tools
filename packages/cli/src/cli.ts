@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { extract } from "./commands/extract";
+import { initConfig } from "./commands/initConfig";
 import { cli } from "./shared";
 import { version } from "../package.json";
 import { interactive } from "./commands/interactive";
@@ -8,6 +9,8 @@ cli
   .command("extract", "提取代码中的文案")
   .example("dune extract")
   .action(extract);
+
+cli.command("init", "初始化配置文件").example("dune init").action(initConfig);
 
 cli
   .command("interactive", "交互式操作")

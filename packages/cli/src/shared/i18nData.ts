@@ -1,17 +1,23 @@
+import { InternalConfig } from "./config";
 import { createLogger } from "./index";
 import fs from "fs-extra";
 import pc from "picocolors";
+import path from "path";
 const log = createLogger("i18nData");
 export type ExtractedMap = Map<string, { id: string; defaults: string }>;
 
 export class I18nData {
   private data: Record<string, string> = {};
 
-  constructor(
-    public locale: string,
-    public extractedData: ExtractedMap,
-    public filePath: string
-  ) {}
+  filePath: string;
+
+  constructor(public locale: string, public config: InternalConfig) {
+    this.filePath = path.join(
+      config.cwd,
+      config.i18nDir,
+      config.i18nFileName.replace("{locale}", locale)
+    );
+  }
 
   private async loadData() {
     try {
@@ -31,13 +37,19 @@ export class I18nData {
     return this.data;
   }
 
-  private async updateData(shouldUseDefault = false) {
+  async updateByExtractedData(
+    extractedData: ExtractedMap,
+    shouldUseDefault = false
+  ) {
     await this.loadData();
-    this.extractedData.forEach((value, key) => {
+    extractedData.forEach((value, key) => {
       this.data[key] = shouldUseDefault
         ? value.defaults || key
         : this.data[key] || "";
     });
+  }
+
+  private sortData() {
     //region 语言key按一定规则排序
     const keys = Object.keys(this.data).sort((a, b) => {
       return a.localeCompare(b);
@@ -50,8 +62,8 @@ export class I18nData {
     //endregion
   }
 
-  async saveToDisk(shouldUseDefault = false) {
-    await this.updateData(shouldUseDefault);
+  async saveToDisk() {
+    this.sortData();
     log.info(
       "Saving i18n data for locale '%s' to file '%s'",
       pc.green(this.locale),

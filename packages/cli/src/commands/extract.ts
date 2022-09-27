@@ -1,7 +1,6 @@
 import fs from "fs-extra";
 import { globby } from "globby";
 import pMap from "p-map";
-import path from "path";
 import { createLogger } from "../shared";
 import { getConfig } from "../shared/config";
 import { I18nData, ExtractedMap } from "../shared/i18nData";
@@ -15,11 +14,11 @@ export async function extract() {
   const { extract } = await import("@dune/wasm");
 
   // 这是使得任务串行，方便看日志
-  for (const item of config) {
+  for (const configItem of config) {
     const files = await globby(
       [`**/**.{js,jsx,ts,tsx}`, "!**/node_modules/**", "!**.d.ts"],
       {
-        cwd: item.cwd,
+        cwd: configItem.cwd,
       }
     );
     log.info("预计共解析 %s 个文件", pc.green(files.length));
@@ -49,14 +48,10 @@ export async function extract() {
       extractedI18nDataMap
     );
 
-    const statistics = await pMap(item.locales, async (locale, index) => {
-      const filePath = path.join(
-        item.cwd,
-        item.i18nDir,
-        item.i18nFileName.replace("{locale}", locale)
-      );
-      const i18nData = new I18nData(locale, extractedI18nDataMap, filePath);
-      await i18nData.saveToDisk(index === 0);
+    const statistics = await pMap(configItem.locales, async (locale, index) => {
+      const i18nData = new I18nData(locale, configItem);
+      await i18nData.updateByExtractedData(extractedI18nDataMap, index === 0);
+      await i18nData.saveToDisk();
       return await i18nData.statistic();
     });
     //region 打印统计信息

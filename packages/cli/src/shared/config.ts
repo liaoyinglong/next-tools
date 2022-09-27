@@ -14,18 +14,30 @@ export interface Config {
 }
 export interface InternalConfig extends Config {}
 
-export function defineConfig(config: Config) {
+export function defineConfig(config: Config | Config[]) {
   return config;
 }
 
 export const configName = "dune.config.js";
 
-export async function getConfig(): Promise<InternalConfig> {
+export async function getConfig(): Promise<InternalConfig[]> {
   const res = await joycon.load([configName]);
-  const config = (res.data ?? {}) as InternalConfig;
-  config.cwd ??= process.cwd();
-  config.locales ??= ["zh", "en", "in"];
-  config.i18nDir ??= "./i18n";
-  config.i18nFileName ??= "{locale}.i18n.json";
-  return config;
+
+  const defaultConfig = {
+    locales: ["zh", "en", "in"],
+    i18nDir: "./i18n",
+    i18nFileName: "{locale}.i18n.json",
+    cwd: process.cwd(),
+  };
+
+  if (res.data) {
+    const config: InternalConfig[] = Array.isArray(res.data)
+      ? res.data
+      : [res.data];
+    return config.map((item) => {
+      return Object.assign({}, defaultConfig, item);
+    });
+  }
+
+  return [defaultConfig];
 }

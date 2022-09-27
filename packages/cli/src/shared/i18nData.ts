@@ -1,15 +1,17 @@
+import pMap from "p-map";
 import { InternalConfig } from "./config";
 import { createLogger } from "./index";
 import fs from "fs-extra";
 import pc from "picocolors";
 import path from "path";
 import Table from "cli-table3";
+import { SheetData } from "./resolveSheetData";
 
 const log = createLogger("i18nData");
 export type ExtractedMap = Map<string, { id: string; defaults: string }>;
 
 export class I18nData {
-  private data: Record<string, string> = {};
+  data: Record<string, string> = {};
 
   filePath: string;
 
@@ -21,7 +23,7 @@ export class I18nData {
     );
   }
 
-  private async loadData() {
+  async loadData() {
     try {
       if (await fs.pathExists(this.filePath)) {
         this.data = await fs.readJSON(this.filePath);
@@ -58,9 +60,7 @@ export class I18nData {
 
   private sortData() {
     //region 语言key按一定规则排序
-    const keys = Object.keys(this.data).sort((a, b) => {
-      return a.localeCompare(b);
-    });
+    const keys = Object.keys(this.data).sort(this.config.keySorter);
     const newData = {};
     keys.forEach((key) => {
       newData[key] = this.data[key];
@@ -103,6 +103,22 @@ export class I18nData {
       total,
       missing,
     };
+  }
+
+  async trySaveToGoogle(sheetData: SheetData) {
+    await pMap(Object.entries(this.data), async ([key, value]) => {
+      if (sheetData.hasI18nItem(this.locale, key)) {
+        // 更新已有的
+        await sheetData.getI18nItem(this.locale, key).tryUpdate(value);
+      } else {
+        log.error(
+          "%s range %s not found key %s",
+          pc.bold(this.config.sheetRange),
+          pc.bold(this.locale),
+          pc.bold(key)
+        );
+      }
+    });
   }
 
   static printStatistic(

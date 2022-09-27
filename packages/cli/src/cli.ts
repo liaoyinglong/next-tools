@@ -2,6 +2,7 @@
 import { extract } from "./commands/extract";
 import { generate } from "./commands/generate";
 import { initConfig } from "./commands/initConfig";
+import { upload } from "./commands/upload";
 import { cli } from "./shared";
 import { version } from "../package.json";
 import { interactive } from "./commands/interactive";
@@ -12,6 +13,8 @@ cli
   .example("dune generate")
   .example("dune gen")
   .action(generate);
+
+cli.command("upload", "上传翻译文件").example("dune upload").action(upload);
 
 cli
   .command("extract", "提取代码中的文案")

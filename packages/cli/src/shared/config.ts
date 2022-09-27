@@ -39,6 +39,8 @@ export interface InternalConfig extends Config {
   cwd?: string;
   // 支持的语言列表，从 position 中解析出来
   locales?: string[];
+
+  keySorter?: (a: string, b: string) => number;
 }
 
 export function defineConfig(config: Config | Config[]) {
@@ -74,6 +76,10 @@ export async function getConfig(): Promise<InternalConfig[]> {
       );
 
       item.sheetId = resolveSheetId(item.sheetId);
+
+      item.keySorter = (a, b) => {
+        return a.localeCompare(b);
+      };
 
       return item;
     });

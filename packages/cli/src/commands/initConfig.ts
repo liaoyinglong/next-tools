@@ -7,9 +7,14 @@ const log = createLogger("initConfig");
 
 const tpl = `
 /**
- * @type {import('@dune/cli').Config}
+ * @template {import('@dune/cli').Config} T
+ * @param {T | T[]} config - A generic parameter that flows through to the return type
+ * @constraint {{import('@dune/cli').Config}}
  */
-module.exports = {}
+function defineConfig(config) {
+  return config;
+}
+module.exports = defineConfig([]);
 `;
 
 export const initConfig = async () => {

@@ -1,6 +1,6 @@
 {
   "name": "@dune2/next-plugin",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "exports": {
     ".": {
       "import": "./dist/index.mjs",

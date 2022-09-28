@@ -1,30 +1,33 @@
 {
   "name": "@dune2/next-plugin",
   "version": "0.0.1",
-  "scripts": {
-    "dev": "pnpm run build --watch",
-    "build": "tsup --clean --splitting"
-  },
-  "dependencies": {
-    "@dune2/swc-plugin": "workspace:*",
-    "@dune2/unplugin": "workspace:*",
-    "unplugin-auto-import": "^0.11.2",
-    "next-transpile-modules": "^9.0.0"
-  },
-  "devDependencies": {
-    "tsup": "^6.2.3",
-    "next": "*"
-  },
-  "files": [
-    "dist"
-  ],
-  "types": "dist/index.d.ts",
-  "main": "dist/index.js",
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     },
     "./package.json": "./package.json"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup --clean --splitting",
+    "dev": "pnpm run build --watch"
+  },
+  "dependencies": {
+    "@dune2/swc-plugin": "workspace:*",
+    "@dune2/unplugin": "workspace:*",
+    "next-transpile-modules": "^9.0.0",
+    "unplugin-auto-import": "^0.11.2"
+  },
+  "devDependencies": {
+    "next": "*",
+    "tsup": "^6.2.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

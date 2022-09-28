@@ -1,20 +1,7 @@
 {
   "name": "@dune2/cli",
   "version": "0.0.1",
-  "scripts": {
-    "dev": "pnpm run build --watch",
-    "build": "tsup src/cli.ts src/index.ts --clean --splitting",
-    "test:u": "vitest -u",
-    "test": "vitest run"
-  },
   "type": "module",
-  "types": "dist/index.d.ts",
-  "bin": {
-    "dune": "./dist/cli.js"
-  },
-  "files": [
-    "dist"
-  ],
   "exports": {
     ".": {
       "import": "./dist/index.js"
@@ -23,6 +10,19 @@
       "import": "./dist/cli.js"
     },
     "./package.json": "./package.json"
+  },
+  "types": "dist/index.d.ts",
+  "bin": {
+    "dune": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/cli.ts src/index.ts --clean --splitting",
+    "dev": "pnpm run build --watch",
+    "test": "vitest run",
+    "test:u": "vitest -u"
   },
   "dependencies": {
     "@dune2/wasm": "workspace:*",
@@ -46,5 +46,8 @@
     "gaxios": "*",
     "google-auth-library": "*",
     "tsup": "^6.2.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

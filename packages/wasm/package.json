@@ -11,5 +11,8 @@
     "test": "vitest run",
     "test:u": "vitest -u"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
 }

@@ -1,23 +1,26 @@
 {
   "name": "@dune2/unplugin",
   "version": "0.0.1",
-  "scripts": {
-    "dev": "pnpm run build-fast --watch",
-    "build": "tsup ./src/index.ts --clean --splitting",
-    "test:update": "vitest -u",
-    "test": "vitest run",
-    "build-fast": "pnpm run build --no-dts"
-  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
+  "scripts": {
+    "build": "tsup ./src/index.ts --clean --splitting",
+    "build-fast": "pnpm run build --no-dts",
+    "dev": "pnpm run build-fast --watch",
+    "test": "vitest run",
+    "test:update": "vitest -u"
+  },
   "dependencies": {
     "messageformat-parser": "^4.1.3",
     "unplugin": "^0.9.3"
   },
   "devDependencies": {
     "tsup": "^6.2.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

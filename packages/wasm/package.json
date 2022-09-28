@@ -7,7 +7,7 @@
     "pkg"
   ],
   "scripts": {
-    "build": "cargo test && rm -rf ./pkg && wasm-pack build --target nodejs && vitest run",
+    "build": "cargo test && rm -rf ./pkg && wasm-pack build --target nodejs",
     "test": "vitest run",
     "test:u": "vitest -u"
   },

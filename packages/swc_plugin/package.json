@@ -12,7 +12,6 @@
     "dist"
   ],
   "scripts": {
-    "prepublishOnly": "pnpm build",
     "build": "node ./scripts/build.mjs",
     "test": "vitest run",
     "test:u": "vitest -u"

@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "turbo run build --filter=./packages/* --filter=!./packages/i18n",
+    "build": "turbo run build --filter=./packages/*",
+    "test": "turbo run test --filter=./packages/*",
     "example:next-js": "turbo run build --filter=next-js"
   },
   "keywords": [],

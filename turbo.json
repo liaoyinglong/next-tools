@@ -12,6 +12,10 @@
       "outputs": [".next/**", "pkg/**", "dist/**"],
       "inputs": ["src/**"]
     },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "test/**"]
+    },
     "next-js#build": {
       "dependsOn": ["^build"],
       "outputs": [".next/**"],

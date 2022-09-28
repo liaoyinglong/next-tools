@@ -4,7 +4,6 @@
   "scripts": {
     "dev": "pnpm run build --watch",
     "build": "tsup src/cli.ts src/index.ts --clean --splitting",
-    "prepublishOnly": "pnpm run build",
     "test:u": "vitest -u",
     "test": "vitest run"
   },

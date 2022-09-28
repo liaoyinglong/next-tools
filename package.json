@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "build": "turbo run build --filter=./packages/*",
     "test": "turbo run test --filter=./packages/*",

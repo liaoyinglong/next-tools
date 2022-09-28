@@ -1,6 +1,6 @@
 {
   "name": "@dune2/unplugin",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "dev": "pnpm run build-fast --watch",
     "build": "tsup ./src/index.ts --clean --splitting",

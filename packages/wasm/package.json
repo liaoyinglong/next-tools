@@ -1,6 +1,6 @@
 {
   "name": "@dune2/wasm",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "main": "./pkg/s_wasm.js",
   "types": "./pkg/s_wasm.d.ts",
   "files": [

@@ -1,6 +1,6 @@
 {
   "name": "@dune2/cli",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "scripts": {
     "dev": "pnpm run build --watch",
     "build": "tsup src/cli.ts src/index.ts --clean --splitting",

@@ -1,5 +1,13 @@
 # next-js
 
+## 0.1.4
+
+### Patch Changes
+
+- 修复已知问题
+- Updated dependencies
+  - @dune2/tools@0.0.4
+
 ## 0.1.3
 
 ### Patch Changes

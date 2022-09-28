@@ -27,10 +27,8 @@ export const withDunePresets = (options: DunePresetsOptions = {}) => {
 
     const combinedConfig = withTM(
       ["@dune2/tools"].concat(options.transpileModules).filter(Boolean)
-    )(nextConfig);
-
-    return {
-      ...combinedConfig,
+    )({
+      ...nextConfig,
       webpack: (config, webpackFnOptions) => {
         config.plugins.unshift(
           autoImportPlugin({
@@ -48,7 +46,9 @@ export const withDunePresets = (options: DunePresetsOptions = {}) => {
         }
         return config;
       },
-    };
+    });
+
+    return combinedConfig;
   }
 };
 

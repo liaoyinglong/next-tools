@@ -7,7 +7,7 @@
     "pkg"
   ],
   "scripts": {
-    "build": "cargo test && rm -rf ./pkg && wasm-pack build --target nodejs",
+    "build": "node scripts/build.mjs",
     "test": "vitest run",
     "test:u": "vitest -u"
   },

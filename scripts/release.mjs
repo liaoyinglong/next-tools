@@ -18,7 +18,7 @@ await $`git add .`;
 await $`git commit -m "chore: update version"`;
 
 echo("发布到npm");
-await $`pnpm release`;
+await $`pnpm publish -r`;
 
 echo("推送到git");
 await $`git push`;

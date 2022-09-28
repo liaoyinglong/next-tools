@@ -12,7 +12,8 @@
     "next-transpile-modules": "^9.0.0"
   },
   "devDependencies": {
-    "tsup": "^6.2.3"
+    "tsup": "^6.2.3",
+    "next": "*"
   },
   "files": [
     "dist"

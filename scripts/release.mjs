@@ -1,5 +1,11 @@
 import { $, echo } from "zx";
 
+echo("打包");
+await $`pnpm build`;
+
+echo("运行发布前的测试");
+await $`pnpm test`;
+
 echo("选择需要发布的包");
 await $`pnpm changeset`;
 

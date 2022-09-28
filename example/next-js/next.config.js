@@ -50,7 +50,6 @@ const combinedConfig = withDunePresets()({
      */
     swcPlugins: [["next-superjson-plugin", {}]],
   },
-  i,
 });
 
 module.exports = combinedConfig;

@@ -3,7 +3,7 @@ name: Publish
 on:
   push:
     branches:
-      - release
+      - main
 env:
   RUST_LOG: debug
   CARGO_INCREMENTAL: 0

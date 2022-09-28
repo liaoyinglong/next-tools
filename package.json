@@ -6,7 +6,8 @@
   "scripts": {
     "build": "turbo run build --filter=./packages/*",
     "test": "turbo run test --filter=./packages/*",
-    "example:next-js": "turbo run build --filter=next-js"
+    "example:next-js": "turbo run build --filter=next-js",
+    "release": "pnpm publish -r"
   },
   "keywords": [],
   "author": "",

@@ -23,8 +23,8 @@ importers:
   example/next-js:
     specifiers:
       '@dune2/cli': workspace:*
-      '@dune2/i18n': workspace:*
       '@dune2/next-plugin': workspace:*
+      '@dune2/tools': workspace:*
       '@types/node': 18.7.18
       '@types/react': ^18
       '@types/react-dom': 18.0.6
@@ -38,7 +38,7 @@ importers:
       superjson: ^1.10.0
       typescript: 4.8.3
     dependencies:
-      '@dune2/i18n': link:../../packages/i18n
+      '@dune2/tools': link:../../packages/tools
       classnames: 2.3.2
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
       next-superjson-plugin: 0.4.2_qc67pa6ck677udaroeig4oejby
@@ -97,19 +97,6 @@ importers:
       gaxios: 5.0.2
       google-auth-library: 8.5.2
       tsup: 6.2.3
-
-  packages/i18n:
-    specifiers:
-      '@lingui/core': ^3
-      '@lingui/react': ^3
-      '@types/react': ^18
-      react: ^18
-    dependencies:
-      '@lingui/core': 3.14.0
-      '@lingui/react': 3.14.0_react@18.2.0
-    devDependencies:
-      '@types/react': 18.0.20
-      react: 18.2.0
 
   packages/next-plugin:
     specifiers:
@@ -2618,7 +2605,6 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
-    dev: false
 
   /node-domexception/1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}

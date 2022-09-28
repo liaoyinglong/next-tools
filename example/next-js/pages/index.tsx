@@ -4,7 +4,7 @@ import { Layout } from "lingui-example/components/Layout";
 import styles from "./index.module.css";
 
 export default function Home() {
-  const name = new Date().toLocaleTimeString();
+  const name = "12345678";
   return (
     <Layout className={styles.main}>
       <h1 className={styles.title}>

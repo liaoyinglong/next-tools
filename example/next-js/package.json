@@ -12,7 +12,7 @@
     "dune": "dune"
   },
   "dependencies": {
-    "@dune2/i18n": "workspace:*",
+    "@dune2/tools": "workspace:*",
     "classnames": "^2.3.2",
     "next": "12.3.1",
     "next-superjson-plugin": "^0.4.2",

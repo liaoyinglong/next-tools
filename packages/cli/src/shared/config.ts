@@ -4,7 +4,7 @@ import { resolveSheetId } from "./resolveSheetId";
 const joycon = new JoyCon();
 
 export interface Config {
-  // 语言文件存放目录，默认为项目根目录的 "./i18n"
+  // 语言文件存放目录，默认为项目根目录的 "./src/i18n"
   i18nDir?: string;
   // 语言文件名，默认为 "{locale}.i18n.json"，其中 {locale} 会被替换为 locales 中的语言
   i18nFileName?: string;
@@ -21,6 +21,7 @@ export interface Config {
   /**
    * 对应 语言、i18nKey 所在的列标识符 如(A,B,C...)
    * 传入时将忽略默认的配置
+   * @default  {key: "B", zh: "C", en: "D", in: "E",}
    */
   position?: {
     key: string;
@@ -53,15 +54,10 @@ export async function getConfig(): Promise<InternalConfig[]> {
   const res = await joycon.load([configName]);
 
   const defaultConfig = {
-    i18nDir: "./i18n",
+    i18nDir: "./src/i18n",
     i18nFileName: "{locale}.i18n.json",
     cwd: process.cwd(),
-    position: {
-      key: "B",
-      zh: "C",
-      en: "D",
-      in: "E",
-    },
+    position: { key: "B", zh: "C", en: "D", in: "E" },
     parseStartIndex: 2,
   };
 

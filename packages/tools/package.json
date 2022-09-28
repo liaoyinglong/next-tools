@@ -1,0 +1,26 @@
+{
+  "name": "@dune2/tools",
+  "version": "0.1.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "keywords": [
+    "i18n"
+  ],
+  "main": "./src/index.ts",
+  "scripts": {
+    "build": "echo 'not need build'"
+  },
+  "files": [
+    "src"
+  ],
+  "devDependencies": {
+    "@types/react": "^18",
+    "react": "^18"
+  },
+  "dependencies": {
+    "@lingui/core": "^3",
+    "@lingui/react": "^3",
+    "@lingui/detect-locale": "^3"
+  }
+}

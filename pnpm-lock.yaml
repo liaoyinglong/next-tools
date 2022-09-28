@@ -134,6 +134,21 @@ importers:
     devDependencies:
       '@swc/core': 1.3.1
 
+  packages/tools:
+    specifiers:
+      '@lingui/core': ^3
+      '@lingui/detect-locale': ^3
+      '@lingui/react': ^3
+      '@types/react': ^18
+      react: ^18
+    dependencies:
+      '@lingui/core': 3.14.0
+      '@lingui/detect-locale': 3.14.0
+      '@lingui/react': 3.14.0_react@18.2.0
+    devDependencies:
+      '@types/react': 18.0.20
+      react: 18.2.0
+
   packages/unplugin:
     specifiers:
       messageformat-parser: ^4.1.3
@@ -243,6 +258,11 @@ packages:
       '@babel/runtime': 7.19.0
       make-plural: 6.2.2
       messageformat-parser: 4.1.3
+    dev: false
+
+  /@lingui/detect-locale/3.14.0:
+    resolution: {integrity: sha512-IELWULt9I+iyVlxGES21cXoOwTcPSIisElAmr3/KJlqvJ9zXT3s4w4Jxw9j5oHJjdxBDRkifwpnVmGd57wrmzg==}
+    engines: {node: '>=10.0.0'}
     dev: false
 
   /@lingui/react/3.14.0_react@18.2.0:

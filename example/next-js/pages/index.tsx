@@ -46,7 +46,7 @@ export default function Home() {
     </Layout>
   );
 }
-export const getServerSideProps = () => {
+export const getStaticProps = () => {
   return {
     props: {
       date: new Date(),

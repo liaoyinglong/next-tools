@@ -1,5 +1,11 @@
 # @dune2/wasm
 
+## 0.0.5
+
+### Patch Changes
+
+- 修复部分已知问题
+
 ## 0.0.4
 
 ### Patch Changes

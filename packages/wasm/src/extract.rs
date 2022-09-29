@@ -53,16 +53,17 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_transform_sync() {
+    fn test_extract() {
         let source = r#"
         t`hello ${name}`;
         <Trans>hello {name2}</Trans>;
         <Trans id="msg_id1">hello {name2}</Trans>;
-        <Trans id={"msg_id2"}>hello {name2}</Trans>"#;
+        <Trans id={"msg_id2"}>hello {name2}</Trans>;
+        <Trans id={`msg_id3`}>hello {name2}</Trans>;"#;
 
         let res = extract(ExtractOptions::new(source.into())).expect("failed to extract");
 
-        assert_eq!(res.data.len(), 4);
+        assert_eq!(res.data.len(), 5);
         assert_eq!(res.data, {
             let mut map = AHashMap::default();
             map.insert(
@@ -91,6 +92,13 @@ mod tests {
                 Item {
                     messages: "hello {name2}".to_string(),
                     id: "msg_id2".into(),
+                },
+            );
+            map.insert(
+                "msg_id3".into(),
+                Item {
+                    messages: "hello {name2}".to_string(),
+                    id: "msg_id3".into(),
                 },
             );
             map

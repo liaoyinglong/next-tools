@@ -6,27 +6,33 @@ const str = [
   "<Trans>hello {name2}</Trans>",
   '<Trans id="msg_id1">hello {name2}</Trans>',
   '<Trans id={"msg_id2"}>hello {name2}</Trans>',
+  "<Trans id={`msg_id3`}>hello {name2}</Trans>",
 ].join(";");
 
 describe("extract", () => {
   it("extract correctly", async () => {
     const result = await extract(str);
+    expect(result.size).toMatchInlineSnapshot('5');
     expect(result).toMatchInlineSnapshot(`
       Map {
-        "msg_id2" => {
-          "id": "msg_id2",
-          "messages": "hello {name2}",
+        "hello {name2}" => {
+          "id": "hello {name2}",
+          "messages": "",
         },
         "msg_id1" => {
           "id": "msg_id1",
           "messages": "hello {name2}",
         },
+        "msg_id2" => {
+          "id": "msg_id2",
+          "messages": "hello {name2}",
+        },
+        "msg_id3" => {
+          "id": "msg_id3",
+          "messages": "hello {name2}",
+        },
         "hello {name}" => {
           "id": "hello {name}",
-          "messages": "",
-        },
-        "hello {name2}" => {
-          "id": "hello {name2}",
           "messages": "",
         },
       }

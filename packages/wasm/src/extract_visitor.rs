@@ -1,13 +1,13 @@
 use serde::{Deserialize, Serialize};
 use swc_core::common::collections::AHashMap;
 use swc_core::ecma::ast::{
-    CallExpr, ExprOrSpread, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName, JSXExpr,
-    JSXOpeningElement, Lit,
+    CallExpr, Expr, ExprOrSpread, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName,
+    JSXExpr, JSXOpeningElement, Lit,
 };
 use swc_core::ecma::visit::VisitMutWith;
 use swc_core::ecma::visit::{noop_visit_mut_type, VisitMut};
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Item {
     // 翻译文案的id
@@ -67,7 +67,17 @@ impl ExtractVisitor {
         match value? {
             JSXAttrValue::Lit(lit) => self.lit_to_string(lit),
             JSXAttrValue::JSXExprContainer(container) => match container.expr {
-                JSXExpr::Expr(expr) => expr.lit().and_then(|lit| self.lit_to_string(lit)),
+                JSXExpr::Expr(expr) => match *expr {
+                    Expr::Lit(lit) => self.lit_to_string(lit),
+                    Expr::Tpl(tpl) => {
+                        if tpl.exprs.is_empty() {
+                            return tpl.quasis.get(0).map(|item| item.raw.to_string());
+                        }
+                        // case <Trans id={`msg_${name}`} />, 这种不支持
+                        None
+                    }
+                    _ => None,
+                },
                 JSXExpr::JSXEmptyExpr(_) => None,
             },
             _ => None,

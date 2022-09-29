@@ -8,7 +8,7 @@ import Table from "cli-table3";
 import { SheetData } from "./resolveSheetData";
 
 const log = createLogger("i18nData");
-export type ExtractedMap = Map<string, { id: string; defaults: string }>;
+export type ExtractedMap = Map<string, { id: string; messages: string }>;
 
 export class I18nData {
   data: Record<string, string> = {};
@@ -48,7 +48,7 @@ export class I18nData {
     await this.loadData();
     extractedData.forEach((value, key) => {
       this.data[key] = shouldUseDefault
-        ? value.defaults || key
+        ? value.messages || key
         : this.data[key] || "";
     });
   }

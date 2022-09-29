@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use swc_core::common::collections::AHashMap;
 use swc_core::ecma::ast::{
-    CallExpr, ExprOrSpread, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName,
+    CallExpr, ExprOrSpread, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName, JSXExpr,
     JSXOpeningElement, Lit,
 };
 use swc_core::ecma::visit::VisitMutWith;
@@ -10,16 +10,18 @@ use swc_core::ecma::visit::{noop_visit_mut_type, VisitMut};
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Item {
+    // 翻译文案的id
     #[serde(default, skip_deserializing)]
     pub id: String,
+    // 默认的翻译文案
     #[serde(default)]
-    pub defaults: String,
+    pub messages: String,
 }
 
 #[derive(Debug)]
 pub struct Config {
     pub id: String,
-    pub defaults: String,
+    pub messages: String,
     pub trans_component: String,
     pub t_fn: String,
 }
@@ -30,7 +32,7 @@ impl Default for Config {
             trans_component: "Trans".to_string(),
             t_fn: "t".to_string(),
             id: "id".to_string(),
-            defaults: "defaults".to_string(),
+            messages: "messages".to_string(),
         }
     }
 }
@@ -64,6 +66,10 @@ impl ExtractVisitor {
     fn jsx_attr_value_to_string(&mut self, value: Option<JSXAttrValue>) -> Option<String> {
         match value? {
             JSXAttrValue::Lit(lit) => self.lit_to_string(lit),
+            JSXAttrValue::JSXExprContainer(container) => match container.expr {
+                JSXExpr::Expr(expr) => expr.lit().and_then(|lit| self.lit_to_string(lit)),
+                JSXExpr::JSXEmptyExpr(_) => None,
+            },
             _ => None,
         }
     }
@@ -90,12 +96,18 @@ impl VisitMut for ExtractVisitor {
             let id = self.expr_or_spread_to_string(id_arg)?;
             //endregion
             //region 获取msg defaults
-            let defaults_arg = arg.get(2);
-            let defaults = self
-                .expr_or_spread_to_string(defaults_arg)
+            let default_msg_arg = arg.get(2);
+            let default_msg = self
+                .expr_or_spread_to_string(default_msg_arg)
                 .unwrap_or("".into());
             //endregion
-            self.data.insert(id.clone(), Item { id, defaults });
+            self.data.insert(
+                id.clone(),
+                Item {
+                    id,
+                    messages: default_msg,
+                },
+            );
             None
         };
         work();
@@ -128,7 +140,7 @@ impl VisitMut for ExtractVisitor {
 
                             if attr_name == self.config.id {
                                 id = value?;
-                            } else if attr_name == self.config.defaults {
+                            } else if attr_name == self.config.messages {
                                 defaults = value.unwrap_or("".into());
                             }
                         }
@@ -139,7 +151,13 @@ impl VisitMut for ExtractVisitor {
                 work();
             });
             if !id.is_empty() {
-                self.data.insert(id.clone(), Item { id, defaults });
+                self.data.insert(
+                    id.clone(),
+                    Item {
+                        id,
+                        messages: defaults,
+                    },
+                );
             };
 
             None

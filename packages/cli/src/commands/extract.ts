@@ -34,7 +34,8 @@ export async function extract() {
         );
         res.forEach((value, key) => {
           const cur = extractedI18nDataMap.get(key);
-          if (!cur?.defaults) {
+          // 优先保留有 messages 的
+          if (!cur?.messages) {
             extractedI18nDataMap.set(key, value);
           }
         });

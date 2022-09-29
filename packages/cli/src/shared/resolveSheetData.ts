@@ -1,4 +1,4 @@
-import { InternalConfig } from "./config";
+import { I18nConfig } from "./config";
 import { googleSheet } from "./google/sheet";
 import { createLogger } from "./index";
 import { letterToNumber } from "./letters";
@@ -44,9 +44,7 @@ class SheetI18nItem {
   }
 }
 
-export async function resolveSheetData(
-  config: InternalConfig
-): Promise<SheetData> {
+export async function resolveSheetData(config: I18nConfig): Promise<SheetData> {
   const { position } = config;
   const parseStartIndex = config.parseStartIndex ?? 2;
 
@@ -73,7 +71,7 @@ export async function resolveSheetData(
       return;
     }
 
-    const i18nKey = row[letterToNumber(position.key)]?.trim();
+    const i18nKey = row[letterToNumber(position!.key)]?.trim();
 
     if (i18nKey) {
       if (sheetData.keySet.has(i18nKey)) {
@@ -84,14 +82,14 @@ export async function resolveSheetData(
         sheetData.keySet.add(i18nKey);
       }
 
-      config.locales.forEach((lang) => {
+      config.locales?.forEach((lang) => {
         sheetData.setI18nItem(
           lang,
           new SheetI18nItem(
-            config.sheetId,
-            config.sheetRange,
+            config.sheetId!,
+            config.sheetRange!,
             i18nKey,
-            position[lang],
+            position![lang],
             row,
             trulyRowIndex
           )
@@ -107,32 +105,32 @@ export class SheetData {
   keySet = new Set<string>();
 
   constructor(
-    private config: InternalConfig,
+    private config: I18nConfig,
     // 当前有多少行 新增的时候往后面添加
     public nextAppendRowIndex: number
   ) {}
 
   private value = new Map(
-    this.config.locales.map((lang) => {
+    this.config.locales!.map((lang) => {
       return [lang, new Map<string, SheetI18nItem>()];
     })
   );
 
   getI18nItem(lang: string, i18nKey: string) {
-    return this.value.get(lang).get(i18nKey);
+    return this.value.get(lang)!.get(i18nKey);
   }
 
   setI18nItem(lang: string, i18nItem: SheetI18nItem) {
-    this.value.get(lang).set(i18nItem.key, i18nItem);
+    this.value.get(lang)!.set(i18nItem.key, i18nItem);
   }
 
   hasI18nItem(lang: string, i18nKey: string) {
-    return this.value.get(lang).has(i18nKey);
+    return this.value.get(lang)!.has(i18nKey);
   }
 
   getLangDataJSON(lang: string) {
     const res = {} as Record<string, string>;
-    this.value.get(lang).forEach((i18nItem) => {
+    this.value.get(lang)!.forEach((i18nItem) => {
       res[i18nItem.key] = i18nItem.value;
     });
     return res;

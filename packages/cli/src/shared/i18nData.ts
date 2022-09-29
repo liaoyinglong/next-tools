@@ -1,5 +1,5 @@
 import pMap from "p-map";
-import { InternalConfig } from "./config";
+import { I18nConfig } from "./config";
 import { createLogger } from "./index";
 import fs from "fs-extra";
 import pc from "picocolors";
@@ -15,11 +15,11 @@ export class I18nData {
 
   filePath: string;
 
-  constructor(public locale: string, public config: InternalConfig) {
+  constructor(public locale: string, public config: I18nConfig) {
     this.filePath = path.join(
-      config.cwd,
-      config.i18nDir,
-      config.i18nFileName.replace("{locale}", locale)
+      config.cwd!,
+      config.i18nDir!,
+      config.i18nFileName!.replace("{locale}", locale)
     );
   }
 
@@ -109,7 +109,7 @@ export class I18nData {
     await pMap(Object.entries(this.data), async ([key, value]) => {
       if (sheetData.hasI18nItem(this.locale, key)) {
         // 更新已有的
-        await sheetData.getI18nItem(this.locale, key).tryUpdate(value);
+        await sheetData.getI18nItem(this.locale, key)?.tryUpdate(value);
       } else {
         log.error(
           "%s range %s not found key %s",

@@ -39,7 +39,7 @@ const base = alphabet.length;
  * numberToLetter(702)  // AAA
  */
 export function numberToLetter(n: number) {
-  const digits = [];
+  const digits: number[] = [];
 
   do {
     const v = n % base;
@@ -47,9 +47,9 @@ export function numberToLetter(n: number) {
     n = Math.floor(n / base);
   } while (n-- > 0);
 
-  const chars = [];
+  const chars: string[] = [];
   while (digits.length) {
-    chars.push(alphabet[digits.pop()]);
+    chars.push(alphabet[digits.pop()!]);
   }
 
   return chars.join("");

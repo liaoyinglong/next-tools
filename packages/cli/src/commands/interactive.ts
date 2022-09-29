@@ -31,5 +31,5 @@ export const interactive = async (args: any) => {
     log.error("未找到命令 %s", res.command);
     return;
   }
-  command.commandAction.apply(cli, args);
+  command.commandAction?.apply(cli, args);
 };

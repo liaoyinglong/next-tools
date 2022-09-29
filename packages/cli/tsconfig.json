@@ -8,7 +8,8 @@
     "noEmit": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "moduleResolution": "Node"
+    "moduleResolution": "Node",
+    "strictNullChecks": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

@@ -28,7 +28,7 @@ debug.enable(`${cli.name}:*`);
 export const homeConfigDir = (() => {
   const isWin = process.platform === "win32";
   const USER_HOME_DIR = isWin ? process.env.USERPROFILE : process.env.HOME;
-  const configDir = path.join(USER_HOME_DIR, ".config", cli.name);
+  const configDir = path.join(USER_HOME_DIR!, ".config", cli.name);
 
   if (!fs.existsSync(configDir)) {
     fs.mkdirSync(configDir);

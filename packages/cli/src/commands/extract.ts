@@ -13,7 +13,7 @@ export async function extract() {
   const { extract } = await import("@dune2/wasm");
 
   // 这是使得任务串行，方便看日志
-  for (const configItem of config) {
+  for (const configItem of config.i18n ?? []) {
     const files = await globby(
       [`**/**.{js,jsx,ts,tsx}`, "!**/node_modules/**", "!**.d.ts"],
       {
@@ -48,12 +48,15 @@ export async function extract() {
       extractedI18nDataMap
     );
 
-    const statistics = await pMap(configItem.locales, async (locale, index) => {
-      const i18nData = new I18nData(locale, configItem);
-      await i18nData.updateByExtractedData(extractedI18nDataMap, index === 0);
-      await i18nData.saveToDisk();
-      return await i18nData.statistic();
-    });
+    const statistics = await pMap(
+      configItem.locales ?? [],
+      async (locale, index) => {
+        const i18nData = new I18nData(locale, configItem);
+        await i18nData.updateByExtractedData(extractedI18nDataMap, index === 0);
+        await i18nData.saveToDisk();
+        return await i18nData.statistic();
+      }
+    );
     I18nData.printStatistic("提取结果: ", statistics);
   }
 }

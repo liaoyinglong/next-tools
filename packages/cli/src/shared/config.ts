@@ -3,7 +3,7 @@ import { resolveSheetId } from "./resolveSheetId";
 
 const joycon = new JoyCon();
 
-export interface Config {
+export interface I18nConfig {
   // 语言文件存放目录，默认为项目根目录的 "./src/i18n"
   i18nDir?: string;
   // 语言文件名，默认为 "{locale}.i18n.json"，其中 {locale} 会被替换为 locales 中的语言
@@ -34,26 +34,34 @@ export interface Config {
    * @default 2
    */
   parseStartIndex?: number;
-}
-export interface InternalConfig extends Config {
-  // 默认是 命令运行的目录，一般是项目根目录
+
+  /**
+   * 默认是 命令运行的目录，一般是项目根目录
+   * @internal
+   */
   cwd?: string;
-  // 支持的语言列表，从 position 中解析出来
+  /**
+   * 支持的语言列表，从 position 中解析出来
+   * @internal
+   */
   locales?: string[];
 
+  /**
+   * 翻译key的排序
+   * @internal
+   */
   keySorter?: (a: string, b: string) => number;
 }
 
-export function defineConfig(config: Config | Config[]) {
-  return config;
+export interface Config {
+  i18n?: I18nConfig[];
 }
-
 export const configName = "dune.config.js";
 
-export async function getConfig(): Promise<InternalConfig[]> {
+export async function getConfig(): Promise<Config> {
   const res = await joycon.load([configName]);
 
-  const defaultConfig = {
+  const defaultI18nConfig: I18nConfig = {
     i18nDir: "./src/i18n",
     i18nFileName: "{locale}.i18n.json",
     cwd: process.cwd(),
@@ -61,25 +69,21 @@ export async function getConfig(): Promise<InternalConfig[]> {
     parseStartIndex: 2,
   };
 
-  if (res.data) {
-    const config: InternalConfig[] = Array.isArray(res.data)
-      ? res.data
-      : [res.data];
-    return config.map((item) => {
-      item = Object.assign({}, defaultConfig, item);
-      item.locales = Object.keys(item.position).filter(
-        (item) => item !== "key"
-      );
-
-      item.sheetId = resolveSheetId(item.sheetId);
-
-      item.keySorter = (a, b) => {
-        return a.localeCompare(b);
-      };
-
-      return item;
-    });
+  let config = (res.data ?? {}) as Config;
+  if (!config.i18n || !config.i18n?.length) {
+    config.i18n = [defaultI18nConfig];
   }
 
-  return [defaultConfig];
+  // 格式化 i18n 配置
+  config.i18n = config.i18n.map((item) => {
+    item = Object.assign({}, defaultI18nConfig, item);
+    item.locales = Object.keys(item.position!).filter((item) => item !== "key");
+    item.sheetId = resolveSheetId(item.sheetId);
+    item.keySorter = (a, b) => {
+      return a.localeCompare(b);
+    };
+    return item;
+  });
+
+  return config;
 }

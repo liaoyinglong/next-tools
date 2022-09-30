@@ -13,7 +13,7 @@ export const interactive = async (args: any) => {
 
   const commandMap = new Map<string, typeof commands[number]>();
   const res = await prompts({
-    type: "select",
+    type: "autocomplete",
     name: "command",
     message: "选择要执行的命令：",
     choices: commands.map((command) => {
@@ -25,7 +25,6 @@ export const interactive = async (args: any) => {
       };
     }),
   });
-
   const command = commandMap.get(res.command);
   if (!command) {
     log.error("未找到命令 %s", res.command);

@@ -55,6 +55,11 @@ export interface I18nConfig {
 
 export interface Config {
   i18n?: I18nConfig[];
+  /**
+   * 默认是 命令运行的目录，一般是项目根目录
+   * @internal
+   */
+  cwd?: string;
 }
 export const configName = "dune.config.js";
 
@@ -64,12 +69,13 @@ export async function getConfig(): Promise<Config> {
   const defaultI18nConfig: I18nConfig = {
     i18nDir: "./src/i18n",
     i18nFileName: "{locale}.i18n.json",
-    cwd: process.cwd(),
     position: { key: "B", zh: "C", en: "D", in: "E" },
     parseStartIndex: 2,
   };
 
   let config = (res.data ?? {}) as Config;
+  config.cwd ??= process.cwd();
+
   if (!config.i18n || !config.i18n?.length) {
     config.i18n = [defaultI18nConfig];
   }
@@ -77,6 +83,7 @@ export async function getConfig(): Promise<Config> {
   // 格式化 i18n 配置
   config.i18n = config.i18n.map((item) => {
     item = Object.assign({}, defaultI18nConfig, item);
+    item.cwd ??= config.cwd;
     item.locales = Object.keys(item.position!).filter((item) => item !== "key");
     item.sheetId = resolveSheetId(item.sheetId);
     item.keySorter = (a, b) => {

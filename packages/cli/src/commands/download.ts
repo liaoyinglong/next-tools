@@ -6,7 +6,7 @@ import { resolveSheetData } from "../shared/resolveSheetData";
 
 const log = createLogger("generate");
 
-export async function generate() {
+export async function download() {
   const config = await getConfig();
   let i = 0;
   for (const configItem of config.i18n ?? []) {

@@ -19,7 +19,7 @@ module.exports = defineConfig({ i18n: [] });
 
 export const initConfig = async () => {
   const config = await getConfig();
-  const configPath = path.join(config[0].cwd, configName);
+  const configPath = path.join(config.cwd!, configName);
   log.info(`config file path: ${configPath}`);
   if (await fs.pathExists(configPath)) {
     log.info(`config file already exists, skip`);

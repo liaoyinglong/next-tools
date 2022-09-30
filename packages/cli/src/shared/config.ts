@@ -53,8 +53,35 @@ export interface I18nConfig {
   keySorter?: (a: string, b: string) => number;
 }
 
+export interface ApiConfig {
+  /**
+   * swagger JSON 的路径  可以是 本地 可以是远程
+   */
+  swaggerJSONPath: string;
+  /**
+   * 用在生成代码里快捷连接跳转到 swagger ui
+   * 必须携带 urls.primaryName 参数
+   * @example http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API
+   */
+  swaggerUiUrl?: string;
+  /**
+   * 输出的文件夹路径
+   * @default "./src/apis"
+   */
+  output?: string;
+  /**
+   * 配置`requestFn` 方法引入的路径，生成的代码里会用到，生成代码如下
+   * ```ts
+   * import requestFn from '@/utils/request'
+   * ```
+   * @default @/utils/request
+   */
+  requestFnPath?: string;
+}
+
 export interface Config {
   i18n?: I18nConfig[];
+  api?: ApiConfig[];
   /**
    * 默认是 命令运行的目录，一般是项目根目录
    * @internal
@@ -76,6 +103,7 @@ export async function getConfig(): Promise<Config> {
   let config = (res.data ?? {}) as Config;
   config.cwd ??= process.cwd();
 
+  //#region i18n 配置标准化
   if (!config.i18n || !config.i18n?.length) {
     config.i18n = [defaultI18nConfig];
   }
@@ -91,6 +119,15 @@ export async function getConfig(): Promise<Config> {
     };
     return item;
   });
+  //#endregion
+
+  //#region api 配置标准化
+  config.api ??= [];
+  config.api = config.api.map((item) => {
+    item.output ??= "./src/apis";
+    return item;
+  });
+  //#endregion
 
   return config;
 }

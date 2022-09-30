@@ -9,8 +9,9 @@
     "lint": "next lint",
     "export": "next export",
     "extract": "dune extract",
-    "dune-help": "dune",
-    "dune": "dune --help"
+    "dune": "dune",
+    "dune:api": "dune generateApi",
+    "dune-help": "dune --help"
   },
   "dependencies": {
     "@dune2/tools": "workspace:*",

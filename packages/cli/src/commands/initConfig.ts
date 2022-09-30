@@ -14,7 +14,7 @@ const tpl = `
 function defineConfig(config) {
   return config;
 }
-module.exports = defineConfig({ i18n: [] });
+module.exports = defineConfig({ i18n: [], api:[] });
 `;
 
 export const initConfig = async () => {

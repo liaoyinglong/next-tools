@@ -38,10 +38,15 @@
     "p-map": "^5.5.0",
     "path-to-regexp": "^6.2.1",
     "picocolors": "^1.0.0",
-    "prompts": "^2.4.2"
+    "prompts": "^2.4.2",
+    "json-schema-to-typescript": "^11.0.2",
+    "@apidevtools/swagger-parser": "^10.1.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
+    "openapi-types": "^12.0.2",
     "@types/debug": "^4.1.7",
+    "@types/lodash": "^4.14.186",
     "@types/prompts": "^2.4.0",
     "gaxios": "*",
     "google-auth-library": "*",

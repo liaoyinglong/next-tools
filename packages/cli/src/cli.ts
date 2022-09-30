@@ -1,23 +1,31 @@
 #!/usr/bin/env node
 import { extract } from "./commands/extract";
 import { download } from "./commands/download";
+import { generateApi } from "./commands/generateApi";
 import { initConfig } from "./commands/initConfig";
 import { upload } from "./commands/upload";
 import { cli } from "./shared";
 import { version } from "../package.json";
 import { interactive } from "./commands/interactive";
+//#region 翻译相关
 
 cli
   .command("download", "生成翻译文件")
   .example("dune download")
   .action(download);
-
-cli.command("upload", "上传翻译文件").example("dune upload").action(upload);
-
 cli
   .command("extract", "提取代码中的文案")
   .example("dune extract")
   .action(extract);
+cli.command("upload", "上传翻译文件").example("dune upload").action(upload);
+//#endregion
+
+//#region api 相关
+cli
+  .command("generateApi", "生成api文件")
+  .example("dune generateApi")
+  .action(generateApi);
+//#endregion
 
 cli.command("init", "初始化配置文件").example("dune init").action(initConfig);
 
@@ -26,6 +34,7 @@ cli
   .example("dune interactive")
   .alias("i")
   .action(interactive);
+
 // make default command run interactive
 cli.command("").action(interactive);
 

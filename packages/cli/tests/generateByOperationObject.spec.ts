@@ -12,6 +12,8 @@ describe("api 生成", function () {
           name: "id",
           in: "query",
           required: true,
+          description: "用户id",
+          example: 1,
           schema: {
             type: "integer",
             format: "int64",
@@ -103,7 +105,7 @@ describe("api 生成", function () {
       },
     };
 
-    const result = generateApiRequestCode({
+    const result = await generateApiRequestCode({
       url: "/users",
       method: "get",
       operationObject: operationObject as never,

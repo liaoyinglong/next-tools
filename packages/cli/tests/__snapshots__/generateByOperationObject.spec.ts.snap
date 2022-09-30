@@ -1,6 +1,6 @@
 // Vitest Snapshot v1
 
-exports[`api 生成 > generateByOperationObject 1`] = `
+exports[`api 生成 > generateByOperationObject 参数在url上 1`] = `
 "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖
 import { RequestBuilder } from '@dune2/tools';
 import requestFn  from '@/utils/http';
@@ -21,6 +21,76 @@ export namespace usersApiGet {
    * 用户id
    */
   id: number;
+  [k: string]: unknown;
+}
+
+}
+"
+`;
+
+exports[`api 生成 > 参数在body里 1`] = `
+"// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖
+import { RequestBuilder } from '@dune2/tools';
+import requestFn  from '@/utils/http';
+/**
+ * 分页查询币种信息
+ * @tags 币种管理相关接口
+ * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%B8%81%E7%A7%8D%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_4
+ */
+export const coinsPageSearchApiPost = new RequestBuilder<coinsPageSearchApiPost.Req,coinsPageSearchApiPost.Res>({
+  url: '/coins:page-search',
+  method: 'post',
+  requestFn,
+})
+
+export namespace coinsPageSearchApiPost {
+ /**
+ * 分页查询统一结构体
+ */
+export interface Req {
+  /**
+   * 页码数, 该值的范围是1~1024
+   */
+  pageNum: number;
+  /**
+   * 页大小, 该值的范围是1~99999
+   */
+  pageSize: number;
+  /**
+   * 是否查询总记录数。查询总记录数会严重影响性能，非必要不查询.
+   */
+  count: boolean;
+  /**
+   * 币种列表查询参数
+   */
+  params: {
+    /**
+     * 币种代码或者币种名称
+     */
+    nameOrCode?: string;
+    /**
+     * 币种状态(NEW, ACTIVE, INACTIVE)
+     */
+    status?: \\"NEW\\" | \\"ACTIVE\\" | \\"INACTIVE\\";
+    [k: string]: unknown;
+  };
+  /**
+   * 分页查询的排序规则, 最大不能超过10个排序字段
+   *
+   * @minItems 0
+   * @maxItems 10
+   */
+  orders?: {
+    /**
+     * 字段名称
+     */
+    fieldName: string;
+    /**
+     * 排序规则
+     */
+    type: \\"asc\\" | \\"desc\\";
+    [k: string]: unknown;
+  }[];
   [k: string]: unknown;
 }
 

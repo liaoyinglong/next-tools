@@ -102,6 +102,7 @@ export namespace ${requestBuilderName} {
 export async function compileRequestParams(
   operationObject: OpenAPIV3.OperationObject
 ) {
+  let schema;
   if (operationObject.parameters) {
     // FIXME: 这里还需要处理 ref 类型
     const parameters =
@@ -124,18 +125,25 @@ export async function compileRequestParams(
         ];
       })
     );
-
-    return await compile(
-      {
-        required,
-        type: "object",
-        properties,
-      },
-      "Req",
-      {
-        bannerComment: "",
-        // format: false,
-      }
-    );
+    schema = {
+      required,
+      type: "object",
+      properties,
+    };
+  } else if (operationObject.requestBody) {
+    //TODO: 这里也需要处理其他类型
+    schema = (operationObject.requestBody as OpenAPIV3.RequestBodyObject)
+      .content["application/json"].schema;
   }
+
+  let code = "";
+  if (schema) {
+    code = await compile(schema, "Req", {
+      bannerComment: "",
+      maxItems: -1,
+      // format: false,
+    });
+  }
+
+  return code ? code : "export type Req = any";
 }

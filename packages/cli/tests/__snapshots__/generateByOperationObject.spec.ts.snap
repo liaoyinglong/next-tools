@@ -9,13 +9,13 @@ import requestFn  from '@/utils/http';
  * @tags 币种管理相关接口
  * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%B8%81%E7%A7%8D%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_4
  */
-export const coinsPageSearchApiPost = new RequestBuilder<coinsPageSearchApiPost.Req,coinsPageSearchApiPost.Res>({
-  url: '/coins:page-search',
+export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Res>({
+  url: '/users',
   method: 'post',
   requestFn,
-})
+});
 
-export namespace coinsPageSearchApiPost {
+export namespace usersPostApi {
  /**
  * 分页查询统一结构体
  */
@@ -123,8 +123,7 @@ export interface Res {
   [k: string]: unknown;
 }
 
-}
-"
+};"
 `;
 
 exports[`api 生成 > 参数在url上 1`] = `
@@ -136,13 +135,13 @@ import requestFn  from '@/utils/http';
  * @tags 后台用户管理相关接口
  * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%90%8E%E5%8F%B0%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/queryUserById
  */
-export const usersApiGet = new RequestBuilder<usersApiGet.Req,usersApiGet.Res>({
+export const usersGetApi = new RequestBuilder<usersGetApi.Req, usersGetApi.Res>({
   url: '/users',
   method: 'get',
   requestFn,
-})
+});
 
-export namespace usersApiGet {
+export namespace usersGetApi {
  export interface Req {
   /**
    * 用户id
@@ -174,6 +173,29 @@ export interface Res {
   [k: string]: unknown;
 }
 
+};"
+`;
+
+exports[`api 生成 > 参数或响应为空 1`] = `
+"// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖
+import { RequestBuilder } from '@dune2/tools';
+import requestFn  from '@/utils/http';
+/**
+ * 分页查询币种信息
+ * @tags 币种管理相关接口
+ * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%B8%81%E7%A7%8D%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_4
+ */
+export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Res>({
+  url: '/users',
+  method: 'post',
+  requestFn,
+});
+
+export namespace usersPostApi {
+ export interface Req {
+  [k: string]: unknown;
 }
-"
+
+ export type Res = any;
+};"
 `;

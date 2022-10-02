@@ -262,32 +262,35 @@ const paramsInBody = {
   },
 };
 
+const generate = (data, methods: string) => {
+  return generateApiRequestCode({
+    url: "/users",
+    method: methods,
+    operationObject: data,
+    apiConfig: {
+      requestFnPath: "@/utils/http",
+      swaggerUiUrl:
+        "http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API",
+    } as never,
+  });
+};
+
 describe("api 生成", function () {
   it("参数在url上", async () => {
-    const result = await generateApiRequestCode({
-      url: "/users",
-      method: "get",
-      operationObject: paramsInQuery as never,
-      apiConfig: {
-        requestFnPath: "@/utils/http",
-        swaggerUiUrl:
-          "http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API",
-      } as never,
-    });
+    const result = await generate(paramsInQuery, "get");
     expect(result).toMatchSnapshot();
   });
 
   it("参数在body里", async function () {
-    const result = await generateApiRequestCode({
-      url: "/coins:page-search",
-      method: "post",
-      operationObject: paramsInBody as never,
-      apiConfig: {
-        requestFnPath: "@/utils/http",
-        swaggerUiUrl:
-          "http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API",
-      } as never,
-    });
+    const result = await generate(paramsInBody, "post");
+    expect(result).toMatchSnapshot();
+  });
+
+  it("参数或响应为空", async () => {
+    let parmas = JSON.parse(JSON.stringify(paramsInBody));
+    parmas.parameters = [];
+    parmas.responses = {};
+    const result = await generate(parmas, "post");
     expect(result).toMatchSnapshot();
   });
 });

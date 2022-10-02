@@ -65,7 +65,7 @@ export async function generateApiRequestCode(options: {
       )}/${operationObject.operationId}`
     : "not found swagger ui url";
 
-  const requestBuilderName = _.camelCase(url + "_api_" + method);
+  const requestBuilderName = _.camelCase(`${url}_${method}_api`);
   let code: string[] = [
     "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖",
     `import { RequestBuilder } from '@dune2/tools';`,
@@ -79,11 +79,12 @@ export async function generateApiRequestCode(options: {
   ];
 
   // builder 代码
-  code.push(`export const ${requestBuilderName} = new RequestBuilder<${requestBuilderName}.Req,${requestBuilderName}.Res>({
+  code.push(`\
+export const ${requestBuilderName} = new RequestBuilder<${requestBuilderName}.Req, ${requestBuilderName}.Res>({
   url: '${url}',
   method: '${method}',
   requestFn,
-})`);
+});`);
 
   // 请求参数类型
   const requestParamsTypeCode = await compileRequestParams(operationObject);
@@ -94,8 +95,7 @@ export async function generateApiRequestCode(options: {
 export namespace ${requestBuilderName} {
  ${requestParamsTypeCode}
  ${responseParamsTypeCode}
-}
-`);
+};`);
 
   return code.join(os.EOL);
 }
@@ -150,7 +150,7 @@ async function compileRequestParams(
     });
   }
 
-  return code ? code : "export type Req = any";
+  return code ? code : "export type Req = any;";
 }
 
 async function compileResponseParams(
@@ -162,7 +162,7 @@ async function compileResponseParams(
     // FIXME: 可能需要处理其他的content类型
     const temp2 = temp.content["application/json"] || temp.content["*/*"];
     const schema = temp2.schema as OpenAPIV3.SchemaObject;
-    const data = schema.properties?.data;
+    const data = schema.properties?.data ?? schema;
     if (data) {
       code = await compile(data, "Res", {
         bannerComment: "",
@@ -172,5 +172,5 @@ async function compileResponseParams(
     }
   }
 
-  return code ? code : "export type Res = any";
+  return code ? code : "export type Res = any;";
 }

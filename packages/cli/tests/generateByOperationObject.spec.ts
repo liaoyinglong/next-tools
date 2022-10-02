@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { generateApiRequestCode } from "../src/commands/generateApi";
 
 describe("api 生成", function () {
-  it("generateByOperationObject 参数在url上", async () => {
+  it("参数在url上", async () => {
     const operationObject = {
       tags: ["后台用户管理相关接口"],
       summary: "查询单个后台用户信息",

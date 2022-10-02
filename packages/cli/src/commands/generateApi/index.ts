@@ -70,7 +70,8 @@ export async function generateApiRequestCode(options: {
     "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖",
     `import { RequestBuilder } from '@dune2/tools';`,
     `import requestFn  from '${apiConfig.requestFnPath}';`,
-    `/**
+    `\
+/**
  * ${operationObject.summary}
  * @tags ${operationObject.tags?.join(",")}
  * @see ${seeUrl}
@@ -86,10 +87,13 @@ export async function generateApiRequestCode(options: {
 
   // 请求参数类型
   const requestParamsTypeCode = await compileRequestParams(operationObject);
+  // 响应参数类型
+  const responseParamsTypeCode = await compileResponseParams(operationObject);
 
   code.push(`
 export namespace ${requestBuilderName} {
  ${requestParamsTypeCode}
+ ${responseParamsTypeCode}
 }
 `);
 
@@ -99,12 +103,13 @@ export namespace ${requestBuilderName} {
 /**
  * 这个方法还不完善，只能处理简单的请求参数
  */
-export async function compileRequestParams(
+async function compileRequestParams(
   operationObject: OpenAPIV3.OperationObject
 ) {
   let schema;
   if (operationObject.parameters) {
     // FIXME: 这里还需要处理 ref 类型
+    // FIXME: 这里只处理了query的参数，可能还有url上的参数需要处理
     const parameters =
       (operationObject.parameters as OpenAPIV3.ParameterObject[]).filter(
         (p) => p.in === "query"
@@ -140,10 +145,32 @@ export async function compileRequestParams(
   if (schema) {
     code = await compile(schema, "Req", {
       bannerComment: "",
-      maxItems: -1,
+      ignoreMinAndMaxItems: !!1,
       // format: false,
     });
   }
 
   return code ? code : "export type Req = any";
+}
+
+async function compileResponseParams(
+  operationObject: OpenAPIV3.OperationObject
+) {
+  const temp = operationObject.responses["200"] as OpenAPIV3.ResponseObject;
+  let code = "";
+  if (temp?.content) {
+    // FIXME: 可能需要处理其他的content类型
+    const temp2 = temp.content["application/json"] || temp.content["*/*"];
+    const schema = temp2.schema as OpenAPIV3.SchemaObject;
+    const data = schema.properties?.data;
+    if (data) {
+      code = await compile(data, "Res", {
+        bannerComment: "",
+        ignoreMinAndMaxItems: !!1,
+        // format: false,
+      });
+    }
+  }
+
+  return code ? code : "export type Res = any";
 }

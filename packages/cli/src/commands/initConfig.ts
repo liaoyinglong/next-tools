@@ -5,7 +5,7 @@ import path from "path";
 
 const log = createLogger("initConfig");
 
-const tpl = `
+const tpl = `\
 /**
  * @template {import('@dune2/cli').Config} T
  * @param {T} config - A generic parameter that flows through to the return type

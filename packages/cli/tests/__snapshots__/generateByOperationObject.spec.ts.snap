@@ -3,7 +3,7 @@
 exports[`api 生成 > 参数在body里 1`] = `
 "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖
 import { RequestBuilder } from '@dune2/tools';
-import requestFn  from '@/utils/http';
+import requestFn from '@/utils/request';
 /**
  * 分页查询币种信息
  * @tags 币种管理相关接口
@@ -129,7 +129,7 @@ export interface Res {
 exports[`api 生成 > 参数在url上 1`] = `
 "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖
 import { RequestBuilder } from '@dune2/tools';
-import requestFn  from '@/utils/http';
+import requestFn from '@/utils/request';
 /**
  * 查询单个后台用户信息
  * @tags 后台用户管理相关接口
@@ -179,7 +179,7 @@ export interface Res {
 exports[`api 生成 > 参数或响应为空 1`] = `
 "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖
 import { RequestBuilder } from '@dune2/tools';
-import requestFn  from '@/utils/http';
+import requestFn from '@/utils/request';
 /**
  * 分页查询币种信息
  * @tags 币种管理相关接口

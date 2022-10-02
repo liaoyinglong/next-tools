@@ -69,7 +69,7 @@ export async function generateApiRequestCode(options: {
   let code: string[] = [
     "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖",
     `import { RequestBuilder } from '@dune2/tools';`,
-    `import requestFn  from '${apiConfig.requestFnPath}';`,
+    apiConfig.requestFnImportPath!,
     `\
 /**
  * ${operationObject.summary}

@@ -71,12 +71,15 @@ export interface ApiConfig {
   output?: string;
   /**
    * 配置`requestFn` 方法引入的路径，生成的代码里会用到，生成代码如下
+   * 引入的名称必须是`requestFn`
    * ```ts
+   * // 需要命名为 requestFn
    * import requestFn from '@/utils/request'
+   * import { foo as requestFn } from '@/utils/request'
    * ```
-   * @default @/utils/request
+   * @default `import requestFn from '@/utils/request'`
    */
-  requestFnPath?: string;
+  requestFnImportPath?: string;
 }
 
 export interface Config {
@@ -125,6 +128,7 @@ export async function getConfig(): Promise<Config> {
   config.api ??= [];
   config.api = config.api.map((item) => {
     item.output ??= "./src/apis";
+    item.requestFnImportPath ??= `import requestFn from '@/utils/request';`;
     return item;
   });
   //#endregion

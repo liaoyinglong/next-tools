@@ -102,50 +102,6 @@ export interface Res {
        * 币种状态(NEW,ACTIVE,INACTIVE)
        */
       status?: string;
-      /**
-       * 资产显示精度
-       */
-      decimals?: number;
-      /**
-       * 币种icon
-       */
-      iconUrl?: string;
-      /**
-       * 支持充值
-       */
-      canDeposit?: boolean;
-      /**
-       * 支持体现
-       */
-      canWithdraw?: boolean;
-      /**
-       * 备注
-       */
-      remarks?: string;
-      /**
-       * 创建人id
-       */
-      createdBy?: number;
-      /**
-       * 创建人
-       */
-      createdRealName?: string;
-      /**
-       * 更新人id
-       */
-      updatedBy?: number;
-      /**
-       * 更新人
-       */
-      updatedRealName?: string;
-      /**
-       * 创建时间
-       */
-      createdTime?: number;
-      /**
-       * 更新时间
-       */
-      updatedTime?: number;
       [k: string]: unknown;
     };
     /**
@@ -160,89 +116,10 @@ export interface Res {
        * 币种的唯一标识，用于将网络关联到币种
        */
       coinId?: number;
-      /**
-       * 网络类型Id
-       */
-      networkTypeId?: number;
-      /**
-       * network对应的网络名称，例如Ethereum
-       */
-      networkTypeName?: string;
-      /**
-       * 协议类型Id
-       */
-      protocolTypeId?: number;
-      /**
-       * network对应的协议，例如ERC20
-       */
-      protocolTypeName?: string;
-      /**
-       * 是否支持充币或者提币标签备注
-       */
-      canMemo?: boolean;
-      /**
-       * 支持充值
-       */
-      canDeposit?: boolean;
-      /**
-       * 支持提现
-       */
-      canWithdraw?: boolean;
-      /**
-       * Crypto中台收取的提币或者充币手续费用
-       */
-      withdrawFees?: string;
-      /**
-       * 最小提币数量
-       */
-      minWithdrawAmount?: string;
-      /**
-       * 资产Id
-       */
-      assetId?: string;
-      /**
-       * 资产来源。FireBlocks CyraWallet
-       */
-      assetSource?: string;
-      /**
-       * 网络状态
-       */
-      status?: string;
-      /**
-       * 备注
-       */
-      remarks?: string;
-      /**
-       * 创建人ID
-       */
-      createdBy?: number;
-      /**
-       * 更新人ID
-       */
-      updatedBy?: number;
-      /**
-       * 创建时间
-       */
-      createdTime?: number;
-      /**
-       * 更新时间
-       */
-      updatedTime?: number;
       [k: string]: unknown;
     }[];
     [k: string]: unknown;
   }[];
-  /**
-   * 附加值
-   */
-  extra?: {
-    /**
-     * 附加值
-     */
-    [k: string]: {
-      [k: string]: unknown;
-    };
-  };
   [k: string]: unknown;
 }
 
@@ -294,30 +171,6 @@ export interface Res {
    * 用户状态(ACTIVE, INACTIVE)
    */
   status?: \\"NEW\\" | \\"ACTIVE\\" | \\"INACTIVE\\";
-  /**
-   * 手机区号
-   */
-  areaCode?: string;
-  /**
-   * 手机号
-   */
-  phoneNumber?: string;
-  /**
-   * 备注
-   */
-  remark?: string;
-  /**
-   * 更新用户id
-   */
-  updatedBy?: number;
-  /**
-   * 更新的用户名
-   */
-  updatedRealName?: string;
-  /**
-   * 更新时间
-   */
-  updatedTime?: string;
   [k: string]: unknown;
 }
 

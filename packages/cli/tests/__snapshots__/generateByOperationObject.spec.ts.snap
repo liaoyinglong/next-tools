@@ -13,6 +13,7 @@ export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Re
   url: '/users',
   method: 'post',
   requestFn,
+  
 });
 
 export namespace usersPostApi {
@@ -66,6 +67,7 @@ export interface Req {
   [k: string]: unknown;
 }
 
+ 
  /**
  * 分页查询结果统计结构体
  */
@@ -139,6 +141,7 @@ export const usersGetApi = new RequestBuilder<usersGetApi.Req, usersGetApi.Res>(
   url: '/users',
   method: 'get',
   requestFn,
+  
 });
 
 export namespace usersGetApi {
@@ -150,6 +153,7 @@ export namespace usersGetApi {
   [k: string]: unknown;
 }
 
+ 
  /**
  * 查询用户响应结果
  */
@@ -189,6 +193,7 @@ export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Re
   url: '/users',
   method: 'post',
   requestFn,
+  
 });
 
 export namespace usersPostApi {
@@ -196,6 +201,7 @@ export namespace usersPostApi {
   [k: string]: unknown;
 }
 
+ 
  export type Res = any;
 };"
 `;

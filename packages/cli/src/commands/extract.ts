@@ -48,11 +48,6 @@ export async function extract() {
       },
       { concurrency: 20 }
     );
-    log.info(
-      "总统提取到 %s 条文案 %O",
-      pc.green(extractedI18nDataMap.size),
-      extractedI18nDataMap
-    );
 
     const statistics = await pMap(
       configItem.locales ?? [],

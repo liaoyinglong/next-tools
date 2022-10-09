@@ -1,5 +1,11 @@
 # @dune2/cli
 
+## 0.0.8
+
+### Patch Changes
+
+- 移除 log
+
 ## 0.0.7
 
 ### Patch Changes

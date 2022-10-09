@@ -74,6 +74,15 @@ export async function generateApiRequestCode(options: {
     : "not found swagger ui url";
 
   const requestBuilderName = _.camelCase(`${url}_${method}_api`);
+  //#region url上参数 例如 /api/v1/users/{userId}
+  const urlPathParams = getUrlPathParams(
+    (operationObject.parameters as never) ?? []
+  );
+  const urlPathParamsCode = urlPathParams.length
+    ? `urlPathParams: ${JSON.stringify(urlPathParams)},`
+    : "";
+  //#endregion
+
   let code: string[] = [
     "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖",
     `import { RequestBuilder } from '@dune2/tools';`,
@@ -92,6 +101,7 @@ export const ${requestBuilderName} = new RequestBuilder<${requestBuilderName}.Re
   url: '${url}',
   method: '${method}',
   requestFn,
+  ${urlPathParamsCode}
 });`);
 
   // 请求参数类型
@@ -104,10 +114,17 @@ export const ${requestBuilderName} = new RequestBuilder<${requestBuilderName}.Re
   code.push(`
 export namespace ${requestBuilderName} {
  ${requestParamsTypeCode}
+ 
  ${responseParamsTypeCode}
 };`);
 
   return code.join(os.EOL);
+}
+
+function getUrlPathParams(parameters: OpenAPIV3.ParameterObject[]) {
+  return parameters
+    .filter((item) => item.in === "path")
+    .map((item) => item.name);
 }
 
 /**
@@ -119,10 +136,9 @@ async function compileRequestParams(
   let schema;
   if (operationObject.parameters) {
     // FIXME: 这里还需要处理 ref 类型
-    // FIXME: 这里只处理了query的参数，可能还有url上的参数需要处理
     const parameters =
       (operationObject.parameters as OpenAPIV3.ParameterObject[]).filter(
-        (p) => p.in === "query"
+        (p) => p.in === "query" || p.in === "path"
       ) ?? [];
 
     const required = parameters.filter((p) => p.required).map((p) => p.name);

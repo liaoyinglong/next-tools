@@ -16,6 +16,8 @@ export interface RequestBuilderOptions<Req, Res> {
   method?: Lowercase<Method>;
   // 请求路径
   url: string;
+  // url path 上的参数 , /prefunding-order/{id} 中的 id
+  urlPathParams?: string[];
 
   requestFn?: <T = unknown>(config: AxiosRequestConfig) => Promise<T>;
 
@@ -56,11 +58,17 @@ export class RequestBuilder<Req = any, Res = any> {
    * 特殊情况，如：url上有query参数，又需要传body参数
    */
   requestWithConfig<T>(config: AxiosRequestConfig) {
-    const { requestFn, url } = this.options;
+    let { requestFn, url } = this.options;
     const method = this.options.method!;
     if (!requestFn) {
       throw new Error("request function is not defined");
     }
+    this.options.urlPathParams?.forEach((param) => {
+      url = url.replace(
+        `{${param}}`,
+        config.params?.[param] ?? config.data?.[param]
+      );
+    });
     return requestFn<T>({
       url,
       method,

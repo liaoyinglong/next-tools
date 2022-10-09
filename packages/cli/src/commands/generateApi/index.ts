@@ -7,6 +7,7 @@ import fs from "fs-extra";
 import * as os from "os";
 import SwaggerParser from "@apidevtools/swagger-parser";
 import { compile } from "json-schema-to-typescript";
+import path from "path";
 
 const log = createLogger("generateApi");
 
@@ -38,6 +39,13 @@ export async function generateApi() {
                 operationObject: operationObject,
                 apiConfig,
               });
+              const outputPath = path.join(
+                apiConfig.output!,
+                url,
+                `${method}.ts`
+              );
+              await fs.ensureFile(outputPath);
+              await fs.writeFile(outputPath, code);
             }
           }
         );
@@ -87,9 +95,11 @@ export const ${requestBuilderName} = new RequestBuilder<${requestBuilderName}.Re
 });`);
 
   // 请求参数类型
-  const requestParamsTypeCode = await compileRequestParams(operationObject);
   // 响应参数类型
-  const responseParamsTypeCode = await compileResponseParams(operationObject);
+  const [requestParamsTypeCode, responseParamsTypeCode] = await Promise.all([
+    compileRequestParams(operationObject),
+    compileResponseParams(operationObject),
+  ]);
 
   code.push(`
 export namespace ${requestBuilderName} {

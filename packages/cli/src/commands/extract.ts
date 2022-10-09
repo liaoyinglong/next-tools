@@ -31,18 +31,20 @@ export async function extract() {
       async (file) => {
         const content = await fs.readFile(file, "utf-8");
         const res: ExtractedMap = await extract(content);
-        log.info(
-          "从 %s 中提取到 %s 条文案",
-          pc.dim(file),
-          res.size ? pc.green(res.size) : res.size
-        );
-        res.forEach((value, key) => {
-          const cur = extractedI18nDataMap.get(key);
-          // 优先保留有 messages 的
-          if (!cur?.messages) {
-            extractedI18nDataMap.set(key, value);
-          }
-        });
+        if (res.size) {
+          log.info(
+            "从 %s 中提取到 %s 条文案",
+            pc.dim(file),
+            pc.green(res.size)
+          );
+          res.forEach((value, key) => {
+            const cur = extractedI18nDataMap.get(key);
+            // 优先保留有 messages 的
+            if (!cur?.messages) {
+              extractedI18nDataMap.set(key, value);
+            }
+          });
+        }
       },
       { concurrency: 20 }
     );

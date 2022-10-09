@@ -15,10 +15,14 @@ export async function extract() {
   // 这是使得任务串行，方便看日志
   for (const configItem of config.i18n ?? []) {
     const files = await globby(
-      [`**/**.{js,jsx,ts,tsx}`, "!**/node_modules/**", "!**.d.ts"],
-      {
-        cwd: configItem.cwd,
-      }
+      [
+        `**/**.{js,jsx,ts,tsx}`,
+        "!**/node_modules/**",
+        "!**.d.ts",
+        "!**/.next/**",
+        "!**/out/**",
+      ],
+      { cwd: configItem.cwd }
     );
     log.info("预计共解析 %s 个文件", pc.green(files.length));
     const extractedI18nDataMap: ExtractedMap = new Map();

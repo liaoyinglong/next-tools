@@ -4,7 +4,8 @@ import { FC } from "react";
 import { LocalesEnum } from "./enums";
 
 export { enableDetectLocale } from "./enableDetectLocale";
-export * from "./hooks";
+export { useT, useLocale } from "./hooks";
+export { t } from "./shared";
 
 export { I18nProvider, useLingui, withI18n } from "@lingui/react";
 export type {
@@ -12,25 +13,13 @@ export type {
   I18nContext,
   withI18nProps,
 } from "@lingui/react";
+
 export { i18n, LocalesEnum };
 
 const defaultPlurals = () => "";
 Object.values(LocalesEnum).forEach((locale) => {
   i18n.loadLocaleData(locale, { plurals: defaultPlurals });
 });
-
-/**
- * Translates a template string using the global I18n instance
- * @example
- * ```
- * const message = t`Hello ${name}`;
- * ```
- */
-export const t = i18n._.bind(i18n) as unknown as (
-  literals: TemplateStringsArray,
-  ...placeholders: any[]
-) => string;
-
 /**
  * @example
  * ```tsx

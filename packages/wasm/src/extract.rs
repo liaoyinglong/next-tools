@@ -59,49 +59,29 @@ mod tests {
         <Trans>hello {name2}</Trans>;
         <Trans id="msg_id1">hello {name2}</Trans>;
         <Trans id={"msg_id2"}>hello {name2}</Trans>;
-        <Trans id={`msg_id3`}>hello {name2}</Trans>;"#;
+        <Trans id={`msg_id3`}>hello {name2}</Trans>;
+        <Trans>
+            Welcome to <a>Next.js!</a> {counter}
+        </Trans>;"#;
 
         let res = extract(ExtractOptions::new(source.into())).expect("failed to extract");
-
-        assert_eq!(res.data.len(), 5);
-        assert_eq!(res.data, {
-            let mut map = AHashMap::default();
+        let mut map = AHashMap::default();
+        let mut insert = |id: &str, message: &str| {
             map.insert(
-                "hello {name}".into(),
+                id.to_string(),
                 Item {
-                    messages: "".to_string(),
-                    id: "hello {name}".into(),
+                    id: id.into(),
+                    messages: message.into(),
                 },
             );
-            map.insert(
-                "hello {name2}".into(),
-                Item {
-                    messages: "".to_string(),
-                    id: "hello {name2}".into(),
-                },
-            );
-            map.insert(
-                "msg_id1".into(),
-                Item {
-                    messages: "hello {name2}".to_string(),
-                    id: "msg_id1".into(),
-                },
-            );
-            map.insert(
-                "msg_id2".into(),
-                Item {
-                    messages: "hello {name2}".to_string(),
-                    id: "msg_id2".into(),
-                },
-            );
-            map.insert(
-                "msg_id3".into(),
-                Item {
-                    messages: "hello {name2}".to_string(),
-                    id: "msg_id3".into(),
-                },
-            );
-            map
-        })
+        };
+        insert("hello {name}", "");
+        insert("hello {name2}", "");
+        insert("msg_id1", "hello {name2}");
+        insert("msg_id2", "hello {name2}");
+        insert("msg_id3", "hello {name2}");
+        insert("Welcome to <0>Next.js!</0> {counter}", "");
+        assert_eq!(res.data.len(), map.len());
+        assert_eq!(res.data, map);
     }
 }

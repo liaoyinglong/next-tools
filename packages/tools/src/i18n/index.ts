@@ -5,9 +5,9 @@ import { LocalesEnum } from "./enums";
 
 export { enableDetectLocale } from "./enableDetectLocale";
 export { useT, useLocale } from "./hooks";
-export { t } from "./shared";
+export { t, I18nProvider } from "./shared";
 
-export { I18nProvider, useLingui, withI18n } from "@lingui/react";
+export { useLingui, withI18n } from "@lingui/react";
 export type {
   I18nProviderProps,
   I18nContext,

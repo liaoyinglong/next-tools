@@ -1,6 +1,6 @@
 import { i18n } from "@lingui/core";
 import { detect, fromUrl, fromStorage } from "@lingui/detect-locale";
-import { isServer } from "../shared";
+import { isServer, isBrowser } from "../shared";
 import { DetectLocaleEnum, LocalesEnum } from "./enums";
 
 interface Options {
@@ -17,7 +17,7 @@ interface Options {
  */
 export function enableDetectLocale(options: Options = {}) {
   options.defaultLocale ??= LocalesEnum.zh_CN;
-  if (!isServer) {
+  if (isBrowser) {
     //#region 启用语言方法重写
     const oldActivateLocale = i18n.activate;
     i18n.activate = (locale) => {

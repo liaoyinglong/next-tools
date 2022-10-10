@@ -39,11 +39,9 @@ export async function generateApi() {
                 operationObject: operationObject,
                 apiConfig,
               });
-              const outputPath = path.join(
-                apiConfig.output!,
-                url,
-                `${method}.ts`
-              );
+              const outputPath = path
+                .join(apiConfig.output!, url, `${method}.ts`)
+                .replace(/:/g, "_");
               await fs.ensureFile(outputPath);
               await fs.writeFile(outputPath, code);
             }

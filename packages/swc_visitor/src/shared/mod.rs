@@ -111,12 +111,17 @@ impl Normalizer {
                     let start_with_white_space = js_text.raw.starts_with(" ");
                     let end_with_white_space = js_text.raw.ends_with(" ");
                     let mut s = js_text.raw.trim().to_string();
-                    // should keep whitespace at start and end
-                    if start_with_white_space {
-                        s.insert_str(0, " ");
-                    }
-                    if end_with_white_space {
-                        s.push_str(" ");
+                    // case: jsx_text = " "
+                    if s.is_empty() {
+                        s = " ".to_string();
+                    } else {
+                        // should keep whitespace at start and end
+                        if start_with_white_space {
+                            s.insert_str(0, " ");
+                        }
+                        if end_with_white_space {
+                            s.push_str(" ");
+                        }
                     }
                     s
                 };

@@ -9,7 +9,15 @@
 
 //  inline markup
 // simple inline markup
-<Trans>Hello <br/> Mike</Trans>;
-<Trans>Hello <strong>{name}</strong>.</Trans>;
-<Trans>Hello <strong>{name}</strong>. <Link to="/inbox">See my profile</Link></Trans>;
-
+<Trans>
+  Hello <br /> Mike
+</Trans>;
+<Trans>
+  Hello <strong>{name}</strong>.
+</Trans>;
+<Trans>
+  Hello <strong>{name}</strong>. <Link to="/inbox">See my profile</Link>
+</Trans>;
+<Trans>
+  Welcome to <a>Next.js!</a> {counter}
+</Trans>;

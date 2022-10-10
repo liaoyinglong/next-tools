@@ -28,3 +28,8 @@
     0: <strong >{name}</strong>,
     1: <Link to="/inbox">See my profile</Link>
 }}></Trans>;
+<Trans id="Welcome to <0>Next.js!</0> {counter}" values={{
+    counter: counter
+}} components={{
+    0: <a >Next.js!</a>
+}}></Trans>;

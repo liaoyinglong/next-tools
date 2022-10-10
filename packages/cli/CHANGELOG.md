@@ -1,5 +1,11 @@
 # @dune2/cli
 
+## 0.0.10
+
+### Patch Changes
+
+- dd
+
 ## 0.0.9
 
 ### Patch Changes

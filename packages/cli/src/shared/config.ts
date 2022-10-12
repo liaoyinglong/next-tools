@@ -91,6 +91,10 @@ export interface Config {
    */
   cwd?: string;
 }
+export function defineConfig<T = Config>(c: T) {
+  return c;
+}
+
 export const configName = "dune.config.js";
 
 export async function getConfig(): Promise<Config> {

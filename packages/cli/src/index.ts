@@ -1,1 +1,1 @@
-export { Config } from "./shared/config";
+export { Config, defineConfig } from "./shared/config";

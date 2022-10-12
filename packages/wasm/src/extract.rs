@@ -56,6 +56,7 @@ mod tests {
     fn test_extract() {
         let source = r#"
         t`hello ${name}`;
+        t(`error_${errorCode}`); // 提取不到
         <Trans>hello {name2}</Trans>;
         <Trans id="msg_id1">hello {name2}</Trans>;
         <Trans id={"msg_id2"}>hello {name2}</Trans>;

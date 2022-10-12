@@ -9,6 +9,7 @@ function defineConfig(config) {
 module.exports = defineConfig({
   i18n: [
     {
+      output: "./i18n",
       sheetId:
         "https://docs.google.com/spreadsheets/d/1_xpkDxAfKDcyvFwXyELN4vlweSbO0DnClOk_TVHNjWw/edit#gid=971638239",
       sheetRange: "资金记录",

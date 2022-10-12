@@ -14,7 +14,7 @@ import { enableDetectLocale } from "./enableDetectLocale";
  * ```
  */
 export const t = i18n._.bind(i18n) as unknown as (
-  literals: TemplateStringsArray,
+  literals: TemplateStringsArray | string,
   ...placeholders: any[]
 ) => string;
 

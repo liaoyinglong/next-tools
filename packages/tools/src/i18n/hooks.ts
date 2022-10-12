@@ -1,4 +1,5 @@
 import { useLingui } from "@lingui/react";
+import { useMemo } from "react";
 import { LocalesEnum } from "./enums";
 import { t } from "./shared";
 
@@ -12,6 +13,9 @@ export function useLocale() {
     locale: i18n.locale,
     isZhCN: i18n.locale === LocalesEnum.zh_CN,
     isInID: i18n.locale === LocalesEnum.in_ID,
+    activate: useMemo(() => {
+      return i18n.activate.bind(i18n);
+    }, [i18n.activate]),
   };
 }
 

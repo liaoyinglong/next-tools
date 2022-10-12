@@ -33,7 +33,7 @@ export const withDunePresets = (options: DunePresetsOptions = {}) => {
         config.plugins.unshift(
           autoImportPlugin({
             ...options.autoImport,
-            imports: ["react", { "@dune2/tools": ["t", "Trans"] }]
+            imports: ["react", { "@dune2/tools": ["useT", "Trans"] }]
               .concat(options.autoImport?.imports as never)
               .filter(Boolean) as never,
           }),

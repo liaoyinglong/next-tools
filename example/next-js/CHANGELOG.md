@@ -1,5 +1,12 @@
 # next-js
 
+## 0.1.9
+
+### Patch Changes
+
+- Updated dependencies
+  - @dune2/tools@0.0.9
+
 ## 0.1.8
 
 ### Patch Changes

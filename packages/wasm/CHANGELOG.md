@@ -1,5 +1,11 @@
 # @dune2/wasm
 
+## 0.0.9
+
+### Patch Changes
+
+- update
+
 ## 0.0.8
 
 ### Patch Changes

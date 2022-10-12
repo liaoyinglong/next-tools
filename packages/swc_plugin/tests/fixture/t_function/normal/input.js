@@ -12,15 +12,12 @@ t`Attachment ${props.firstName} saved ${props.secondName}`;
 t`Attachment ${props.firstName || props.secondName} saved`;
 t`Attachment ${props.age + 1} saved`;
 
-// function call with template string
-t(`Attachment ${name} saved`);
-
 // other cases
 <div>{t`hello ${name}`}</div>;
-<div title={t`hello ${name}`}></div>
+<div title={t`hello ${name}`}></div>;
 var a = t`hello ${name}`;
 var obj = { a: t`hello ${name}` };
-var obj = { [t`hello ${name}`]:'string' };
+var obj = { [t`hello ${name}`]: "string" };
 var arr = [t`hello ${name}`];
 var a = Math.random() ? t`hello ${name}` : t`hello ${name2}`;
 var a = Math.random() && t`hello ${name}`;
@@ -29,6 +26,9 @@ console.log(t`hello ${name}`);
 // ====================
 // should not transform
 t("Refresh inbox");
+t(`Attachment ${name} saved`);
+
 raw`Refresh inbox`;
+
 obj.t("Refresh inbox");
 obj.t(`Refresh inbox ${name}`);

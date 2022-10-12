@@ -27,10 +27,6 @@ t("Attachment {0} saved", {
 t("Attachment {0} saved", {
     0: props.age + 1
 });
-// function call with template string
-t("Attachment {name} saved", {
-    name: name
-});
 // other cases
 <div >{t("hello {name}", {
     name: name
@@ -49,7 +45,7 @@ var obj = {
 var obj = {
     [t("hello {name}", {
         name: name
-    })]: 'string'
+    })]: "string"
 };
 var arr = [
     t("hello {name}", {
@@ -70,6 +66,7 @@ console.log(t("hello {name}", {
 // ====================
 // should not transform
 t("Refresh inbox");
+t(`Attachment ${name} saved`);
 raw`Refresh inbox`;
 obj.t("Refresh inbox");
 obj.t(`Refresh inbox ${name}`);

@@ -65,30 +65,12 @@ impl TFunctionVisitor {
         }))
     }
 
-    fn modify_call_expr(&mut self, call_expr: &mut CallExpr) -> Option<Expr> {
-        let callee_ident = call_expr.callee.as_expr()?.as_ident();
-        call_expr.callee = Self::resolve_t_fn_callee(callee_ident)?;
-        let tpl = call_expr.args.first()?.expr.clone().tpl()?;
-        // more args should ignore
-        if tpl.exprs.is_empty() || call_expr.args.len() != 1 {
-            return None;
-        }
-        let args = &mut Self::transform_tpl_to_args(tpl.clone());
-        // clear old args with new args
-        call_expr.args.clear();
-        call_expr.args.append(args);
-        None
-    }
-
     fn handle_expr(&mut self, expr: &mut Expr) {
         match expr {
             Expr::TaggedTpl(tagged_tpl) => {
                 if let Some(new_expr) = self.tagged_tpl_to_expr(tagged_tpl) {
                     *expr = new_expr
                 }
-            }
-            Expr::Call(call_expr) => {
-                self.modify_call_expr(call_expr);
             }
             _ => {}
         }

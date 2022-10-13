@@ -1,5 +1,13 @@
 # @dune2/cli
 
+## 0.0.13
+
+### Patch Changes
+
+- 提取失败添加提示语
+- Updated dependencies
+  - @dune2/wasm@0.0.10
+
 ## 0.0.12
 
 ### Patch Changes

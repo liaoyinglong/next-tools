@@ -29,7 +29,7 @@ module.exports = withDunePresets(duneConfig)(nextConfig);
 ```tsx
 const App = () => {
   const t = useT(); // 会自动导入 useT，调用了 useT 后，更改语言的时候才会触发组件的重新渲染
-  return <div>{t("hello")}</div>;
+  return <div>{t`hello`}</div>;
 };
 ```
 

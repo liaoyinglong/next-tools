@@ -1106,6 +1106,7 @@ dependencies = [
  "serde-wasm-bindgen",
  "serde_json",
  "swc_core",
+ "swc_error_reporters",
  "tracing",
  "wasm-bindgen",
  "wasm-bindgen-futures",

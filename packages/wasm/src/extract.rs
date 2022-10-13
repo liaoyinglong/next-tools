@@ -1,47 +1,59 @@
 use anyhow::Error;
-use swc_core::common::{FileName, FilePathMapping, SourceMap};
+use s_swc_visitor::get_folder;
+use swc_core::common::sync::Lrc;
+use swc_core::common::{FileName, SourceMap};
 use swc_core::ecma::parser::parse_file_as_program;
 use swc_core::ecma::parser::{Syntax, TsConfig};
 use swc_core::ecma::visit::FoldWith;
 use swc_core::ecma::visit::VisitMutWith;
 
-use s_swc_visitor::get_folder;
-
 use crate::extract_visitor::ExtractVisitor;
+use crate::setup_handler::setup_handler;
 
 pub struct ExtractOptions {
     pub source: String,
+    pub filename: FileName,
 }
 
 impl ExtractOptions {
-    pub fn new(source: String) -> Self {
-        Self { source }
+    pub fn new(source: String, filename: String) -> Self {
+        Self {
+            source,
+            filename: FileName::Real(filename.into()),
+        }
     }
 }
 
 pub fn extract(opts: ExtractOptions) -> Result<ExtractVisitor, Error> {
-    let source_map = SourceMap::new(FilePathMapping::empty());
+    let source_map = Lrc::<SourceMap>::default();
+
     let mut visitor = ExtractVisitor::new();
-    let fm = source_map.new_source_file(FileName::Anon, opts.source);
-    let program = parse_file_as_program(
-        &*fm,
-        Syntax::Typescript(TsConfig {
-            tsx: true,
-            ..Default::default()
-        }),
-        Default::default(),
-        None,
-        &mut vec![],
-    );
-    match program {
-        Ok(program) => {
-            let mut program = program.fold_with(&mut get_folder());
-            program.visit_mut_with(&mut visitor);
+    let fm = source_map.new_source_file(opts.filename.clone(), opts.source);
+
+    setup_handler(source_map.clone(), |_handler, wr| {
+        let mut errors = vec![];
+
+        let program = parse_file_as_program(
+            &*fm,
+            Syntax::Typescript(TsConfig {
+                tsx: true,
+                ..Default::default()
+            }),
+            Default::default(),
+            None,
+            &mut errors,
+        );
+        match program {
+            Ok(program) => {
+                let mut program = program.fold_with(&mut get_folder());
+                program.visit_mut_with(&mut visitor);
+            }
+            Err(e) => return Err(Error::msg(format!(" {:?}", e)).context("Failed to parse file")),
         }
-        Err(e) => return Err(Error::msg(format!(" {:?}", e)).context("Failed to parse file")),
-    }
-    dbg!(&visitor.data);
-    Ok(visitor)
+        visitor.err_msg = wr.get_display_str();
+        dbg!(&visitor.data);
+        Ok(visitor)
+    })
 }
 
 #[cfg(test)]
@@ -69,8 +81,10 @@ mod tests {
         // 以下无法提取
         source.push_str("t(`error_${errorCode}`);"); // 提取不到
         source.push_str("i18n.t('welcome');");
+        source.push_str("t(true);");
 
-        let res = extract(ExtractOptions::new(source)).expect("failed to extract");
+        let res = extract(ExtractOptions::new(source, "test.tsx".to_string()))
+            .expect("failed to extract");
         let mut map = AHashMap::default();
         let mut insert = |id: &str, message: &str| {
             map.insert(

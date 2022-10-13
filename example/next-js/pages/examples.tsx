@@ -1,6 +1,7 @@
 import { Layout } from "lingui-example/components/Layout";
 
 export default function Home() {
+  t(`hello ${name}`);
   return (
     <Layout>
       <h1>

@@ -26,5 +26,6 @@ swc_core = { version = "0.24.*", features = [
     "ecma_visit"
 ] }
 serde-wasm-bindgen="0.4.3"
+swc_error_reporters="*"
 
 s_swc_visitor = { path = "../swc_visitor"  }

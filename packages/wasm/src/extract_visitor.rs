@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use swc_core::common::collections::AHashMap;
+use swc_core::common::errors::HANDLER;
 use swc_core::ecma::ast::{
     CallExpr, Expr, ExprOrSpread, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName,
     JSXExpr, JSXOpeningElement, Lit,
@@ -37,9 +38,14 @@ impl Default for Config {
     }
 }
 
-#[derive(Default)]
+#[derive(Debug, Default, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ExtractVisitor {
+    #[serde(default)]
     pub data: AHashMap<String, Item>,
+    #[serde(default)]
+    pub err_msg: String,
+    #[serde(skip)]
     pub config: Config,
 }
 
@@ -48,6 +54,7 @@ impl ExtractVisitor {
         ExtractVisitor {
             data: AHashMap::default(),
             config: Config::default(),
+            err_msg: "".to_string(),
         }
     }
 
@@ -103,21 +110,33 @@ impl VisitMut for ExtractVisitor {
 
             //region 获取msg id
             let id_arg = arg.first();
-            let id = self.expr_or_spread_to_string(id_arg)?;
+            let id = self.expr_or_spread_to_string(id_arg);
             //endregion
-            //region 获取msg defaults
-            let default_msg_arg = arg.get(2);
-            let default_msg = self
-                .expr_or_spread_to_string(default_msg_arg)
-                .unwrap_or("".into());
-            //endregion
-            self.data.insert(
-                id.clone(),
-                Item {
-                    id,
-                    messages: default_msg,
-                },
-            );
+            match id.clone() {
+                None => {
+                    // error!("msg id is not string literal, skip");
+                    HANDLER.with(|handler| {
+                        handler
+                            .span_note_without_error(n.span, "msg id is not string literal, skip");
+                    });
+                }
+                Some(id) => {
+                    //region 获取msg defaults
+                    let default_msg_arg = arg.get(2);
+                    let default_msg = self
+                        .expr_or_spread_to_string(default_msg_arg)
+                        .unwrap_or("".into());
+                    //endregion
+                    self.data.insert(
+                        id.clone(),
+                        Item {
+                            id,
+                            messages: default_msg,
+                        },
+                    );
+                }
+            };
+
             None
         };
         work();

@@ -54,18 +54,23 @@ mod tests {
 
     #[test]
     fn test_extract() {
-        let source = r#"
-        t`hello ${name}`;
-        t(`error_${errorCode}`); // 提取不到
-        <Trans>hello {name2}</Trans>;
-        <Trans id="msg_id1">hello {name2}</Trans>;
-        <Trans id={"msg_id2"}>hello {name2}</Trans>;
-        <Trans id={`msg_id3`}>hello {name2}</Trans>;
-        <Trans>
-            Welcome to <a>Next.js!</a> {counter}
-        </Trans>;"#;
+        let mut source = String::new();
+        source.push_str("t`hello ${name}`;");
+        source.push_str("<Trans>hello {name2}</Trans>;");
+        source.push_str(r#"<Trans id="msg_id1">hello {name2}</Trans>;"#);
+        source.push_str(r#"<Trans id={"msg_id2"}>hello {name2}</Trans>;"#);
+        source.push_str("<Trans id={`msg_id3`}>hello {name2}</Trans>;");
+        source.push_str(
+            r#"
+            <Trans>
+               Welcome to <a>Next.js!</a> {counter}
+            </Trans>;"#,
+        );
+        // 以下无法提取
+        source.push_str("t(`error_${errorCode}`);"); // 提取不到
+        source.push_str("i18n.t('welcome');");
 
-        let res = extract(ExtractOptions::new(source.into())).expect("failed to extract");
+        let res = extract(ExtractOptions::new(source)).expect("failed to extract");
         let mut map = AHashMap::default();
         let mut insert = |id: &str, message: &str| {
             map.insert(

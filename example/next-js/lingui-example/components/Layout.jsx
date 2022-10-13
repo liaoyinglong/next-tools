@@ -5,6 +5,7 @@ import { activate } from "lingui-example/i18n";
 import styles from "./Layout.module.css";
 
 export function Layout({ title = null, className = "", children }) {
+  const t = useT();
   // Default props can't be translated at module level because active locale
   // isn't known when module is imported, but rather when component
   // is rendered.

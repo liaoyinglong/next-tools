@@ -5,7 +5,7 @@ import { createLogger } from "../shared";
 import { getConfig } from "../shared/config";
 import { I18nData, ExtractedMap } from "../shared/i18nData";
 import pc from "picocolors";
-
+import os from "os";
 const log = createLogger("extract");
 
 export async function extract() {
@@ -25,25 +25,32 @@ export async function extract() {
       { cwd: configItem.cwd }
     );
     log.info("预计共解析 %s 个文件", pc.green(files.length));
+    let errMsgs: string[] = [];
     const extractedI18nDataMap: ExtractedMap = new Map();
     await pMap(
       files,
       async (file) => {
         const content = await fs.readFile(file, "utf-8");
-        const res: ExtractedMap = await extract(content);
-        if (res.size) {
+        const res: { data: ExtractedMap; errMsg: string } = await extract(
+          content,
+          file
+        );
+        if (res.data.size) {
           log.info(
             "从 %s 中提取到 %s 条文案",
             pc.dim(file),
-            pc.green(res.size)
+            pc.green(res.data.size)
           );
-          res.forEach((value, key) => {
+          res.data.forEach((value, key) => {
             const cur = extractedI18nDataMap.get(key);
             // 优先保留有 messages 的
             if (!cur?.messages) {
               extractedI18nDataMap.set(key, value);
             }
           });
+        }
+        if (res.errMsg) {
+          errMsgs.push(res.errMsg);
         }
       },
       { concurrency: 20 }
@@ -58,6 +65,10 @@ export async function extract() {
         return await i18nData.statistic();
       }
     );
+    if (errMsgs.length) {
+      console.log(pc.bold("以下未能成功提取的文案，请手动处理："));
+      console.log(errMsgs.join(os.EOL));
+    }
     I18nData.printStatistic("提取结果: ", statistics);
   }
 }

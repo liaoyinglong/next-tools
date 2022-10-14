@@ -11,6 +11,7 @@ export const tenantsPutApi = new RequestBuilder<tenantsPutApi.Req, tenantsPutApi
   method: 'put',
   requestFn,
   
+  
 });
 
 export namespace tenantsPutApi {
@@ -60,7 +61,7 @@ export interface Req {
    * @minItems 1
    * @maxItems 5
    */
-  businessLicense: string[];
+  businessLicense?: string[];
   /**
    * 状态
    */

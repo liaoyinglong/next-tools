@@ -11,6 +11,7 @@ export const storageSignatureUploadPostApi = new RequestBuilder<storageSignature
   method: 'post',
   requestFn,
   
+  
 });
 
 export namespace storageSignatureUploadPostApi {
@@ -64,7 +65,7 @@ export interface Res {
    */
   expire?: number;
   /**
-   * 文件上传成功后的资源地址，如果是私密文件，则格式为'private:xxxx',此时使用此key申请临时访问权限.
+   * 文件上传成功后的资源地址，如果是私密文件，则格式为'private:xxxx',此时使用此key申请临时访问权限
    */
   source?: string;
   [k: string]: unknown;

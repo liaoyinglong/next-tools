@@ -11,6 +11,7 @@ export const membersKycAuditPageSearchPostApi = new RequestBuilder<membersKycAud
   method: 'post',
   requestFn,
   
+  
 });
 
 export namespace membersKycAuditPageSearchPostApi {

@@ -11,6 +11,7 @@ export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Re
   method: 'post',
   requestFn,
   
+  
 });
 
 export namespace usersPostApi {
@@ -35,6 +36,10 @@ export interface Req {
    * 备注
    */
   remark?: string;
+  /**
+   * 角色列表
+   */
+  roleIds: number[];
   [k: string]: unknown;
 }
 

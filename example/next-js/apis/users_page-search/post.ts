@@ -11,6 +11,7 @@ export const usersPageSearchPostApi = new RequestBuilder<usersPageSearchPostApi.
   method: 'post',
   requestFn,
   
+  
 });
 
 export namespace usersPageSearchPostApi {
@@ -117,6 +118,16 @@ export interface Res {
      * 更新时间
      */
     updatedTime?: string;
+    /**
+     * 用户角色
+     */
+    roles?: {
+      userId?: number;
+      roleId?: number;
+      roleName?: string;
+      disabled?: boolean;
+      [k: string]: unknown;
+    }[];
     [k: string]: unknown;
   }[];
   /**

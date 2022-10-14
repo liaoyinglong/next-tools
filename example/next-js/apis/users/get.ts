@@ -11,6 +11,7 @@ export const usersGetApi = new RequestBuilder<usersGetApi.Req, usersGetApi.Res>(
   method: 'get',
   requestFn,
   
+  
 });
 
 export namespace usersGetApi {
@@ -64,6 +65,16 @@ export interface Res {
    * 更新时间
    */
   updatedTime?: string;
+  /**
+   * 用户角色
+   */
+  roles?: {
+    userId?: number;
+    roleId?: number;
+    roleName?: string;
+    disabled?: boolean;
+    [k: string]: unknown;
+  }[];
   [k: string]: unknown;
 }
 

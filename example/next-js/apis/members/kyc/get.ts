@@ -11,6 +11,7 @@ export const membersKycGetApi = new RequestBuilder<membersKycGetApi.Req, members
   method: 'get',
   requestFn,
   
+  
 });
 
 export namespace membersKycGetApi {

@@ -11,6 +11,7 @@ export const usersPutApi = new RequestBuilder<usersPutApi.Req, usersPutApi.Res>(
   method: 'put',
   requestFn,
   
+  
 });
 
 export namespace usersPutApi {
@@ -46,6 +47,10 @@ export interface Req {
    * 备注
    */
   remark?: string;
+  /**
+   * 角色列表
+   */
+  roleIds: number[];
   [k: string]: unknown;
 }
 

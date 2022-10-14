@@ -11,6 +11,7 @@ export const tenantsPostApi = new RequestBuilder<tenantsPostApi.Req, tenantsPost
   method: 'post',
   requestFn,
   
+  
 });
 
 export namespace tenantsPostApi {
@@ -68,7 +69,7 @@ export interface Req {
    * @minItems 1
    * @maxItems 5
    */
-  businessLicense: string[];
+  businessLicense?: string[];
   /**
    * 备注
    */

@@ -11,6 +11,7 @@ export const prefundingOrderDestroyPutApi = new RequestBuilder<prefundingOrderDe
   method: 'put',
   requestFn,
   
+  
 });
 
 export namespace prefundingOrderDestroyPutApi {

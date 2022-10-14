@@ -11,6 +11,7 @@ export const coinsGetApi = new RequestBuilder<coinsGetApi.Req, coinsGetApi.Res>(
   method: 'get',
   requestFn,
   
+  
 });
 
 export namespace coinsGetApi {
@@ -109,19 +110,19 @@ export interface Res {
     /**
      * 网络类型Id
      */
-    networkTypeId?: number;
+    networkId?: number;
     /**
      * network对应的网络名称，例如Ethereum
      */
-    networkTypeName?: string;
+    networkName?: string;
     /**
      * 协议类型Id
      */
-    protocolTypeId?: number;
+    protocolId?: number;
     /**
      * network对应的协议，例如ERC20
      */
-    protocolTypeName?: string;
+    protocolName?: string;
     /**
      * 是否支持充币或者提币标签备注
      */

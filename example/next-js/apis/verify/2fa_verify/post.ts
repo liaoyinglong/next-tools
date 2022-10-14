@@ -11,6 +11,7 @@ export const verify2FaVerifyPostApi = new RequestBuilder<verify2FaVerifyPostApi.
   method: 'post',
   requestFn,
   
+  
 });
 
 export namespace verify2FaVerifyPostApi {

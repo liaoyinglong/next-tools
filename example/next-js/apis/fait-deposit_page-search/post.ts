@@ -4,12 +4,13 @@ import requestFn from '@/utils/request';
 /**
  * 分页查询入金信息
  * @tags 入金管理相关接口
- * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%85%A5%E9%87%91%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_3
+ * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%85%A5%E9%87%91%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_4
  */
 export const faitDepositPageSearchPostApi = new RequestBuilder<faitDepositPageSearchPostApi.Req, faitDepositPageSearchPostApi.Res>({
   url: '/fait-deposit:page-search',
   method: 'post',
   requestFn,
+  
   
 });
 

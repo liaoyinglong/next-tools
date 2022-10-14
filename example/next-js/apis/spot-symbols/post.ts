@@ -11,6 +11,7 @@ export const spotSymbolsPostApi = new RequestBuilder<spotSymbolsPostApi.Req, spo
   method: 'post',
   requestFn,
   
+  
 });
 
 export namespace spotSymbolsPostApi {
@@ -61,11 +62,31 @@ export interface Req {
     /**
      * 订单类型,多选允许支持多个（目前只有市价），必填项。1、市价
      */
-    orderTypes: "MARKET"[];
+    orderTypes: ("MARKET" | "PRESENT_PRICE" | "STOP_PROFIT_STOP_LOSS" | "PLAN" | "SELECTIVE")[];
     /**
      * 备注
      */
     remarks?: string;
+    /**
+     * 最大市价下单金额
+     */
+    marketOrderMaxLimit: string;
+    /**
+     * 最小下单价格步进间隔，如Tick Size为0.2，价格只能10.2，10.4等，不允许出现10.3的价格下单。数值精度不允许超过Counter精度
+     */
+    tickSize: string;
+    /**
+     * 最小下单数量步进间隔，如Step Size为10，数量只能10，20等，不允许出现11的数量下单。数值精度不允许超过Base精度
+     */
+    stepSize: string;
+    /**
+     * 限价下单价格范围:上限。取值范围>0
+     */
+    limitedPriceUp: string;
+    /**
+     * 限价下单价格范围:下限。取值范围0~100
+     */
+    limitedPriceDown: string;
     [k: string]: unknown;
   };
   [k: string]: unknown;

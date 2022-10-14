@@ -11,6 +11,7 @@ export const spotOrderSinglePageSearchPostApi = new RequestBuilder<spotOrderSing
   method: 'post',
   requestFn,
   
+  
 });
 
 export namespace spotOrderSinglePageSearchPostApi {

@@ -11,6 +11,7 @@ export const fiatIndividualIdGetApi = new RequestBuilder<fiatIndividualIdGetApi.
   method: 'get',
   requestFn,
   urlPathParams: ["id"],
+  
 });
 
 export namespace fiatIndividualIdGetApi {

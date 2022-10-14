@@ -4,12 +4,13 @@ import requestFn from '@/utils/request';
 /**
  * 查询出金详情
  * @tags 出金管理相关接口
- * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%87%BA%E9%87%91%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/getDetail_1
+ * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%87%BA%E9%87%91%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/getDetail_3
  */
 export const faitWithdrawalGetApi = new RequestBuilder<faitWithdrawalGetApi.Req, faitWithdrawalGetApi.Res>({
   url: '/fait-withdrawal',
   method: 'get',
   requestFn,
+  
   
 });
 

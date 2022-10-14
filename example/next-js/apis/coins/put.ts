@@ -11,6 +11,7 @@ export const coinsPutApi = new RequestBuilder<coinsPutApi.Req, coinsPutApi.Res>(
   method: 'put',
   requestFn,
   
+  
 });
 
 export namespace coinsPutApi {
@@ -74,11 +75,11 @@ export interface Req {
     /**
      * 网络类型Id
      */
-    networkTypeId?: number;
+    networkId?: number;
     /**
      * 协议类型Id
      */
-    protocolTypeId?: number;
+    protocolId?: number;
     /**
      * 是否支持充币或者提币标签备注
      */

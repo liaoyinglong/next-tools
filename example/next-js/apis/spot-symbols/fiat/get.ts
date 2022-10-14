@@ -11,6 +11,7 @@ export const spotSymbolsFiatGetApi = new RequestBuilder<spotSymbolsFiatGetApi.Re
   method: 'get',
   requestFn,
   
+  
 });
 
 export namespace spotSymbolsFiatGetApi {

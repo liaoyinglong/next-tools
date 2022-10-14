@@ -11,6 +11,7 @@ export const walletAmlPageSearchPostApi = new RequestBuilder<walletAmlPageSearch
   method: 'post',
   requestFn,
   
+  
 });
 
 export namespace walletAmlPageSearchPostApi {

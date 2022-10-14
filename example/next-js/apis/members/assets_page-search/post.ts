@@ -11,6 +11,7 @@ export const membersAssetsPageSearchPostApi = new RequestBuilder<membersAssetsPa
   method: 'post',
   requestFn,
   
+  
 });
 
 export namespace membersAssetsPageSearchPostApi {

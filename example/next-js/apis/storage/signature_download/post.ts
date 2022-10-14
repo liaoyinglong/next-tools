@@ -11,6 +11,7 @@ export const storageSignatureDownloadPostApi = new RequestBuilder<storageSignatu
   method: 'post',
   requestFn,
   
+  
 });
 
 export namespace storageSignatureDownloadPostApi {

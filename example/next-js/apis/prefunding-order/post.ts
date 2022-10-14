@@ -4,12 +4,13 @@ import requestFn from '@/utils/request';
 /**
  * 创建换汇记录
  * @tags 汇率管理相关接口
- * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E6%B1%87%E7%8E%87%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/create_2
+ * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E6%B1%87%E7%8E%87%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/create_4
  */
 export const prefundingOrderPostApi = new RequestBuilder<prefundingOrderPostApi.Req, prefundingOrderPostApi.Res>({
   url: '/prefunding-order',
   method: 'post',
   requestFn,
+  
   
 });
 

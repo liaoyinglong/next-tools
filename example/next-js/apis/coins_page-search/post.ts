@@ -4,12 +4,13 @@ import requestFn from '@/utils/request';
 /**
  * 分页查询币种信息
  * @tags 币种管理相关接口
- * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%B8%81%E7%A7%8D%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_4
+ * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%B8%81%E7%A7%8D%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_6
  */
 export const coinsPageSearchPostApi = new RequestBuilder<coinsPageSearchPostApi.Req, coinsPageSearchPostApi.Res>({
   url: '/coins:page-search',
   method: 'post',
   requestFn,
+  
   
 });
 
@@ -162,19 +163,19 @@ export interface Res {
       /**
        * 网络类型Id
        */
-      networkTypeId?: number;
+      networkId?: number;
       /**
        * network对应的网络名称，例如Ethereum
        */
-      networkTypeName?: string;
+      networkName?: string;
       /**
        * 协议类型Id
        */
-      protocolTypeId?: number;
+      protocolId?: number;
       /**
        * network对应的协议，例如ERC20
        */
-      protocolTypeName?: string;
+      protocolName?: string;
       /**
        * 是否支持充币或者提币标签备注
        */

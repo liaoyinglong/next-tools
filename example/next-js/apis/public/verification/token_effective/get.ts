@@ -11,6 +11,7 @@ export const publicVerificationTokenEffectiveGetApi = new RequestBuilder<publicV
   method: 'get',
   requestFn,
   
+  
 });
 
 export namespace publicVerificationTokenEffectiveGetApi {

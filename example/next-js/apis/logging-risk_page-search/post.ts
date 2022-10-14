@@ -11,6 +11,7 @@ export const loggingRiskPageSearchPostApi = new RequestBuilder<loggingRiskPageSe
   method: 'post',
   requestFn,
   
+  
 });
 
 export namespace loggingRiskPageSearchPostApi {

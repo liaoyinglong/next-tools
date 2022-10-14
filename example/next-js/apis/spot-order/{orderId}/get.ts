@@ -11,6 +11,7 @@ export const spotOrderOrderIdGetApi = new RequestBuilder<spotOrderOrderIdGetApi.
   method: 'get',
   requestFn,
   urlPathParams: ["orderId"],
+  
 });
 
 export namespace spotOrderOrderIdGetApi {

@@ -11,6 +11,7 @@ export const publicVerify2FaGetApi = new RequestBuilder<publicVerify2FaGetApi.Re
   method: 'get',
   requestFn,
   
+  
 });
 
 export namespace publicVerify2FaGetApi {

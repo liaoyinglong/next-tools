@@ -11,6 +11,7 @@ export const fiatAmlPageSearchPostApi = new RequestBuilder<fiatAmlPageSearchPost
   method: 'post',
   requestFn,
   
+  
 });
 
 export namespace fiatAmlPageSearchPostApi {

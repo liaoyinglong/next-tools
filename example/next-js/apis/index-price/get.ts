@@ -11,6 +11,7 @@ export const indexPriceGetApi = new RequestBuilder<indexPriceGetApi.Req, indexPr
   method: 'get',
   requestFn,
   
+  
 });
 
 export namespace indexPriceGetApi {

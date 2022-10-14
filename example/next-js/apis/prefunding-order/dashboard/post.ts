@@ -11,6 +11,7 @@ export const prefundingOrderDashboardPostApi = new RequestBuilder<prefundingOrde
   method: 'post',
   requestFn,
   
+  
 });
 
 export namespace prefundingOrderDashboardPostApi {

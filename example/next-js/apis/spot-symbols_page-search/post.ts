@@ -11,6 +11,7 @@ export const spotSymbolsPageSearchPostApi = new RequestBuilder<spotSymbolsPageSe
   method: 'post',
   requestFn,
   
+  
 });
 
 export namespace spotSymbolsPageSearchPostApi {
@@ -178,6 +179,26 @@ export interface Res {
      * 更新时间
      */
     updatedTime?: number;
+    /**
+     * 最大市价下单金额
+     */
+    marketOrderMaxLimit?: string;
+    /**
+     * 最小下单价格步进间隔
+     */
+    tickSize?: string;
+    /**
+     * 最小下单数量步进间隔
+     */
+    stepSize?: string;
+    /**
+     * 限价下单价格范围:上限。取值范围>0
+     */
+    limitedPriceUp?: string;
+    /**
+     * 限价下单价格范围:下限。取值范围0~100
+     */
+    limitedPriceDown?: string;
     [k: string]: unknown;
   }[];
   /**

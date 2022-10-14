@@ -4,6 +4,8 @@ import {
   useQuery,
   QueryFunctionContext,
   useMutation,
+  QueryClient,
+  FetchQueryOptions,
 } from "@tanstack/react-query";
 
 import { Method, AxiosRequestConfig } from "axios";
@@ -26,6 +28,8 @@ export interface RequestBuilderOptions<Req, Res> {
 
   // 透传给 useMutation 的 options
   useMutationOptions?: UseMutationOptions<Res, unknown, Req>;
+
+  client?: QueryClient;
 }
 
 export class RequestBuilder<Req = any, Res = any> {
@@ -113,6 +117,23 @@ export class RequestBuilder<Req = any, Res = any> {
     return useMutation({
       mutationFn: this.request,
       ...this.options.useMutationOptions,
+      ...options,
+    });
+  }
+
+  /**
+   * 用来预请求接口
+   * @see https://tanstack.com/query/v4/docs/guides/prefetching
+   */
+  prefetchQuery(params?: Req, options?: FetchQueryOptions<Res>) {
+    const client = this.options.client;
+    if (!client) {
+      throw new Error("没有传入 client，无法预请求，可以在构造函数中传入");
+    }
+    // @ts-expect-error 后续处理类型问题
+    return client.prefetchQuery({
+      queryKey: this.getQueryKey(params),
+      queryFn: this.queryFn,
       ...options,
     });
   }

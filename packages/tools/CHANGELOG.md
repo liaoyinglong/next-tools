@@ -1,5 +1,11 @@
 # @dune2/tools
 
+## 0.0.11
+
+### Patch Changes
+
+- 支持 queryClient
+
 ## 0.0.10
 
 ### Patch Changes

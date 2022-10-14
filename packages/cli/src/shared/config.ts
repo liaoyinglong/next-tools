@@ -80,6 +80,12 @@ export interface ApiConfig {
    * @default `import requestFn from '@/utils/request'`
    */
   requestFnImportPath?: string;
+  /**
+   * 配置`queryClient` 路径，需要是`namedImport`
+   * @example `import { queryClient } from '@/utils/request'`
+   * @example `import { xxClient as queryClient } from '@/utils/request'`
+   */
+  queryClientImportPath?: string;
 }
 
 export interface Config {

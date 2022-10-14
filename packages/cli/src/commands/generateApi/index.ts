@@ -85,13 +85,14 @@ export async function generateApiRequestCode(options: {
     "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖",
     `import { RequestBuilder } from '@dune2/tools';`,
     apiConfig.requestFnImportPath!,
+    apiConfig.queryClientImportPath!,
     `\
 /**
  * ${operationObject.summary}
  * @tags ${operationObject.tags?.join(",")}
  * @see ${seeUrl}
  */`,
-  ];
+  ].filter(Boolean);
 
   // builder 代码
   code.push(`\
@@ -100,6 +101,7 @@ export const ${requestBuilderName} = new RequestBuilder<${requestBuilderName}.Re
   method: '${method}',
   requestFn,
   ${urlPathParamsCode}
+  ${apiConfig.queryClientImportPath ? "queryClient," : ""}
 });`);
 
   // 请求参数类型

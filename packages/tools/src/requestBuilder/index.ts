@@ -29,7 +29,7 @@ export interface RequestBuilderOptions<Req, Res> {
   // 透传给 useMutation 的 options
   useMutationOptions?: UseMutationOptions<Res, unknown, Req>;
 
-  client?: QueryClient;
+  queryClient?: QueryClient;
 }
 
 export class RequestBuilder<Req = any, Res = any> {
@@ -126,12 +126,12 @@ export class RequestBuilder<Req = any, Res = any> {
    * @see https://tanstack.com/query/v4/docs/guides/prefetching
    */
   prefetchQuery(params?: Req, options?: FetchQueryOptions<Res>) {
-    const client = this.options.client;
-    if (!client) {
-      throw new Error("没有传入 client，无法预请求，可以在构造函数中传入");
+    const queryClient = this.options.queryClient;
+    if (!queryClient) {
+      throw new Error("没有传入 queryClient，无法预请求，可以在构造函数中传入");
     }
     // @ts-expect-error 后续处理类型问题
-    return client.prefetchQuery({
+    return queryClient.prefetchQuery({
       queryKey: this.getQueryKey(params),
       queryFn: this.queryFn,
       ...options,

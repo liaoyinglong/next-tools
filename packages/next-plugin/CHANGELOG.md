@@ -1,5 +1,11 @@
 # @dune2/next-plugin
 
+## 0.0.11
+
+### Patch Changes
+
+- d
+
 ## 0.0.10
 
 ### Patch Changes

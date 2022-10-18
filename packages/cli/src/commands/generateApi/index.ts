@@ -122,7 +122,7 @@ export const ${requestBuilderName} = new RequestBuilder({
     // 响应参数类型
     const [requestParamsTypeCode, responseParamsTypeCode] = await Promise.all([
       compileRequestParams(operationObject),
-      compileResponseParams(operationObject),
+      compileResponseParams(operationObject, apiConfig),
     ]);
 
     code.push(`
@@ -195,7 +195,8 @@ async function compileRequestParams(
 }
 
 async function compileResponseParams(
-  operationObject: OpenAPIV3.OperationObject
+  operationObject: OpenAPIV3.OperationObject,
+  apiConfig: ApiConfig
 ) {
   const temp = operationObject.responses["200"] as OpenAPIV3.ResponseObject;
   let code = "";
@@ -203,13 +204,15 @@ async function compileResponseParams(
     // FIXME: 可能需要处理其他的content类型
     const temp2 = temp.content["application/json"] || temp.content["*/*"];
     const schema = temp2.schema as OpenAPIV3.SchemaObject;
-    const data = schema.properties?.data ?? schema;
+    const data = apiConfig.responseSchemaTransformer!(schema);
     if (data) {
       code = await compile(data, "Res", {
         bannerComment: "",
         ignoreMinAndMaxItems: !!1,
         // format: false,
       });
+    } else {
+      log.error("responseSchemaTransformer 返回值为空, 请检查");
     }
   }
 

@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { generateApiRequestCode } from "../src/commands/generateApi";
+import { apiConfigNormalizer } from "../src/shared/config";
 
 const paramsInQuery = {
   tags: ["后台用户管理相关接口"],
@@ -267,14 +268,11 @@ const generate = (data, methods: string) => {
     url: "/users",
     method: methods,
     operationObject: data,
-    apiConfig: {
-      requestFnImportPath: `import requestFn from '@/utils/request';`,
-      RequestBuilderImportPath: `import { RequestBuilder } from '@dune2/tools';`,
+    apiConfig: apiConfigNormalizer({
       swaggerJSONPath: "",
-      enableTs: true,
       swaggerUiUrl:
-        "http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API"
-    }
+        "http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API",
+    }),
   });
 };
 

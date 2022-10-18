@@ -1,5 +1,6 @@
 import JoyCon from "joycon";
 import { resolveSheetId } from "./resolveSheetId";
+import { OpenAPIV3 } from "openapi-types";
 
 const joycon = new JoyCon();
 
@@ -100,6 +101,12 @@ export interface ApiConfig {
    * @default true
    */
   enableTs?: boolean;
+
+  /**
+   * 响应的scheme转换，默认获取获取 data 字段，取不到回退到 scheme
+   * @default (schema) => schema.properties?.data ?? schema
+   */
+  responseSchemaTransformer?: (schema: OpenAPIV3.SchemaObject) => any;
 }
 
 export interface Config {
@@ -150,14 +157,18 @@ export async function getConfig(): Promise<Config> {
 
   //#region api 配置标准化
   config.api ??= [];
-  config.api = config.api.map((item) => {
-    item.output ??= "./src/apis";
-    item.requestFnImportPath ??= `import requestFn from '@/utils/request';`;
-    item.RequestBuilderImportPath ??= `import { RequestBuilder } from '@dune2/tools';`;
-    item.enableTs ??= true;
-    return item;
-  });
+  config.api = config.api.map(apiConfigNormalizer);
   //#endregion
 
   return config;
+}
+
+export function apiConfigNormalizer(item: ApiConfig) {
+  item.output ??= "./src/apis";
+  item.requestFnImportPath ??= `import requestFn from '@/utils/request';`;
+  item.RequestBuilderImportPath ??= `import { RequestBuilder } from '@dune2/tools';`;
+  item.enableTs ??= true;
+  item.responseSchemaTransformer ??= (schema) =>
+    schema.properties?.data ?? schema;
+  return item;
 }

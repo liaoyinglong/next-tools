@@ -13,8 +13,6 @@ export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Re
   url: '/users',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace usersPostApi {
@@ -142,8 +140,6 @@ export const usersGetApi = new RequestBuilder<usersGetApi.Req, usersGetApi.Res>(
   url: '/users',
   method: 'get',
   requestFn,
-  
-  
 });
 
 export namespace usersGetApi {
@@ -195,8 +191,6 @@ export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Re
   url: '/users',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace usersPostApi {

@@ -102,8 +102,9 @@ export const ${requestBuilderName} = new RequestBuilder({
   requestFn,
   ${urlPathParamsCode}
   ${apiConfig.queryClientImportPath ? "queryClient," : ""}
-});`;
-
+});`
+    // 移除空行
+    .replace(/,\n\s*}/, "," + os.EOL + "}");
   if (apiConfig.enableTs) {
     builderCode = builderCode.replace(
       "new RequestBuilder(",

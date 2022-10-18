@@ -87,6 +87,13 @@ export interface ApiConfig {
    * @example `import { xxClient as queryClient } from '@/utils/request'`
    */
   queryClientImportPath?: string;
+
+  /**
+   * 配置`RequestBuilder` 路径，导入的变量必须是命名为`RequestBuilder`
+   * @example `import RequestBuilder from '@/utils/RequestBuilder'`
+   * @default `import { RequestBuilder } from '@dune2/tools'`
+   */
+  RequestBuilderImportPath?: string;
 }
 
 export interface Config {
@@ -140,6 +147,7 @@ export async function getConfig(): Promise<Config> {
   config.api = config.api.map((item) => {
     item.output ??= "./src/apis";
     item.requestFnImportPath ??= `import requestFn from '@/utils/request';`;
+    item.RequestBuilderImportPath ??= `import { RequestBuilder } from '@dune2/tools';`;
     return item;
   });
   //#endregion

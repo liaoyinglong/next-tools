@@ -95,28 +95,38 @@ export async function generateApiRequestCode(options: {
   ].filter(Boolean);
 
   // builder 代码
-  code.push(`\
-export const ${requestBuilderName} = new RequestBuilder<${requestBuilderName}.Req, ${requestBuilderName}.Res>({
+  let builderCode = `\
+export const ${requestBuilderName} = new RequestBuilder({
   url: '${url}',
   method: '${method}',
   requestFn,
   ${urlPathParamsCode}
   ${apiConfig.queryClientImportPath ? "queryClient," : ""}
-});`);
+});`;
 
-  // 请求参数类型
-  // 响应参数类型
-  const [requestParamsTypeCode, responseParamsTypeCode] = await Promise.all([
-    compileRequestParams(operationObject),
-    compileResponseParams(operationObject),
-  ]);
+  if (apiConfig.enableTs) {
+    builderCode = builderCode.replace(
+      "new RequestBuilder(",
+      `new RequestBuilder<${requestBuilderName}.Req, ${requestBuilderName}.Res>(`
+    );
+  }
+  code.push(builderCode);
 
-  code.push(`
+  if (apiConfig.enableTs) {
+    // 请求参数类型
+    // 响应参数类型
+    const [requestParamsTypeCode, responseParamsTypeCode] = await Promise.all([
+      compileRequestParams(operationObject),
+      compileResponseParams(operationObject),
+    ]);
+
+    code.push(`
 export namespace ${requestBuilderName} {
  ${requestParamsTypeCode}
  
  ${responseParamsTypeCode}
 };`);
+  }
 
   return code.join(os.EOL);
 }

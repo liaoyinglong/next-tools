@@ -94,6 +94,12 @@ export interface ApiConfig {
    * @default `import { RequestBuilder } from '@dune2/tools'`
    */
   RequestBuilderImportPath?: string;
+
+  /**
+   * 是否启用ts，`true`会生成`.ts`文件，`false`会生成`.js`文件
+   * @default true
+   */
+  enableTs?: boolean;
 }
 
 export interface Config {
@@ -148,6 +154,7 @@ export async function getConfig(): Promise<Config> {
     item.output ??= "./src/apis";
     item.requestFnImportPath ??= `import requestFn from '@/utils/request';`;
     item.RequestBuilderImportPath ??= `import { RequestBuilder } from '@dune2/tools';`;
+    item.enableTs ??= true;
     return item;
   });
   //#endregion

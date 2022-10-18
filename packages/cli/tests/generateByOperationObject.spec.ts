@@ -269,9 +269,12 @@ const generate = (data, methods: string) => {
     operationObject: data,
     apiConfig: {
       requestFnImportPath: `import requestFn from '@/utils/request';`,
+      RequestBuilderImportPath: `import { RequestBuilder } from '@dune2/tools';`,
+      swaggerJSONPath: "",
+      enableTs: true,
       swaggerUiUrl:
-        "http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API",
-    } as never,
+        "http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API"
+    }
   });
 };
 

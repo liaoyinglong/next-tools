@@ -1,5 +1,13 @@
 # @dune2/cli
 
+## 0.0.15
+
+### Patch Changes
+
+- u
+- Updated dependencies
+  - @dune2/wasm@0.0.11
+
 ## 0.0.14
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @dune2/unplugin
 
+## 0.0.10
+
+### Patch Changes
+
+- u
+
 ## 0.0.9
 
 ### Patch Changes

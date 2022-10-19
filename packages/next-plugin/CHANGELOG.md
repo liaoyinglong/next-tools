@@ -1,5 +1,14 @@
 # @dune2/next-plugin
 
+## 0.0.12
+
+### Patch Changes
+
+- u
+- Updated dependencies
+  - @dune2/swc-plugin@0.0.10
+  - @dune2/unplugin@0.0.10
+
 ## 0.0.11
 
 ### Patch Changes

@@ -21,7 +21,7 @@ export async function generateApi() {
     await fs.emptydir(apiConfig.output!);
   }
 
-  for (const apiConfig of config.api ?? []) {
+  for (const apiConfig of apiConfigs) {
     log.info("开始解析 %s", apiConfig.swaggerJSONPath);
     const parsed = (await SwaggerParser.dereference(
       apiConfig.swaggerJSONPath
@@ -208,6 +208,8 @@ async function compileResponseParams(
     const schema = temp2.schema as OpenAPIV3.SchemaObject;
     const data = apiConfig.responseSchemaTransformer!(schema);
     if (data) {
+      markCircularToRef(data);
+
       code = await compile(data, "Res", {
         bannerComment: "",
         ignoreMinAndMaxItems: !!1,
@@ -219,4 +221,26 @@ async function compileResponseParams(
   }
 
   return code ? code : "export type Res = any;";
+}
+
+export function markCircularToRef(
+  obj,
+  parentMark = "#",
+  map = new Map([[obj, parentMark]]),
+  set = new Set([obj])
+) {
+  Object.keys(obj).forEach((key) => {
+    const value = obj[key];
+    if (typeof value === "object" && !Array.isArray(value)) {
+      if (set.has(value)) {
+        obj[key] = { $ref: map.get(value) };
+        return;
+      }
+      const tempMark = parentMark + "/" + key;
+      set.add(value);
+      map.set(value, tempMark);
+      markCircularToRef(value, tempMark, map, set);
+    }
+  });
+  return map;
 }

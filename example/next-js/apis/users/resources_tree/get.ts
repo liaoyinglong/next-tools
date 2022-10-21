@@ -15,34 +15,15 @@ export const usersResourcesTreeGetApi = new RequestBuilder<usersResourcesTreeGet
 export namespace usersResourcesTreeGetApi {
  export type Req = any;
  
- export type Res = OperationResultListResourceNodeVO[];
-
-/**
- * HTTP响应的统一结构体
+ /**
+ * 请求返回的结果
  */
-export interface OperationResultListResourceNodeVO {
-  /**
-   * 请求结果的状态码.如果这个值返回的是200, 那么就代表业务处理成功了
-   */
-  code: string;
-  /**
-   * 请求结果的描述. 如果业务处理失败，将会描述失败的原因.
-   */
-  message: string;
-  /**
-   * 请求返回的结果
-   */
-  data?: ResourceNodeVO[];
-  /**
-   * 请求ID
-   */
-  requestId: string;
-  [k: string]: unknown;
-}
+export type Res = Items[];
+
 /**
  * 资源(菜单、页面、按钮)的信息(资源树使用)
  */
-export interface ResourceNodeVO {
+export interface Items {
   /**
    * 资源id
    */
@@ -102,7 +83,7 @@ export interface ResourceNodeVO {
   /**
    * 该资源的子资源列表
    */
-  children?: ResourceNodeVO[];
+  children?: Items[];
   [k: string]: unknown;
 }
 

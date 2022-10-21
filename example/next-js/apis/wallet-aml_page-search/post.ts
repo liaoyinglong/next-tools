@@ -10,8 +10,6 @@ export const walletAmlPageSearchPostApi = new RequestBuilder<walletAmlPageSearch
   url: '/wallet-aml:page-search',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace walletAmlPageSearchPostApi {

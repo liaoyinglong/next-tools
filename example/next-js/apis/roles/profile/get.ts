@@ -10,8 +10,6 @@ export const rolesProfileGetApi = new RequestBuilder<rolesProfileGetApi.Req, rol
   url: '/roles/profile',
   method: 'get',
   requestFn,
-  
-  
 });
 
 export namespace rolesProfileGetApi {

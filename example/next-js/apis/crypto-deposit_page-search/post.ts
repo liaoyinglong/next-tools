@@ -4,14 +4,12 @@ import requestFn from '@/utils/request';
 /**
  * 分页查询入币信息
  * @tags 入币管理相关接口
- * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%85%A5%E5%B8%81%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_5
+ * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%85%A5%E5%B8%81%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_6
  */
 export const cryptoDepositPageSearchPostApi = new RequestBuilder<cryptoDepositPageSearchPostApi.Req, cryptoDepositPageSearchPostApi.Res>({
   url: '/crypto-deposit:page-search',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace cryptoDepositPageSearchPostApi {
@@ -36,6 +34,14 @@ export interface Req {
    */
   params: {
     /**
+     * 开始时间
+     */
+    startTime?: string;
+    /**
+     * 结束时间
+     */
+    endTime?: string;
+    /**
      * 账户id
      */
     accountId: number;
@@ -46,15 +52,21 @@ export interface Req {
     /**
      * 交易状态
      */
-    status?: "NEW" | "PENDING" | "COMPLETED" | "CANCELLED" | "FAILED" | "EXCEPTIONAL" | "PROCESSING" | "PROCESSED";
+    status?:
+      | "NEW"
+      | "PENDING"
+      | "COMPLETED"
+      | "CANCELLED"
+      | "FAILED"
+      | "EXCEPTIONAL"
+      | "PROCESSING"
+      | "PROCESSED"
+      | "PENDING_REVIEW"
+      | "PENDING_NETWORK";
     /**
-     * 开始时间（订单的更新时间）
+     * 时间类型
      */
-    startUpdatedTime?: string;
-    /**
-     * 结束时间（订单的更新时间）
-     */
-    endUpdatedTime?: string;
+    timeType?: "CREATE" | "FINISH";
     [k: string]: unknown;
   };
   /**
@@ -103,6 +115,10 @@ export interface Res {
      */
     coinCode?: string;
     /**
+     * 网络Id
+     */
+    networkId?: number;
+    /**
      * 网络名称
      */
     networkName?: string;
@@ -121,7 +137,17 @@ export interface Res {
     /**
      * 交易状态
      */
-    status?: "NEW" | "PENDING" | "COMPLETED" | "CANCELLED" | "FAILED" | "EXCEPTIONAL" | "PROCESSING" | "PROCESSED";
+    status?:
+      | "NEW"
+      | "PENDING"
+      | "COMPLETED"
+      | "CANCELLED"
+      | "FAILED"
+      | "EXCEPTIONAL"
+      | "PROCESSING"
+      | "PROCESSED"
+      | "PENDING_REVIEW"
+      | "PENDING_NETWORK";
     /**
      * 到达时间
      */

@@ -10,8 +10,6 @@ export const resourcesDisabledUpdatePutApi = new RequestBuilder<resourcesDisable
   url: '/resources/disabled:update',
   method: 'put',
   requestFn,
-  
-  
 });
 
 export namespace resourcesDisabledUpdatePutApi {

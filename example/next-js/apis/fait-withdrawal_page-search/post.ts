@@ -4,14 +4,12 @@ import requestFn from '@/utils/request';
 /**
  * 分页查询出金信息
  * @tags 出金管理相关接口
- * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%87%BA%E9%87%91%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_3
+ * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%87%BA%E9%87%91%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_4
  */
 export const faitWithdrawalPageSearchPostApi = new RequestBuilder<faitWithdrawalPageSearchPostApi.Req, faitWithdrawalPageSearchPostApi.Res>({
   url: '/fait-withdrawal:page-search',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace faitWithdrawalPageSearchPostApi {

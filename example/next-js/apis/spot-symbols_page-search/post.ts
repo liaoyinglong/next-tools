@@ -10,8 +10,6 @@ export const spotSymbolsPageSearchPostApi = new RequestBuilder<spotSymbolsPageSe
   url: '/spot-symbols:page-search',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace spotSymbolsPageSearchPostApi {

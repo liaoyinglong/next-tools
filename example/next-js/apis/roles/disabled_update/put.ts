@@ -10,8 +10,6 @@ export const rolesDisabledUpdatePutApi = new RequestBuilder<rolesDisabledUpdateP
   url: '/roles/disabled:update',
   method: 'put',
   requestFn,
-  
-  
 });
 
 export namespace rolesDisabledUpdatePutApi {

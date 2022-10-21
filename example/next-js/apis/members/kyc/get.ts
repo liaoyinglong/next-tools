@@ -10,8 +10,6 @@ export const membersKycGetApi = new RequestBuilder<membersKycGetApi.Req, members
   url: '/members/kyc',
   method: 'get',
   requestFn,
-  
-  
 });
 
 export namespace membersKycGetApi {

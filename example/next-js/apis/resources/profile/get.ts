@@ -10,8 +10,6 @@ export const resourcesProfileGetApi = new RequestBuilder<resourcesProfileGetApi.
   url: '/resources/profile',
   method: 'get',
   requestFn,
-  
-  
 });
 
 export namespace resourcesProfileGetApi {
@@ -41,6 +39,10 @@ export interface Res {
    * 名字(国际化完成前使用)，国际化名字使用code字段
    */
   name?: string;
+  /**
+   * 资源的路径，从父资源到子资源的路径(数组值是code)
+   */
+  path?: string[];
   /**
    * 排序(值越小，排前面)
    */

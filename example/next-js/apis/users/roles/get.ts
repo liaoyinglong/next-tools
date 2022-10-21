@@ -10,8 +10,6 @@ export const usersRolesGetApi = new RequestBuilder<usersRolesGetApi.Req, usersRo
   url: '/users/roles',
   method: 'get',
   requestFn,
-  
-  
 });
 
 export namespace usersRolesGetApi {

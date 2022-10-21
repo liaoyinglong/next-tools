@@ -10,8 +10,6 @@ export const tenantsVerificationSendPostApi = new RequestBuilder<tenantsVerifica
   url: '/tenants/verification:send',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace tenantsVerificationSendPostApi {

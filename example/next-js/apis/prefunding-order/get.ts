@@ -10,8 +10,6 @@ export const prefundingOrderGetApi = new RequestBuilder<prefundingOrderGetApi.Re
   url: '/prefunding-order',
   method: 'get',
   requestFn,
-  
-  
 });
 
 export namespace prefundingOrderGetApi {

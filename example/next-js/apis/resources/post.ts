@@ -10,8 +10,6 @@ export const resourcesPostApi = new RequestBuilder<resourcesPostApi.Req, resourc
   url: '/resources',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace resourcesPostApi {

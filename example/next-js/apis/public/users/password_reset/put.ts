@@ -10,8 +10,6 @@ export const publicUsersPasswordResetPutApi = new RequestBuilder<publicUsersPass
   url: '/public/users/password:reset',
   method: 'put',
   requestFn,
-  
-  
 });
 
 export namespace publicUsersPasswordResetPutApi {

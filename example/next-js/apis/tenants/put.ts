@@ -10,8 +10,6 @@ export const tenantsPutApi = new RequestBuilder<tenantsPutApi.Req, tenantsPutApi
   url: '/tenants',
   method: 'put',
   requestFn,
-  
-  
 });
 
 export namespace tenantsPutApi {

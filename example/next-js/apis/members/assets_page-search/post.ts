@@ -10,8 +10,6 @@ export const membersAssetsPageSearchPostApi = new RequestBuilder<membersAssetsPa
   url: '/members/assets:page-search',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace membersAssetsPageSearchPostApi {

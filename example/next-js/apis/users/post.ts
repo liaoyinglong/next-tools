@@ -10,8 +10,6 @@ export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Re
   url: '/users',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace usersPostApi {

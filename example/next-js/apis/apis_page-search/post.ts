@@ -4,14 +4,12 @@ import requestFn from '@/utils/request';
 /**
  * 分页查询所有角色(支持根据角色name模糊查询)
  * @tags 后端http接口(即:Api)的相关接口
- * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%90%8E%E7%AB%AFhttp%E6%8E%A5%E5%8F%A3(%E5%8D%B3%3AApi)%E7%9A%84%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_7
+ * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%90%8E%E7%AB%AFhttp%E6%8E%A5%E5%8F%A3(%E5%8D%B3%3AApi)%E7%9A%84%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_8
  */
 export const apisPageSearchPostApi = new RequestBuilder<apisPageSearchPostApi.Req, apisPageSearchPostApi.Res>({
   url: '/apis:page-search',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace apisPageSearchPostApi {

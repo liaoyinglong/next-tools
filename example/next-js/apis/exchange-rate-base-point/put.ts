@@ -10,8 +10,6 @@ export const exchangeRateBasePointPutApi = new RequestBuilder<exchangeRateBasePo
   url: '/exchange-rate-base-point',
   method: 'put',
   requestFn,
-  
-  
 });
 
 export namespace exchangeRateBasePointPutApi {

@@ -10,8 +10,6 @@ export const rolesResourcesBindPutApi = new RequestBuilder<rolesResourcesBindPut
   url: '/roles/resources:bind',
   method: 'put',
   requestFn,
-  
-  
 });
 
 export namespace rolesResourcesBindPutApi {

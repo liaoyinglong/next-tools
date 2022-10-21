@@ -10,8 +10,6 @@ export const usersPageSearchPostApi = new RequestBuilder<usersPageSearchPostApi.
   url: '/users:page-search',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace usersPageSearchPostApi {

@@ -10,8 +10,6 @@ export const prefundingOrderDestroyPutApi = new RequestBuilder<prefundingOrderDe
   url: '/prefunding-order:destroy',
   method: 'put',
   requestFn,
-  
-  
 });
 
 export namespace prefundingOrderDestroyPutApi {

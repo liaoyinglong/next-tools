@@ -10,8 +10,6 @@ export const usersVerificationSendPostApi = new RequestBuilder<usersVerification
   url: '/users/verification:send',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace usersVerificationSendPostApi {

@@ -4,14 +4,12 @@ import requestFn from '@/utils/request';
 /**
  * 分页查询换汇记录
  * @tags 汇率管理相关接口
- * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E6%B1%87%E7%8E%87%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_2
+ * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E6%B1%87%E7%8E%87%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_3
  */
 export const prefundingOrderPageSearchPostApi = new RequestBuilder<prefundingOrderPageSearchPostApi.Req, prefundingOrderPageSearchPostApi.Res>({
   url: '/prefunding-order:page-search',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace prefundingOrderPageSearchPostApi {

@@ -10,8 +10,6 @@ export const publicVerificationTokenEffectiveGetApi = new RequestBuilder<publicV
   url: '/public/verification/token:effective',
   method: 'get',
   requestFn,
-  
-  
 });
 
 export namespace publicVerificationTokenEffectiveGetApi {

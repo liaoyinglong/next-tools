@@ -10,8 +10,6 @@ export const publicVerify2FaResetPutApi = new RequestBuilder<publicVerify2FaRese
   url: '/public/verify/2fa:reset',
   method: 'put',
   requestFn,
-  
-  
 });
 
 export namespace publicVerify2FaResetPutApi {

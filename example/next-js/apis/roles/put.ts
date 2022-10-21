@@ -10,8 +10,6 @@ export const rolesPutApi = new RequestBuilder<rolesPutApi.Req, rolesPutApi.Res>(
   url: '/roles',
   method: 'put',
   requestFn,
-  
-  
 });
 
 export namespace rolesPutApi {

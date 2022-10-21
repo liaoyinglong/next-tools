@@ -10,8 +10,6 @@ export const storageSignatureUploadPostApi = new RequestBuilder<storageSignature
   url: '/storage/signature:upload',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace storageSignatureUploadPostApi {

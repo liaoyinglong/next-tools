@@ -10,8 +10,6 @@ export const verify2FaVerifyPostApi = new RequestBuilder<verify2FaVerifyPostApi.
   url: '/verify/2fa:verify',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace verify2FaVerifyPostApi {

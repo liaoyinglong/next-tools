@@ -10,8 +10,6 @@ export const prefundingOrderPostApi = new RequestBuilder<prefundingOrderPostApi.
   url: '/prefunding-order',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace prefundingOrderPostApi {

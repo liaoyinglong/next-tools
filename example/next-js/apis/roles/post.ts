@@ -10,8 +10,6 @@ export const rolesPostApi = new RequestBuilder<rolesPostApi.Req, rolesPostApi.Re
   url: '/roles',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace rolesPostApi {

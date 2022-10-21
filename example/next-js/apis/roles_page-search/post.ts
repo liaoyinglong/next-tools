@@ -10,8 +10,6 @@ export const rolesPageSearchPostApi = new RequestBuilder<rolesPageSearchPostApi.
   url: '/roles:page-search',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace rolesPageSearchPostApi {

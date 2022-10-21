@@ -10,8 +10,6 @@ export const faitWithdrawalGetApi = new RequestBuilder<faitWithdrawalGetApi.Req,
   url: '/fait-withdrawal',
   method: 'get',
   requestFn,
-  
-  
 });
 
 export namespace faitWithdrawalGetApi {

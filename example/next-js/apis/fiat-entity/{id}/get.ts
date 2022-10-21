@@ -11,7 +11,6 @@ export const fiatEntityIdGetApi = new RequestBuilder<fiatEntityIdGetApi.Req, fia
   method: 'get',
   requestFn,
   urlPathParams: ["id"],
-  
 });
 
 export namespace fiatEntityIdGetApi {

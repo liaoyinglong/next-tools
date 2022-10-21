@@ -10,8 +10,6 @@ export const loggingRiskPageSearchPostApi = new RequestBuilder<loggingRiskPageSe
   url: '/logging-risk:page-search',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace loggingRiskPageSearchPostApi {

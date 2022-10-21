@@ -10,8 +10,6 @@ export const tenantsPageSearchPostApi = new RequestBuilder<tenantsPageSearchPost
   url: '/tenants:page-search',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace tenantsPageSearchPostApi {

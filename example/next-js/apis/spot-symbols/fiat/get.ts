@@ -10,8 +10,6 @@ export const spotSymbolsFiatGetApi = new RequestBuilder<spotSymbolsFiatGetApi.Re
   url: '/spot-symbols/fiat',
   method: 'get',
   requestFn,
-  
-  
 });
 
 export namespace spotSymbolsFiatGetApi {

@@ -10,8 +10,6 @@ export const publicVerify2FaGetApi = new RequestBuilder<publicVerify2FaGetApi.Re
   url: '/public/verify/2fa',
   method: 'get',
   requestFn,
-  
-  
 });
 
 export namespace publicVerify2FaGetApi {

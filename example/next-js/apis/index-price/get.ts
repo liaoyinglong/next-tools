@@ -10,8 +10,6 @@ export const indexPriceGetApi = new RequestBuilder<indexPriceGetApi.Req, indexPr
   url: '/index-price',
   method: 'get',
   requestFn,
-  
-  
 });
 
 export namespace indexPriceGetApi {

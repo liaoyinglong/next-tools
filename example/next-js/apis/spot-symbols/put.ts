@@ -10,8 +10,6 @@ export const spotSymbolsPutApi = new RequestBuilder<spotSymbolsPutApi.Req, spotS
   url: '/spot-symbols',
   method: 'put',
   requestFn,
-  
-  
 });
 
 export namespace spotSymbolsPutApi {

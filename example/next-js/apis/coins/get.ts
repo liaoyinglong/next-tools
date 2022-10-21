@@ -10,8 +10,6 @@ export const coinsGetApi = new RequestBuilder<coinsGetApi.Req, coinsGetApi.Res>(
   url: '/coins',
   method: 'get',
   requestFn,
-  
-  
 });
 
 export namespace coinsGetApi {

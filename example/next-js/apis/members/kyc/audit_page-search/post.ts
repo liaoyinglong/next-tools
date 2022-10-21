@@ -10,8 +10,6 @@ export const membersKycAuditPageSearchPostApi = new RequestBuilder<membersKycAud
   url: '/members/kyc/audit:page-search',
   method: 'post',
   requestFn,
-  
-  
 });
 
 export namespace membersKycAuditPageSearchPostApi {

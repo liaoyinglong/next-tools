@@ -10,8 +10,6 @@ export const membersAccountsGetApi = new RequestBuilder<membersAccountsGetApi.Re
   url: '/members/accounts',
   method: 'get',
   requestFn,
-  
-  
 });
 
 export namespace membersAccountsGetApi {

@@ -10,8 +10,6 @@ export const publicUsersActivePutApi = new RequestBuilder<publicUsersActivePutAp
   url: '/public/users:active',
   method: 'put',
   requestFn,
-  
-  
 });
 
 export namespace publicUsersActivePutApi {

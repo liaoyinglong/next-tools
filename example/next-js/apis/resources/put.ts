@@ -10,8 +10,6 @@ export const resourcesPutApi = new RequestBuilder<resourcesPutApi.Req, resources
   url: '/resources',
   method: 'put',
   requestFn,
-  
-  
 });
 
 export namespace resourcesPutApi {

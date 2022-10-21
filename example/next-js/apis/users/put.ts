@@ -10,8 +10,6 @@ export const usersPutApi = new RequestBuilder<usersPutApi.Req, usersPutApi.Res>(
   url: '/users',
   method: 'put',
   requestFn,
-  
-  
 });
 
 export namespace usersPutApi {

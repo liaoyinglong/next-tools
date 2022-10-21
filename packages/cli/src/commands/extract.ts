@@ -3,17 +3,21 @@ import { globby } from "globby";
 import pMap from "p-map";
 import { createLogger } from "../shared";
 import { getConfig } from "../shared/config";
-import { I18nData, ExtractedMap } from "../shared/i18nData";
+import { ExtractedMap, I18nData } from "../shared/i18nData";
 import pc from "picocolors";
 import os from "os";
+import { promptI18nConfigEnable } from "../shared/promptConfigEnable";
+
 const log = createLogger("extract");
 
 export async function extract() {
   const config = await getConfig();
   const { extract } = await import("@dune2/wasm");
 
+  let i18nConfigs = await promptI18nConfigEnable(config.i18n);
+
   // 这是使得任务串行，方便看日志
-  for (const configItem of config.i18n ?? []) {
+  for (const configItem of i18nConfigs) {
     const files = await globby(
       [
         `**/**.{js,jsx,ts,tsx}`,

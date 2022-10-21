@@ -52,6 +52,11 @@ export interface I18nConfig {
    * @internal
    */
   keySorter?: (a: string, b: string) => number;
+  /**
+   * 是否启用
+   * @internal
+   */
+  enabled?: boolean;
 }
 
 export interface ApiConfig {
@@ -107,6 +112,11 @@ export interface ApiConfig {
    * @default (schema) => schema.properties?.data ?? schema
    */
   responseSchemaTransformer?: (schema: OpenAPIV3.SchemaObject) => any;
+  /**
+   * 是否启用
+   * @internal
+   */
+  enabled?: boolean;
 }
 
 export interface Config {
@@ -151,6 +161,7 @@ export async function getConfig(): Promise<Config> {
     item.keySorter = (a, b) => {
       return a.localeCompare(b);
     };
+    item.enabled ??= true;
     return item;
   });
   //#endregion
@@ -168,6 +179,7 @@ export function apiConfigNormalizer(item: ApiConfig) {
   item.requestFnImportPath ??= `import requestFn from '@/utils/request';`;
   item.RequestBuilderImportPath ??= `import { RequestBuilder } from '@dune2/tools';`;
   item.enableTs ??= true;
+  item.enabled ??= true;
   item.responseSchemaTransformer ??= (schema) =>
     schema.properties?.data ?? schema;
   return item;

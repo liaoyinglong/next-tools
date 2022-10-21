@@ -3,13 +3,17 @@ import { createLogger } from "../shared";
 import { getConfig } from "../shared/config";
 import { I18nData } from "../shared/i18nData";
 import { resolveSheetData } from "../shared/resolveSheetData";
+import { promptI18nConfigEnable } from "../shared/promptConfigEnable";
 
 const log = createLogger("generate");
 
 export async function download() {
   const config = await getConfig();
+
+  let i18nConfigs = await promptI18nConfigEnable(config.i18n);
+
   let i = 0;
-  for (const configItem of config.i18n ?? []) {
+  for (const configItem of i18nConfigs) {
     i++;
     if (!configItem.sheetId || !configItem.sheetRange) {
       log.error(`config.${i} sheetId 或 sheetRange 为空，请检查`);

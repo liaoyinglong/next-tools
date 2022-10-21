@@ -5,6 +5,7 @@ import { googleSheet } from "../shared/google/sheet";
 import { I18nData } from "../shared/i18nData";
 import { letterToNumber } from "../shared/letters";
 import { resolveSheetData } from "../shared/resolveSheetData";
+import { promptI18nConfigEnable } from "../shared/promptConfigEnable";
 
 const log = createLogger("upload");
 
@@ -77,8 +78,9 @@ function sleep(ms: number) {
 
 export async function upload() {
   const config = await getConfig();
+  let i18nConfigs = await promptI18nConfigEnable(config.i18n);
 
-  for (const configItem of config.i18n ?? []) {
+  for (const configItem of i18nConfigs) {
     const { sheetData, i18nDataMap } = await batchUpdateKeys(configItem);
     await pMap(configItem.locales ?? [], async (locale) => {
       const i18nData = i18nDataMap.get(locale)!;

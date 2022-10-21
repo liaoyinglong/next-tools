@@ -20,6 +20,18 @@ module.exports = defineConfig({
         in: "F",
       },
     },
+    {
+      i18nDir: "./i18n2",
+      sheetId:
+        "https://docs.google.com/spreadsheets/d/1_xpkDxAfKDcyvFwXyELN4vlweSbO0DnClOk_TVHNjWw/edit#gid=971638239",
+      sheetRange: "资金记录2",
+      position: {
+        key: "B",
+        zh: "C",
+        en: "D",
+        in: "F",
+      },
+    },
   ],
   api: [
     {

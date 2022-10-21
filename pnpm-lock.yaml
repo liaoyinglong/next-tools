@@ -63,11 +63,11 @@ importers:
       '@dune2/wasm': workspace:*
       '@types/debug': ^4.1.7
       '@types/lodash': ^4.14.186
-      '@types/prompts': ^2.4.0
       cac: ^6.7.14
       cli-table3: ^0.6.3
       connect: ^3.7.0
       debug: ^4.3.4
+      enquirer: ^2.3.6
       fs-extra: ^10.1.0
       gaxios: '*'
       globby: ^13.1.2
@@ -81,7 +81,6 @@ importers:
       p-map: ^5.5.0
       path-to-regexp: ^6.2.1
       picocolors: ^1.0.0
-      prompts: ^2.4.2
       tsup: ^6.2.3
     dependencies:
       '@apidevtools/swagger-parser': 10.1.0_openapi-types@12.0.2
@@ -90,6 +89,7 @@ importers:
       cli-table3: 0.6.3
       connect: 3.7.0
       debug: 4.3.4
+      enquirer: 2.3.6
       fs-extra: 10.1.0
       globby: 13.1.2
       googleapis: 108.0.0
@@ -100,11 +100,9 @@ importers:
       p-map: 5.5.0
       path-to-regexp: 6.2.1
       picocolors: 1.0.0
-      prompts: 2.4.2
     devDependencies:
       '@types/debug': 4.1.7
       '@types/lodash': 4.14.186
-      '@types/prompts': 2.4.0
       gaxios: 5.0.2
       google-auth-library: 8.5.2
       openapi-types: 12.0.2
@@ -724,10 +722,6 @@ packages:
     resolution: {integrity: sha512-ri0UmynRRvZiiUJdiz38MmIblKK+oH30MztdBVR95dv/Ubw6neWSb8u1XpRb72L4qsZOhz+L+z9JD40SJmfWow==}
     dev: false
 
-  /@types/prompts/2.4.0:
-    resolution: {integrity: sha512-7th8Opn+0XlN0O6qzO7dXOPwL6rigq/EwRS2DntaTHwSw8cLaYKeAPt5dWEKHSL+ffVSUl1itTPUC06+FlsV4Q==}
-    dev: true
-
   /@types/prop-types/15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
     dev: true
@@ -876,6 +870,11 @@ packages:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
       uri-js: 4.4.1
+    dev: false
+
+  /ansi-colors/4.1.3:
+    resolution: {integrity: sha512-/6w/C21Pm1A7aZitlI5Ni/2J6FFQN8i1Cvz3kHABAAbw93v/NlvKdVOqz7CCWz/3iv/JplRSEEZ83XION15ovw==}
+    engines: {node: '>=6'}
     dev: false
 
   /ansi-regex/5.0.1:
@@ -1325,6 +1324,13 @@ packages:
     dependencies:
       graceful-fs: 4.2.10
       tapable: 2.2.1
+    dev: false
+
+  /enquirer/2.3.6:
+    resolution: {integrity: sha512-yjNnPr315/FjS4zIsUxYguYUPP2e1NK4d7E7ZOLiyYCcbFBiTMyID+2wvm2w6+pZ/odMA7cRkjhsPbltwBOrLg==}
+    engines: {node: '>=8.6'}
+    dependencies:
+      ansi-colors: 4.1.3
     dev: false
 
   /es-abstract/1.20.2:
@@ -2656,6 +2662,7 @@ packages:
   /kleur/3.0.3:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
+    dev: true
 
   /kleur/4.1.5:
     resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
@@ -3245,6 +3252,7 @@ packages:
     dependencies:
       kleur: 3.0.3
       sisteransi: 1.0.5
+    dev: true
 
   /prop-types/15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
@@ -3426,6 +3434,7 @@ packages:
 
   /sisteransi/1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
+    dev: true
 
   /slash/3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}

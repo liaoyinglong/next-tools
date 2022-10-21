@@ -1,5 +1,6 @@
 import { cli, createLogger } from "../shared";
-import prompts from "prompts";
+import enquirer from "enquirer";
+const { prompt } = enquirer;
 
 const log = createLogger("interactive");
 
@@ -12,16 +13,17 @@ export const interactive = async (args: any) => {
   });
 
   const commandMap = new Map<string, typeof commands[number]>();
-  const res = await prompts({
+  const res = await prompt<{ command: string }>({
     type: "autocomplete",
     name: "command",
     message: "选择要执行的命令：",
     choices: commands.map((command) => {
       commandMap.set(command.name, command);
       return {
-        title: command.name,
+        name: command.name,
         value: command.name,
-        description: command.description,
+        message: command.description,
+        hint: `等同命令 ${cli.name} ${command.name}`,
       };
     }),
   });

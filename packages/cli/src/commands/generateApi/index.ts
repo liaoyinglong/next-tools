@@ -8,13 +8,15 @@ import * as os from "os";
 import SwaggerParser from "@apidevtools/swagger-parser";
 import { compile } from "json-schema-to-typescript";
 import path from "path";
+import { promptApiConfigEnable } from "../../shared/promptConfigEnable";
 
 const log = createLogger("generateApi");
 
 export async function generateApi() {
   const config = await getConfig();
+  const apiConfigs = await promptApiConfigEnable(config.api);
 
-  for (const apiConfig of config.api ?? []) {
+  for (const apiConfig of apiConfigs) {
     log.info(`清除旧的api文件: ${apiConfig.output}`);
     await fs.emptydir(apiConfig.output!);
   }

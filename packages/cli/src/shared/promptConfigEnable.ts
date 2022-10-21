@@ -1,5 +1,5 @@
 import enquirer from "enquirer";
-import { I18nConfig } from "./config";
+import { ApiConfig, I18nConfig } from "./config";
 const { prompt } = enquirer;
 
 interface Opt<T> {
@@ -13,7 +13,7 @@ interface Opt<T> {
   checkIsEnabled: (enabledArr: string[], item: T) => boolean;
 }
 
-export async function promptConfigEnable<T>(opt: Opt<T>) {
+async function promptConfigEnable<T>(opt: Opt<T>) {
   const { configArr, getChoiceItem } = opt;
   // 只有一条配置的时候不用选择
   if (configArr.length <= 1) {
@@ -58,6 +58,21 @@ export function promptI18nConfigEnable(configArr: I18nConfig[] | undefined) {
     },
     checkIsEnabled: (enabledArr, item) => {
       return enabledArr.includes(item.i18nDir!);
+    },
+  });
+}
+
+export function promptApiConfigEnable(configArr: ApiConfig[] | undefined) {
+  return promptConfigEnable({
+    configArr: configArr ?? [],
+    getChoiceItem: (item) => {
+      return {
+        name: item.output!,
+        hint: `swaggerJSONPath: ${item.swaggerJSONPath}`,
+      };
+    },
+    checkIsEnabled: (enabledArr, item) => {
+      return enabledArr.includes(item.output!);
     },
   });
 }

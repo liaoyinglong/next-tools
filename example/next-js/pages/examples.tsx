@@ -2,6 +2,7 @@ import { Layout } from "lingui-example/components/Layout";
 
 export default function Home() {
   const t = useT();
+  const name = "12345678";
   t(`hello ${name}`);
   return (
     <Layout>

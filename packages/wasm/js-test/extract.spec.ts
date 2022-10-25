@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { extract } from "../";
+import { extract } from "..";
 
 const str = [
   "t`hello ${name}`",

@@ -3,6 +3,14 @@
   "version": "0.0.16",
   "main": "./pkg/s_wasm.js",
   "types": "./pkg/s_wasm.d.ts",
+  "exports": {
+    ".": {
+      "import": "./pkg/s_wasm.js",
+      "require": "./pkg/s_wasm.js",
+      "default": "./pkg/s_wasm.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "pkg"
   ],

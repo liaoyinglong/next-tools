@@ -1,6 +1,6 @@
 {
   "name": "@dune2/tools",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "",
   "keywords": [
     "i18n"
@@ -21,10 +21,10 @@
     "@lingui/react": "^3"
   },
   "devDependencies": {
-    "@types/react": "^18",
-    "react": "^18",
     "@tanstack/react-query": "^4.7.2",
-    "axios": "^0.27.2"
+    "@types/react": "^18",
+    "axios": "^0.27.2",
+    "react": "^18"
   },
   "publishConfig": {
     "access": "public"

@@ -1,6 +1,6 @@
 {
   "name": "@dune2/wasm",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "main": "./pkg/s_wasm.js",
   "types": "./pkg/s_wasm.d.ts",
   "exports": {
@@ -19,7 +19,6 @@
     "test": "vitest run",
     "test:u": "vitest -u"
   },
-  "dependencies": {},
   "publishConfig": {
     "access": "public"
   }

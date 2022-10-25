@@ -1,6 +1,6 @@
 {
   "name": "@dune2/swc-plugin",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "",
   "keywords": [
     "swc-plugin"
@@ -16,7 +16,6 @@
     "test": "vitest run",
     "test:u": "vitest -u"
   },
-  "dependencies": {},
   "devDependencies": {
     "@swc/core": "1.3.1"
   },

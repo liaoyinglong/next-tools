@@ -1,6 +1,6 @@
 {
   "name": "@dune2/cli",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "type": "module",
   "exports": {
     ".": {
@@ -25,30 +25,30 @@
     "test:u": "vitest -u"
   },
   "dependencies": {
+    "@apidevtools/swagger-parser": "^10.1.0",
     "@dune2/wasm": "workspace:*",
     "cac": "^6.7.14",
     "cli-table3": "^0.6.3",
     "connect": "^3.7.0",
     "debug": "^4.3.4",
+    "enquirer": "^2.3.6",
     "fs-extra": "^10.1.0",
     "globby": "^13.1.2",
     "googleapis": "^108.0.0",
     "joycon": "^3.1.1",
+    "json-schema-to-typescript": "^11.0.2",
+    "lodash": "^4.17.21",
     "open": "^8.4.0",
     "p-map": "^5.5.0",
     "path-to-regexp": "^6.2.1",
-    "picocolors": "^1.0.0",
-    "enquirer": "^2.3.6",
-    "json-schema-to-typescript": "^11.0.2",
-    "@apidevtools/swagger-parser": "^10.1.0",
-    "lodash": "^4.17.21"
+    "picocolors": "^1.0.0"
   },
   "devDependencies": {
-    "openapi-types": "^12.0.2",
     "@types/debug": "^4.1.7",
     "@types/lodash": "^4.14.186",
     "gaxios": "*",
     "google-auth-library": "*",
+    "openapi-types": "^12.0.2",
     "tsup": "^6.2.3"
   },
   "publishConfig": {

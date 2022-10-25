@@ -81,10 +81,15 @@ export class RequestBuilder<Req = any, Res = any> {
       throw new Error("request function is not defined");
     }
     this.options.urlPathParams?.forEach((param) => {
-      url = url.replace(
-        `{${param}}`,
-        config.params?.[param] ?? config.data?.[param]
-      );
+      let t = "";
+      if (config.params?.[param]) {
+        t = config.params[param];
+        delete config.params[param];
+      } else if (config.data?.[param]) {
+        t = config.data[param];
+        delete config.data[param];
+      }
+      url = url.replace(`{${param}}`, t);
     });
     return requestFn<T>({
       url,

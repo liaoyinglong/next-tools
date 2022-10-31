@@ -34,15 +34,13 @@ export default function Home() {
           </p>
         </a>
 
-        <Link href="/examples">
-          <a className={styles.card}>
-            <h3>
-              <Trans>Examples →</Trans>
-            </h3>
-            <p>
-              <Trans>Checkout LinguiJS examples and usecases.</Trans>
-            </p>
-          </a>
+        <Link href="/examples" className={styles.card}>
+          <h3>
+            <Trans>Examples →</Trans>
+          </h3>
+          <p>
+            <Trans>Checkout LinguiJS examples and usecases.</Trans>
+          </p>
         </Link>
       </div>
     </Layout>
@@ -51,7 +49,7 @@ export default function Home() {
 export const getStaticProps = () => {
   return {
     props: {
-      date: new Date(),
+      // date: new Date(),
     },
   };
 };

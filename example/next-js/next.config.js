@@ -48,7 +48,9 @@ const combinedConfig = withDunePresets()({
     /**
      * @see https://nextjs.org/docs/advanced-features/compiler#swc-plugins-experimental
      */
-    swcPlugins: [["next-superjson-plugin", {}]],
+    swcPlugins: [
+      //    ["next-superjson-plugin", {}]
+    ],
   },
 });
 

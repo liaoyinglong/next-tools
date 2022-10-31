@@ -16,7 +16,7 @@
   "dependencies": {
     "@dune2/tools": "workspace:*",
     "classnames": "^2.3.2",
-    "next": "12.3.1",
+    "next": "13.0.0",
     "next-superjson-plugin": "^0.4.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -24,12 +24,12 @@
   },
   "devDependencies": {
     "@dune2/cli": "workspace:*",
+    "@dune2/next-plugin": "workspace:*",
     "@types/node": "18.7.18",
     "@types/react": "^18",
     "@types/react-dom": "18.0.6",
     "eslint": "8.23.1",
-    "eslint-config-next": "12.3.0",
-    "typescript": "4.8.3",
-    "@dune2/next-plugin": "workspace:*"
+    "eslint-config-next": "13.0.0",
+    "typescript": "4.8.3"
   }
 }

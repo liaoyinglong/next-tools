@@ -1,4 +1,5 @@
 import { $, echo, fs } from "zx";
+process.env.FORCE_COLOR = "1";
 
 echo("testing wasm...");
 await $`cargo test`;

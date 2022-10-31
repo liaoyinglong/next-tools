@@ -20,5 +20,6 @@ fn fixture(input: PathBuf) {
         &|_| get_folder(),
         &input,
         &output,
+        Default::default(),
     );
 }

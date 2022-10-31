@@ -29,20 +29,20 @@ describe("extract", () => {
           "id": "hello {name2}",
           "messages": "",
         },
-        "msg_id2" => {
-          "id": "msg_id2",
-          "messages": "hello {name2}",
+        "hello {name}" => {
+          "id": "hello {name}",
+          "messages": "",
         },
         "msg_id3" => {
           "id": "msg_id3",
           "messages": "hello {name2}",
         },
-        "hello {name}" => {
-          "id": "hello {name}",
-          "messages": "",
-        },
         "msg_id1" => {
           "id": "msg_id1",
+          "messages": "hello {name2}",
+        },
+        "msg_id2" => {
+          "id": "msg_id2",
           "messages": "hello {name2}",
         },
       }

@@ -1,14 +1,15 @@
 import {
-  UseQueryOptions,
-  UseMutationOptions,
-  useQuery,
+  FetchQueryOptions,
+  QueryClient,
   QueryFunctionContext,
   useMutation,
-  QueryClient,
-  FetchQueryOptions,
+  UseMutationOptions,
+  useQuery,
+  UseQueryOptions,
+  UseQueryResult,
 } from "@tanstack/react-query";
 
-import { Method, AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig, Method } from "axios";
 
 type Basic = {
   /**
@@ -122,7 +123,7 @@ export class RequestBuilder<Req = any, Res = any> {
    */
   useQuery(params?: Req, options?: UseQueryOptions<Res> & Basic) {
     const { useQueryOptions } = this.options;
-    return useQuery({
+    const res = useQuery({
       queryFn: this.defaultQueryFn,
       queryKey: this.getQueryKey(params),
       ...useQueryOptions,
@@ -133,6 +134,7 @@ export class RequestBuilder<Req = any, Res = any> {
         requestFn: options?.requestFn ?? this.options.requestFn,
       },
     });
+    return res as UseQueryResult<Res>;
   }
 
   /**

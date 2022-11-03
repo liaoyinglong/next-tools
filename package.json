@@ -8,7 +8,7 @@
     "build": "lerna run build --scope @dune2/*",
     "test": "lerna run test --scope @dune2/*",
     "example:next-js": "lerna run build --scope=next-js",
-    "release": "pnpm test && lerna version --scope @dune2/* && pnpm publish -r",
+    "release": "pnpm test && lerna version --no-private && pnpm publish -r",
     "graph": "nx graph",
     "reset:cache": "nx reset"
   },

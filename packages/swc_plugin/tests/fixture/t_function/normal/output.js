@@ -63,6 +63,12 @@ var a = Math.random() && t("hello {name}", {
 console.log(t("hello {name}", {
     name: name
 }));
+// return statement
+function a() {
+    return t("hello {name}", {
+        name: name
+    });
+}
 // ====================
 // should not transform
 t("Refresh inbox");

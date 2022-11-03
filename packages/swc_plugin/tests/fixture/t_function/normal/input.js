@@ -23,6 +23,11 @@ var a = Math.random() ? t`hello ${name}` : t`hello ${name2}`;
 var a = Math.random() && t`hello ${name}`;
 console.log(t`hello ${name}`);
 
+// return statement
+function a() {
+  return t`hello ${name}`;
+}
+
 // ====================
 // should not transform
 t("Refresh inbox");

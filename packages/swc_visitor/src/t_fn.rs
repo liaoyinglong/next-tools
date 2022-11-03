@@ -1,8 +1,8 @@
 use swc_core::common::DUMMY_SP;
-use swc_core::ecma::ast::ExprStmt;
 use swc_core::ecma::ast::{ArrayLit, BinExpr, CallExpr, CondExpr, Ident, PropName};
 use swc_core::ecma::ast::{Callee, Expr};
 use swc_core::ecma::ast::{ExprOrSpread, JSXExpr, JSXExprContainer};
+use swc_core::ecma::ast::{ExprStmt, ReturnStmt};
 use swc_core::ecma::ast::{KeyValueProp, Tpl};
 use swc_core::ecma::ast::{TaggedTpl, VarDeclarator};
 use swc_core::ecma::atoms::JsWord;
@@ -152,5 +152,13 @@ impl VisitMut for TFunctionVisitor {
         n.args.iter_mut().for_each(|arg| {
             self.handle_expr(&mut arg.expr);
         });
+    }
+
+    // case: return t`hello ${name}`;
+    fn visit_mut_return_stmt(&mut self, n: &mut ReturnStmt) {
+        n.visit_mut_children_with(self);
+        if let Some(arg) = &mut n.arg {
+            self.handle_expr(&mut *arg);
+        }
     }
 }

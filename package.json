@@ -9,7 +9,8 @@
     "test": "lerna run test --scope @dune2/*",
     "example:next-js": "lerna run build --scope=next-js",
     "release": "pnpm test && lerna version && pnpm publish -r",
-    "graph": "nx graph"
+    "graph": "nx graph",
+    "reset:cache": "nx reset"
   },
   "keywords": [],
   "author": "",

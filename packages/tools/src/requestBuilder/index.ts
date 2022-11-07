@@ -61,7 +61,7 @@ export class RequestBuilder<Req = any, Res = any> {
     const method = this.options.method!;
     let data;
     // 根据请求方法来放到url上或者body里
-    if (!["delete", "get", "head", "options"].includes(method)) {
+    if (!["get", "head", "options"].includes(method)) {
       data = params;
       params = undefined;
     }

@@ -83,13 +83,17 @@ export class RequestBuilder<Req = any, Res = any> {
     }
     this.options.urlPathParams?.forEach((param) => {
       let t = "";
+      //region config.params || config.data 在 queryHash 之后不变的话，会保持同一个引用，这里需要做个浅拷贝，将引用打破
       if (config.params?.[param]) {
+        config.params = { ...config.params };
         t = config.params[param];
         delete config.params[param];
       } else if (config.data?.[param]) {
+        config.data = { ...config.data };
         t = config.data[param];
         delete config.data[param];
       }
+      //endregion
       url = url.replace(`{${param}}`, t);
     });
     return requestFn<T>({

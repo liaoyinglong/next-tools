@@ -13,10 +13,17 @@ import { enableDetectLocale } from "./enableDetectLocale";
  * const message = t`Hello ${name}`;
  * ```
  */
-export const t = i18n._.bind(i18n) as unknown as (
-  literals: TemplateStringsArray | string,
-  ...placeholders: any[]
-) => string;
+export let t = initT();
+function initT() {
+  return i18n._.bind(i18n) as unknown as (
+    literals: TemplateStringsArray | string,
+    ...placeholders: any[]
+  ) => string;
+}
+// 修复 更换语言的时候 t 没有重新生成，导致某些写在 useMemo 的 t 调用没有更新语言
+i18n.on("change", () => {
+  t = initT();
+});
 
 /**
  * 这里封装好了 传递给 Lingui 的 i18n 实例

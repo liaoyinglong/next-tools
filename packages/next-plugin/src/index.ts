@@ -11,12 +11,6 @@ import {
 export * from "./shared";
 
 export interface DunePresetsOptions {
-  /**
-   * 配置需要走babel/swc编译的依赖
-   * 默认编译 @dune2 下面的依赖，也就是 内部包 发布到npm的时候可以ts
-   * @see https://github.com/martpie/next-transpile-modules
-   */
-  transpileModules?: string[];
   autoImport?: AutoImportOptions;
 }
 

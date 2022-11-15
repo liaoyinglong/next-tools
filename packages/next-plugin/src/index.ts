@@ -1,4 +1,3 @@
-import withTM from "next-transpile-modules";
 import { Options as AutoImportOptions } from "unplugin-auto-import/types";
 import { i18nResourcePlugin } from "@dune2/unplugin";
 import { NextConfig } from "next";
@@ -30,10 +29,13 @@ export const withDunePresets = (options: DunePresetsOptions = {}) => {
   function withDunePresetsImpl(nextConfig: NextConfig) {
     updateValue(nextConfig, ["experimental", "externalDir"], true);
     updateValue(nextConfig, ["experimental", "swcPlugins"], defaultSwcPlugins);
+    updateValue(
+      nextConfig,
+      ["experimental", "transpilePackages"],
+      defaultTranspileModules
+    );
 
-    const combinedConfig = withTM(
-      defaultTranspileModules.concat(options.transpileModules).filter(Boolean)
-    )({
+    const combinedConfig = {
       ...nextConfig,
       webpack: (config, webpackFnOptions) => {
         config.plugins.unshift(
@@ -52,7 +54,7 @@ export const withDunePresets = (options: DunePresetsOptions = {}) => {
         }
         return config;
       },
-    });
+    };
 
     return combinedConfig;
   }

@@ -1,5 +1,4 @@
 import { Layout } from "lingui-example/components/Layout";
-import styles from "./index.module.css";
 export default function Home() {
     const name = "Home";
     return <Layout className={styles.main}>

@@ -1,6 +1,10 @@
+pub mod semi_ui;
+
+use crate::semi_ui::SemiUiImportCssVisitor;
 use s_swc_visitor::get_folder;
 use swc_core::ecma::ast::Program;
 use swc_core::ecma::visit::FoldWith;
+use swc_core::ecma::visit::VisitMutWith;
 use swc_core::plugin::metadata::TransformPluginMetadataContextKind;
 use swc_core::plugin::plugin_transform;
 use swc_core::plugin::proxies::TransformPluginProgramMetadata;
@@ -23,16 +27,23 @@ use swc_core::plugin::proxies::TransformPluginProgramMetadata;
 /// This requires manual handling of serialization / deserialization from ptrs.
 /// Refer swc_plugin_macro to see how does it work internally.
 #[plugin_transform]
-pub fn process_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
+pub fn process_transform(
+    mut program: Program,
+    metadata: TransformPluginProgramMetadata,
+) -> Program {
     let file_name = metadata
         .get_context(&TransformPluginMetadataContextKind::Filename)
         .unwrap_or("unknown file_name".to_string());
 
     // println!("===================================");
     // println!("file_name: {}", file_name);
+    if file_name.contains("@douyinfe/semi-ui") || file_name.contains("@douyinfe/semi-icons") {
+        program.visit_mut_with(&mut SemiUiImportCssVisitor {});
+    }
 
     // FIXME: only transform expected files now, should make it configurable
     let should_transform = file_name.contains("@dune2/") || !file_name.contains("node_modules");
+
     if should_transform {
         // println!("swc plugin: should_transform, {}", file_name);
         program.fold_with(&mut get_folder())

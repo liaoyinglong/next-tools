@@ -222,7 +222,7 @@ export class RequestBuilder<Req = any, Res = any> {
           return pageData.result;
         }) ?? []
       );
-    }, []);
+    }, [rawData]);
 
     type Data<T> = T extends PageData ? T["result"] : T;
     return { ...res, data: data as Data<Res>, rawData };

@@ -2,14 +2,17 @@ import {
   FetchQueryOptions,
   QueryClient,
   QueryFunctionContext,
-  useMutation,
+  UseInfiniteQueryOptions,
   UseMutationOptions,
-  useQuery,
   UseQueryOptions,
   UseQueryResult,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
 } from "@tanstack/react-query";
 
 import { AxiosRequestConfig, Method } from "axios";
+import { useMemo } from "react";
 
 type Basic = {
   /**
@@ -42,6 +45,12 @@ export interface RequestBuilderOptions<Req, Res> extends Basic {
 }
 
 type RequestConfig = Basic & AxiosRequestConfig;
+
+type PageData<T = any> = {
+  total?: number;
+  result: T[];
+  extra?: any;
+};
 
 export class RequestBuilder<Req = any, Res = any> {
   constructor(public options: RequestBuilderOptions<Req, Res>) {
@@ -109,7 +118,7 @@ export class RequestBuilder<Req = any, Res = any> {
    * 通常配置react-query的queryKey
    */
   getQueryKey(params?: Req) {
-    return [this.options.url, this.options.method!, params];
+    return [this.options.url, this.options.method!, params] as const;
   }
   private async defaultQueryFn(
     ctx: QueryFunctionContext<[string, string, Req]>
@@ -162,6 +171,63 @@ export class RequestBuilder<Req = any, Res = any> {
     });
   }
   //endregion
+  //#region useInfiniteQuery
+  useInfiniteQuery(
+    params?: Omit<Req, "pageNum" | "pageSize" | "count"> & {
+      pageSize?: number;
+      count?: boolean;
+    },
+    options?: UseInfiniteQueryOptions<Res> & Basic
+  ) {
+    const pageSize = params?.pageSize ?? 10;
+    const res = useInfiniteQuery({
+      queryFn: (ctx) => {
+        return this.request(
+          {
+            pageNum: ctx.pageParam ?? 1,
+            // @ts-expect-error 后续处理类型问题
+            ...ctx.queryKey[2],
+          },
+          {
+            signal: ctx.signal,
+            requestFn: ctx.meta?.requestFn as never,
+          }
+        );
+      },
+      // @ts-expect-error 后续处理类型问题
+      queryKey: this.getQueryKey(params),
+
+      getNextPageParam: (_lastPage, _allPages) => {
+        let lastPage = _lastPage as PageData;
+        let allPages = _allPages as PageData[];
+        // 如果最后一页的数据不满足pageSize，说明没有下一页了
+        if (lastPage.result.length < pageSize) {
+          return undefined;
+        }
+        return allPages.length + 1;
+      },
+      ...options,
+      meta: {
+        ...options?.meta,
+        requestFn: options?.requestFn ?? this.options.requestFn,
+      },
+    });
+
+    const rawData = res.data;
+
+    const data = useMemo(() => {
+      return (
+        rawData?.pages.flatMap((page) => {
+          const pageData = page as PageData;
+          return pageData.result;
+        }) ?? []
+      );
+    }, []);
+
+    type Data<T> = T extends PageData ? T["result"] : T;
+    return { ...res, data: data as Data<Res>, rawData };
+  }
+  //#endregion
 
   //#region mutation
 

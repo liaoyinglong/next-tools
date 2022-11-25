@@ -173,12 +173,10 @@ export class RequestBuilder<Req = any, Res = any> {
   //endregion
   //#region useInfiniteQuery
   useInfiniteQuery(
-    params?: Omit<Req, "pageNum" | "pageSize" | "count"> & {
-      pageSize?: number;
-      count?: boolean;
-    },
+    params?: Req,
     options?: UseInfiniteQueryOptions<Res> & Basic
   ) {
+    // @ts-expect-error 后续处理类型问题
     const pageSize = params?.pageSize ?? 10;
     const res = useInfiniteQuery({
       queryFn: (ctx) => {
@@ -194,7 +192,6 @@ export class RequestBuilder<Req = any, Res = any> {
           }
         );
       },
-      // @ts-expect-error 后续处理类型问题
       queryKey: this.getQueryKey(params),
 
       getNextPageParam: (_lastPage, _allPages) => {

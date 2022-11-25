@@ -158,7 +158,12 @@ async function compileRequestParams(
         (p) => p.in === "query" || p.in === "path"
       ) ?? [];
 
-    const required = parameters.filter((p) => p.required).map((p) => p.name);
+    // 必填参数中忽略 分页相关的参数
+    const required = parameters
+      .filter(
+        (p) => p.required && !["pageNum", "pageSize", "count"].includes(p.name)
+      )
+      .map((p) => p.name);
     const properties = Object.fromEntries(
       parameters.map((p) => {
         //TODO: 这里也要处理 ref 类型

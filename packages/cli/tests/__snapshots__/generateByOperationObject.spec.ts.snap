@@ -44,7 +44,6 @@ export interface Req {
      * 币种状态(NEW, ACTIVE, INACTIVE)
      */
     status?: \\"NEW\\" | \\"ACTIVE\\" | \\"INACTIVE\\";
-    [k: string]: unknown;
   };
   /**
    * 分页查询的排序规则, 最大不能超过10个排序字段
@@ -61,9 +60,7 @@ export interface Req {
      * 排序规则
      */
     type: \\"asc\\" | \\"desc\\";
-    [k: string]: unknown;
   }[];
-  [k: string]: unknown;
 }
 
  
@@ -103,7 +100,6 @@ export interface Res {
        * 币种状态(NEW,ACTIVE,INACTIVE)
        */
       status?: string;
-      [k: string]: unknown;
     };
     /**
      * 币种支持的网络
@@ -117,11 +113,8 @@ export interface Res {
        * 币种的唯一标识，用于将网络关联到币种
        */
       coinId?: number;
-      [k: string]: unknown;
     }[];
-    [k: string]: unknown;
   }[];
-  [k: string]: unknown;
 }
 
 };"
@@ -148,7 +141,6 @@ export namespace usersGetApi {
    * 用户id
    */
   id: number;
-  [k: string]: unknown;
 }
 
  
@@ -172,7 +164,6 @@ export interface Res {
    * 用户状态(ACTIVE, INACTIVE)
    */
   status?: \\"NEW\\" | \\"ACTIVE\\" | \\"INACTIVE\\";
-  [k: string]: unknown;
 }
 
 };"
@@ -194,9 +185,7 @@ export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Re
 });
 
 export namespace usersPostApi {
- export interface Req {
-  [k: string]: unknown;
-}
+ export interface Req {}
 
  
  export type Res = any;

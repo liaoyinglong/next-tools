@@ -194,6 +194,7 @@ async function compileRequestParams(
     code = await compile(schema, "Req", {
       bannerComment: "",
       ignoreMinAndMaxItems: !!1,
+      additionalProperties: false,
       // format: false,
     });
   }
@@ -218,6 +219,7 @@ async function compileResponseParams(
       code = await compile(data, "Res", {
         bannerComment: "",
         ignoreMinAndMaxItems: !!1,
+        additionalProperties: false,
         // format: false,
       });
     } else {

@@ -2,8 +2,8 @@ use serde::{Deserialize, Serialize};
 use swc_core::common::collections::AHashMap;
 use swc_core::common::errors::HANDLER;
 use swc_core::ecma::ast::{
-    CallExpr, Expr, ExprOrSpread, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName,
-    JSXExpr, JSXOpeningElement, Lit,
+    CallExpr, Expr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName, JSXExpr,
+    JSXOpeningElement, Lit, ObjectLit,
 };
 use swc_core::ecma::visit::VisitMutWith;
 use swc_core::ecma::visit::{noop_visit_mut_type, VisitMut};
@@ -22,7 +22,7 @@ pub struct Item {
 #[derive(Debug)]
 pub struct Config {
     pub id: String,
-    pub messages: String,
+    pub message: String,
     pub trans_component: String,
     pub t_fn: String,
 }
@@ -33,7 +33,7 @@ impl Default for Config {
             trans_component: "Trans".to_string(),
             t_fn: "t".to_string(),
             id: "id".to_string(),
-            messages: "messages".to_string(),
+            message: "message".to_string(),
         }
     }
 }
@@ -66,10 +66,24 @@ impl ExtractVisitor {
         }
     }
 
-    fn expr_or_spread_to_string(&mut self, item: Option<&ExprOrSpread>) -> Option<String> {
-        let lit = item?.expr.clone().lit()?;
-        self.lit_to_string(lit)
+    fn pick_object_value(&mut self, obj: ObjectLit, key: &str) -> Option<String> {
+        let props = obj.props;
+        let item = props.iter().find(|prop| {
+            let f = || -> Option<String> {
+                let p = prop.as_prop()?;
+                let p = p.as_key_value()?;
+                let k = p.key.as_ident()?.sym.to_string();
+                Some(k)
+            };
+            match f() {
+                Some(k) => k == key,
+                None => false,
+            }
+        })?;
+        let v = item.as_prop()?.as_key_value()?.value.clone();
+        self.lit_to_string(v.lit()?)
     }
+
     fn jsx_attr_value_to_string(&mut self, value: Option<JSXAttrValue>) -> Option<String> {
         match value? {
             JSXAttrValue::Lit(lit) => self.lit_to_string(lit),
@@ -98,7 +112,13 @@ impl VisitMut for ExtractVisitor {
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
     noop_visit_mut_type!();
 
-    // case: t("msg.id", { name: "Tom" }, { defaults: "My name is {name}" })
+    /// 对应 t 方法调用的时候有以下：
+    /// ```js
+    /// t({ id: "Refresh inbox", message: "Refresh inbox" });
+    /// t({ id: "Refresh inbox" }, { name: "name" });
+    /// t({ id: "Refresh inbox", values: { name: "name" }});
+    /// t("Refresh inbox", { name: "name" });
+    /// ```
     fn visit_mut_call_expr(&mut self, n: &mut CallExpr) {
         n.visit_mut_children_with(self);
         let mut work = || -> Option<()> {
@@ -108,34 +128,31 @@ impl VisitMut for ExtractVisitor {
             }
             let arg = &n.args;
 
-            //region 获取msg id
-            let id_arg = arg.first();
-            let id = self.expr_or_spread_to_string(id_arg);
-            //endregion
-            match id.clone() {
-                None => {
-                    // error!("msg id is not string literal, skip");
-                    HANDLER.with(|handler| {
-                        handler
-                            .span_note_without_error(n.span, "msg id is not string literal, skip");
-                    });
+            let first_arg = arg.first()?;
+            let mut id = "".to_string();
+            let mut default_msg = "".to_string();
+            match *first_arg.expr.clone() {
+                Expr::Lit(lit) => id = self.lit_to_string(lit)?,
+                Expr::Object(obj) => {
+                    id = self.pick_object_value(obj.clone(), &self.config.id.clone())?;
+                    default_msg = self.pick_object_value(obj, &self.config.message.clone())?;
                 }
-                Some(id) => {
-                    //region 获取msg defaults
-                    let default_msg_arg = arg.get(2);
-                    let default_msg = self
-                        .expr_or_spread_to_string(default_msg_arg)
-                        .unwrap_or("".into());
-                    //endregion
-                    self.data.insert(
-                        id.clone(),
-                        Item {
-                            id,
-                            messages: default_msg,
-                        },
-                    );
-                }
-            };
+                _ => (),
+            }
+            if id.is_empty() {
+                // error!("msg id is not string literal, skip");
+                HANDLER.with(|handler| {
+                    handler.span_note_without_error(n.span, "msg id is not string literal, skip");
+                });
+            } else {
+                self.data.insert(
+                    id.clone(),
+                    Item {
+                        id,
+                        messages: default_msg,
+                    },
+                );
+            }
 
             None
         };
@@ -169,7 +186,7 @@ impl VisitMut for ExtractVisitor {
 
                             if attr_name == self.config.id {
                                 id = value?;
-                            } else if attr_name == self.config.messages {
+                            } else if attr_name == self.config.message {
                                 defaults = value.unwrap_or("".into());
                             }
                         }

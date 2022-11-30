@@ -68,6 +68,7 @@ mod tests {
     fn test_extract() {
         let mut source = String::new();
         source.push_str("t`hello ${name}`;");
+        source.push_str(r#"t({ id: "t.fn.obj.arg", message: "Refresh inbox" });"#);
         source.push_str("<Trans>hello {name2}</Trans>;");
         source.push_str(r#"<Trans id="msg_id1">hello {name2}</Trans>;"#);
         source.push_str(r#"<Trans id={"msg_id2"}>hello {name2}</Trans>;"#);
@@ -96,6 +97,7 @@ mod tests {
             );
         };
         insert("hello {name}", "");
+        insert("t.fn.obj.arg", "Refresh inbox");
         insert("hello {name2}", "");
         insert("msg_id1", "hello {name2}");
         insert("msg_id2", "hello {name2}");

@@ -9,6 +9,8 @@ import {
   useInfiniteQuery,
   useMutation,
   useQuery,
+  InvalidateOptions,
+  RefetchOptions,
 } from "@tanstack/react-query";
 
 import { AxiosRequestConfig, Method } from "axios";
@@ -118,6 +120,9 @@ export class RequestBuilder<Req = any, Res = any> {
    * 通常配置react-query的queryKey
    */
   getQueryKey(params?: Req) {
+    if (typeof params === "undefined") {
+      return [this.options.url, this.options.method];
+    }
     return [this.options.url, this.options.method!, params] as const;
   }
   private async defaultQueryFn(
@@ -168,6 +173,26 @@ export class RequestBuilder<Req = any, Res = any> {
         ...options?.meta,
         requestFn: options?.requestFn,
       },
+    });
+  }
+  invalidateQuery(params?: Req, options?: InvalidateOptions) {
+    const queryClient = this.options.queryClient;
+    if (!queryClient) {
+      throw new Error("没有传入 queryClient，无法预请求，可以在构造函数中传入");
+    }
+    return queryClient.invalidateQueries({
+      queryKey: this.getQueryKey(params),
+      ...options,
+    });
+  }
+  refetchQueries(params?: Req, options?: RefetchOptions) {
+    const queryClient = this.options.queryClient;
+    if (!queryClient) {
+      throw new Error("没有传入 queryClient，无法预请求，可以在构造函数中传入");
+    }
+    return queryClient.refetchQueries({
+      queryKey: this.getQueryKey(params),
+      ...options,
     });
   }
   //endregion

@@ -34,6 +34,6 @@ t("Refresh inbox");
 t(`Attachment ${name} saved`);
 
 raw`Refresh inbox`;
-
+t({ id: "Refresh inbox", message: "Refresh inbox" });
 obj.t("Refresh inbox");
 obj.t(`Refresh inbox ${name}`);

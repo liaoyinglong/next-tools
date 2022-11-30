@@ -159,9 +159,9 @@ impl Normalizer {
         debug!("trans component msg_id: {}", self.msg_id);
 
         let mut attrs = vec![
-            // id={"msg_id"} || messages={"msg_id"}
+            // id={"msg_id"} || message={"msg_id"}
             jsx_attr!(
-                if exist_id_prop { "messages" } else { "id" },
+                if exist_id_prop { "message" } else { "id" },
                 JSXAttrValue::Lit(self.msg_id.trim().into())
             ),
         ];

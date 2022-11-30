@@ -9,7 +9,7 @@
     0: props.name ?? defaultName
 }}></Trans>;
 // Custom id is preserved:
-<Trans id="message.attachment_saved" messages="Attachment {name} saved." values={{
+<Trans id="message.attachment_saved" message="Attachment {name} saved." values={{
     name: name
 }}></Trans>;
 //  inline markup

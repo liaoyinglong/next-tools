@@ -16,7 +16,7 @@ interface Options {
  * @tips 最好在 useEffect 中调用，否则可能会导致 ssr 时，html 和执行完成后的语言不一致
  */
 export function enableDetectLocale(options: Options = {}) {
-  options.defaultLocale ??= LocalesEnum.zh_CN;
+  options.defaultLocale ??= LocalesEnum.zh;
   if (isBrowser) {
     //#region 启用语言方法重写
     const oldActivateLocale = i18n.activate;

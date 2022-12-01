@@ -11,8 +11,9 @@ export function useLocale() {
 
   return {
     locale: i18n.locale,
-    isZhCN: i18n.locale === LocalesEnum.zh_CN,
-    isInID: i18n.locale === LocalesEnum.in_ID,
+    isZH: i18n.locale === LocalesEnum.zh,
+    isID: i18n.locale === LocalesEnum.id,
+    isEn: i18n.locale === LocalesEnum.en,
     activate: useMemo(() => {
       return i18n.activate.bind(i18n);
     }, [i18n.activate]),

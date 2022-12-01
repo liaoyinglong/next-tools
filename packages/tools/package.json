@@ -13,7 +13,7 @@
     "src"
   ],
   "scripts": {
-    "build": "echo 'not need build'"
+    "build": "tsc --diagnostics"
   },
   "dependencies": {
     "@lingui/core": "^3",

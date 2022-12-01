@@ -1,11 +1,11 @@
 // https://gist.github.com/msikma/8912e62ed866778ff8cd
 export enum LocalesEnum {
   //  中文
-  zh_CN = "zh_CN",
+  zh = "zh",
   // 印尼
-  in_ID = "in_ID",
+  id = "id",
   // 英文
-  en_US = "en_US",
+  en = "en",
 }
 
 export enum DetectLocaleEnum {

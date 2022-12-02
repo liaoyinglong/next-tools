@@ -1,3 +1,4 @@
+import * as child_process from "child_process";
 import _ from "lodash";
 import { OpenAPIV3 } from "openapi-types";
 import pMap from "p-map";
@@ -55,6 +56,20 @@ export async function generateApi() {
         );
       }
     });
+
+    if (apiConfig.format) {
+      // 格式化代码
+      log.info(`尝试格式化代码: %s`, apiConfig.output);
+      child_process.exec(`prettier --write ${apiConfig.output}`, (error) => {
+        if (error) {
+          log.error(`格式化代码失败: ${error}`);
+          log.error(`请手动执行: prettier --write ${apiConfig.output}`);
+          log.error(`或者在配置文件中关闭格式化功能`);
+        } else {
+          log.info(`格式化代码成功: %s`, apiConfig.output);
+        }
+      });
+    }
   }
 
   log.info("generateApi Done");

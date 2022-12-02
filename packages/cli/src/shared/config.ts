@@ -117,6 +117,13 @@ export interface ApiConfig {
    * @internal
    */
   enabled?: boolean;
+
+  /**
+   * 生成代码完毕后是否自动格式化，默认格式化
+   * 需要安装 prettier
+   * @default true
+   */
+  format?: boolean;
 }
 
 export interface Config {
@@ -180,6 +187,7 @@ export function apiConfigNormalizer(item: ApiConfig) {
   item.RequestBuilderImportPath ??= `import { RequestBuilder } from '@dune2/tools';`;
   item.enableTs ??= true;
   item.enabled ??= true;
+  item.format ??= true;
   item.responseSchemaTransformer ??= (schema) =>
     schema.properties?.data ?? schema;
   return item;

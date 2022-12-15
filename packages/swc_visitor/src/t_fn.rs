@@ -72,6 +72,10 @@ impl TFunctionVisitor {
                     *expr = new_expr
                 }
             }
+            // 这是括号里面的表达式
+            Expr::Paren(expr) => {
+                self.handle_expr(&mut expr.expr);
+            }
             _ => {}
         }
     }

@@ -57,6 +57,7 @@ var a = Math.random() ? t("hello {name}", {
 }) : t("hello {name2}", {
     name2: name2
 });
+//prettier-ignore
 var a = Math.random() ? t("hello {name}", {
     name: name
 }) : t("hello {name2}", {

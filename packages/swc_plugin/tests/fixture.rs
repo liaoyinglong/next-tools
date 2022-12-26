@@ -11,6 +11,7 @@ use testing::fixture;
 fn fixture(input: PathBuf) {
     let output = input.with_file_name("output.js");
     //env::set_var("UPDATE", "1");
+    println!("1");
     test_fixture(
         Syntax::Es(EsConfig {
             //jsx: input.to_string_lossy().ends_with(".jsx"),

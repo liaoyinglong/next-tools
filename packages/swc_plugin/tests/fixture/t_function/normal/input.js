@@ -20,7 +20,8 @@ var obj = { a: t`hello ${name}` };
 var obj = { [t`hello ${name}`]: "string" };
 var arr = [t`hello ${name}`];
 var a = Math.random() ? t`hello ${name}` : t`hello ${name2}`;
-var a = Math.random() ? t`hello ${name}` : t`hello ${name2}`;
+//prettier-ignore
+var a = Math.random() ? (t`hello ${name}`) : (t`hello ${name2}`);
 var a = Math.random() && t`hello ${name}`;
 console.log(t`hello ${name}`);
 const { node = t`hello ${name}` } = props;

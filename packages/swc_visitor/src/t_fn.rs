@@ -1,5 +1,5 @@
 use swc_core::common::DUMMY_SP;
-use swc_core::ecma::ast::{ArrayLit, BinExpr, CallExpr, CondExpr, Ident, PropName};
+use swc_core::ecma::ast::{ArrayLit, AssignPatProp, BinExpr, CallExpr, CondExpr, Ident, PropName};
 use swc_core::ecma::ast::{Callee, Expr};
 use swc_core::ecma::ast::{ExprOrSpread, JSXExpr, JSXExprContainer};
 use swc_core::ecma::ast::{ExprStmt, ReturnStmt};
@@ -163,6 +163,14 @@ impl VisitMut for TFunctionVisitor {
         n.visit_mut_children_with(self);
         if let Some(arg) = &mut n.arg {
             self.handle_expr(&mut *arg);
+        }
+    }
+
+    // case: const { node = t`hello ${name}` } = props;
+    fn visit_mut_assign_pat_prop(&mut self, n: &mut AssignPatProp) {
+        n.visit_mut_children_with(self);
+        if let Some(value) = &mut n.value {
+            self.handle_expr(&mut *value);
         }
     }
 }

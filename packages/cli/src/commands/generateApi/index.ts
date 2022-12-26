@@ -227,10 +227,12 @@ async function compileResponseParams(
     // FIXME: 可能需要处理其他的content类型
     const temp2 = temp.content["application/json"] || temp.content["*/*"];
     const schema = temp2.schema as OpenAPIV3.SchemaObject;
-    const data = apiConfig.responseSchemaTransformer!(schema);
+    let data = apiConfig.responseSchemaTransformer!(schema);
     if (data) {
+      // 这里需要深度clone的原因是：
+      // 解析出来的scheme会尽可能的被复用，导致影响到下次解析
+      data = _.cloneDeep(data);
       markCircularToRef(data);
-
       code = await compile(data, "Res", {
         bannerComment: "",
         ignoreMinAndMaxItems: !!1,

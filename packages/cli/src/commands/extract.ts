@@ -20,7 +20,7 @@ export async function extract() {
   for (const configItem of i18nConfigs) {
     const files = await globby(
       [
-        `**/**.{js,jsx,ts,tsx}`,
+        `./src/**/**.{js,jsx,ts,tsx}`,
         "!**/node_modules/**",
         "!**.d.ts",
         "!**/.next/**",

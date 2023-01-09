@@ -79,6 +79,7 @@ mod tests {
                Welcome to <a>Next.js!</a> {counter}
             </Trans>;"#,
         );
+        source.push_str("obj.title = t`设置title`;");
         // 以下无法提取
         source.push_str("t(`error_${errorCode}`);"); // 提取不到
         source.push_str("i18n.t('welcome');");
@@ -102,6 +103,7 @@ mod tests {
         insert("msg_id1", "hello {name2}");
         insert("msg_id2", "hello {name2}");
         insert("msg_id3", "hello {name2}");
+        insert("设置title", "");
         insert("Welcome to <0>Next.js!</0> {counter}", "");
         assert_eq!(res.data.len(), map.len());
         assert_eq!(res.data, map);

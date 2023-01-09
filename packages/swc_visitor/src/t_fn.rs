@@ -1,5 +1,7 @@
 use swc_core::common::DUMMY_SP;
-use swc_core::ecma::ast::{ArrayLit, AssignPatProp, BinExpr, CallExpr, CondExpr, Ident, PropName};
+use swc_core::ecma::ast::{
+    ArrayLit, AssignExpr, AssignPatProp, BinExpr, CallExpr, CondExpr, Ident, PropName,
+};
 use swc_core::ecma::ast::{Callee, Expr};
 use swc_core::ecma::ast::{ExprOrSpread, JSXExpr, JSXExprContainer};
 use swc_core::ecma::ast::{ExprStmt, ReturnStmt};
@@ -91,6 +93,12 @@ impl VisitMut for TFunctionVisitor {
     fn visit_mut_expr_stmt(&mut self, n: &mut ExprStmt) {
         n.visit_mut_children_with(self);
         self.handle_expr(&mut n.expr);
+    }
+
+    // case: obj.title = t`设置title`
+    fn visit_mut_assign_expr(&mut self, n: &mut AssignExpr) {
+        n.visit_mut_children_with(self);
+        self.handle_expr(&mut n.right);
     }
 
     // case: <div>{t`hello ${name}`}</div>;

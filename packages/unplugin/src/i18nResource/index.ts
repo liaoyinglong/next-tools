@@ -14,7 +14,7 @@ export const i18nResourcePlugin = createUnplugin((options: unknown) => {
       try {
         const data = JSON.parse(code);
         Object.keys(data).forEach((key) => {
-          data[key] = compile(data[key]);
+          data[key] = compile(data[key] || key);
         });
         return JSON.stringify(data);
       } catch (e) {

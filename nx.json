@@ -9,22 +9,19 @@
     }
   },
   "namedInputs": {
-    "default": [
-      "{projectRoot}/src/**",
-      "{projectRoot}/Cargo.toml",
-      "swc_visitor/src/**"
-    ],
-    "testInput": ["{projectRoot}/{src,test}/**"]
+    "default": ["{projectRoot}/src/**", "{projectRoot}/Cargo.toml"],
+    "testInput": ["{projectRoot}/{src,test}/**"],
+    "swc_visitor": ["{workspaceRoot}/packages/swc_visitor/src/**"]
   },
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["{projectRoot}/dist", "{projectRoot}/pkg"],
-      "inputs": ["default"]
+      "inputs": ["default", "swc_visitor"]
     },
     "test": {
       "dependsOn": ["build"],
-      "inputs": ["testInput"]
+      "inputs": ["testInput", "swc_visitor"]
     }
   }
 }

@@ -36,7 +36,7 @@
     "globby": "^13.1.2",
     "googleapis": "^108.0.0",
     "joycon": "^3.1.1",
-    "json-schema-to-typescript": "^11.0.2",
+    "json-schema-to-typescript": "^11.0.3",
     "lodash": "^4.17.21",
     "open": "^8.4.0",
     "p-map": "^5.5.0",

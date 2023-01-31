@@ -206,12 +206,19 @@ async function compileRequestParams(
 
   let code = "";
   if (schema) {
-    code = await compile(schema, "Req", {
-      bannerComment: "",
-      ignoreMinAndMaxItems: !!1,
-      additionalProperties: false,
-      // format: false,
-    });
+    try {
+      code = await compile(schema, "Req", {
+        bannerComment: "",
+        ignoreMinAndMaxItems: !!1,
+        additionalProperties: false,
+        // format: false,
+      });
+    } catch (e) {
+      log.error("生成请求参数类型失败，请检查 %o", {
+        summary: operationObject.summary,
+        message: e.message,
+      });
+    }
   }
 
   return code ? code : "export type Req = any;";
@@ -233,12 +240,19 @@ async function compileResponseParams(
       // 解析出来的scheme会尽可能的被复用，导致影响到下次解析
       data = _.cloneDeep(data);
       markCircularToRef(data);
-      code = await compile(data, "Res", {
-        bannerComment: "",
-        ignoreMinAndMaxItems: !!1,
-        additionalProperties: false,
-        // format: false,
-      });
+      try {
+        code = await compile(data, "Res", {
+          bannerComment: "",
+          ignoreMinAndMaxItems: !!1,
+          additionalProperties: false,
+          // format: false,
+        });
+      } catch (e) {
+        log.error("转换响应参数类型失败, 请检查 %o", {
+          summary: operationObject.summary,
+          error: e.message,
+        });
+      }
     } else {
       log.error("responseSchemaTransformer 返回值为空, 请检查");
     }

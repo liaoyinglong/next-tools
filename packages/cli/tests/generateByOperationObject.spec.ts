@@ -291,6 +291,7 @@ describe("api 生成", function () {
     let parmas = JSON.parse(JSON.stringify(paramsInBody));
     parmas.parameters = [];
     parmas.responses = {};
+    delete parmas.requestBody;
     const result = await generate(parmas, "post");
     expect(result).toMatchSnapshot();
   });

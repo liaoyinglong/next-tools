@@ -166,7 +166,11 @@ async function compileRequestParams(
   operationObject: OpenAPIV3.OperationObject
 ) {
   let schema;
-  if (operationObject.parameters) {
+  if (operationObject.requestBody) {
+    //TODO: 这里也需要处理其他类型
+    schema = (operationObject.requestBody as OpenAPIV3.RequestBodyObject)
+      .content["application/json"].schema;
+  } else if (operationObject.parameters) {
     // FIXME: 这里还需要处理 ref 类型
     const parameters =
       (operationObject.parameters as OpenAPIV3.ParameterObject[]).filter(
@@ -198,10 +202,6 @@ async function compileRequestParams(
       type: "object",
       properties,
     };
-  } else if (operationObject.requestBody) {
-    //TODO: 这里也需要处理其他类型
-    schema = (operationObject.requestBody as OpenAPIV3.RequestBodyObject)
-      .content["application/json"].schema;
   }
 
   let code = "";

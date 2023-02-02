@@ -23,11 +23,7 @@ export const withDunePresets = (options: DunePresetsOptions = {}) => {
   function withDunePresetsImpl(nextConfig: NextConfig) {
     updateValue(nextConfig, ["experimental", "externalDir"], true);
     updateValue(nextConfig, ["experimental", "swcPlugins"], defaultSwcPlugins);
-    updateValue(
-      nextConfig,
-      ["experimental", "transpilePackages"],
-      defaultTranspileModules
-    );
+    updateValue(nextConfig, ["transpilePackages"], defaultTranspileModules);
 
     const combinedConfig = {
       ...nextConfig,

@@ -171,11 +171,21 @@ async function compileRequestParams(
     schema = (operationObject.requestBody as OpenAPIV3.RequestBodyObject)
       .content["application/json"].schema;
   } else if (operationObject.parameters) {
-    // FIXME: 这里还需要处理 ref 类型
-    const parameters =
-      (operationObject.parameters as OpenAPIV3.ParameterObject[]).filter(
-        (p) => p.in === "query" || p.in === "path"
-      ) ?? [];
+    const extraProperties = {};
+    const parameters: OpenAPIV3.ParameterObject[] = [];
+    (operationObject.parameters as OpenAPIV3.ParameterObject[]).forEach(
+      (item) => {
+        if (!["query", "path"].includes(item.in)) {
+          return;
+        }
+        if (_.get(item.schema, "type") === "object") {
+          // swagger get 请求上 有些参数是 object 类型 应该拍平
+          _.assign(extraProperties, _.get(item.schema, "properties", {}));
+        } else {
+          parameters.push(item);
+        }
+      }
+    );
 
     // 必填参数中忽略 分页相关的参数
     const required = parameters
@@ -200,7 +210,7 @@ async function compileRequestParams(
     schema = {
       required,
       type: "object",
-      properties,
+      properties: { ...properties, ...extraProperties },
     };
   }
 

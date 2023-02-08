@@ -2,9 +2,9 @@ use swc_core::ecma::ast::{Lit, ModuleDecl, ModuleItem, Stmt};
 use swc_core::ecma::visit::VisitMutWith;
 use swc_core::ecma::visit::{noop_visit_mut_type, VisitMut};
 use tracing::debug;
-pub struct SemiUiImportCssVisitor;
+pub struct SemiUiImportCssOmitVisitor;
 
-impl SemiUiImportCssVisitor {
+impl SemiUiImportCssOmitVisitor {
     // 返回 true 保留当前节点，返回 false 删除当前节点
     pub fn handle_require_fn(stmt: &Stmt) -> Option<bool> {
         let call_expr = stmt.as_expr()?.expr.as_call()?;
@@ -22,7 +22,7 @@ impl SemiUiImportCssVisitor {
     }
 }
 
-impl VisitMut for SemiUiImportCssVisitor {
+impl VisitMut for SemiUiImportCssOmitVisitor {
     // Implement necessary visit_mut_* methods for actual custom transform.
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html

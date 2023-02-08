@@ -1,6 +1,6 @@
-pub mod semi_ui;
+pub mod semi;
 
-use crate::semi_ui::SemiUiImportCssVisitor;
+use crate::semi::semi_css_omit::SemiUiImportCssOmitVisitor;
 use s_swc_visitor::get_folder;
 use swc_core::ecma::ast::Program;
 use swc_core::ecma::visit::FoldWith;
@@ -38,7 +38,7 @@ pub fn process_transform(
     // println!("===================================");
     // println!("file_name: {}", file_name);
     if file_name.contains("@douyinfe/semi-ui") || file_name.contains("@douyinfe/semi-icons") {
-        program.visit_mut_with(&mut SemiUiImportCssVisitor {});
+        program.visit_mut_with(&mut SemiUiImportCssOmitVisitor {});
     }
 
     // FIXME: only transform expected files now, should make it configurable

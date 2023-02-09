@@ -10,10 +10,14 @@ use s_swc_plugin::semi::semi_css_omit::SemiUiImportCssOmitVisitor;
 use s_swc_visitor::get_folder;
 use swc_core::common::chain;
 
+use s_swc_plugin::semi::modularize_imports::SemiUiModularizeImportsVisitor;
 use testing::fixture;
 
 fn get_folder2() -> impl Fold {
-    as_folder(SemiUiImportCssOmitVisitor)
+    as_folder(chain!(
+        SemiUiImportCssOmitVisitor {},
+        SemiUiModularizeImportsVisitor::default()
+    ))
 }
 
 //use std::env;

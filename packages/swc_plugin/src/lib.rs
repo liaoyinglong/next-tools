@@ -1,10 +1,13 @@
+#![feature(drain_filter)]
+
 pub mod semi;
 
+use crate::semi::modularize_imports::SemiUiModularizeImportsVisitor;
 use crate::semi::semi_css_omit::SemiUiImportCssOmitVisitor;
 use s_swc_visitor::get_folder;
 use swc_core::ecma::ast::Program;
-use swc_core::ecma::visit::FoldWith;
 use swc_core::ecma::visit::VisitMutWith;
+use swc_core::ecma::visit::{as_folder, FoldWith};
 use swc_core::plugin::metadata::TransformPluginMetadataContextKind;
 use swc_core::plugin::plugin_transform;
 use swc_core::plugin::proxies::TransformPluginProgramMetadata;
@@ -46,7 +49,9 @@ pub fn process_transform(
 
     if should_transform {
         // println!("swc plugin: should_transform, {}", file_name);
-        program.fold_with(&mut get_folder())
+        program
+            .fold_with(&mut get_folder())
+            .fold_with(&mut as_folder(SemiUiModularizeImportsVisitor::default()))
     } else {
         // println!("swc plugin: skip, {}", file_name);
         program

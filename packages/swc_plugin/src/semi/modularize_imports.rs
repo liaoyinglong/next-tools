@@ -1,22 +1,35 @@
 use swc_core::common::collections::AHashMap;
-use swc_core::ecma::ast::{Ident, ModuleDecl, ModuleExportName, ModuleItem, Str};
-use swc_core::ecma::atoms::js_word;
+use swc_core::ecma::ast::{
+    ImportDecl, ImportDefaultSpecifier, ImportSpecifier, ModuleDecl, ModuleExportName, ModuleItem,
+    Str,
+};
+use swc_core::ecma::utils::quote_ident;
 use swc_core::ecma::{visit::noop_visit_mut_type, visit::VisitMut, visit::VisitMutWith};
 
 /// 用来重定向 semi ui 的桶导出
 pub struct SemiUiModularizeImportsVisitor {
     imports: AHashMap<String, String>,
+    /// semi ui 的桶导出所对应的路径
+    map: AHashMap<String, String>,
 }
 
 impl Default for SemiUiModularizeImportsVisitor {
     fn default() -> Self {
+        let mut map = AHashMap::default();
+
         Self {
             imports: AHashMap::default(),
+            map,
         }
     }
 }
 
 impl SemiUiModularizeImportsVisitor {
+    fn get_import_source(s: &str) -> String {
+        let name = s[0..1].to_lowercase() + &s[1..];
+        format!("@douyinfe/semi-ui/lib/es/{}", name)
+    }
+
     /// 找到了 @douyinfe/semi-ui 的 import 语句
     /// 将存起来导入了哪些，以及导入的名字是什么。并且删除这个 import 语句
     /// 例如：
@@ -46,8 +59,34 @@ impl SemiUiModularizeImportsVisitor {
         }
         Some(true)
     }
+    /// 移除 @douyinfe/semi-ui 导入
     fn drain_import_and_collect(&mut self, n: &mut Vec<ModuleItem>) {
         n.drain_filter(|item| self.collect_imports(item.clone()).unwrap_or(false));
+    }
+    /// 根据收集的imports重新生成 @douyinfe/semi-ui 的导入语句
+    /// 例如：
+    /// ```js
+    /// import Input from "@douyinfe/semi-ui/lib/es/input";
+    /// import SemiUiSpace from "@douyinfe/semi-ui/lib/es/space";
+    /// ```
+    fn push_imports(&self, n: &mut Vec<ModuleItem>) {
+        self.imports.iter().for_each(|(local_var, imported_var)| {
+            let p = ImportDecl {
+                span: Default::default(),
+                src: Box::new(Str {
+                    span: Default::default(),
+                    value: format!("@douyinfe/semi-ui/lib/es/{}", imported_var).into(),
+                    raw: None,
+                }),
+                specifiers: vec![ImportSpecifier::Default(ImportDefaultSpecifier {
+                    span: Default::default(),
+                    local: quote_ident!(local_var.clone()),
+                })],
+                type_only: false,
+                asserts: None,
+            };
+            n.insert(0, ModuleItem::ModuleDecl(ModuleDecl::Import(p)));
+        });
     }
 }
 
@@ -59,9 +98,16 @@ impl VisitMut for SemiUiModularizeImportsVisitor {
 
     fn visit_mut_module_items(&mut self, n: &mut Vec<ModuleItem>) {
         self.drain_import_and_collect(n);
-
         dbg!(self.imports.clone());
-
+        self.push_imports(n);
         n.visit_mut_children_with(self);
+    }
+}
+
+pub fn capitalize(s: &str) -> String {
+    let mut c = s.chars();
+    match c.next() {
+        None => String::new(),
+        Some(f) => f.to_lowercase().collect::<String>() + c.as_str(),
     }
 }

@@ -1,3 +1,4 @@
+use crate::semi::semi_ui_map::get_semi_ui_map;
 use swc_core::common::collections::AHashMap;
 use swc_core::ecma::ast::{
     ImportDecl, ImportDefaultSpecifier, ImportSpecifier, ModuleDecl, ModuleItem, Str,
@@ -65,12 +66,24 @@ impl SemiUiModularizeImportsVisitor {
     /// import SemiUiSpace from "@douyinfe/semi-ui/lib/es/space";
     /// ```
     fn push_imports(&self, n: &mut Vec<ModuleItem>) {
-        self.imports.iter().for_each(|(local_var, imported_var)| {
+        let semi_ui_imported_map = get_semi_ui_map();
+
+        self.imports.iter().for_each(|(imported_var, local_var)| {
+            let import_path = {
+                match semi_ui_imported_map.get(imported_var) {
+                    None => "",
+                    Some(x) => x,
+                }
+            };
+
+            if import_path.is_empty() {
+                return;
+            }
             let p = ImportDecl {
                 span: Default::default(),
                 src: Box::new(Str {
                     span: Default::default(),
-                    value: format!("@douyinfe/semi-ui/lib/es/{}", imported_var).into(),
+                    value: import_path.to_string().into(),
                     raw: None,
                 }),
                 specifiers: vec![ImportSpecifier::Default(ImportDefaultSpecifier {

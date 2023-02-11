@@ -1,6 +1,7 @@
 #![feature(drain_filter)]
 
 pub mod semi;
+pub mod shared;
 
 use crate::semi::modularize_imports::SemiUiModularizeImportsVisitor;
 use crate::semi::semi_css_omit::SemiUiImportCssOmitVisitor;

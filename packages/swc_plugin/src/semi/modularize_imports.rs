@@ -1,13 +1,20 @@
 use swc_core::common::collections::AHashMap;
 use swc_core::ecma::ast::{
-    ImportDecl, ImportDefaultSpecifier, ImportSpecifier, ModuleDecl, ModuleExportName, ModuleItem,
-    Str,
+    ImportDecl, ImportDefaultSpecifier, ImportSpecifier, ModuleDecl, ModuleItem, Str,
 };
 use swc_core::ecma::utils::quote_ident;
 use swc_core::ecma::{visit::noop_visit_mut_type, visit::VisitMut, visit::VisitMutWith};
 
+use crate::shared::module_export_name_to_string;
+
 /// 用来重定向 semi ui 的桶导出
 pub struct SemiUiModularizeImportsVisitor {
+    /// eg:
+    /// ```js
+    /// import { Input, Space as SemiUiSpace } from "@douyinfe/semi-ui";
+    /// ```
+    /// key = Input, value = Input
+    /// key = Space, value = SemiUiSpace
     imports: AHashMap<String, String>,
 }
 
@@ -33,19 +40,17 @@ impl SemiUiModularizeImportsVisitor {
         }
         for specifier in import_decl.specifiers.iter() {
             let import_specifier = specifier.as_named()?;
+            // local_var = Button, SemiInput
             let local_var = import_specifier.local.sym.to_string();
-            let mut imported_var = local_var.clone();
-            if let Some(imported) = import_specifier.imported.clone() {
-                match imported {
-                    ModuleExportName::Ident(id) => {
-                        imported_var = id.sym.to_string();
-                    }
-                    ModuleExportName::Str(str) => {
-                        imported_var = str.value.to_string();
-                    }
+            // imported_var = Button, Input
+            let imported_var = {
+                match import_specifier.imported.clone() {
+                    None => local_var.clone(),
+                    Some(m) => module_export_name_to_string(m),
                 }
-            }
-            self.imports.insert(local_var, imported_var);
+            };
+
+            self.imports.insert(imported_var, local_var);
         }
         Some(true)
     }

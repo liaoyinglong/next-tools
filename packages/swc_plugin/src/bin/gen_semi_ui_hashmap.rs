@@ -5,10 +5,12 @@ use std::sync::Arc;
 
 use swc_core::common::collections::AHashMap;
 use swc_core::common::SourceMap;
-use swc_core::ecma::ast::{ModuleExportName, ModuleItem};
+use swc_core::ecma::ast::ModuleItem;
 use swc_core::ecma::parser::{parse_file_as_program, Syntax, TsConfig};
 use swc_core::ecma::visit::VisitMut;
 use swc_core::ecma::visit::{noop_visit_mut_type, VisitMutWith};
+extern crate s_swc_plugin;
+use s_swc_plugin::shared::module_export_name_to_string;
 
 static PROJ_ROOT: &str = "packages/swc_plugin/src";
 
@@ -78,11 +80,14 @@ impl CollectImportVisitor {
         /// do not modify it manually
         use swc_core::common::collections::AHashMap;
         fn get_semi_ui_map() -> AHashMap<String, String> {
-            let mut map = AHashMap::new();
+            let mut map = AHashMap::default();
         "#,
         );
         self.imports.iter().for_each(|(k, v)| {
-            code.push_str(&*format!("map.insert(\"{}\", \"{}\");", k, v));
+            code.push_str(&*format!(
+                "map.insert(\"{}\".to_string(), \"{}\".to_string());",
+                k, v
+            ));
         });
         code.push_str("map}");
         code
@@ -134,12 +139,5 @@ impl VisitMut for CollectImportVisitor {
         });
 
         n.visit_mut_children_with(self);
-    }
-}
-
-fn module_export_name_to_string(name: ModuleExportName) -> String {
-    match name {
-        ModuleExportName::Ident(id) => id.sym.to_string(),
-        ModuleExportName::Str(str) => str.value.to_string(),
     }
 }

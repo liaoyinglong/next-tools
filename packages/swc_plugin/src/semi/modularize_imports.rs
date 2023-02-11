@@ -9,27 +9,17 @@ use swc_core::ecma::{visit::noop_visit_mut_type, visit::VisitMut, visit::VisitMu
 /// 用来重定向 semi ui 的桶导出
 pub struct SemiUiModularizeImportsVisitor {
     imports: AHashMap<String, String>,
-    /// semi ui 的桶导出所对应的路径
-    map: AHashMap<String, String>,
 }
 
 impl Default for SemiUiModularizeImportsVisitor {
     fn default() -> Self {
-        let mut map = AHashMap::default();
-
         Self {
             imports: AHashMap::default(),
-            map,
         }
     }
 }
 
 impl SemiUiModularizeImportsVisitor {
-    fn get_import_source(s: &str) -> String {
-        let name = s[0..1].to_lowercase() + &s[1..];
-        format!("@douyinfe/semi-ui/lib/es/{}", name)
-    }
-
     /// 找到了 @douyinfe/semi-ui 的 import 语句
     /// 将存起来导入了哪些，以及导入的名字是什么。并且删除这个 import 语句
     /// 例如：

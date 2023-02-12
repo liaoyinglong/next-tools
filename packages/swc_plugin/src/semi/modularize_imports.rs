@@ -10,19 +10,14 @@ use crate::shared::module_export_name_to_string;
 
 /// 用来重定向 semi ui 的桶导出
 pub struct SemiUiModularizeImportsVisitor {
-    /// eg:
-    /// ```js
-    /// import { Input, Space as SemiUiSpace } from "@douyinfe/semi-ui";
-    /// ```
-    /// key = Input, value = Input
-    /// key = Space, value = SemiUiSpace
-    imports: AHashMap<String, String>,
+    // 用来存储 @douyinfe/semi-ui 的导入语句
+    imports: Vec<ModuleItem>,
 }
 
 impl Default for SemiUiModularizeImportsVisitor {
     fn default() -> Self {
         Self {
-            imports: AHashMap::default(),
+            imports: Vec::default(),
         }
     }
 }
@@ -39,6 +34,7 @@ impl SemiUiModularizeImportsVisitor {
         if import_decl.src.value != *"@douyinfe/semi-ui" {
             return None;
         }
+        let semi_ui_imported_map = get_semi_ui_map();
         for specifier in import_decl.specifiers.iter() {
             let import_specifier = specifier.as_named()?;
             // local_var = Button, SemiInput
@@ -51,50 +47,43 @@ impl SemiUiModularizeImportsVisitor {
                 }
             };
 
-            self.imports.insert(imported_var, local_var);
+            #[allow(unused_doc_comments)]
+            /// 根据收集的imports重新生成 @douyinfe/semi-ui 的导入语句
+            /// 例如：
+            /// ```js
+            /// import Input from "@douyinfe/semi-ui/lib/es/input";
+            /// import SemiUiSpace from "@douyinfe/semi-ui/lib/es/space";
+            /// ```
+            let import_path = {
+                match semi_ui_imported_map.get(&*imported_var) {
+                    None => "",
+                    Some(x) => x,
+                }
+            };
+            if !import_path.is_empty() {
+                let p = ImportDecl {
+                    span: import_decl.span,
+                    src: Box::new(Str {
+                        span: Default::default(),
+                        value: import_path.to_string().into(),
+                        raw: None,
+                    }),
+                    specifiers: vec![ImportSpecifier::Default(ImportDefaultSpecifier {
+                        span: import_specifier.local.span,
+                        local: import_specifier.local.clone(),
+                    })],
+                    type_only: false,
+                    asserts: None,
+                };
+                self.imports
+                    .push(ModuleItem::ModuleDecl(ModuleDecl::Import(p)));
+            }
         }
         Some(true)
     }
     /// 移除 @douyinfe/semi-ui 导入
     fn drain_import_and_collect(&mut self, n: &mut Vec<ModuleItem>) {
         n.drain_filter(|item| self.collect_imports(item.clone()).unwrap_or(false));
-    }
-    /// 根据收集的imports重新生成 @douyinfe/semi-ui 的导入语句
-    /// 例如：
-    /// ```js
-    /// import Input from "@douyinfe/semi-ui/lib/es/input";
-    /// import SemiUiSpace from "@douyinfe/semi-ui/lib/es/space";
-    /// ```
-    fn push_imports(&self, n: &mut Vec<ModuleItem>) {
-        let semi_ui_imported_map = get_semi_ui_map();
-
-        self.imports.iter().for_each(|(imported_var, local_var)| {
-            let import_path = {
-                match semi_ui_imported_map.get(imported_var) {
-                    None => "",
-                    Some(x) => x,
-                }
-            };
-
-            if import_path.is_empty() {
-                return;
-            }
-            let p = ImportDecl {
-                span: Default::default(),
-                src: Box::new(Str {
-                    span: Default::default(),
-                    value: import_path.to_string().into(),
-                    raw: None,
-                }),
-                specifiers: vec![ImportSpecifier::Default(ImportDefaultSpecifier {
-                    span: Default::default(),
-                    local: quote_ident!(local_var.clone()),
-                })],
-                type_only: false,
-                asserts: None,
-            };
-            n.insert(0, ModuleItem::ModuleDecl(ModuleDecl::Import(p)));
-        });
     }
 }
 
@@ -106,8 +95,7 @@ impl VisitMut for SemiUiModularizeImportsVisitor {
 
     fn visit_mut_module_items(&mut self, n: &mut Vec<ModuleItem>) {
         self.drain_import_and_collect(n);
-        dbg!(self.imports.clone());
-        self.push_imports(n);
+        self.imports.drain(..).for_each(|x| n.insert(0, x));
         n.visit_mut_children_with(self);
     }
 }

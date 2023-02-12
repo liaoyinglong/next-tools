@@ -8,16 +8,21 @@ use swc_core::ecma::{
 
 use s_swc_plugin::semi::semi_css_omit::SemiUiImportCssOmitVisitor;
 use s_swc_visitor::get_folder;
-use swc_core::common::chain;
+use swc_core::common::{chain, Mark};
+use swc_core::ecma::transforms::base::resolver;
 
 use s_swc_plugin::semi::modularize_imports::SemiUiModularizeImportsVisitor;
 use testing::fixture;
 
-fn get_folder2() -> impl Fold {
-    as_folder(chain!(
-        SemiUiImportCssOmitVisitor {},
-        SemiUiModularizeImportsVisitor::default()
-    ))
+fn tr() -> impl Fold {
+    chain!(
+        resolver(Mark::new(), Mark::new(), false),
+        // Most of transform does not care about globals so it does not need `SyntaxContext`
+        as_folder(chain!(
+            SemiUiImportCssOmitVisitor {},
+            SemiUiModularizeImportsVisitor::default()
+        ))
+    )
 }
 
 //use std::env;
@@ -32,7 +37,7 @@ fn fixture(input: PathBuf) {
             jsx: true,
             ..Default::default()
         }),
-        &|_| chain!(get_folder(), get_folder2()),
+        &|_| chain!(tr(), get_folder()),
         &input,
         &output,
         Default::default(),

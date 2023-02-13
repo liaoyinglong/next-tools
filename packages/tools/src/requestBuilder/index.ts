@@ -1,7 +1,9 @@
 import {
   FetchQueryOptions,
+  InvalidateOptions,
   QueryClient,
   QueryFunctionContext,
+  RefetchOptions,
   UseInfiniteQueryOptions,
   UseMutationOptions,
   UseQueryOptions,
@@ -9,12 +11,10 @@ import {
   useInfiniteQuery,
   useMutation,
   useQuery,
-  InvalidateOptions,
-  RefetchOptions,
 } from "@tanstack/react-query";
 
 import { AxiosRequestConfig, Method } from "axios";
-import { useMemo } from "react";
+import { useDebugValue, useMemo } from "react";
 
 type Basic = {
   /**
@@ -205,11 +205,12 @@ export class RequestBuilder<Req = any, Res = any> {
     const pageSize = params?.pageSize ?? 10;
     const res = useInfiniteQuery({
       queryFn: (ctx) => {
+        // @ts-expect-error 后续处理类型问题
+        const { pageNum, ...rest } = ctx.queryKey[2];
         return this.request(
           {
-            pageNum: ctx.pageParam ?? 1,
-            // @ts-expect-error 后续处理类型问题
-            ...ctx.queryKey[2],
+            ...rest,
+            pageNum: ctx.pageParam ?? pageNum ?? 1,
           },
           {
             signal: ctx.signal,
@@ -247,7 +248,10 @@ export class RequestBuilder<Req = any, Res = any> {
     }, [rawData]);
 
     type Data<T> = T extends PageData ? T["result"] : T;
-    return { ...res, data: data as Data<Res>, rawData };
+
+    const result = { ...res, data: data as Data<Res>, rawData };
+    useDebugValue(result);
+    return result;
   }
   //#endregion
 

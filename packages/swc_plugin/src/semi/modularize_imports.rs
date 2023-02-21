@@ -1,9 +1,7 @@
 use crate::semi::semi_ui_map::get_semi_ui_map;
-use swc_core::common::collections::AHashMap;
 use swc_core::ecma::ast::{
     ImportDecl, ImportDefaultSpecifier, ImportSpecifier, ModuleDecl, ModuleItem, Str,
 };
-use swc_core::ecma::utils::quote_ident;
 use swc_core::ecma::{visit::noop_visit_mut_type, visit::VisitMut, visit::VisitMutWith};
 
 use crate::shared::module_export_name_to_string;
@@ -12,12 +10,17 @@ use crate::shared::module_export_name_to_string;
 pub struct SemiUiModularizeImportsVisitor {
     // 用来存储 @douyinfe/semi-ui 的导入语句
     imports: Vec<ModuleItem>,
+    pkgs: Vec<String>,
 }
 
 impl Default for SemiUiModularizeImportsVisitor {
     fn default() -> Self {
         Self {
             imports: Vec::default(),
+            pkgs: vec![
+                "@douyinfe/semi-ui".to_string(),
+                "@douyinfe/semi-icons".to_string(),
+            ],
         }
     }
 }
@@ -31,9 +34,11 @@ impl SemiUiModularizeImportsVisitor {
     fn collect_imports(&mut self, item: ModuleItem) -> Option<bool> {
         let module_decl = item.as_module_decl()?;
         let import_decl = module_decl.as_import()?;
-        if import_decl.src.value != *"@douyinfe/semi-ui" {
+        // 只处理 semi 相关的导入语句
+        if !self.pkgs.contains(&import_decl.src.value.to_string()) {
             return None;
         }
+
         let semi_ui_imported_map = get_semi_ui_map();
         for specifier in import_decl.specifiers.iter() {
             let import_specifier = specifier.as_named()?;
@@ -97,13 +102,5 @@ impl VisitMut for SemiUiModularizeImportsVisitor {
         self.drain_import_and_collect(n);
         self.imports.drain(..).for_each(|x| n.insert(0, x));
         n.visit_mut_children_with(self);
-    }
-}
-
-pub fn capitalize(s: &str) -> String {
-    let mut c = s.chars();
-    match c.next() {
-        None => String::new(),
-        Some(f) => f.to_lowercase().collect::<String>() + c.as_str(),
     }
 }

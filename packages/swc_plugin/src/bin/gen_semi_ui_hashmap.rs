@@ -38,20 +38,6 @@ impl ConfigItem {
 
 fn main() {
     let cm = Arc::<SourceMap>::default();
-
-    let configs = vec![
-        ConfigItem {
-            base: "@douyinfe/semi-ui/lib/es/".to_string(),
-            files: vec!["index.js".to_string()],
-            ignore: vec!["Icon".to_string()],
-        },
-        ConfigItem {
-            base: "@douyinfe/semi-icons/lib/es/icons/".to_string(),
-            files: vec!["index.js".to_string()],
-            ignore: vec![],
-        },
-        // "@douyinfe/semi-icons/lib/es/index.js",
-    ];
     let mut errors = vec![];
     let mut visitor = CollectImportVisitor::new();
     let mut parse_file_get_map = |config: &ConfigItem, p: &PathBuf| -> Option<()> {
@@ -76,7 +62,18 @@ fn main() {
 
         None
     };
-
+    let configs = vec![
+        ConfigItem {
+            base: "@douyinfe/semi-ui/lib/es/".to_string(),
+            files: vec!["index.js".to_string()],
+            ignore: vec!["Icon".to_string()],
+        },
+        ConfigItem {
+            base: "@douyinfe/semi-icons/lib/es/icons/".to_string(),
+            files: vec!["index.js".to_string()],
+            ignore: vec![],
+        },
+    ];
     configs.iter().for_each(|config| {
         config.files_to_path_bufs().iter().for_each(|p| {
             parse_file_get_map(config, p);
@@ -98,8 +95,19 @@ struct CollectImportVisitor {
 
 impl CollectImportVisitor {
     fn new() -> Self {
+        let mut imports = AHashMap::default();
+        //#region 默认导入
+        imports.insert(
+            "Icon".to_string(),
+            "@douyinfe/semi-icons/lib/es/components/Icon".to_string(),
+        );
+        imports.insert(
+            "convertIcon".to_string(),
+            "@douyinfe/semi-icons/lib/es/components/Icon".to_string(),
+        );
+        //#endregion
         Self {
-            imports: AHashMap::default(),
+            imports,
             config: ConfigItem::default(),
         }
     }

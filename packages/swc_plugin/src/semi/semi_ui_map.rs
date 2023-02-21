@@ -132,6 +132,10 @@ pub fn get_semi_ui_map() -> AHashMap<String, String> {
         "@douyinfe/semi-ui/lib/es/highlight".to_string(),
     );
     map.insert(
+        "Icon".to_string(),
+        "@douyinfe/semi-icons/lib/es/components/Icon".to_string(),
+    );
+    map.insert(
         "IconAbsoluteStroked".to_string(),
         "@douyinfe/semi-icons/lib/es/icons/IconAbsoluteStroked".to_string(),
     );
@@ -2118,6 +2122,10 @@ pub fn get_semi_ui_map() -> AHashMap<String, String> {
     map.insert(
         "Upload".to_string(),
         "@douyinfe/semi-ui/lib/es/upload".to_string(),
+    );
+    map.insert(
+        "convertIcon".to_string(),
+        "@douyinfe/semi-icons/lib/es/components/Icon".to_string(),
     );
     map.insert(
         "useFieldApi".to_string(),

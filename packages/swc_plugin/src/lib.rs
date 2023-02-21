@@ -7,8 +7,8 @@ use crate::semi::modularize_imports::SemiUiModularizeImportsVisitor;
 use crate::semi::semi_css_omit::SemiUiImportCssOmitVisitor;
 use s_swc_visitor::get_folder;
 use swc_core::ecma::ast::Program;
+use swc_core::ecma::visit::FoldWith;
 use swc_core::ecma::visit::VisitMutWith;
-use swc_core::ecma::visit::{as_folder, FoldWith};
 use swc_core::plugin::metadata::TransformPluginMetadataContextKind;
 use swc_core::plugin::plugin_transform;
 use swc_core::plugin::proxies::TransformPluginProgramMetadata;
@@ -44,15 +44,14 @@ pub fn process_transform(
     if file_name.contains("@douyinfe/semi-ui") || file_name.contains("@douyinfe/semi-icons") {
         program.visit_mut_with(&mut SemiUiImportCssOmitVisitor {});
     }
+    program.visit_mut_with(&mut SemiUiModularizeImportsVisitor::default());
 
     // FIXME: only transform expected files now, should make it configurable
     let should_transform = file_name.contains("@dune2/") || !file_name.contains("node_modules");
 
     if should_transform {
         // println!("swc plugin: should_transform, {}", file_name);
-        program
-            .fold_with(&mut get_folder())
-            .fold_with(&mut as_folder(SemiUiModularizeImportsVisitor::default()))
+        program.fold_with(&mut get_folder())
     } else {
         // println!("swc plugin: skip, {}", file_name);
         program

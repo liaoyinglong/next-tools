@@ -15,19 +15,21 @@ use s_swc_plugin::shared::module_export_name_to_string;
 // some-tools/packages/swc_plugin
 const WORK_DIR: &str = env!("CARGO_MANIFEST_DIR");
 
-struct ConfigItem<'a> {
-    base: &'a str,
-    files: Vec<&'a str>,
+#[derive(Clone, Default)]
+struct ConfigItem {
+    base: String,
+    files: Vec<String>,
+    ignore: Vec<String>,
 }
 
-impl<'a> ConfigItem<'a> {
+impl ConfigItem {
     fn files_to_path_bufs(&self) -> Vec<PathBuf> {
         self.files
             .iter()
             .map(|file| {
                 Path::new(WORK_DIR)
                     .join("node_modules")
-                    .join(self.base)
+                    .join(self.base.to_string())
                     .join(file)
             })
             .collect()
@@ -39,15 +41,21 @@ fn main() {
 
     let configs = vec![
         ConfigItem {
-            base: "@douyinfe/semi-ui/lib/es/",
-            files: vec!["index.js"],
+            base: "@douyinfe/semi-ui/lib/es/".to_string(),
+            files: vec!["index.js".to_string()],
+            ignore: vec!["Icon".to_string()],
+        },
+        ConfigItem {
+            base: "@douyinfe/semi-icons/lib/es/icons/".to_string(),
+            files: vec!["index.js".to_string()],
+            ignore: vec![],
         },
         // "@douyinfe/semi-icons/lib/es/index.js",
     ];
     let mut errors = vec![];
     let mut visitor = CollectImportVisitor::new();
     let mut parse_file_get_map = |config: &ConfigItem, p: &PathBuf| -> Option<()> {
-        visitor.set_import_base(config.base.to_string());
+        visitor.set_config(config.clone());
         //#region 收集所有的导出 和 路径
         let fm = cm
             .load_file(&*p)
@@ -85,19 +93,19 @@ fn main() {
 /// 收集所有的导出 和 路径
 struct CollectImportVisitor {
     pub imports: AHashMap<String, String>,
-    import_base: String,
+    config: ConfigItem,
 }
 
 impl CollectImportVisitor {
     fn new() -> Self {
         Self {
             imports: AHashMap::default(),
-            import_base: String::new(),
+            config: ConfigItem::default(),
         }
     }
 
-    fn set_import_base(&mut self, base: String) {
-        self.import_base = base;
+    fn set_config(&mut self, config: ConfigItem) {
+        self.config = config;
     }
 
     fn imports_to_code(&mut self) -> String {
@@ -141,7 +149,7 @@ impl VisitMut for CollectImportVisitor {
                 // eg: @douyinfe/semi-ui/lib/es/button
                 let source = {
                     let temp = export.clone().src?.value.to_string();
-                    let mut base = self.import_base.clone();
+                    let mut base = self.config.base.clone();
                     if temp.starts_with("./") {
                         base.push_str(&temp[2..]);
                     } else {
@@ -159,7 +167,10 @@ impl VisitMut for CollectImportVisitor {
                             // case: export { Anchor } from './anchor';
                             None => module_export_name_to_string(named.clone().orig),
                         };
-                        self.imports.insert(name, source.clone());
+
+                        if !self.config.ignore.contains(&name) {
+                            self.imports.insert(name, source.clone());
+                        }
                         None
                     };
                     iter_specifiers();

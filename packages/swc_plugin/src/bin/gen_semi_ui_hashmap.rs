@@ -18,13 +18,15 @@ const WORK_DIR: &str = env!("CARGO_MANIFEST_DIR");
 fn main() {
     let cm = Arc::<SourceMap>::default();
 
-    let files = vec!["node_modules/@douyinfe/semi-ui/lib/es/index.js"];
+    let files = vec![
+        "@douyinfe/semi-ui/lib/es/index.js",
+        // "@douyinfe/semi-icons/lib/es/index.js",
+    ];
     let mut errors = vec![];
-
+    let mut visitor = CollectImportVisitor::new();
     let mut parse_file_get_map = |file: &str| -> Option<()> {
         //#region 收集所有的导出 和 路径
-        let mut visitor = CollectImportVisitor::new();
-        let p = Path::new(WORK_DIR).join(file);
+        let p = Path::new(WORK_DIR).join("node_modules").join(file);
         let fm = cm
             .load_file(&*p)
             .expect(&*format!("failed to load file: {}", p.display()));
@@ -41,12 +43,6 @@ fn main() {
         .ok()?;
         program.visit_mut_with(&mut visitor);
         //#endregion
-        //#region 生成代码
-        let code = visitor.imports_to_code();
-        let p = Path::new(WORK_DIR).join("src/semi/semi_ui_map.rs");
-        std::fs::write(&p, &code).expect(&*format!("failed to write file: {}", p.display()));
-        println!("write code to {}", p.display());
-        //#endregion
 
         None
     };
@@ -54,12 +50,12 @@ fn main() {
     files.iter().for_each(|file| {
         parse_file_get_map(file);
     });
-}
-
-#[allow(dead_code)]
-fn get_import_source(s: &str) -> String {
-    let name = s[0..1].to_lowercase() + &s[1..];
-    format!("@douyinfe/semi-ui/lib/es/{}", name)
+    //#region 生成代码
+    let code = visitor.imports_to_code();
+    let p = Path::new(WORK_DIR).join("src/semi/semi_ui_map.rs");
+    std::fs::write(&p, &code).expect(&*format!("failed to write file: {}", p.display()));
+    println!("write code to {}", p.display());
+    //#endregion
 }
 
 /// 收集所有的导出 和 路径

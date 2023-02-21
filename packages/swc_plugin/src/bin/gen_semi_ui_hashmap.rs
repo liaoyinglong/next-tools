@@ -1,6 +1,6 @@
 #![feature(absolute_path)]
 
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use swc_core::common::collections::AHashMap;
@@ -15,18 +15,40 @@ use s_swc_plugin::shared::module_export_name_to_string;
 // some-tools/packages/swc_plugin
 const WORK_DIR: &str = env!("CARGO_MANIFEST_DIR");
 
+struct ConfigItem<'a> {
+    base: &'a str,
+    files: Vec<&'a str>,
+}
+
+impl<'a> ConfigItem<'a> {
+    fn files_to_path_bufs(&self) -> Vec<PathBuf> {
+        self.files
+            .iter()
+            .map(|file| {
+                Path::new(WORK_DIR)
+                    .join("node_modules")
+                    .join(self.base)
+                    .join(file)
+            })
+            .collect()
+    }
+}
+
 fn main() {
     let cm = Arc::<SourceMap>::default();
 
-    let files = vec![
-        "@douyinfe/semi-ui/lib/es/index.js",
+    let configs = vec![
+        ConfigItem {
+            base: "@douyinfe/semi-ui/lib/es/",
+            files: vec!["index.js"],
+        },
         // "@douyinfe/semi-icons/lib/es/index.js",
     ];
     let mut errors = vec![];
     let mut visitor = CollectImportVisitor::new();
-    let mut parse_file_get_map = |file: &str| -> Option<()> {
+    let mut parse_file_get_map = |config: &ConfigItem, p: &PathBuf| -> Option<()> {
+        visitor.set_import_base(config.base.to_string());
         //#region 收集所有的导出 和 路径
-        let p = Path::new(WORK_DIR).join("node_modules").join(file);
         let fm = cm
             .load_file(&*p)
             .expect(&*format!("failed to load file: {}", p.display()));
@@ -47,8 +69,10 @@ fn main() {
         None
     };
 
-    files.iter().for_each(|file| {
-        parse_file_get_map(file);
+    configs.iter().for_each(|config| {
+        config.files_to_path_bufs().iter().for_each(|p| {
+            parse_file_get_map(config, p);
+        })
     });
     //#region 生成代码
     let code = visitor.imports_to_code();
@@ -61,13 +85,19 @@ fn main() {
 /// 收集所有的导出 和 路径
 struct CollectImportVisitor {
     pub imports: AHashMap<String, String>,
+    import_base: String,
 }
 
 impl CollectImportVisitor {
     fn new() -> Self {
         Self {
             imports: AHashMap::default(),
+            import_base: String::new(),
         }
+    }
+
+    fn set_import_base(&mut self, base: String) {
+        self.import_base = base;
     }
 
     fn imports_to_code(&mut self) -> String {
@@ -111,7 +141,7 @@ impl VisitMut for CollectImportVisitor {
                 // eg: @douyinfe/semi-ui/lib/es/button
                 let source = {
                     let temp = export.clone().src?.value.to_string();
-                    let mut base = "@douyinfe/semi-ui/lib/es/".to_string();
+                    let mut base = self.import_base.clone();
                     if temp.starts_with("./") {
                         base.push_str(&temp[2..]);
                     } else {

@@ -40,18 +40,19 @@ export async function preBuildDepsCore(
       bundle: true,
       outdir,
       allowOverwrite: true,
+      external: ["react", "react-dom"],
     });
+    Object.entries(options.deps).forEach(([depImportName, depPath]) => {
+      // 保存到 json 中，后续要用这个路径覆盖 webpack 的 alias
+      preBuild.alias[depImportName] = path.join(outdir, `${depImportName}.js`);
+    });
+    await fs.writeJSON(preBuildCacheJsonPath, preBuild, {
+      spaces: 2,
+    });
+    preBuildDepsLog(`[core] 构建成功`);
   } catch (e) {
     preBuildDepsLog(`[core] 构建失败: ${e.message}`);
   }
-  Object.entries(options.deps).forEach(([depImportName, depPath]) => {
-    // 保存到 json 中，后续要用这个路径覆盖 webpack 的 alias
-    preBuild.alias[depImportName] = path.join(outdir, `${depImportName}.js`);
-  });
-  await fs.writeJSON(preBuildCacheJsonPath, preBuild, {
-    spaces: 2,
-  });
-  preBuildDepsLog(`[core] 构建成功`);
   return preBuild.alias;
 
   // const cache = fileEntryCache.createFromFile(

@@ -8,7 +8,10 @@ import {
 
 export { PreBuildDepsPluginOptions } from "./shared";
 
-let promiseMap = new Map<PreBuildDepsPluginOptions, Promise<void>>();
+let promiseMap = new Map<
+  PreBuildDepsPluginOptions,
+  ReturnType<typeof preBuildDepsCore>
+>();
 
 export const preBuildDepsPlugin = createUnplugin(
   (options: PreBuildDepsPluginOptions) => {
@@ -20,10 +23,12 @@ export const preBuildDepsPlugin = createUnplugin(
     if (!promise) {
       promise = (async () => {
         try {
-          preBuildDepsLog(`开始预先构建依赖`);
-          await preBuildDepsCore(normalizedOptions);
+          preBuildDepsLog(`[plugin] 开始预先构建依赖`);
+          return await preBuildDepsCore(normalizedOptions);
         } catch (e) {
-          preBuildDepsLog(`预先构建依赖失败: ${e.message}，将跳过预先构建依赖`);
+          preBuildDepsLog(
+            `[plugin] 预先构建依赖失败: ${e.message}，将跳过预先构建依赖`
+          );
         }
       })();
       promiseMap.set(options, promise);
@@ -32,13 +37,25 @@ export const preBuildDepsPlugin = createUnplugin(
     return {
       name,
       webpack(compiler) {
-        const work = () => {
-          return promise;
+        let done = false;
+        const work = async () => {
+          if (done) {
+            return;
+          }
+          done = true;
+          const res = await promise;
+          const alias = Object.fromEntries(
+            Object.entries(res).map(([key, value]) => [`${key}$`, value])
+          );
+          compiler.options.resolve.alias = {
+            ...compiler.options.resolve.alias,
+            ...alias,
+          };
+          preBuildDepsLog("[plugin] 已覆盖 webpack 的 alias 配置");
         };
         // https://github.com/webpack/webpack/issues/10061
         compiler.hooks.beforeRun.tapPromise(name, work);
         compiler.hooks.watchRun.tapPromise(name, work);
-        // compiler.options.resolve.alias
       },
     };
   }

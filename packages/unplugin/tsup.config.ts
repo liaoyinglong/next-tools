@@ -1,7 +1,7 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  name: "webpack",
+  name: "unplugin",
   sourcemap: true,
   tsconfig: "./tsconfig.json",
   entry: [],

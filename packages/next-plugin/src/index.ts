@@ -1,5 +1,9 @@
 import { Options as AutoImportOptions } from "unplugin-auto-import/types";
-import { i18nResourcePlugin } from "@dune2/unplugin";
+import {
+  i18nResourcePlugin,
+  preBuildDepsPlugin,
+  PreBuildDepsPluginOptions,
+} from "@dune2/unplugin";
 import { NextConfig } from "next";
 import {
   autoImportPlugin,
@@ -12,6 +16,7 @@ export * from "./shared";
 
 export interface DunePresetsOptions {
   autoImport?: AutoImportOptions;
+  preBuildDeps?: PreBuildDepsPluginOptions;
 }
 
 /**
@@ -37,6 +42,11 @@ export const withDunePresets = (options: DunePresetsOptions = {}) => {
           }),
           i18nResourcePlugin.webpack()
         );
+        if (options.preBuildDeps) {
+          config.plugins.unshift(
+            preBuildDepsPlugin.webpack(options.preBuildDeps)
+          );
+        }
 
         // Overload the Webpack config if it was already overloaded
         if (typeof nextConfig.webpack === "function") {

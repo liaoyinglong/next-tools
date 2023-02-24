@@ -79,7 +79,7 @@ impl SemiUiModularizeImportsVisitor {
                             ImportSpecifier::Named(ImportNamedSpecifier {
                                 span: import_specifier.local.span,
                                 local: import_specifier.local.clone(),
-                                imported: None,
+                                imported: import_specifier.imported.clone(),
                                 is_type_only: false,
                             })
                         } else {

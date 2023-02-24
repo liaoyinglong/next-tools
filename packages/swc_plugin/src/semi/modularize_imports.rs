@@ -1,6 +1,7 @@
 use crate::semi::semi_ui_map::get_semi_ui_map;
 use swc_core::ecma::ast::{
-    ImportDecl, ImportDefaultSpecifier, ImportSpecifier, ModuleDecl, ModuleItem, Str,
+    ImportDecl, ImportDefaultSpecifier, ImportNamedSpecifier, ImportSpecifier, ModuleDecl,
+    ModuleItem, Str,
 };
 use swc_core::ecma::{visit::noop_visit_mut_type, visit::VisitMut, visit::VisitMutWith};
 
@@ -59,10 +60,10 @@ impl SemiUiModularizeImportsVisitor {
             /// import Input from "@douyinfe/semi-ui/lib/es/input";
             /// import SemiUiSpace from "@douyinfe/semi-ui/lib/es/space";
             /// ```
-            let import_path = {
+            let (import_path, is_named_import) = {
                 match semi_ui_imported_map.get(&*imported_var) {
-                    None => "",
-                    Some(x) => x,
+                    None => ("".to_string(), false),
+                    Some(x) => x.clone(),
                 }
             };
             if !import_path.is_empty() {
@@ -73,10 +74,21 @@ impl SemiUiModularizeImportsVisitor {
                         value: import_path.to_string().into(),
                         raw: None,
                     }),
-                    specifiers: vec![ImportSpecifier::Default(ImportDefaultSpecifier {
-                        span: import_specifier.local.span,
-                        local: import_specifier.local.clone(),
-                    })],
+                    specifiers: vec![{
+                        if is_named_import {
+                            ImportSpecifier::Named(ImportNamedSpecifier {
+                                span: import_specifier.local.span,
+                                local: import_specifier.local.clone(),
+                                imported: None,
+                                is_type_only: false,
+                            })
+                        } else {
+                            ImportSpecifier::Default(ImportDefaultSpecifier {
+                                span: import_specifier.local.span,
+                                local: import_specifier.local.clone(),
+                            })
+                        }
+                    }],
                     type_only: false,
                     asserts: None,
                 };

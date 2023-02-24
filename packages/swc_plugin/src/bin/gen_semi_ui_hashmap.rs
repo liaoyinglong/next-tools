@@ -144,11 +144,11 @@ impl CollectImportVisitor {
 
         vec.iter().for_each(|(k, v)| {
             code.push_str(&*format!(
-                "m .insert(\"{}\".to_string(), (\"{}\".to_string(), {}));",
+                "m.insert(\"{}\".to_string(), (\"{}\".to_string(), {}));",
                 k, v.0, v.1
             ));
         });
-        code.push_str("map}");
+        code.push_str("m}");
         code
     }
 }

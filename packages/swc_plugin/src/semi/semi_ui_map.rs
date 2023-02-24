@@ -3535,5 +3535,5 @@ pub fn get_semi_ui_map() -> AHashMap<String, (String, bool)> {
         "withFormState".to_string(),
         ("@douyinfe/semi-ui/lib/es/form".to_string(), true),
     );
-    map
+    m
 }

@@ -10,7 +10,6 @@ pub fn module_export_name_to_string(name: ModuleExportName) -> String {
 }
 
 #[derive(Debug, PartialEq, Deserialize, Serialize, Clone, Default)]
-#[serde(rename_all = "camelCase")]
 pub struct PluginConfig {
     /// 是否开启 semi-css-omit，即是否移除 js 中的 css import/require
     /// 对齐 SemiWebpackPlugin 的 omitCss 功能

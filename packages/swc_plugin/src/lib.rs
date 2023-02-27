@@ -39,13 +39,12 @@ pub fn process_transform(
     let file_name = metadata
         .get_context(&TransformPluginMetadataContextKind::Filename)
         .unwrap_or("unknown file_name".to_string());
-
-    let config = serde_json::from_str::<PluginConfig>(
-        &metadata
-            .get_transform_plugin_config()
-            .expect("failed to get plugin config for transform-imports"),
-    )
-    .unwrap_or_default();
+    //#region config setup
+    let configStr = &metadata
+        .get_transform_plugin_config()
+        .expect("failed to get plugin config for transform-imports");
+    let config = serde_json::from_str::<PluginConfig>(configStr).unwrap_or_default();
+    //#endregion
 
     if config.enable_semi_css_omit {
         if file_name.contains("@douyinfe/semi") {

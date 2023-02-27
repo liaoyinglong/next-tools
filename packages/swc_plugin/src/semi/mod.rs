@@ -4,7 +4,7 @@ mod semi_ui_map;
 use serde::{Deserialize, Serialize};
 use swc_core::common::collections::AHashMap;
 
-#[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
+#[derive(Debug, PartialEq, Deserialize, Serialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SemiImportItem {
     #[serde(default)]

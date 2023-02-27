@@ -7,6 +7,8 @@ use swc_core::ecma::{visit::noop_visit_mut_type, visit::VisitMut, visit::VisitMu
 
 use crate::shared::module_export_name_to_string;
 
+use super::SemiImportItem;
+
 /// 用来重定向 semi ui 的桶导出
 pub struct SemiUiModularizeImportsVisitor {
     // 用来存储 @douyinfe/semi-ui 的导入语句
@@ -42,6 +44,7 @@ impl SemiUiModularizeImportsVisitor {
 
         let semi_ui_imported_map = get_semi_ui_map();
         for specifier in import_decl.specifiers.iter() {
+            // 这里理论上不会抛出错误
             let import_specifier = specifier.as_named()?;
             // local_var = Button, SemiInput
             let local_var = import_specifier.local.sym.to_string();
@@ -53,19 +56,20 @@ impl SemiUiModularizeImportsVisitor {
                 }
             };
 
-            #[allow(unused_doc_comments)]
-            /// 根据收集的imports重新生成 @douyinfe/semi-ui 的导入语句
-            /// 例如：
-            /// ```js
-            /// import Input from "@douyinfe/semi-ui/lib/es/input";
-            /// import SemiUiSpace from "@douyinfe/semi-ui/lib/es/space";
-            /// ```
-            let (import_path, is_named_import) = {
-                match semi_ui_imported_map.get(&*imported_var) {
-                    None => ("".to_string(), false),
-                    Some(x) => (x.path.clone(),x.is_named_import),
-                }
-            };
+            // 根据收集的imports重新生成 @douyinfe/semi-ui 的导入语句
+            // 例如：
+            // ```js
+            // import Input from "@douyinfe/semi-ui/lib/es/input";
+            // import SemiUiSpace from "@douyinfe/semi-ui/lib/es/space";
+            // ```
+            let default_semi_import_item = SemiImportItem::default();
+            let SemiImportItem {
+                path: import_path,
+                is_named_import,
+            } = semi_ui_imported_map
+                .get(&*imported_var)
+                .unwrap_or(&default_semi_import_item);
+
             if !import_path.is_empty() {
                 let p = ImportDecl {
                     span: import_decl.span,
@@ -75,7 +79,7 @@ impl SemiUiModularizeImportsVisitor {
                         raw: None,
                     }),
                     specifiers: vec![{
-                        if is_named_import {
+                        if *is_named_import {
                             ImportSpecifier::Named(ImportNamedSpecifier {
                                 span: import_specifier.local.span,
                                 local: import_specifier.local.clone(),

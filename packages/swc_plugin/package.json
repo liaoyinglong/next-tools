@@ -1,6 +1,6 @@
 {
   "name": "@dune2/swc-plugin",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "",
   "keywords": [
     "swc-plugin"
@@ -17,9 +17,9 @@
     "test:u": "vitest -u"
   },
   "devDependencies": {
-    "@swc/core": "1.3.11",
+    "@douyinfe/semi-icons": "2.29.0",
     "@douyinfe/semi-ui": "2.29.0",
-    "@douyinfe/semi-icons": "2.29.0"
+    "@swc/core": "1.3.11"
   },
   "publishConfig": {
     "access": "public"

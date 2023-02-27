@@ -8,6 +8,7 @@ use swc_core::ecma::{
 
 use s_swc_plugin::semi::semi_css_omit::SemiUiImportCssOmitVisitor;
 use s_swc_visitor::get_folder;
+use swc_core::common::collections::AHashMap;
 use swc_core::common::{chain, Mark};
 use swc_core::ecma::transforms::base::resolver;
 
@@ -17,10 +18,10 @@ use testing::fixture;
 fn tr() -> impl Fold {
     chain!(
         resolver(Mark::new(), Mark::new(), false),
-        // Most of transform does not care about globals so it does not need `SyntaxContext`
+        // Most of the transform does not care about globals so it does not need `SyntaxContext`
         as_folder(chain!(
             SemiUiImportCssOmitVisitor {},
-            SemiUiModularizeImportsVisitor::default()
+            SemiUiModularizeImportsVisitor::new(AHashMap::default())
         ))
     )
 }

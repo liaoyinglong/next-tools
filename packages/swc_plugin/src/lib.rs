@@ -5,6 +5,7 @@ pub mod shared;
 
 use crate::semi::modularize_imports::SemiUiModularizeImportsVisitor;
 use crate::semi::semi_css_omit::SemiUiImportCssOmitVisitor;
+use crate::shared::PluginConfig;
 use s_swc_visitor::get_folder;
 use swc_core::ecma::ast::Program;
 use swc_core::ecma::visit::FoldWith;
@@ -39,12 +40,22 @@ pub fn process_transform(
         .get_context(&TransformPluginMetadataContextKind::Filename)
         .unwrap_or("unknown file_name".to_string());
 
-    // println!("===================================");
-    // println!("file_name: {}", file_name);
-    if file_name.contains("@douyinfe/semi-ui") || file_name.contains("@douyinfe/semi-icons") {
-        program.visit_mut_with(&mut SemiUiImportCssOmitVisitor {});
+    let config = serde_json::from_str::<PluginConfig>(
+        &metadata
+            .get_transform_plugin_config()
+            .expect("failed to get plugin config for transform-imports"),
+    )
+    .unwrap_or_default();
+
+    if config.enable_semi_css_omit {
+        if file_name.contains("@douyinfe/semi") {
+            program.visit_mut_with(&mut SemiUiImportCssOmitVisitor {});
+        }
     }
-    program.visit_mut_with(&mut SemiUiModularizeImportsVisitor::default());
+    if config.enable_semi_modularize_import {
+        let mut visitor = SemiUiModularizeImportsVisitor::new(config.extra_semi_import_map);
+        program.visit_mut_with(&mut visitor);
+    }
 
     // FIXME: only transform expected files now, should make it configurable
     let should_transform = file_name.contains("@dune2/") || !file_name.contains("node_modules");

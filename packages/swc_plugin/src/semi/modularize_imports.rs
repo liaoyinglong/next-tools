@@ -1,4 +1,5 @@
 use crate::semi::semi_ui_map::get_semi_ui_map;
+use crate::semi::SemiImportMap;
 use swc_core::ecma::ast::{
     ImportDecl, ImportDefaultSpecifier, ImportNamedSpecifier, ImportSpecifier, ModuleDecl,
     ModuleItem, Str,
@@ -14,21 +15,24 @@ pub struct SemiUiModularizeImportsVisitor {
     // 用来存储 @douyinfe/semi-ui 的导入语句
     imports: Vec<ModuleItem>,
     pkgs: Vec<String>,
+    import_map: SemiImportMap,
 }
 
-impl Default for SemiUiModularizeImportsVisitor {
-    fn default() -> Self {
+impl SemiUiModularizeImportsVisitor {
+    pub fn new(extra_semi_import_map: SemiImportMap) -> Self {
+        // 内置的 semi-ui 的导入映射
+        let mut builtin_import_map = get_semi_ui_map();
+        builtin_import_map.extend(extra_semi_import_map);
         Self {
             imports: Vec::default(),
             pkgs: vec![
                 "@douyinfe/semi-ui".to_string(),
                 "@douyinfe/semi-icons".to_string(),
             ],
+            import_map: builtin_import_map,
         }
     }
-}
 
-impl SemiUiModularizeImportsVisitor {
     /// 找到了 @douyinfe/semi-ui 的 import 语句
     /// 将存起来导入了哪些，以及导入的名字是什么。并且删除这个 import 语句
     /// 例如：
@@ -42,7 +46,6 @@ impl SemiUiModularizeImportsVisitor {
             return None;
         }
 
-        let semi_ui_imported_map = get_semi_ui_map();
         for specifier in import_decl.specifiers.iter() {
             // 这里理论上不会抛出错误
             let import_specifier = specifier.as_named()?;
@@ -66,7 +69,8 @@ impl SemiUiModularizeImportsVisitor {
             let SemiImportItem {
                 path: import_path,
                 is_named_import,
-            } = semi_ui_imported_map
+            } = self
+                .import_map
                 .get(&*imported_var)
                 .unwrap_or(&default_semi_import_item);
 

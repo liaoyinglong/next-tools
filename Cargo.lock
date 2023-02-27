@@ -1069,7 +1069,10 @@ checksum = "4501abdff3ae82a1c1b477a17252eb69cee9e66eb915c1abaa4f44d873df9f09"
 name = "s_swc_plugin"
 version = "0.1.1"
 dependencies = [
+ "once_cell",
  "s_swc_visitor",
+ "serde",
+ "serde_json",
  "swc_core",
  "testing",
  "tracing",

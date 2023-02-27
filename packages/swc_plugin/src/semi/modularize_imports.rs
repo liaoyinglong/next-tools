@@ -63,7 +63,7 @@ impl SemiUiModularizeImportsVisitor {
             let (import_path, is_named_import) = {
                 match semi_ui_imported_map.get(&*imported_var) {
                     None => ("".to_string(), false),
-                    Some(x) => x.clone(),
+                    Some(x) => (x.path.clone(),x.is_named_import),
                 }
             };
             if !import_path.is_empty() {

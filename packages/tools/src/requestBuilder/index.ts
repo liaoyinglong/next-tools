@@ -68,7 +68,7 @@ export class RequestBuilder<Req = any, Res = any> {
    * @param params 请求参数 默认会根据请求方法来放到url上或者body里
    * @param config axios的配置，一般不需要传，内部用
    */
-  request<P = Req, T = Res>(params?: P, config?: RequestConfig) {
+  request<P extends Req, T = Res>(params?: P, config?: RequestConfig) {
     const method = this.options.method!;
     let data;
     // 根据请求方法来放到url上或者body里

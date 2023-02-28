@@ -71,7 +71,7 @@ export async function resolveSheetData(config: I18nConfig): Promise<SheetData> {
       return;
     }
 
-    const i18nKey = row[letterToNumber(position!.key)]?.trim();
+    const i18nKey = row[letterToNumber(position!.key)];
 
     if (i18nKey) {
       if (sheetData.keySet.has(i18nKey)) {

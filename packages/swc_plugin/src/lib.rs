@@ -40,10 +40,10 @@ pub fn process_transform(
         .get_context(&TransformPluginMetadataContextKind::Filename)
         .unwrap_or("unknown file_name".to_string());
     //#region config setup
-    let configStr = &metadata
+    let config_str = &metadata
         .get_transform_plugin_config()
         .expect("failed to get plugin config for transform-imports");
-    let config = serde_json::from_str::<PluginConfig>(configStr).unwrap_or_default();
+    let config = serde_json::from_str::<PluginConfig>(config_str).unwrap_or_default();
     //#endregion
 
     if config.enable_semi_css_omit {

@@ -92,16 +92,17 @@ impl Normalizer {
         })));
         self.components.push(component);
 
+        let current = self.expr_index;
+        self.expr_index = self.expr_index + 1;
+
         // not have children
         if element.children.is_empty() {
-            self.str_work(&*format!("<{}/>", self.expr_index));
+            self.str_work(&*format!("<{}/>", current));
         } else {
-            self.str_work(&*format!("<{}>", self.expr_index));
+            self.str_work(&*format!("<{}>", current));
             self.jsx_children_work(element.children);
-            self.str_work(&*format!("</{}>", self.expr_index));
+            self.str_work(&*format!("</{}>", current));
         }
-
-        self.expr_index = self.expr_index + 1;
     }
 
     pub fn jsx_children_work(&mut self, children: Vec<JSXElementChild>) {

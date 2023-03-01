@@ -21,3 +21,8 @@
 <Trans>
   Welcome to <a>Next.js!</a> {counter}
 </Trans>;
+
+// 自动命名的变量
+<Trans>
+  Hello <strong>{obj.name}</strong>. <Link to="/inbox">See my profile</Link>
+</Trans>;

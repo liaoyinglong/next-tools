@@ -1080,7 +1080,7 @@ dependencies = [
 
 [[package]]
 name = "s_swc_visitor"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "swc_core",
  "tracing",
@@ -1088,7 +1088,7 @@ dependencies = [
 
 [[package]]
 name = "s_wasm"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "anyhow",
  "console_error_panic_hook",

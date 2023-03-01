@@ -33,3 +33,10 @@
 }} components={{
     0: <a >Next.js!</a>
 }}></Trans>;
+// 自动命名的变量
+<Trans id="Hello <0>{1}</0>. <2>See my profile</2>" values={{
+    1: obj.name
+}} components={{
+    0: <strong >{obj.name}</strong>,
+    2: <Link to="/inbox">See my profile</Link>
+}}></Trans>;

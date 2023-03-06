@@ -69,6 +69,9 @@ var a = Math.random() && t("hello {name}", {
 console.log(t("hello {name}", {
     name: name
 }));
+new VerifyPlaceOrderParamError(t("hello {name}", {
+    name: name
+}));
 const { node =t("hello {name}", {
     name: name
 })  } = props;

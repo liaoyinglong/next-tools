@@ -17,6 +17,21 @@ describe("numbro", () => {
     });
   });
 
+  it("格式化不丢失精度", function () {
+    const a = [
+      [1, 2, "1.00"],
+      [1.1, 2, "1.10"],
+      [1000, 2, "1,000.00"],
+      ["24411725.000021970552501575", 18, "24,411,725.000021970552501575"],
+      ["24411725.000021970552501575", 8, "24,411,725.00002197"],
+    ] as const;
+    a.forEach(([num, precision, output]) => {
+      expect(
+        numbro(num).format({ mantissa: precision, thousandSeparated: true })
+      ).toEqual(output);
+    });
+  });
+
   it("forceSign correct", function () {
     [
       [1, "+1"],
@@ -66,17 +81,17 @@ describe("numbro", () => {
     });
   });
 
-  it("格式化不丢失精度", function () {
-    const a = [
-      [1, 2, "1.00"],
-      [1.1, 2, "1.10"],
-      [1000, 2, "1,000.00"],
-      ["24411725.000021970552501575", 18, "24,411,725.000021970552501575"],
-      ["24411725.000021970552501575", 8, "24,411,725.00002197"],
-    ] as const;
-    a.forEach(([num, precision, output]) => {
+  it.skip("average correct ", function () {
+    [
+      [1, 1],
+      [100, 100],
+      ["1000", "1k"],
+      ["10000", "10k"],
+      ["100000", "100k"],
+      ["1000000", "1m"],
+    ].forEach(([input, output]) => {
       expect(
-        numbro(num).format({ mantissa: precision, thousandSeparated: true })
+        numbro(input).format({ average: true, thousandSeparated: true })
       ).toEqual(output);
     });
   });

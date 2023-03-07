@@ -51,27 +51,33 @@ export class Numbro {
       postfix,
       mantissa,
       forceSign,
-      ...bigNumberFormat
+      average,
+      ...rest
     } = format;
 
-    let num = this.bigNumber;
-    const isPercent = output === "percent";
-    if (isPercent) {
-      num = num.multipliedBy(100);
-    }
-
-    let outputFormat = num.toFormat(mantissa!, roundingMode as never, {
+    const combinedFormat: BigNumber.Format = {
       suffix: postfix,
       groupSize: thousandSeparated ? 3 : 0,
       groupSeparator: thousandSeparated ? "," : "",
       decimalSeparator: ".",
-      ...bigNumberFormat,
-    });
+      ...rest,
+    };
 
+    let num = this.bigNumber;
+    const isPercent = output === "percent";
+    // 百分比
     if (isPercent) {
-      outputFormat += "%";
+      num = num.multipliedBy(100);
+      combinedFormat.suffix = "%";
     }
 
+    let outputFormat = num.toFormat(
+      mantissa!,
+      roundingMode as never,
+      combinedFormat
+    );
+
+    // 强制显示正负号
     if (forceSign) {
       if (!num.eq(0)) {
         outputFormat = num.isPositive() ? `+${outputFormat}` : outputFormat;
@@ -79,6 +85,35 @@ export class Numbro {
     }
 
     return outputFormat;
+  }
+
+  private computeAverage() {
+    const powers = {
+      // 1t
+      trillion: Math.pow(10, 12),
+      // 1b
+      billion: Math.pow(10, 9),
+      // 1m
+      million: Math.pow(10, 6),
+      // 1k
+      thousand: Math.pow(10, 3),
+    };
+    const config = [
+      [powers.trillion, "t"],
+      [powers.billion, "b"],
+      [powers.million, "m"],
+      [powers.thousand, "k"],
+    ];
+
+    for (let i = 0; i < config.length; i++) {
+      const [power, suffix] = config[i];
+      if (this.bigNumber.gte(power)) {
+        return {
+          value: this.bigNumber.dividedBy(power),
+          suffix,
+        };
+      }
+    }
   }
 
   /**

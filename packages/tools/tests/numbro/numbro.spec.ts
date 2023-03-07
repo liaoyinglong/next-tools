@@ -164,4 +164,23 @@ describe("numbro", () => {
       expect(numbro(a).divide(b).bigNumber).toEqual(new BigNumber(output));
     });
   });
+
+  it("formatCurrency", function () {
+    (
+      [
+        [0, 2, "Rp0.00"],
+        [0.1, 2, "Rp0.10"],
+        [1000, 2, "Rp1,000.00"],
+        [1000.1, 2, "Rp1,000.10"],
+      ] as const
+    ).forEach(([input, mantissa, output]) => {
+      expect(
+        numbro(input).formatCurrency({
+          mantissa,
+          currencySymbol: "Rp",
+          thousandSeparated: true,
+        })
+      ).toEqual(output);
+    });
+  });
 });

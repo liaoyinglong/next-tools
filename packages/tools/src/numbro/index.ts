@@ -98,6 +98,20 @@ export class Numbro {
     return outputFormat;
   }
 
+  formatCurrency(
+    format: Format & {
+      /**
+       * 货币符号，默认为 Rp
+       * @default Rp
+       */
+      currencySymbol?: string;
+    }
+  ) {
+    // TODO: 未来可以考虑支持多种货币符号
+    const { currencySymbol = "Rp", ...rest } = format;
+    return `${currencySymbol}${this.format(rest)}`;
+  }
+
   private computeAverage(num: BigNumber) {
     const powers = {
       // 1t

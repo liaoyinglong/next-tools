@@ -55,19 +55,22 @@ export class Numbro {
     } = format;
 
     let num = this.bigNumber;
-    switch (output) {
-      case "percent":
-        num = num.multipliedBy(100);
-        break;
+    const isPercent = output === "percent";
+    if (isPercent) {
+      num = num.multipliedBy(100);
     }
 
-    let outputFormat = num.toFormat(mantissa!, roundingMode, {
+    let outputFormat = num.toFormat(mantissa!, roundingMode as never, {
       suffix: postfix,
       groupSize: thousandSeparated ? 3 : 0,
       groupSeparator: thousandSeparated ? "," : "",
       decimalSeparator: ".",
       ...bigNumberFormat,
     });
+
+    if (isPercent) {
+      outputFormat += "%";
+    }
 
     if (forceSign) {
       if (!num.eq(0)) {

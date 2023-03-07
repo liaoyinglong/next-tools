@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 
 export interface Format extends BigNumber.Format {
-  output?: "currency" | "percent" | "byte" | "time" | "ordinal" | "number";
+  output?: "percent";
 
   /**
    * 同 suffix 配置

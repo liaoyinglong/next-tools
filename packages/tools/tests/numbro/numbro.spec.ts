@@ -55,6 +55,17 @@ describe("numbro", () => {
     });
   });
 
+  it("percent correct", function () {
+    [
+      [1, "100%"],
+      [0, "0%"],
+      [-0, "0%"],
+      [-1, "-100%"],
+    ].forEach(([input, output]) => {
+      expect(numbro(input).format({ output: "percent" })).toEqual(output);
+    });
+  });
+
   it("格式化不丢失精度", function () {
     const a = [
       [1, 2, "1.00"],

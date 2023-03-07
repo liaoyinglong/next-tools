@@ -17,7 +17,45 @@ describe("numbro", () => {
     });
   });
 
-  it("小数格式化不丢失精度", function () {
+  it("forceSign correct", function () {
+    [
+      [1, "+1"],
+      [0, "0"],
+      [-0, "0"],
+      [-1, "-1"],
+    ].forEach(([input, output]) => {
+      expect(numbro(input).format({ forceSign: true })).toEqual(output);
+    });
+  });
+
+  it("roundingMode correct", function () {
+    const instance = numbro(1.23456789);
+    (
+      [
+        [numbro.RoundingMode.RoundDown, 2, "1.23"],
+        [numbro.RoundingMode.RoundFloor, 2, "1.23"],
+        [numbro.RoundingMode.RoundUp, 2, "1.24"],
+        [numbro.RoundingMode.RoundCeil, 2, "1.24"],
+        [numbro.RoundingMode.RoundHalfUp, 2, "1.23"],
+        // ------------------------------
+        [numbro.RoundingMode.RoundDown, 3, "1.234"],
+        [numbro.RoundingMode.RoundFloor, 3, "1.234"],
+        [numbro.RoundingMode.RoundUp, 3, "1.235"],
+        [numbro.RoundingMode.RoundCeil, 3, "1.235"],
+        [numbro.RoundingMode.RoundHalfUp, 3, "1.235"],
+        // ------------------------------
+        [numbro.RoundingMode.RoundDown, 4, "1.2345"],
+        [numbro.RoundingMode.RoundFloor, 4, "1.2345"],
+        [numbro.RoundingMode.RoundUp, 4, "1.2346"],
+        [numbro.RoundingMode.RoundCeil, 4, "1.2346"],
+        [numbro.RoundingMode.RoundHalfUp, 4, "1.2346"],
+      ] as const
+    ).forEach(([roundingMode, mantissa, output]) => {
+      expect(instance.format({ roundingMode, mantissa })).toEqual(output);
+    });
+  });
+
+  it("格式化不丢失精度", function () {
     const a = [
       [1, 2, "1.00"],
       [1.1, 2, "1.10"],

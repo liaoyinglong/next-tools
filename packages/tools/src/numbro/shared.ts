@@ -33,8 +33,21 @@ export interface Format extends BigNumber.Format {
 
   /**
    * 四舍五入模式
-   * 默认为 BigNumber.ROUND_DOWN
-   * @see BigNumber.RoundingMode
+   * 默认为  RoundingMode.RoundDown
+   * @see RoundingMode
    */
-  roundingMode?: BigNumber.RoundingMode;
+  roundingMode?: RoundingMode;
+}
+
+/**
+ * 重新导出 BigNumber.RoundingMode
+ * 由于项目不会使用太多的四舍五入模式，所以只导出常用的几个
+ * @see BigNumber.RoundingMode
+ */
+export enum RoundingMode {
+  RoundDown = BigNumber.ROUND_DOWN,
+  RoundFloor = BigNumber.ROUND_FLOOR,
+  RoundUp = BigNumber.ROUND_UP,
+  RoundCeil = BigNumber.ROUND_CEIL,
+  RoundHalfUp = BigNumber.ROUND_HALF_UP,
 }

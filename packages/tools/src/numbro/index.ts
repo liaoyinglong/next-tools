@@ -1,10 +1,12 @@
 import BigNumber from "bignumber.js";
-import { Format } from "./shared";
-export type { Format };
+import { Format, RoundingMode } from "./shared";
+
+export * from "./shared";
 
 export function numbro(number: any) {
   return new Numbro(number);
 }
+numbro.RoundingMode = RoundingMode;
 
 // 可以参与运算的参数
 type OperationParams =
@@ -18,6 +20,7 @@ type OperationParams =
 
 export class Numbro {
   static rawBigNumber = BigNumber;
+  static RoundingMode = RoundingMode;
   static BN = BigNumber.clone({
     ROUNDING_MODE: BigNumber.ROUND_DOWN,
   });
@@ -68,9 +71,7 @@ export class Numbro {
 
     if (forceSign) {
       if (!num.eq(0)) {
-        outputFormat = num.isPositive()
-          ? `+${outputFormat}`
-          : `-${outputFormat}`;
+        outputFormat = num.isPositive() ? `+${outputFormat}` : outputFormat;
       }
     }
 

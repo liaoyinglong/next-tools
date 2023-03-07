@@ -57,10 +57,12 @@ export class Numbro {
         num = num.multipliedBy(100);
         break;
     }
+
     let outputFormat = num.toFormat(mantissa!, roundingMode, {
       suffix: postfix,
       groupSize: thousandSeparated ? 3 : 0,
       groupSeparator: thousandSeparated ? "," : "",
+      decimalSeparator: ".",
       ...bigNumberFormat,
     });
 

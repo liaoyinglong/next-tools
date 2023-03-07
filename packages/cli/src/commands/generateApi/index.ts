@@ -194,18 +194,21 @@ async function compileRequestParams(
       )
       .map((p) => p.name);
     const properties = Object.fromEntries(
-      parameters.map((p) => {
-        //TODO: 这里也要处理 ref 类型
-        const schema = p.schema as OpenAPIV3.SchemaObject;
-        return [
-          p.name,
-          {
-            type: schema.type,
-            description: p.description,
-            // enum: schema.enum ?? [],
-          },
-        ];
-      })
+      parameters
+        // 后端 swagger 可能出现没有 schema 的情况，这里过滤掉
+        .filter((p) => !!p.schema)
+        .map((p) => {
+          //TODO: 这里也要处理 ref 类型
+          const schema = p.schema as OpenAPIV3.SchemaObject;
+          return [
+            p.name,
+            {
+              type: schema.type,
+              description: p.description,
+              // enum: schema.enum ?? [],
+            },
+          ];
+        })
     );
     schema = {
       required,

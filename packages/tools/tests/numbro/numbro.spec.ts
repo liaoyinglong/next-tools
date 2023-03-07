@@ -81,14 +81,24 @@ describe("numbro", () => {
     });
   });
 
-  it.skip("average correct ", function () {
+  it("average correct ", function () {
     [
-      [1, 1],
-      [100, 100],
+      [1, "1"],
+      [100, "100"],
       ["1000", "1k"],
       ["10000", "10k"],
       ["100000", "100k"],
       ["1000000", "1m"],
+
+      ["9999", "9k"],
+      ["99999", "99k"],
+      ["999999", "999k"],
+      ["9999999", "9m"],
+      ["99999999", "99m"],
+      ["999999999", "999m"],
+      ["9999999999", "9b"],
+      ["99999999999", "99b"],
+      ["999999999999", "999b"],
     ].forEach(([input, output]) => {
       expect(
         numbro(input).format({ average: true, thousandSeparated: true })

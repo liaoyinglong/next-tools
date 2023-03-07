@@ -44,7 +44,7 @@ export class Numbro {
   }
 
   format(format: Format): string {
-    const {
+    let {
       output,
       thousandSeparated,
       roundingMode = BigNumber.ROUND_DOWN,
@@ -64,11 +64,22 @@ export class Numbro {
     };
 
     let num = this.bigNumber;
-    const isPercent = output === "percent";
     // 百分比
-    if (isPercent) {
+    if (output === "percent") {
       num = num.multipliedBy(100);
       combinedFormat.suffix = "%";
+    }
+    // 格式化成 1k, 1m, 1b, 1t
+    if (average) {
+      const average = this.computeAverage(num);
+      if (average) {
+        num = average.value;
+        combinedFormat.suffix = average.suffix;
+        // 没有指定小数位数，默认不保留小数
+        if (!mantissa) {
+          mantissa = 0;
+        }
+      }
     }
 
     let outputFormat = num.toFormat(
@@ -87,7 +98,7 @@ export class Numbro {
     return outputFormat;
   }
 
-  private computeAverage() {
+  private computeAverage(num: BigNumber) {
     const powers = {
       // 1t
       trillion: Math.pow(10, 12),
@@ -103,13 +114,13 @@ export class Numbro {
       [powers.billion, "b"],
       [powers.million, "m"],
       [powers.thousand, "k"],
-    ];
+    ] as const;
 
     for (let i = 0; i < config.length; i++) {
       const [power, suffix] = config[i];
-      if (this.bigNumber.gte(power)) {
+      if (num.gte(power)) {
         return {
-          value: this.bigNumber.dividedBy(power),
+          value: num.dividedBy(power),
           suffix,
         };
       }

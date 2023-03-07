@@ -18,7 +18,8 @@
   "dependencies": {
     "@lingui/core": "^3",
     "@lingui/detect-locale": "^3",
-    "@lingui/react": "^3"
+    "@lingui/react": "^3",
+    "bignumber.js": "^9.1.1"
   },
   "devDependencies": {
     "@tanstack/react-query": "^4.7.2",

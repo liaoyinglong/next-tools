@@ -17,12 +17,6 @@ export interface Format extends BigNumber.Format {
    * 是否显示千分位分割
    */
   thousandSeparated?: boolean;
-  abbreviations?: {
-    thousand?: string;
-    million?: string;
-    billion?: string;
-    trillion?: string;
-  };
   /**
    * 是否强制显示正负号
    * 0  -> 0

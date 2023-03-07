@@ -105,4 +105,63 @@ describe("numbro", () => {
       ).toEqual(output);
     });
   });
+
+  it("add correct", function () {
+    [
+      [0.1, 0.2, 0.3],
+      [new BigNumber(0.1), new BigNumber(0.2), 0.3],
+      [0.1, new BigNumber(0.2), 0.3],
+      [new BigNumber(0.1), 0.2, 0.3],
+      [1000, 10, 1010],
+      [0.5, 3, 3.5],
+      [-100, 200, 100],
+      [0.1, 0.2, 0.3],
+    ].forEach(([a, b, output]) => {
+      expect(numbro(a).add(b).bigNumber).toEqual(new BigNumber(output));
+    });
+  });
+
+  it("subtract correct", function () {
+    [
+      [0.3, 0.2, 0.1],
+      [new BigNumber(0.3), new BigNumber(0.2), 0.1],
+      [0.3, new BigNumber(0.2), 0.1],
+      [new BigNumber(0.3), 0.2, 0.1],
+      [1000, 10, 990],
+      [3, 0.5, 2.5],
+      [200, -100, 300],
+      [0.3, 0.2, 0.1],
+    ].forEach(([a, b, output]) => {
+      expect(numbro(a).subtract(b).bigNumber).toEqual(new BigNumber(output));
+    });
+  });
+
+  it("multiply correct", function () {
+    [
+      [0.1, 0.2, 0.02],
+      [new BigNumber(0.1), new BigNumber(0.2), 0.02],
+      [0.1, new BigNumber(0.2), 0.02],
+      [new BigNumber(0.1), 0.2, 0.02],
+      [1000, 10, 10000],
+      [0.5, 3, 1.5],
+      [-100, 200, -20000],
+      [0.1, 0.2, 0.02],
+    ].forEach(([a, b, output]) => {
+      expect(numbro(a).multiply(b).bigNumber).toEqual(new BigNumber(output));
+    });
+  });
+
+  it("divide correct", function () {
+    [
+      [0.1, 0.2, 0.5],
+      [new BigNumber(0.1), new BigNumber(0.2), 0.5],
+      [0.1, new BigNumber(0.2), 0.5],
+      [new BigNumber(0.1), 0.2, 0.5],
+      [1000, 10, 100],
+      [-100, 200, -0.5],
+      [0.1, 0.2, 0.5],
+    ].forEach(([a, b, output]) => {
+      expect(numbro(a).divide(b).bigNumber).toEqual(new BigNumber(output));
+    });
+  });
 });

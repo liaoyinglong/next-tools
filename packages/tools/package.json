@@ -13,7 +13,9 @@
     "src"
   ],
   "scripts": {
-    "build": "tsc --diagnostics"
+    "build": "tsc --diagnostics",
+    "test": "vitest run",
+    "test:u": "vitest -u"
   },
   "dependencies": {
     "@lingui/core": "^3",

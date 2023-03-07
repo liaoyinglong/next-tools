@@ -39,6 +39,7 @@ export class Numbro {
     }
     return res;
   }
+
   clone() {
     return new Numbro(this.bigNumber);
   }
@@ -63,6 +64,13 @@ export class Numbro {
       ...rest,
     };
 
+    if (mantissa) {
+      mantissa = Number(mantissa);
+      if (Number.isNaN(mantissa)) {
+        mantissa = undefined;
+      }
+    }
+
     let num = this.bigNumber;
     // 百分比
     if (output === "percent") {
@@ -83,7 +91,7 @@ export class Numbro {
     }
 
     let outputFormat = num.toFormat(
-      mantissa!,
+      mantissa as never,
       roundingMode as never,
       combinedFormat
     );

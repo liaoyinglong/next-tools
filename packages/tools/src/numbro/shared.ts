@@ -12,7 +12,7 @@ export interface Format extends BigNumber.Format {
   /**
    * 小数位数
    */
-  mantissa?: number;
+  mantissa?: number | string | null | undefined;
   /**
    * 是否显示千分位分割
    */

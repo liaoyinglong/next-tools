@@ -166,6 +166,19 @@ describe("numbro", () => {
     });
   });
 
+  it("mantissa 配置项", () => {
+    expect(numbro(1.2345).format({ mantissa: 2 })).toEqual("1.23");
+    expect(numbro(1.2345).format({ mantissa: 3 })).toEqual("1.234");
+    expect(numbro(1.2345).format({ mantissa: 4 })).toEqual("1.2345");
+
+    expect(numbro(1.2345).format({ mantissa: "2" })).toEqual("1.23");
+    expect(numbro(1.2345).format({ mantissa: "3" })).toEqual("1.234");
+    expect(numbro(1.2345).format({ mantissa: "4" })).toEqual("1.2345");
+
+    expect(numbro(1.2345).format({ mantissa: null })).toEqual("1.2345");
+    expect(numbro(1.2345).format({ mantissa: undefined })).toEqual("1.2345");
+  });
+
   it("formatCurrency", function () {
     (
       [

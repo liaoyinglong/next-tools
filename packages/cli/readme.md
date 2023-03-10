@@ -20,6 +20,6 @@ Commands:
 
 ## 交互式选择
 
-运行`dune` 或者 `dune interactive`，会进入交互式选择，上下键选择要执行的命令，回车键确认
+运行`dune` 或者 `dune interactive`，会进入交互式选择，上下键选择要执行的命令，回车键确认。
 
 ![](.readme_images/interactive.png)

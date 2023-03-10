@@ -14,11 +14,21 @@ import { enableDetectLocale } from "./enableDetectLocale";
  * ```
  */
 export let t = initT();
+interface TFunction {
+  (literals: TemplateStringsArray | string, ...placeholders: any[]): string;
+
+  /**
+   * 使用这个方法将被cli不会提取出来翻译
+   * 一般用在key是后端返回的动态情况
+   * 但是这种情况下需要开发者手动将翻译填入翻译文件中
+   */
+  ignoreExtract: TFunction;
+}
+
 function initT() {
-  return i18n._.bind(i18n) as unknown as (
-    literals: TemplateStringsArray | string,
-    ...placeholders: any[]
-  ) => string;
+  let r = i18n._.bind(i18n) as unknown as TFunction;
+  r.ignoreExtract = r;
+  return r;
 }
 // 修复 更换语言的时候 t 没有重新生成，导致某些写在 useMemo 的 t 调用没有更新语言
 i18n.on("change", () => {

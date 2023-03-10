@@ -81,12 +81,13 @@ class GoogleAuth {
 // see in https://console.cloud.google.com/apis/credentials?organizationId=286245507762&orgonly=true&project=dune-cli&supportedpurview=organizationId
 const clientSecret = {
   client_id:
-    "728508473485-fgl11a3op1ucd0lef9hs49mkliuaipqa.apps.googleusercontent.com",
-  project_id: "dune-cli",
+    "467670582023-3sr5gnfsuebgtde1mk3vp78om43no4kv.apps.googleusercontent.com",
+  project_id: "dune-cli-376503",
   auth_uri: "https://accounts.google.com/o/oauth2/auth",
   token_uri: "https://oauth2.googleapis.com/token",
   auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
-  client_secret: "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",
+  client_secret: "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",
   redirect_uris: ["http://localhost"],
+  javascript_origins: ["http://localhost"],
 };
 export const googleAuth = new GoogleAuth(clientSecret);

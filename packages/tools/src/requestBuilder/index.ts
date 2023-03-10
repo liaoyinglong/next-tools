@@ -139,7 +139,7 @@ export class RequestBuilder<Req = any, Res = any> {
    * 获取数据的时候可以直接调用这个
    * @see https://tanstack.com/query/v4/docs/guides/queries
    */
-  useQuery<T = Res>(params?: Req, options?: UseQueryOptions<Res> & Basic) {
+  useQuery<T = Res>(params?: Req, options?: UseQueryOptions<T> & Basic) {
     const { useQueryOptions } = this.options;
     const res = useQuery({
       queryFn: this.defaultQueryFn,

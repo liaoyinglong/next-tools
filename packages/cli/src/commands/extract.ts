@@ -64,7 +64,10 @@ export async function extract() {
       configItem.locales ?? [],
       async (locale, index) => {
         const i18nData = new I18nData(locale, configItem);
-        await i18nData.updateByExtractedData(extractedI18nDataMap, index === 0);
+        await i18nData.updateByExtractedData(
+          extractedI18nDataMap,
+          locale === configItem.defaultLocale
+        );
         await i18nData.saveToDisk();
         return await i18nData.statistic();
       }

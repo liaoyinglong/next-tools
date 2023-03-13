@@ -64,12 +64,8 @@ export async function extract(opts?: { deleteUnused: boolean }) {
     );
 
     const i18nDataArr = await pMap(configItem.locales ?? [], async (locale) => {
-      const i18nData = new I18nData(locale, configItem);
-      await i18nData.updateByExtractedData(
-        extractedI18nDataMap,
-        locale === configItem.defaultLocale,
-        opts?.deleteUnused
-      );
+      const i18nData = new I18nData(locale, configItem, opts?.deleteUnused);
+      await i18nData.updateByExtractedData(extractedI18nDataMap);
       await i18nData.saveToDisk();
       return i18nData;
     });

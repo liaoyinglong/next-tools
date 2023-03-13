@@ -15,7 +15,17 @@ export class I18nData {
 
   filePath: string;
 
-  constructor(public locale: string, public config: I18nConfig) {
+  /**
+   * 是否是默认语言，默认语言需要使用提出来的文案作为value
+   */
+  isDefaultLocale: boolean;
+  constructor(
+    public locale: string,
+    public config: I18nConfig,
+    // 是否需要删除未使用的文案
+    public shouldDeleteUnused = false
+  ) {
+    this.isDefaultLocale = locale === config.defaultLocale;
     this.filePath = path.join(
       config.cwd!,
       config.i18nDir!,
@@ -43,25 +53,19 @@ export class I18nData {
 
   /**
    * @param {ExtractedMap} extractedData 提取出来的内容
-   * @param {boolean} isDefaultLocale 是否是默认语言，默认语言需要使用提出来的文案作为value
-   * @param shouldDeleteUnused 是否删除未使用的文案
    */
-  async updateByExtractedData(
-    extractedData: ExtractedMap,
-    isDefaultLocale = false,
-    shouldDeleteUnused = false
-  ) {
+  async updateByExtractedData(extractedData: ExtractedMap) {
     const oldData = await this.loadData();
     let newData = {};
     extractedData.forEach((value, key) => {
       let newValue = oldData[key] || "";
-      if (isDefaultLocale) {
+      if (this.isDefaultLocale) {
         // 默认语言需要回退到key作为value
         newValue = newValue || value.messages || key;
       }
       newData[key] = newValue;
     });
-    if (!shouldDeleteUnused) {
+    if (!this.shouldDeleteUnused) {
       // 不删除未使用的文案，则需要合并旧数据
       newData = { ...oldData, ...newData };
     }

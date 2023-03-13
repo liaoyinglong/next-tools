@@ -18,13 +18,6 @@ cli
   .example("dune extract")
   .action(extract);
 
-cli
-  .command("extractAndDeleteUnused", "提取代码中的文案并删除未使用的文案")
-  .example("dune extractAndDeleteUnused")
-  .action(() => {
-    return extract({ deleteUnused: true });
-  });
-
 cli.command("upload", "上传翻译文件").example("dune upload").action(upload);
 //#endregion
 

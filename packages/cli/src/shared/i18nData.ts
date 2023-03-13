@@ -19,6 +19,8 @@ export class I18nData {
    * 是否是默认语言，默认语言需要使用提出来的文案作为value
    */
   isDefaultLocale: boolean;
+  // 没有被使用到的翻译key
+  unUsedKeys: Set<string> = new Set();
   constructor(
     public locale: string,
     public config: I18nConfig,
@@ -70,6 +72,13 @@ export class I18nData {
       newData = { ...oldData, ...newData };
     }
     this.data = newData;
+
+    // 记录下来未被使用的key，后面需要打印出来提示用户
+    Object.keys(oldData).forEach((key) => {
+      if (!extractedData.has(key)) {
+        this.unUsedKeys.add(key);
+      }
+    });
   }
 
   async updateFromSheetData(sheetData: Record<string, string>) {
@@ -139,6 +148,25 @@ export class I18nData {
     };
   }
   static printStatistic(label: string, i18nDataArr: I18nData[]) {
+    // 首先打印 unUsedKeys
+    const unUsedKeys = i18nDataArr.reduce((keys, item) => {
+      return new Set(item.unUsedKeys);
+    }, new Set<string>());
+    console.log(
+      pc.bold(
+        `共有 ${pc.green(
+          unUsedKeys.size
+        )} 个 key 未在代码中使用，以下是具体的 key`
+      )
+    );
+    console.log(
+      pc.red(
+        "注意：这些key可能是已经删除的代码，也可能是通过 `t.ignoreExtract` 调用忽略了提取 并不一定是冗余的 key"
+      )
+    );
+    console.table(unUsedKeys);
+
+    // 打印提取出来的翻译文案统计
     const table = new Table({
       head: ["Language", "Total count", "Missing"],
       colAligns: ["left", "center", "center"],
@@ -148,6 +176,7 @@ export class I18nData {
         compact: true,
       },
     });
+
     i18nDataArr.forEach((i18nData) => {
       const statistic = i18nData.statistic();
       table.push([

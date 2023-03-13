@@ -41,16 +41,31 @@ export class I18nData {
     return this.data;
   }
 
+  /**
+   * @param {ExtractedMap} extractedData 提取出来的内容
+   * @param {boolean} isDefaultLocale 是否是默认语言，默认语言需要使用提出来的文案作为value
+   * @param shouldDeleteUnused 是否删除未使用的文案
+   */
   async updateByExtractedData(
     extractedData: ExtractedMap,
-    shouldUseDefault = false
+    isDefaultLocale = false,
+    shouldDeleteUnused = false
   ) {
-    await this.loadData();
+    const oldData = await this.loadData();
+    let newData = {};
     extractedData.forEach((value, key) => {
-      this.data[key] = shouldUseDefault
-        ? value.messages || key
-        : this.data[key] || "";
+      let newValue = oldData[key] || "";
+      if (isDefaultLocale) {
+        // 默认语言需要回退到key作为value
+        newValue = newValue || value.messages || key;
+      }
+      newData[key] = newValue;
     });
+    if (!shouldDeleteUnused) {
+      // 不删除未使用的文案，则需要合并旧数据
+      newData = { ...oldData, ...newData };
+    }
+    this.data = newData;
   }
 
   async updateFromSheetData(sheetData: Record<string, string>) {

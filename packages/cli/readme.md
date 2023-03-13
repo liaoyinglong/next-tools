@@ -23,3 +23,11 @@ Commands:
 运行`dune` 或者 `dune interactive`，会进入交互式选择，上下键选择要执行的命令，回车键确认。
 
 ![](.readme_images/interactive.png)
+
+## 显示未使用的 keys
+
+![](.readme_images/4b70c3a3.png)
+
+## 提取成功后的统计
+
+![](.readme_images/8aa8a9a4.png)

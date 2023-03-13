@@ -109,17 +109,6 @@ export class I18nData {
     }
   }
 
-  async statistic() {
-    const total = Object.keys(this.data).length;
-    const missing = Object.values(this.data).filter((v) => !v).length;
-
-    return {
-      locale: this.locale,
-      total,
-      missing,
-    };
-  }
-
   async trySaveToGoogle(sheetData: SheetData) {
     await pMap(Object.entries(this.data), async ([key, value]) => {
       if (sheetData.hasI18nItem(this.locale, key)) {
@@ -135,11 +124,17 @@ export class I18nData {
       }
     });
   }
+  private statistic() {
+    const total = Object.keys(this.data).length;
+    const missing = Object.values(this.data).filter((v) => !v).length;
 
-  static printStatistic(
-    label: string,
-    statistics: { locale: string; total: number; missing: number }[]
-  ) {
+    return {
+      locale: this.locale,
+      total,
+      missing,
+    };
+  }
+  static printStatistic(label: string, i18nDataArr: I18nData[]) {
     const table = new Table({
       head: ["Language", "Total count", "Missing"],
       colAligns: ["left", "center", "center"],
@@ -149,7 +144,8 @@ export class I18nData {
         compact: true,
       },
     });
-    statistics.forEach((statistic) => {
+    i18nDataArr.forEach((i18nData) => {
+      const statistic = i18nData.statistic();
       table.push([
         statistic.locale,
         statistic.total,

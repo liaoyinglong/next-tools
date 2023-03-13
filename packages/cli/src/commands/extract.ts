@@ -63,7 +63,7 @@ export async function extract(opts?: { deleteUnused: boolean }) {
       { concurrency: 20 }
     );
 
-    const statistics = await pMap(configItem.locales ?? [], async (locale) => {
+    const i18nDataArr = await pMap(configItem.locales ?? [], async (locale) => {
       const i18nData = new I18nData(locale, configItem);
       await i18nData.updateByExtractedData(
         extractedI18nDataMap,
@@ -71,12 +71,12 @@ export async function extract(opts?: { deleteUnused: boolean }) {
         opts?.deleteUnused
       );
       await i18nData.saveToDisk();
-      return await i18nData.statistic();
+      return i18nData;
     });
     if (errMsgs.length) {
       console.log(pc.bold("以下未能成功提取的文案，请手动处理："));
       console.log(errMsgs.join(os.EOL));
     }
-    I18nData.printStatistic("提取结果: ", statistics);
+    I18nData.printStatistic("提取结果: ", i18nDataArr);
   }
 }

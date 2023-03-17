@@ -17,6 +17,10 @@ describe("numbro", () => {
     });
   });
 
+  it("default format", function () {
+    expect(numbro("1.230000").format({})).toEqual("1.23");
+  });
+
   it("格式化不丢失精度", function () {
     const a = [
       [1, 2, "1.00"],

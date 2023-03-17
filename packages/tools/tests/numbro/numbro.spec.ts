@@ -19,6 +19,115 @@ describe("numbro", () => {
 
   it("default format", function () {
     expect(numbro("1.230000").format({})).toEqual("1.23");
+    expect(numbro("1.230000").toString()).toEqual("1.23");
+  });
+
+  it("deleteInvalidZero 支持 删除尾数 0", function () {
+    [
+      ["1.000000", 2, "1"],
+      ["1.000000", 3, "1"],
+      ["1.000000", 4, "1"],
+
+      ["1.200001", 2, "1.20"],
+      ["1.200001", 3, "1.200"],
+      ["1.200001", 4, "1.2000"],
+
+      ["1.200010", 2, "1.20"],
+      ["1.200010", 3, "1.200"],
+      ["1.200010", 4, "1.2000"],
+
+      ["0.1234567800000", 2, "0.12"],
+      ["0.1234567800000", 3, "0.123"],
+      ["0.1234567800000", 4, "0.1234"],
+    ].forEach(([input, mantissa, output]) => {
+      expect(
+        numbro(input).format({ mantissa, deleteInvalidZero: true })
+      ).toEqual(output);
+    });
+
+    [
+      ["0.1000000", 2, "10%"],
+      ["0.1000001", 2, "10.00%"],
+      ["0.1000001", 3, "10.000%"],
+      ["0.1000010", 2, "10.00%"],
+      ["0.1000010", 3, "10.000%"],
+    ].forEach(([input, mantissa, output]) => {
+      expect(
+        numbro(input).format({
+          mantissa,
+          deleteInvalidZero: true,
+          output: "percent",
+        })
+      ).toEqual(output);
+    });
+
+    [
+      ["1.000000", 2, "1 BTC"],
+      ["1.000001", 2, "1.00 BTC"],
+      ["1.000001", 3, "1.000 BTC"],
+      ["1.000010", 2, "1.00 BTC"],
+      ["1.000010", 3, "1.000 BTC"],
+    ].forEach(([input, mantissa, output]) => {
+      expect(
+        numbro(input).format({
+          mantissa,
+          deleteInvalidZero: true,
+          suffix: " BTC",
+        })
+      ).toEqual(output);
+    });
+  });
+
+  it("deleteEndZero 支持 删除尾数 0", function () {
+    [
+      ["1.000000", 2, "1"],
+      ["1.000000", 3, "1"],
+      ["1.000000", 4, "1"],
+
+      ["1.200001", 2, "1.2"],
+      ["1.200001", 3, "1.2"],
+      ["1.200001", 4, "1.2"],
+
+      ["1.230000", 2, "1.23"],
+      ["1.230000", 3, "1.23"],
+      ["1.230000", 4, "1.23"],
+
+      ["0.1234567800000", 2, "0.12"],
+      ["0.1234567800000", 3, "0.123"],
+      ["0.1234567800000", 4, "0.1234"],
+    ].forEach(([input, mantissa, output]) => {
+      expect(numbro(input).format({ mantissa, deleteEndZero: true })).toEqual(
+        output
+      );
+    });
+
+    [
+      ["0.1000000", 2, "10%"],
+      ["0.1000001", 2, "10%"],
+      ["0.1000001", 3, "10%"],
+    ].forEach(([input, mantissa, output]) => {
+      expect(
+        numbro(input).format({
+          mantissa,
+          deleteEndZero: true,
+          output: "percent",
+        })
+      ).toEqual(output);
+    });
+
+    [
+      ["1.000000", 2, "1 BTC"],
+      ["1.000001", 2, "1 BTC"],
+      ["1.000001", 3, "1 BTC"],
+    ].forEach(([input, mantissa, output]) => {
+      expect(
+        numbro(input).format({
+          mantissa,
+          deleteEndZero: true,
+          suffix: " BTC",
+        })
+      ).toEqual(output);
+    });
   });
 
   it("格式化不丢失精度", function () {

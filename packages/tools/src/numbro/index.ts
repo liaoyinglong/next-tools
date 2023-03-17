@@ -25,6 +25,7 @@ export class Numbro {
     ROUNDING_MODE: BigNumber.ROUND_DOWN,
   });
   bigNumber!: BigNumber;
+
   constructor(number: any) {
     this.bigNumber = this.castToBigNumber(number);
   }
@@ -53,6 +54,8 @@ export class Numbro {
       mantissa,
       forceSign,
       average,
+      deleteInvalidZero,
+      deleteEndZero,
       ...rest
     } = format;
 
@@ -94,6 +97,14 @@ export class Numbro {
       mantissa as never,
       roundingMode as never,
       combinedFormat
+    );
+
+    outputFormat = this.tryDeleteEndZero(
+      deleteEndZero,
+      deleteInvalidZero,
+      mantissa,
+      outputFormat,
+      combinedFormat.suffix
     );
 
     // 强制显示正负号
@@ -147,6 +158,35 @@ export class Numbro {
         };
       }
     }
+  }
+
+  private tryDeleteEndZero(
+    deleteEndZero: boolean | undefined,
+    deleteInvalidZero: boolean | undefined,
+    mantissa: number | undefined | null | string,
+    outputFormat: string,
+    suffix = ""
+  ) {
+    const num = this.bigNumber;
+    let shouldDeleteEndZero = false;
+    if (deleteEndZero) {
+      shouldDeleteEndZero = true;
+    } else if (deleteInvalidZero && mantissa) {
+      // 先转成数字 移除无效0
+      // case: 1.00100 => 1.001
+      let cloned = num.toString();
+      let clonedDecimal = cloned.split(".")[1]?.length ?? 0;
+      // 移除无效0后，小数位数还比指定的小数位数多，那么就不用删除尾数0
+      shouldDeleteEndZero = !(clonedDecimal > mantissa);
+    }
+
+    if (shouldDeleteEndZero) {
+      // 移除尾数0
+      // outputFormat = outputFormat.replace(/\.?0+$/, "");
+      const reg = new RegExp(`\\.?0+${suffix}$`);
+      outputFormat = outputFormat.replace(reg, suffix);
+    }
+    return outputFormat;
   }
 
   /**
@@ -206,5 +246,9 @@ export class Numbro {
    */
   valueOf(): number {
     return this.bigNumber.toNumber();
+  }
+
+  toString() {
+    return this.bigNumber.toString();
   }
 }

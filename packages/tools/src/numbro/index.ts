@@ -143,10 +143,10 @@ export class Numbro {
       thousand: Math.pow(10, 3),
     };
     const config = [
-      [powers.trillion, "t"],
-      [powers.billion, "b"],
-      [powers.million, "m"],
-      [powers.thousand, "k"],
+      [powers.trillion, "T"],
+      [powers.billion, "B"],
+      [powers.million, "M"],
+      [powers.thousand, "K"],
     ] as const;
 
     for (let i = 0; i < config.length; i++) {

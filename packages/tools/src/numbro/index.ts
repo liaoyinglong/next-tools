@@ -34,6 +34,11 @@ export class Numbro {
     if (other instanceof Numbro) {
       other = other.bigNumber;
     }
+    if (typeof other === "string") {
+      // case: "1,000" => "1000"
+      other = other.trim().replace(/,/g, "");
+    }
+
     const res = new Numbro.BN(other as never);
     if (res.isNaN()) {
       return new Numbro.BN(0);

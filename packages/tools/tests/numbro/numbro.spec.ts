@@ -12,6 +12,9 @@ describe("numbro", () => {
       [false, 0],
       [Infinity, Infinity],
       [-Infinity, -Infinity],
+
+      ["1,000", 1000],
+      ["1,000.000", 1000],
     ].forEach(([input, output]) => {
       expect(numbro(input).bigNumber).toEqual(new BigNumber(output as never));
     });

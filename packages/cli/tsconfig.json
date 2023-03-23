@@ -10,7 +10,8 @@
     "esModuleInterop": true,
     "moduleResolution": "Node",
     "strictNullChecks": true,
-    "stripInternal": true
+    "stripInternal": true,
+    "skipLibCheck": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

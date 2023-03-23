@@ -27,7 +27,7 @@ export async function download() {
         const i18nData = new I18nData(locale, configItem);
         await i18nData.updateFromSheetData(sheetData.getLangDataJSON(locale));
         await i18nData.saveToDisk();
-        return await i18nData.statistic();
+        return i18nData;
       }
     );
     I18nData.printStatistic(`${configItem.sheetRange} 生成结果: `, statistics);

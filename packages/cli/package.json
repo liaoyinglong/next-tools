@@ -21,6 +21,7 @@
   "scripts": {
     "build": "tsup src/cli.ts src/index.ts --clean --splitting",
     "dev": "pnpm run build --watch",
+    "lint": "tsc --diagnostics --noEmit",
     "test": "vitest run",
     "test:u": "vitest -u"
   },

@@ -152,20 +152,21 @@ export class I18nData {
     const unUsedKeys = i18nDataArr.reduce((keys, item) => {
       return new Set(item.unUsedKeys);
     }, new Set<string>());
-    console.log(
-      pc.bold(
-        `共有 ${pc.green(
-          unUsedKeys.size
-        )} 个 key 未在代码中使用，以下是具体的 key`
-      )
-    );
-    console.log(
-      pc.red(
-        "注意：这些key可能是已经删除的代码，也可能是通过 `t.ignoreExtract` 调用忽略了提取 并不一定是冗余的 key"
-      )
-    );
-    console.table(unUsedKeys);
-
+    if (unUsedKeys.size) {
+      console.log(
+        pc.bold(
+          `共有 ${pc.green(
+            unUsedKeys.size
+          )} 个 key 未在代码中使用，以下是具体的 key`
+        )
+      );
+      console.log(
+        pc.red(
+          "注意：这些key可能是已经删除的代码，也可能是通过 `t.ignoreExtract` 调用忽略了提取 并不一定是冗余的 key"
+        )
+      );
+      console.table(unUsedKeys);
+    }
     // 打印提取出来的翻译文案统计
     const table = new Table({
       head: ["Language", "Total count", "Missing"],

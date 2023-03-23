@@ -92,7 +92,14 @@ export async function generateApiRequestCode(options: {
       )}/${operationObject.operationId}`
     : "not found swagger ui url";
 
-  const requestBuilderName = _.camelCase(`${url}_${method}_api`);
+  let requestBuilderName = _.camelCase(`${url}_${method}_api`);
+
+  // 判断是否有效的js变量
+  if (!/^[a-zA-Z_$][0-9a-zA-Z_$]*$/.test(requestBuilderName)) {
+    // 不是有效的js变量，使用 _ + 数字
+    requestBuilderName = `_${requestBuilderName}`;
+  }
+
   //#region url上参数 例如 /api/v1/users/{userId}
   const urlPathParams = getUrlPathParams(
     (operationObject.parameters as never) ?? []

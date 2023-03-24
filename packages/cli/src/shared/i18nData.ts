@@ -8,7 +8,10 @@ import Table from "cli-table3";
 import { SheetData } from "./resolveSheetData";
 
 const log = createLogger("i18nData");
-export type ExtractedMap = Map<string, { id: string; messages: string }>;
+export type ExtractedMap = Map<
+  string,
+  { id: string; messages: string; files: string[] }
+>;
 
 export class I18nData {
   data: Record<string, string> = {};

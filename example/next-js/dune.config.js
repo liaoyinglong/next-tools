@@ -19,6 +19,7 @@ module.exports = defineConfig({
         en: "D",
         in: "F",
       },
+      include: ["./pages/**/*.{js,jsx,ts,tsx}"],
     },
     {
       i18nDir: "./i18n2",
@@ -31,6 +32,7 @@ module.exports = defineConfig({
         en: "D",
         in: "F",
       },
+      include: ["./pages/**/*.{js,jsx,ts,tsx}"],
     },
   ],
   api: [

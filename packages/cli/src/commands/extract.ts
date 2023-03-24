@@ -7,6 +7,7 @@ import { ExtractedMap, I18nData } from "../shared/i18nData";
 import pc from "picocolors";
 import os from "os";
 import { promptI18nConfigEnable } from "../shared/promptConfigEnable";
+import path from "path";
 
 const log = createLogger("extract");
 
@@ -28,20 +29,18 @@ export async function extract(opts?: { deleteUnused: boolean }) {
         "!**.d.ts",
         "!**/.next/**",
         "!**/out/**",
-      ],
+      ].concat(configItem.include ?? []),
       { cwd: configItem.cwd }
     );
     log.info("预计共解析 %s 个文件", pc.green(files.length));
     let errMsgs: string[] = [];
     const extractedI18nDataMap: ExtractedMap = new Map();
+
     await pMap(
       files,
       async (file) => {
         const content = await fs.readFile(file, "utf-8");
-        const res: { data: ExtractedMap; errMsg: string } = await extract(
-          content,
-          file
-        );
+        const res = await extract(content, file);
         if (res.data.size) {
           log.info(
             "从 %s 中提取到 %s 条文案",
@@ -52,7 +51,12 @@ export async function extract(opts?: { deleteUnused: boolean }) {
             const cur = extractedI18nDataMap.get(key);
             // 优先保留有 messages 的
             if (!cur?.messages) {
-              extractedI18nDataMap.set(key, value);
+              extractedI18nDataMap.set(key, {
+                ...value,
+                files: [res.filename],
+              });
+            } else {
+              cur.files.push(res.filename);
             }
           });
         }
@@ -62,6 +66,8 @@ export async function extract(opts?: { deleteUnused: boolean }) {
       },
       { concurrency: 20 }
     );
+
+    await saveDebugLog(config.cacheDir!, extractedI18nDataMap);
 
     const i18nDataArr = await pMap(configItem.locales ?? [], async (locale) => {
       const i18nData = new I18nData(locale, configItem, opts?.deleteUnused);
@@ -75,4 +81,18 @@ export async function extract(opts?: { deleteUnused: boolean }) {
     }
     I18nData.printStatistic("提取结果: ", i18nDataArr);
   }
+}
+
+async function saveDebugLog(dir: string, extractedI18nDataMap: ExtractedMap) {
+  await fs.ensureDirSync(dir);
+  // extractedI18nDataMap 是个 Map 需要转成换json
+
+  await fs.writeJSON(
+    path.join(dir, "extractedI18nDataMap.json"),
+
+    Array.from(extractedI18nDataMap.entries()).map(([key, value]) => value),
+    {
+      spaces: 2,
+    }
+  );
 }

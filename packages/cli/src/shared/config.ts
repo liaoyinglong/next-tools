@@ -1,6 +1,7 @@
 import JoyCon from "joycon";
 import { resolveSheetId } from "./resolveSheetId";
 import { OpenAPIV3 } from "openapi-types";
+import path from "path";
 
 const joycon = new JoyCon();
 
@@ -57,6 +58,12 @@ export interface I18nConfig {
    * @internal
    */
   enabled?: boolean;
+
+  /**
+   * 包括的文件
+   * glob 语法
+   */
+  include?: string[];
 }
 
 export interface ApiConfig {
@@ -134,6 +141,12 @@ export interface Config {
    * @internal
    */
   cwd?: string;
+
+  /**
+   * 默认是 node_modules/.cache/dune-cli
+   * @internal
+   */
+  cacheDir?: string;
 }
 export function defineConfig<T = Config>(c: T) {
   return c;
@@ -153,6 +166,7 @@ export async function getConfig(): Promise<Config> {
 
   let config = (res.data ?? {}) as Config;
   config.cwd ??= process.cwd();
+  config.cacheDir ??= path.join(config.cwd, "node_modules/.cache/dune-cli");
 
   //#region i18n 配置标准化
   if (!config.i18n || !config.i18n?.length) {

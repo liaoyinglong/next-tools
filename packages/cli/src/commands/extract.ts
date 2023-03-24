@@ -48,15 +48,17 @@ export async function extract(opts?: { deleteUnused: boolean }) {
             pc.green(res.data.size)
           );
           res.data.forEach((value, key) => {
-            const cur = extractedI18nDataMap.get(key);
+            let cur = extractedI18nDataMap.get(key)!;
+            const hasCache = !!cur;
+            if (!hasCache) {
+              cur = { ...value, files: [] };
+            }
+            cur.files.push(res.filename);
             // 优先保留有 messages 的
-            if (!cur?.messages) {
-              extractedI18nDataMap.set(key, {
-                ...value,
-                files: [res.filename],
-              });
-            } else {
-              cur.files.push(res.filename);
+            cur.messages = cur.messages || value.messages;
+
+            if (!hasCache) {
+              extractedI18nDataMap.set(key, cur);
             }
           });
         }

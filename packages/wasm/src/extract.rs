@@ -8,6 +8,7 @@ use swc_core::ecma::visit::FoldWith;
 use swc_core::ecma::visit::VisitMutWith;
 
 use crate::extract_visitor::ExtractVisitor;
+use crate::extracted::Extracted;
 use crate::setup_handler::setup_handler;
 
 pub struct ExtractOptions {
@@ -24,17 +25,17 @@ impl ExtractOptions {
     }
 }
 
-pub fn extract(opts: ExtractOptions) -> Result<ExtractVisitor, Error> {
+pub fn extract(opts: ExtractOptions) -> Result<Extracted, Error> {
     let source_map = Lrc::<SourceMap>::default();
+    let source_file = source_map.new_source_file(opts.filename.clone(), opts.source);
 
     let mut visitor = ExtractVisitor::new();
-    let fm = source_map.new_source_file(opts.filename.clone(), opts.source);
 
     setup_handler(source_map.clone(), |_handler, wr| {
         let mut errors = vec![];
 
         let program = parse_file_as_program(
-            &*fm,
+            &*source_file,
             Syntax::Typescript(TsConfig {
                 tsx: true,
                 ..Default::default()
@@ -50,9 +51,10 @@ pub fn extract(opts: ExtractOptions) -> Result<ExtractVisitor, Error> {
             }
             Err(e) => return Err(Error::msg(format!(" {:?}", e)).context("Failed to parse file")),
         }
-        visitor.err_msg = wr.get_display_str();
-        dbg!(&visitor.data);
-        Ok(visitor)
+        visitor.extracted.err_msg = wr.get_display_str();
+        visitor.extracted.filename = opts.filename.to_string();
+        dbg!(&visitor.extracted);
+        Ok(visitor.extracted)
     })
 }
 
@@ -60,7 +62,7 @@ pub fn extract(opts: ExtractOptions) -> Result<ExtractVisitor, Error> {
 mod tests {
     use swc_core::common::collections::AHashMap;
 
-    use crate::extract_visitor::Item;
+    use crate::extracted::Item;
 
     use super::*;
 
@@ -107,5 +109,6 @@ mod tests {
         insert("Welcome to <0>Next.js!</0> {counter}", "");
         assert_eq!(res.data.len(), map.len());
         assert_eq!(res.data, map);
+        assert_eq!(res.filename, "test.tsx".to_string());
     }
 }

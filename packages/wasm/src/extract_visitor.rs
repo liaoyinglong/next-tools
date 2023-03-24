@@ -1,5 +1,3 @@
-use serde::{Deserialize, Serialize};
-use swc_core::common::collections::AHashMap;
 use swc_core::common::errors::HANDLER;
 use swc_core::ecma::ast::{
     CallExpr, Expr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName, JSXExpr,
@@ -8,16 +6,7 @@ use swc_core::ecma::ast::{
 use swc_core::ecma::visit::VisitMutWith;
 use swc_core::ecma::visit::{noop_visit_mut_type, VisitMut};
 
-#[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct Item {
-    // 翻译文案的id
-    #[serde(default, skip_deserializing)]
-    pub id: String,
-    // 默认的翻译文案
-    #[serde(default)]
-    pub messages: String,
-}
+use crate::extracted::Extracted;
 
 #[derive(Debug)]
 pub struct Config {
@@ -38,23 +27,17 @@ impl Default for Config {
     }
 }
 
-#[derive(Debug, Default, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
 pub struct ExtractVisitor {
-    #[serde(default)]
-    pub data: AHashMap<String, Item>,
-    #[serde(default)]
-    pub err_msg: String,
-    #[serde(skip)]
+    pub extracted: Extracted,
+
     pub config: Config,
 }
 
 impl ExtractVisitor {
     pub fn new() -> Self {
         ExtractVisitor {
-            data: AHashMap::default(),
             config: Config::default(),
-            err_msg: "".to_string(),
+            extracted: Default::default(),
         }
     }
 
@@ -104,6 +87,10 @@ impl ExtractVisitor {
             _ => None,
         }
     }
+
+    fn add_to_map(&mut self, id: String, messages: String) {
+        self.extracted.try_add(id, messages)
+    }
 }
 
 impl VisitMut for ExtractVisitor {
@@ -145,13 +132,7 @@ impl VisitMut for ExtractVisitor {
                     handler.span_note_without_error(n.span, "msg id is not string literal, skip");
                 });
             } else {
-                self.data.insert(
-                    id.clone(),
-                    Item {
-                        id,
-                        messages: default_msg,
-                    },
-                );
+                self.add_to_map(id, default_msg);
             }
 
             None
@@ -197,13 +178,7 @@ impl VisitMut for ExtractVisitor {
                 work();
             });
             if !id.is_empty() {
-                self.data.insert(
-                    id.clone(),
-                    Item {
-                        id,
-                        messages: defaults,
-                    },
-                );
+                self.add_to_map(id, defaults);
             };
 
             None

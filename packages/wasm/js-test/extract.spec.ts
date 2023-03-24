@@ -24,34 +24,38 @@ describe("extract", () => {
          \`----
       "
     `);
+    expect(result.data.filename).toMatchInlineSnapshot('undefined');
 
-    expect(result.data).toMatchInlineSnapshot(`
-      Map {
-        "msg_id2" => {
-          "id": "msg_id2",
-          "messages": "hello {name2}",
-        },
-        "msg_id3" => {
-          "id": "msg_id3",
-          "messages": "hello {name2}",
-        },
-        "hello {name2}" => {
-          "id": "hello {name2}",
-          "messages": "",
-        },
-        "hello {name}" => {
+    const arr = Array.from(result.data.values()).sort((a: any, b: any) =>
+      a.id.localeCompare(b.id)
+    );
+    expect(arr).toMatchInlineSnapshot(`
+      [
+        {
           "id": "hello {name}",
           "messages": "",
         },
-        "msg_id1" => {
+        {
+          "id": "hello {name2}",
+          "messages": "",
+        },
+        {
           "id": "msg_id1",
           "messages": "hello {name2}",
         },
-        "t.fn.obj.arg" => {
+        {
+          "id": "msg_id2",
+          "messages": "hello {name2}",
+        },
+        {
+          "id": "msg_id3",
+          "messages": "hello {name2}",
+        },
+        {
           "id": "t.fn.obj.arg",
           "messages": "Refresh inbox",
         },
-      }
+      ]
     `);
   });
 });

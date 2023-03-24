@@ -7,6 +7,7 @@ use wasm_bindgen_futures::future_to_promise;
 
 mod extract;
 mod extract_visitor;
+mod extracted;
 mod setup_handler;
 
 fn convert_err(err: Error) -> JsValue {

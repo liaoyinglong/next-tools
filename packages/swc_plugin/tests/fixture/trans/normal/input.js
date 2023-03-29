@@ -26,3 +26,10 @@
 <Trans>
   Hello <strong>{obj.name}</strong>. <Link to="/inbox">See my profile</Link>
 </Trans>;
+
+// 多行文本
+<Trans id={"Identity_Verification_desc"}>
+  For the security of your account assets and transactions, and according to
+  <strong>BAPPEBTI</strong> and <strong>Kominfo</strong>
+  regulations, please verify your account.
+</Trans>;

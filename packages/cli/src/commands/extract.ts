@@ -54,8 +54,8 @@ export async function extract(opts?: { deleteUnused: boolean }) {
               cur = { ...value, files: [] };
             }
             cur.files.push(res.filename);
-            // 优先保留有 messages 的
-            cur.messages = cur.messages || value.messages;
+            // 优先使用 提取出来的文案
+            cur.messages = value.messages || cur.messages;
 
             if (!hasCache) {
               extractedI18nDataMap.set(key, cur);

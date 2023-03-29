@@ -40,3 +40,8 @@
     0: <strong >{obj.name}</strong>,
     2: <Link to="/inbox">See my profile</Link>
 }}></Trans>;
+// 多行文本
+<Trans id={"Identity_Verification_desc"} message="For the security of your account assets and transactions, and according to <0>BAPPEBTI</0> and <1>Kominfo</1>regulations, please verify your account." components={{
+    0: <strong >BAPPEBTI</strong>,
+    1: <strong >Kominfo</strong>
+}}></Trans>;

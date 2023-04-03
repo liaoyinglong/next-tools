@@ -72,7 +72,7 @@ export class Numbro {
       ...rest,
     };
 
-    if (mantissa) {
+    if (mantissa || Number.isNaN(mantissa)) {
       mantissa = Number(mantissa);
       if (Number.isNaN(mantissa)) {
         mantissa = undefined;

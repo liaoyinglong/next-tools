@@ -313,4 +313,13 @@ describe("numbro", () => {
       ).toEqual(output);
     });
   });
+
+  it("异常情况兼容", function () {
+    const n = numbro(1.2345);
+    expect(
+      n.format({
+        mantissa: NaN,
+      })
+    ).toEqual("1.2345");
+  });
 });

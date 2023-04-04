@@ -6,6 +6,7 @@ import pc from "picocolors";
 import path from "path";
 import Table from "cli-table3";
 import { SheetData } from "./resolveSheetData";
+import { sleep } from "./sleep";
 
 const log = createLogger("i18nData");
 export type ExtractedMap = Map<
@@ -126,19 +127,27 @@ export class I18nData {
   }
 
   async trySaveToGoogle(sheetData: SheetData) {
-    await pMap(Object.entries(this.data), async ([key, value]) => {
-      if (sheetData.hasI18nItem(this.locale, key)) {
-        // 更新已有的
-        await sheetData.getI18nItem(this.locale, key)?.tryUpdate(value);
-      } else {
-        log.error(
-          "%s range %s not found key %s",
-          pc.bold(this.config.sheetRange),
-          pc.bold(this.locale),
-          pc.bold(key)
-        );
-      }
-    });
+    await pMap(
+      Object.entries(this.data),
+      async ([key, value]) => {
+        if (sheetData.hasI18nItem(this.locale, key)) {
+          // 更新已有的
+          await sheetData.getI18nItem(this.locale, key)?.tryUpdate(value);
+          // 避免频繁请求，Google sheet api 默认限制
+          // • 每秒钟读操作数：100 请求/秒
+          // • 每秒钟单元格写操作数：100 请求/秒
+          await sleep(500);
+        } else {
+          log.error(
+            "%s range %s not found key %s",
+            pc.bold(this.config.sheetRange),
+            pc.bold(this.locale),
+            pc.bold(key)
+          );
+        }
+      },
+      { concurrency: 50 }
+    );
   }
   private statistic() {
     const total = Object.keys(this.data).length;

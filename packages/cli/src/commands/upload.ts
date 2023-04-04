@@ -6,6 +6,7 @@ import { I18nData } from "../shared/i18nData";
 import { letterToNumber } from "../shared/letters";
 import { resolveSheetData } from "../shared/resolveSheetData";
 import { promptI18nConfigEnable } from "../shared/promptConfigEnable";
+import { sleep } from "../shared/sleep";
 
 const log = createLogger("upload");
 
@@ -69,11 +70,6 @@ async function batchUpdateKeys(config: I18nConfig) {
   }
 
   return { sheetData, i18nDataMap };
-}
-function sleep(ms: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
 }
 
 export async function upload() {

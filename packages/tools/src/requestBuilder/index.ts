@@ -155,7 +155,7 @@ export class RequestBuilder<Req = any, Res = any> {
       // @ts-expect-error 后续处理类型问题
       meta: {
         ...options?.meta,
-        requestFn: options?.requestFn ?? this.options.requestFn,
+        requestFn: options?.requestFn,
       },
     });
     return res as UseQueryResult<T>;
@@ -177,7 +177,7 @@ export class RequestBuilder<Req = any, Res = any> {
       ...options,
       meta: {
         ...options?.meta,
-        requestFn: options?.requestFn ?? this.options.requestFn,
+        requestFn: options?.requestFn,
       },
     });
   }
@@ -221,7 +221,7 @@ export class RequestBuilder<Req = any, Res = any> {
           {
             ...ctx.meta,
             signal: ctx.signal,
-            requestFn: options?.requestFn ?? this.options.requestFn,
+            requestFn: options?.requestFn,
           }
         );
       },
@@ -239,7 +239,7 @@ export class RequestBuilder<Req = any, Res = any> {
       ...options,
       meta: {
         ...options?.meta,
-        requestFn: options?.requestFn ?? this.options.requestFn,
+        requestFn: options?.requestFn,
       },
     });
 
@@ -265,10 +265,7 @@ export class RequestBuilder<Req = any, Res = any> {
   //#region mutation
 
   private getMutationFn(config?: Basic) {
-    if (config?.requestFn) {
-      return (params: Req) => this.request(params, config);
-    }
-    return this.request;
+    return (params: Req) => this.request(params, config);
   }
 
   /**

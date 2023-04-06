@@ -16,7 +16,10 @@ import {
 import { AxiosRequestConfig, Method } from "axios";
 import { useDebugValue, useMemo } from "react";
 
-type Basic = {
+// 外部可以重写这个类型
+export interface RequestBuilderMeta {}
+
+interface Basic {
   /**
    * 请求方法
    * 1. 实例化的时候会接收一个`requestFn`
@@ -24,7 +27,9 @@ type Basic = {
    * 一般场景是有些情况需要全局`toast`，有些场景不需要，所以在不同的场景下传入不同实现的`requestFn`
    */
   requestFn?: <T = unknown>(config: AxiosRequestConfig) => Promise<T>;
-};
+
+  meta?: RequestBuilderMeta;
+}
 
 export interface RequestBuilderOptions<Req, Res> extends Basic {
   /**
@@ -130,6 +135,7 @@ export class RequestBuilder<Req = any, Res = any> {
   ): Promise<Res> {
     return this.request(ctx.queryKey[2], {
       signal: ctx.signal,
+      meta: ctx.meta,
       requestFn: ctx.meta?.requestFn as never,
     });
   }
@@ -171,7 +177,7 @@ export class RequestBuilder<Req = any, Res = any> {
       ...options,
       meta: {
         ...options?.meta,
-        requestFn: options?.requestFn,
+        requestFn: options?.requestFn ?? this.options.requestFn,
       },
     });
   }
@@ -213,8 +219,9 @@ export class RequestBuilder<Req = any, Res = any> {
             pageNum: ctx.pageParam ?? pageNum ?? 1,
           },
           {
+            ...ctx.meta,
             signal: ctx.signal,
-            requestFn: ctx.meta?.requestFn as never,
+            requestFn: options?.requestFn ?? this.options.requestFn,
           }
         );
       },

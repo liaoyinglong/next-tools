@@ -87,10 +87,10 @@ export async function generateApiRequestCode(options: {
   const { url, method, operationObject, apiConfig } = options;
 
   const seeUrl = apiConfig.swaggerUiUrl
-    ? `${apiConfig.swaggerUiUrl}#/${encodeURIComponent(
-        operationObject.tags?.join("/") ?? ""
-      )}/${operationObject.operationId}`
-    : "not found swagger ui url";
+    ? `${apiConfig.swaggerUiUrl}#/${operationObject.tags?.join("/") ?? ""}/${
+        operationObject.operationId
+      }`
+    : "";
 
   let requestBuilderName = _.camelCase(`${url}_${method}_api`);
 
@@ -114,12 +114,12 @@ export async function generateApiRequestCode(options: {
     apiConfig.RequestBuilderImportPath!,
     apiConfig.requestFnImportPath!,
     apiConfig.queryClientImportPath!,
-    `\
-/**
- * ${operationObject.summary}
- * @tags ${operationObject.tags?.join(",")}
- * @see ${seeUrl}
- */`,
+
+    "/**",
+    `  * ${operationObject.summary}`,
+    `  * @tags ${operationObject.tags?.join(",")}`,
+    seeUrl && `  * @see ${seeUrl}`,
+    `  */`,
   ].filter(Boolean);
 
   // builder 代码

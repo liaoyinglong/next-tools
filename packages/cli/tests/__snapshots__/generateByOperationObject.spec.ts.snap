@@ -5,10 +5,10 @@ exports[`api 生成 > 参数在body里 1`] = `
 import { RequestBuilder } from '@dune2/tools';
 import requestFn from '@/utils/request';
 /**
- * 分页查询币种信息
- * @tags 币种管理相关接口
- * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%B8%81%E7%A7%8D%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_4
- */
+  * 分页查询币种信息
+  * @tags 币种管理相关接口
+  * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/币种管理相关接口/pageSearch_4
+  */
 export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Res>({
   url: '/users',
   method: 'post',
@@ -125,10 +125,10 @@ exports[`api 生成 > 参数在url上 1`] = `
 import { RequestBuilder } from '@dune2/tools';
 import requestFn from '@/utils/request';
 /**
- * 查询单个后台用户信息
- * @tags 后台用户管理相关接口
- * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%90%8E%E5%8F%B0%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/queryUserById
- */
+  * 查询单个后台用户信息
+  * @tags 后台用户管理相关接口
+  * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/后台用户管理相关接口/queryUserById
+  */
 export const usersGetApi = new RequestBuilder<usersGetApi.Req, usersGetApi.Res>({
   url: '/users',
   method: 'get',
@@ -174,10 +174,10 @@ exports[`api 生成 > 参数或响应为空 1`] = `
 import { RequestBuilder } from '@dune2/tools';
 import requestFn from '@/utils/request';
 /**
- * 分页查询币种信息
- * @tags 币种管理相关接口
- * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/%E5%B8%81%E7%A7%8D%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3/pageSearch_4
- */
+  * 分页查询币种信息
+  * @tags 币种管理相关接口
+  * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/币种管理相关接口/pageSearch_4
+  */
 export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Res>({
   url: '/users',
   method: 'post',

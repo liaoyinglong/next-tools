@@ -35,14 +35,20 @@ i18n.on("change", () => {
   t = initT();
 });
 
+interface I18nProviderPropsCustom extends I18nProviderProps {
+  defaultLocale?: string;
+}
+
 /**
  * 这里封装好了 传递给 Lingui 的 i18n 实例
  * 以及在组件挂载时自动开启语言检测
  */
-export const I18nProvider = (props: Partial<I18nProviderProps>) => {
+export const I18nProvider = (props: Partial<I18nProviderPropsCustom>) => {
   useEffect(() => {
-    enableDetectLocale();
-  }, []);
+    enableDetectLocale({
+      defaultLocale: props.defaultLocale,
+    });
+  }, [props.defaultLocale]);
   return (
     <I18nProviderRaw
       i18n={props.i18n ?? i18n}

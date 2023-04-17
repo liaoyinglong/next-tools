@@ -23,11 +23,27 @@ interface TFunction {
    * 但是这种情况下需要开发者手动将翻译填入翻译文件中
    */
   ignoreExtract: TFunction;
+
+  /**
+   * 翻译后端错误信息
+   *
+   * 传入错误码，会补齐 `error_` 前缀
+   * 传入 function，会调用 function 返回的字符串去翻译
+   */
+  displayError: (errorCode: string | (() => string)) => string;
 }
 
 function initT() {
   let r = i18n._.bind(i18n) as unknown as TFunction;
   r.ignoreExtract = r;
+  r.displayError = (key) => {
+    if (typeof key === "function") {
+      key = key();
+    } else {
+      key = `error_${key}`;
+    }
+    return r.ignoreExtract(key);
+  };
   return r;
 }
 // 修复 更换语言的时候 t 没有重新生成，导致某些写在 useMemo 的 t 调用没有更新语言

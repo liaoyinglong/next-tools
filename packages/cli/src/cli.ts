@@ -15,6 +15,7 @@ cli
   .action(download);
 cli
   .command("extract", "提取代码中的文案")
+  .option("--deleteUnused", "删除未使用的文案")
   .example("dune extract")
   .action(extract);
 

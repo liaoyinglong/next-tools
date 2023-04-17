@@ -30,7 +30,7 @@ interface TFunction {
    * 传入错误码，会补齐 `error_` 前缀
    * 传入 function，会调用 function 返回的字符串去翻译
    */
-  displayError: (errorCode: string | (() => string)) => string;
+  displayError: (errorCode: number | string | (() => string)) => string;
 }
 
 function initT() {

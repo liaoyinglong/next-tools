@@ -52,7 +52,7 @@ impl TFunctionVisitor {
         // initial args vec
         let mut args = vec![];
         if !(tpl.exprs.is_empty()) {
-            args = Self::transform_tpl_to_args(tpl.clone());
+            args = Self::transform_tpl_to_args(*tpl.clone());
         } else if let Some(q) = tpl.quasis.get(0) {
             // case normal tagged template, not have variable in template,
             // and it should only have one argument

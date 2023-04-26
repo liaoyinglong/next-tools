@@ -18,17 +18,17 @@ import LocaleProvider from "@douyinfe/semi-ui/lib/es/locale/localeProvider";
 import SemiUiSpace from "@douyinfe/semi-ui/lib/es/space";
 import Input from "@douyinfe/semi-ui/lib/es/input";
 function App() {
-    return <LocaleProvider >
+    return <LocaleProvider>
 
-      <Input />
+      <Input/>
 
-      <SemiUiSpace />
+      <SemiUiSpace/>
 
-      <IconHome ></IconHome>
+      <IconHome></IconHome>
 
-      <IconEmoji ></IconEmoji>
+      <IconEmoji></IconEmoji>
 
-      <IconSpin ></IconSpin>
+      <IconSpin></IconSpin>
 
     </LocaleProvider>;
 }

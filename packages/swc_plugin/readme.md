@@ -42,3 +42,10 @@ t("hello {name}", { name }); // hello dune
 | -------- | :------------ | --------------- | ------- |
 | RUST_LOG | info、debug.. | log 开关        | tracing |
 | UPDATE   | 1             | 是否更新 output | testing |
+
+## 与`next.js`版本兼容
+
+| next.js  |       |
+| -------- | ----- |
+| >=13.3.1 | 0.3.0 |
+| <=13.3.1 | 0.2.x |

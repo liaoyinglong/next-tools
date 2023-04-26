@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 swc_core = { workspace = true, features = ["ecma_quote", "ecma_utils"] }
-tracing = { version = "0.1.32", features = ["release_max_level_info"] }
+tracing = { workspace = true, features = ["release_max_level_info"] }

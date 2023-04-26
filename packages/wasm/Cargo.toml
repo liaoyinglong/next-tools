@@ -5,16 +5,16 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
-bench      = false
+bench = false
 crate-type = ["cdylib"]
 [dependencies]
 anyhow = "1.0.42"
 console_error_panic_hook = "0.1.6"
-once_cell = "1.13.0"
-serde = {version = "1", features = ["derive"]}
-serde_json = "1"
-tracing = { version = "0.1.32", features = ["release_max_level_off"] }
-wasm-bindgen = {version = "0.2", features = ["serde-serialize", "enable-interning"]}
+once_cell = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+tracing = { workspace = true, features = ["release_max_level_off"] }
+wasm-bindgen = { version = "0.2", features = ["serde-serialize", "enable-interning"] }
 wasm-bindgen-futures = "0.4.8"
 getrandom = { version = "0.2.5", optional = true, default-features = false }
 js-sys = "0.3.59"
@@ -25,7 +25,7 @@ swc_core = { workspace = true, features = [
     "ecma_utils",
     "ecma_visit"
 ] }
-serde-wasm-bindgen="0.4.3"
-swc_error_reporters="0.13.13"
+serde-wasm-bindgen = "0.4.3"
+swc_error_reporters = { workspace = true }
 
 s_swc_visitor = { path = "../swc_visitor", version = "0.1.3" }

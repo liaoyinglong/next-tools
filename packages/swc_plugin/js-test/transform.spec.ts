@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import * as swc from "@swc/core";
 
 let code = [
-  "<Trans>Attachment  saved.</Trans>",
+  "<Trans>Attachment saved.</Trans>",
   "var name = Date.now()",
   "t`hello ${name}`",
   "<div>{t`hello ${name}`}</div>",
@@ -16,7 +16,7 @@ const transform = (source: string) => {
         tsx: true,
       },
       experimental: {
-        plugins: [[require.resolve('../'), {}]],
+        plugins: [[require.resolve("../"), {}]],
       },
     },
   });

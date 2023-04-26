@@ -5,3 +5,7 @@ members = [
     "packages/wasm"
 ]
 [profile.release]
+
+
+[workspace.dependencies]
+swc_core = { version = "0.40.16"  }

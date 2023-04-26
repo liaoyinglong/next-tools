@@ -19,7 +19,7 @@ wasm-bindgen-futures = "0.4.8"
 getrandom = { version = "0.2.5", optional = true, default-features = false }
 js-sys = "0.3.59"
 
-swc_core = { version = "0.40.16", features = [
+swc_core = { workspace = true, features = [
     "ecma_parser",
     "ecma_parser_typescript",
     "ecma_utils",

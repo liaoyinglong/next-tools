@@ -191,3 +191,50 @@ export namespace usersPostApi {
  export type Res = any;
 };"
 `;
+
+exports[`api 生成 > 支持 urlTransformer 1`] = `
+"// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖
+import { RequestBuilder } from '@dune2/tools';
+/**
+  * 查询单个后台用户信息
+  * @tags 后台用户管理相关接口
+  * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/后台用户管理相关接口/queryUserById
+  */
+export const apiV1UsersGetApi = new RequestBuilder<apiV1UsersGetApi.Req, apiV1UsersGetApi.Res>({
+  url: '/api/v1/users',
+  method: 'get',
+});
+
+export namespace apiV1UsersGetApi {
+ export interface Req {
+  /**
+   * 用户id
+   */
+  id: number;
+}
+
+ 
+ /**
+ * 查询用户响应结果
+ */
+export interface Res {
+  /**
+   * 用户id
+   */
+  id?: number;
+  /**
+   * 邮箱
+   */
+  email?: string;
+  /**
+   * 姓名
+   */
+  realName?: string;
+  /**
+   * 用户状态(ACTIVE, INACTIVE)
+   */
+  status?: \\"NEW\\" | \\"ACTIVE\\" | \\"INACTIVE\\";
+}
+
+};"
+`;

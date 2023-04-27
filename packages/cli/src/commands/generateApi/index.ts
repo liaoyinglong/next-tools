@@ -84,7 +84,17 @@ export async function generateApiRequestCode(options: {
   operationObject: OpenAPIV3.OperationObject;
   apiConfig: ApiConfig;
 }): Promise<string> {
-  const { url, method, operationObject, apiConfig } = options;
+  const { method, operationObject, apiConfig } = options;
+
+  const url = (() => {
+    if (typeof apiConfig.urlTransformer === "string") {
+      return `${apiConfig.urlTransformer}${options.url}`;
+    }
+    if (typeof apiConfig.urlTransformer === "function") {
+      return apiConfig.urlTransformer(options.url);
+    }
+    return options.url;
+  })();
 
   const seeUrl = apiConfig.swaggerUiUrl
     ? `${apiConfig.swaggerUiUrl}#/${operationObject.tags?.join("/") ?? ""}/${
@@ -127,7 +137,7 @@ export async function generateApiRequestCode(options: {
 export const ${requestBuilderName} = new RequestBuilder({
   url: '${url}',
   method: '${method}',
-  requestFn,
+  ${apiConfig.requestFnImportPath ? "requestFn," : ""}
   ${urlPathParamsCode}
   ${apiConfig.queryClientImportPath ? "queryClient," : ""}
 });`

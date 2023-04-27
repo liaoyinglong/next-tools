@@ -91,6 +91,7 @@ export interface ApiConfig {
    * import { foo as requestFn } from '@/utils/request'
    * ```
    * @default `import requestFn from '@/utils/request'`
+   * @deprecated 优先使用 `urlTransformer`
    */
   requestFnImportPath?: string;
   /**
@@ -131,6 +132,14 @@ export interface ApiConfig {
    * @default true
    */
   format?: boolean;
+  /**
+   * url 转换器，可以是字符串，也可以是函数
+   *
+   * 字符串会被当成prefix, 会在url前面加上
+   *
+   * 函数会被当成转换器
+   */
+  urlTransformer?: string | ((url: string) => string);
 }
 
 export interface Config {
@@ -197,7 +206,11 @@ export async function getConfig(): Promise<Config> {
 
 export function apiConfigNormalizer(item: ApiConfig) {
   item.output ??= "./src/apis";
-  item.requestFnImportPath ??= `import requestFn from '@/utils/request';`;
+  // 没有配置 urlTransformer 时，给 requestFnImportPath 赋默认值
+  // 优先使用 urlTransformer
+  if (!item.urlTransformer) {
+    item.requestFnImportPath ??= `import requestFn from '@/utils/request';`;
+  }
   item.RequestBuilderImportPath ??= `import { RequestBuilder } from '@dune2/tools';`;
   item.enableTs ??= true;
   item.enabled ??= true;

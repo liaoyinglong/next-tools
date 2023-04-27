@@ -295,4 +295,25 @@ describe("api 生成", function () {
     const result = await generate(parmas, "post");
     expect(result).toMatchSnapshot();
   });
+  it("支持 urlTransformer", async () => {
+    const f = (urlTransformer) => {
+      return generateApiRequestCode({
+        url: "/users",
+        method: "get",
+        operationObject: paramsInQuery as never,
+        apiConfig: apiConfigNormalizer({
+          swaggerJSONPath: "",
+          swaggerUiUrl:
+            "http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API",
+          urlTransformer,
+        }),
+      });
+    };
+
+    const result = await f("/api/v1");
+    const result2 = await f((url) => `/api/v1${url}`);
+
+    expect(result).toMatchSnapshot();
+    expect(result2).toEqual(result);
+  });
 });

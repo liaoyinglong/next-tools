@@ -5,3 +5,4 @@ export * from "./requestBuilder";
 export * from "./numbro";
 
 export * from "./storage";
+export * from "./storage/cookie";

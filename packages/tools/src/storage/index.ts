@@ -46,6 +46,9 @@ export function createStorage<T extends Record<string, any>>(
       return store.get(this.baseKey) ?? this.defaultValue;
     }
 
+    /**
+     * 设置为 undefined 时，会删除该 key
+     */
     set(v: V): void {
       v === undefined ? this.remove() : store.set(this.baseKey, v);
     }

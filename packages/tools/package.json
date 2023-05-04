@@ -22,7 +22,9 @@
     "@lingui/detect-locale": "^3",
     "@lingui/react": "^3",
     "bignumber.js": "^9.1.1",
-    "store2": "^2.14.2"
+    "js-cookie": "^3.0.5",
+    "store2": "^2.14.2",
+    "@types/js-cookie": "3.0.3"
   },
   "devDependencies": {
     "@tanstack/react-query": "^4.7.2",

@@ -1,7 +1,5 @@
-import baseStore from "store2";
-import type { StoreType } from "store2";
-
-type StorageType = "local" | "session";
+import Cookies from "js-cookie";
+import type { CookieAttributes, CookiesStatic } from "js-cookie";
 
 interface CreateStorageConfig<T> {
   /**
@@ -15,13 +13,8 @@ interface CreateStorageConfig<T> {
    * 会在存储的 key 前面加上命名空间
    */
   namespace: string;
-  /**
-   * 默认创建 localStorage 的存储
-   * 如果需要创建 sessionStorage 的存储，需要传入 storageType: "session"
-   * @default "local"
-   */
-  storageType?: StorageType;
 }
+
 class StorageHelper<V = any> {
   /**
    * 存的key 包含 namespace
@@ -32,7 +25,7 @@ class StorageHelper<V = any> {
    */
   key: string;
   constructor(
-    public store: StoreType,
+    public store: CookiesStatic,
     public namespace: string,
     public baseKey: string,
     public defaultValue: V
@@ -41,36 +34,36 @@ class StorageHelper<V = any> {
   }
 
   get(): V | undefined {
-    return this.store.get(this.baseKey) ?? this.defaultValue;
+    return (this.store.get(this.baseKey) ?? this.defaultValue) as never;
   }
 
   /**
    * 设置为 undefined 时，会删除该 key
    */
-  set(v: V): void {
-    v === undefined ? this.remove() : this.store.set(this.baseKey, v);
+  set(v: V, options?: CookieAttributes): void {
+    v === undefined
+      ? this.remove(options)
+      : this.store.set(this.baseKey, v as never, options);
   }
 
-  remove(): void {
-    this.store.remove(this.baseKey);
+  remove(options?: CookieAttributes): void {
+    this.store.remove(this.baseKey, options);
   }
 }
 
 /**
- * 创建 localStorage 或 sessionStorage 的存储
+ * 创建 cookie 的存储
  */
-export function createStorage<T extends Record<string, any>>(
+export function createCookieStorage<T extends Record<string, any>>(
   config: CreateStorageConfig<T>
 ) {
-  const { DataMap, namespace, storageType = "local" } = config;
-
-  const store = baseStore[storageType].namespace(namespace);
+  const { DataMap, namespace } = config;
 
   const storage: any = {};
   const storageMap = new DataMap();
   Object.keys(storageMap).forEach((key) => {
     storage[key] = new StorageHelper(
-      store,
+      Cookies,
       namespace,
       String(key),
       storageMap[key]

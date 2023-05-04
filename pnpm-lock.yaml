@@ -139,9 +139,11 @@ importers:
       '@lingui/detect-locale': ^3
       '@lingui/react': ^3
       '@tanstack/react-query': ^4.7.2
+      '@types/js-cookie': 3.0.3
       '@types/react': ^18
       axios: ^0.27.2
       bignumber.js: ^9.1.1
+      js-cookie: ^3.0.5
       react: ^18
       store2: ^2.14.2
     dependencies:
@@ -149,9 +151,11 @@ importers:
       '@lingui/detect-locale': 3.14.0
       '@lingui/react': 3.14.0_react@18.2.0
       bignumber.js: 9.1.1
+      js-cookie: 3.0.5
       store2: 2.14.2
     devDependencies:
       '@tanstack/react-query': 4.7.2_react@18.2.0
+      '@types/js-cookie': 3.0.3
       '@types/react': 18.0.20
       axios: 0.27.2
       react: 18.2.0
@@ -2183,6 +2187,10 @@ packages:
       '@types/minimatch': 5.1.2
       '@types/node': 18.7.18
     dev: false
+
+  /@types/js-cookie/3.0.3:
+    resolution: {integrity: sha512-Xe7IImK09HP1sv2M/aI+48a20VX+TdRJucfq4vfRVy6nWN8PYPOEnlMRSgxJAgYQIXJVL8dZ4/ilAM7dWNaOww==}
+    dev: true
 
   /@types/json-schema/7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
@@ -5398,6 +5406,11 @@ packages:
   /joycon/3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
     engines: {node: '>=10'}
+
+  /js-cookie/3.0.5:
+    resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
+    engines: {node: '>=14'}
+    dev: false
 
   /js-sdsl/4.1.4:
     resolution: {integrity: sha512-Y2/yD55y5jteOAmY50JbUZYwk3CP3wnLPEZnlR1w9oKhITrBEtAxwuWKebFf8hMrPMgbYwFoWK/lH2sBkErELw==}

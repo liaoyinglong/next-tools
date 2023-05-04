@@ -7,8 +7,3 @@ export enum LocalesEnum {
   // 英文
   en = "en",
 }
-
-export enum DetectLocaleEnum {
-  query = "lang",
-  storage = "dune-lang",
-}

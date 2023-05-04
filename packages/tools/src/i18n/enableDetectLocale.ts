@@ -6,11 +6,22 @@ import {
   fromNavigator,
 } from "@lingui/detect-locale";
 import { isServer, isBrowser } from "../shared";
-import { DetectLocaleEnum, LocalesEnum } from "./enums";
+import { LocalesEnum } from "./enums";
 
 interface Options {
   // 推导失败后的默认语言
   defaultLocale?: string;
+  /**
+   * 存储的 key
+   * @default dune-lang
+   */
+  storageKey?: string;
+
+  /**
+   * url 参数
+   * @default lang
+   */
+  queryKey?: string;
 }
 
 /**
@@ -22,12 +33,15 @@ interface Options {
  * @tips 最好在 useEffect 中调用，否则可能会导致 ssr 时，html 和执行完成后的语言不一致
  */
 export function enableDetectLocale(options: Options = {}) {
+  const storageKey = options.storageKey ?? "dune-lang";
+  const queryKey = options.queryKey ?? "lang";
+
   if (isBrowser) {
     //#region 启用语言方法重写
     const oldActivateLocale = i18n.activate;
     i18n.activate = (locale) => {
       // sync to localStorage
-      localStorage.setItem(DetectLocaleEnum.storage, locale);
+      localStorage.setItem(storageKey, locale);
       oldActivateLocale.call(i18n, locale);
     };
     //#endregion
@@ -39,7 +53,8 @@ export function enableDetectLocale(options: Options = {}) {
         ["id-", LocalesEnum.id],
         ["en-", LocalesEnum.en],
       ];
-      for (const [prefix, locale] of mappers) {
+      for (let i = 0; i < mappers.length; i++) {
+        const [prefix, locale] = mappers[i];
         if (browserLocale.startsWith(prefix)) {
           options.defaultLocale = locale;
           break;
@@ -52,10 +67,7 @@ export function enableDetectLocale(options: Options = {}) {
 
   let defaultLocale = isServer
     ? options.defaultLocale
-    : detect(
-        fromStorage(DetectLocaleEnum.storage),
-        fromUrl(DetectLocaleEnum.query)
-      );
+    : detect(fromStorage(storageKey), fromUrl(queryKey));
   if (
     !defaultLocale ||
     !Object.values(LocalesEnum).includes(defaultLocale as never)

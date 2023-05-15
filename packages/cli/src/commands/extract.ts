@@ -70,7 +70,11 @@ export async function extract(opts?: { deleteUnused: boolean }) {
       { concurrency: 20 }
     );
 
-    await saveDebugLog(config.cacheDir!, configItem, extractedI18nDataMap);
+    await saveExtractedMetaData(
+      config.cacheDir!,
+      configItem,
+      extractedI18nDataMap
+    );
 
     const i18nDataArr = await pMap(configItem.locales ?? [], async (locale) => {
       const i18nData = new I18nData(locale, configItem, opts?.deleteUnused);
@@ -86,19 +90,24 @@ export async function extract(opts?: { deleteUnused: boolean }) {
   }
 }
 
-async function saveDebugLog(
+/**
+ * 保存相关的提取信息
+ */
+async function saveExtractedMetaData(
   cacheDir: string,
   config: I18nConfig,
   extractedI18nDataMap: ExtractedMap
 ) {
   const { i18nDir } = config;
+  // case:
+  //   input: "./src/i18n"
+  //   output: "src_i18n.extractedLog.json"
+  const prefix = i18nDir!.replace("./", "").replace(/\//g, "_");
+  const filename = `${prefix}.extractedLog.json`;
 
-  const extractedDebugJsonPath = path.join(
-    cacheDir,
-    `${i18nDir!.replace(/\//g, "_")}.extractedLog.json`
-  );
+  const metaDataJsonPath = path.join(cacheDir, filename);
 
-  await fs.ensureFile(extractedDebugJsonPath);
+  await fs.ensureFile(metaDataJsonPath);
 
   // extractedI18nDataMap 是个 Map 需要转成换json
   let data = Array.from(extractedI18nDataMap.entries()).map(
@@ -110,7 +119,7 @@ async function saveDebugLog(
   });
 
   await fs.writeJSON(
-    extractedDebugJsonPath,
+    metaDataJsonPath,
 
     data,
     {

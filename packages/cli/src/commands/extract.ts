@@ -2,12 +2,13 @@ import fs from "fs-extra";
 import { globby } from "globby";
 import pMap from "p-map";
 import { createLogger } from "../shared";
-import { getConfig } from "../shared/config";
+import { getConfig, I18nConfig } from "../shared/config";
 import { ExtractedMap, I18nData } from "../shared/i18nData";
 import pc from "picocolors";
 import os from "os";
 import { promptI18nConfigEnable } from "../shared/promptConfigEnable";
 import path from "path";
+import _ from "lodash";
 
 const log = createLogger("extract");
 
@@ -69,7 +70,7 @@ export async function extract(opts?: { deleteUnused: boolean }) {
       { concurrency: 20 }
     );
 
-    await saveDebugLog(config.cacheDir!, extractedI18nDataMap);
+    await saveDebugLog(config.cacheDir!, configItem, extractedI18nDataMap);
 
     const i18nDataArr = await pMap(configItem.locales ?? [], async (locale) => {
       const i18nData = new I18nData(locale, configItem, opts?.deleteUnused);
@@ -85,14 +86,33 @@ export async function extract(opts?: { deleteUnused: boolean }) {
   }
 }
 
-async function saveDebugLog(dir: string, extractedI18nDataMap: ExtractedMap) {
-  await fs.ensureDirSync(dir);
+async function saveDebugLog(
+  cacheDir: string,
+  config: I18nConfig,
+  extractedI18nDataMap: ExtractedMap
+) {
+  const { i18nDir } = config;
+
+  const extractedDebugJsonPath = path.join(
+    cacheDir,
+    `${i18nDir!.replace(/\//g, "_")}.extractedLog.json`
+  );
+
+  await fs.ensureFile(extractedDebugJsonPath);
+
   // extractedI18nDataMap 是个 Map 需要转成换json
+  let data = Array.from(extractedI18nDataMap.entries()).map(
+    ([key, value]) => value
+  );
+  // 按照 id 排序
+  data = data.sort((a, b) => {
+    return a.id.localeCompare(b.id);
+  });
 
   await fs.writeJSON(
-    path.join(dir, "extractedI18nDataMap.json"),
+    extractedDebugJsonPath,
 
-    Array.from(extractedI18nDataMap.entries()).map(([key, value]) => value),
+    data,
     {
       spaces: 2,
     }

@@ -70,11 +70,7 @@ export async function extract(opts?: { deleteUnused: boolean }) {
       { concurrency: 20 }
     );
 
-    await saveExtractedMetaData(
-      config.cacheDir!,
-      configItem,
-      extractedI18nDataMap
-    );
+    await saveExtractedMetaData(configItem, extractedI18nDataMap);
 
     const i18nDataArr = await pMap(configItem.locales ?? [], async (locale) => {
       const i18nData = new I18nData(locale, configItem, opts?.deleteUnused);
@@ -94,7 +90,6 @@ export async function extract(opts?: { deleteUnused: boolean }) {
  * 保存相关的提取信息
  */
 async function saveExtractedMetaData(
-  cacheDir: string,
   config: I18nConfig,
   extractedI18nDataMap: ExtractedMap
 ) {
@@ -105,7 +100,7 @@ async function saveExtractedMetaData(
   const prefix = i18nDir!.replace("./", "").replace(/\//g, "_");
   const filename = `${prefix}.extractedLog.json`;
 
-  const metaDataJsonPath = path.join(cacheDir, filename);
+  const metaDataJsonPath = path.join(i18nDir!, filename);
 
   await fs.ensureFile(metaDataJsonPath);
 

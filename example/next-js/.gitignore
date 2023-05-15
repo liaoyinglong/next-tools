@@ -36,3 +36,4 @@ yarn-error.log*
 next-env.d.ts
 i18n2
 apis2
+*.extractedLog.json

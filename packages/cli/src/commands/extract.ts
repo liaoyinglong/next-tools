@@ -54,7 +54,7 @@ export async function extract(opts?: { deleteUnused: boolean }) {
             if (!hasCache) {
               cur = { ...value, files: [] };
             }
-            cur.files.push(res.filename);
+            cur.files.push(path.resolve(file));
             // 优先使用 提取出来的文案
             cur.messages = value.messages || cur.messages;
 

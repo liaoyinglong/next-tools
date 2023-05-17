@@ -1,9 +1,9 @@
 import { Options as AutoImportOptions } from "unplugin-auto-import/types";
+import { i18nResourcePlugin } from "@dune2/unplugin/dist/i18nResource";
 import {
-  i18nResourcePlugin,
   preBuildDepsPlugin,
   PreBuildDepsPluginOptions,
-} from "@dune2/unplugin";
+} from "@dune2/unplugin/dist/PreBuildDeps";
 import { NextConfig } from "next";
 import {
   autoImportPlugin,

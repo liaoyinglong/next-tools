@@ -182,7 +182,7 @@ export class Numbro {
       let cloned = num.toString();
       let clonedDecimal = cloned.split(".")[1]?.length ?? 0;
       // 移除无效0后，小数位数还比指定的小数位数多，那么就不用删除尾数0
-      shouldDeleteEndZero = !(clonedDecimal > mantissa);
+      shouldDeleteEndZero = !(clonedDecimal > (mantissa as number));
     }
 
     if (shouldDeleteEndZero) {

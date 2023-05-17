@@ -18,7 +18,7 @@ export { i18n, LocalesEnum };
 
 const defaultPlurals = () => "";
 Object.values(LocalesEnum).forEach((locale) => {
-  i18n.loadLocaleData(locale, { plurals: defaultPlurals });
+  i18n.loadLocaleData(locale, { plurals: defaultPlurals as never });
 });
 /**
  * @example

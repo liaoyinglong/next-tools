@@ -4,11 +4,7 @@ export default defineConfig({
   name: "unplugin",
   sourcemap: true,
   tsconfig: "./tsconfig.json",
-  entry: [
-    "./src/i18nResource/index.ts",
-    "./src/PreBuildDeps/index.ts",
-    "./src/AtlaskitCompact/index.ts",
-  ],
+  entry: ["./src/i18nResource/index.ts", "./src/PreBuildDeps/index.ts"],
   dts: {
     // resolve: true,
     // build types for `src/index.ts` only

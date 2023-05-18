@@ -9,7 +9,7 @@ import {
   defaultSwcPluginPath,
 } from "./shared";
 
-import type { BeforeSwcLoaderOptions } from "./beforeSwcLoader";
+import { BeforeSwcLoaderOptions } from "./beforeSwcLoader";
 
 export * from "./shared";
 
@@ -35,7 +35,7 @@ export interface DunePresetsOptions {
   /**
    * 在运行 swc loader 之前做的处理
    * - 目前用来自动加上 use client
-   *
+   *   - 如检测到了emotion的css-in-js的代码，就会自动加上 use client
    * - 以及给 /@atlaskit/ 下的文件加上 jsxRuntime classic 以兼容 next 13
    */
   beforeSwcLoader?: BeforeSwcLoaderOptions;

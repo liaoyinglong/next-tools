@@ -5,6 +5,7 @@
     "dist"
   ],
   "scripts": {
+    "prebuild": "tsc --diagnostics",
     "build": "tsup --clean --splitting",
     "build-fast": "pnpm run build --no-dts",
     "dev": "pnpm run build-fast --watch",

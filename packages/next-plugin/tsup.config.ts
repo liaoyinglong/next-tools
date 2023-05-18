@@ -6,7 +6,7 @@ export default defineConfig([
     target: "node16",
     sourcemap: true,
     format: ["cjs", "esm"],
-    entry: ["src/index.ts"],
+    entry: ["src/index.ts", "src/beforeSwcLoader.ts"],
     dts: true,
   },
 ]);

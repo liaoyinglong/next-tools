@@ -25,7 +25,8 @@
   },
   "devDependencies": {
     "next": "*",
-    "tsup": "^6.2.3"
+    "tsup": "^6.2.3",
+    "webpack": "^5.75.0"
   },
   "publishConfig": {
     "access": "public"

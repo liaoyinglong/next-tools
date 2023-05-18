@@ -13,19 +13,16 @@ pub fn module_export_name_to_string(name: ModuleExportName) -> String {
 pub struct PluginConfig {
     /// 是否开启 semi-css-omit，即是否移除 js 中的 css import/require
     /// 对齐 SemiWebpackPlugin 的 omitCss 功能
-    #[serde(default = "true_by_default")]
+    #[serde(default)]
     pub enable_semi_css_omit: bool,
 
     /// 优化 semi-ui 的 barrel file 导出
     /// 类似 babel-plugin-import 能力
     /// 精确导入文件，加快编译速度
-    #[serde(default = "true_by_default")]
+    #[serde(default)]
     pub enable_semi_modularize_import: bool,
 
     /// 外部额外配置的 semi-ui 的导入映射
     #[serde(default)]
     pub extra_semi_import_map: SemiImportMap,
-}
-fn true_by_default() -> bool {
-    true
 }

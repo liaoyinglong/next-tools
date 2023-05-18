@@ -1,9 +1,6 @@
 import { Options as AutoImportOptions } from "unplugin-auto-import/types";
 import { i18nResourcePlugin } from "@dune2/unplugin/dist/i18nResource";
-import {
-  preBuildDepsPlugin,
-  PreBuildDepsPluginOptions,
-} from "@dune2/unplugin/dist/PreBuildDeps";
+import { PreBuildDepsPluginOptions } from "@dune2/unplugin/dist/PreBuildDeps";
 import { NextConfig } from "next";
 import {
   autoImportPlugin,
@@ -32,6 +29,9 @@ export interface DunePresetsOptions {
       { path: string; is_named_import: boolean }
     >;
   };
+
+  // 是否开启 AtlaskitCompact对next13的兼容
+  atlaskitCompact?: Record<any, any>;
 }
 
 /**
@@ -69,8 +69,19 @@ export const withDunePresets = (options: DunePresetsOptions = {}) => {
           i18nResourcePlugin.webpack()
         );
         if (options.preBuildDeps) {
+          const {
+            preBuildDepsPlugin,
+          } = require("@dune2/unplugin/dist/PreBuildDeps");
           config.plugins.unshift(
             preBuildDepsPlugin.webpack(options.preBuildDeps)
+          );
+        }
+        if (options.atlaskitCompact) {
+          const {
+            AtlaskitCompactPlugin,
+          } = require("@dune2/unplugin/dist/AtlaskitCompact");
+          config.plugins.unshift(
+            AtlaskitCompactPlugin.webpack(options.atlaskitCompact)
           );
         }
 

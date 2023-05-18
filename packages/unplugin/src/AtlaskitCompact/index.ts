@@ -5,7 +5,7 @@ import { createUnplugin } from "unplugin";
  */
 export const AtlaskitCompactPlugin = createUnplugin((options: any) => {
   // 判断是否是在 node_modules/@atlaskit 下的文件
-  const isShouldTransformReg = /[\\/]node_modules[\\/]@atlaskit[\\/]/;
+  const isShouldTransformReg = /@atlaskit/;
 
   // 判断是否包含 /** @jsx jsx */ 注释
   const isHasJsxCommentReg = /\/\*\*.*@jsx.+jsx.*\*\//;
@@ -16,11 +16,11 @@ export const AtlaskitCompactPlugin = createUnplugin((options: any) => {
       return isShouldTransformReg.test(id);
     },
     transform(code) {
-      code = code.replace(
-        isHasJsxCommentReg,
-        `/** @jsxRuntime classic */` + "\n" + `/** @jsx jsx */`
-      );
-      return code;
+      let transformedCode = code;
+      if (isHasJsxCommentReg.test(code)) {
+        transformedCode = `/** @jsxRuntime classic */\n` + transformedCode;
+      }
+      return transformedCode;
     },
   };
 });

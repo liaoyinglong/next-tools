@@ -8,7 +8,7 @@ members = [
 
 
 [workspace.dependencies]
-swc_core = { version = "0.76.18"  }
+swc_core = { version = "0.76.6"  }
 testing = "0.33.4"
 swc_error_reporters="0.15.5"
 tracing = { version = "0.1.32" }

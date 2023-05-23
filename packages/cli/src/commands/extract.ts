@@ -19,7 +19,9 @@ export async function extract(opts?: { deleteUnused: boolean }) {
   const config = await getConfig();
   const { extract } = await import("@dune2/wasm");
 
-  let i18nConfigs = await promptI18nConfigEnable(config.i18n);
+  let i18nConfigs = await promptI18nConfigEnable(
+    config.i18n?.filter((item) => !item.disableExtract)
+  );
 
   // 这是使得任务串行，方便看日志
   for (const configItem of i18nConfigs) {

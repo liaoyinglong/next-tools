@@ -64,6 +64,11 @@ export interface I18nConfig {
    * glob 语法
    */
   include?: string[];
+  /**
+   * 是否禁用提取功能，某些项是不需要提取的，只需要同不Google sheet
+   * @default false
+   */
+  disableExtract?: boolean;
 }
 
 export interface ApiConfig {

@@ -1,6 +1,8 @@
 export interface ExtractedItem {
   id: string;
   messages: string;
+  column: number;
+  line: number;
 }
 
 export interface Extracted {

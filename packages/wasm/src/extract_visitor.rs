@@ -1,4 +1,7 @@
+use std::sync::Arc;
 use swc_core::common::errors::HANDLER;
+use swc_core::common::sync::Lrc;
+use swc_core::common::SourceMap;
 use swc_core::ecma::ast::{
     CallExpr, Expr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName, JSXExpr,
     JSXOpeningElement, Lit, ObjectLit,
@@ -31,13 +34,15 @@ pub struct ExtractVisitor {
     pub extracted: Extracted,
 
     pub config: Config,
+    pub source_map: Lrc<SourceMap>,
 }
 
 impl ExtractVisitor {
-    pub fn new() -> Self {
+    pub fn new(source_map: Arc<SourceMap>) -> Self {
         ExtractVisitor {
             config: Config::default(),
             extracted: Default::default(),
+            source_map,
         }
     }
 
@@ -87,10 +92,6 @@ impl ExtractVisitor {
             _ => None,
         }
     }
-
-    fn add_to_map(&mut self, id: String, messages: String) {
-        self.extracted.try_add(id, messages)
-    }
 }
 
 impl VisitMut for ExtractVisitor {
@@ -131,8 +132,13 @@ impl VisitMut for ExtractVisitor {
                 HANDLER.with(|handler| {
                     handler.span_note_without_error(n.span, "msg id is not string literal, skip");
                 });
+                println!("找不到");
             } else {
-                self.add_to_map(id, default_msg);
+                self.extracted.try_add(
+                    id,
+                    default_msg,
+                    self.source_map.lookup_char_pos(n.span.lo()),
+                );
             }
 
             None
@@ -178,7 +184,8 @@ impl VisitMut for ExtractVisitor {
                 work();
             });
             if !id.is_empty() {
-                self.add_to_map(id, defaults);
+                self.extracted
+                    .try_add(id, defaults, self.source_map.lookup_char_pos(n.span.lo()));
             };
 
             None

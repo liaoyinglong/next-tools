@@ -1,4 +1,3 @@
-use swc_core::common::DUMMY_SP;
 use swc_core::ecma::ast::{
     ArrayLit, AssignExpr, AssignPatProp, BinExpr, CallExpr, CondExpr, Ident, NewExpr, PropName,
 };
@@ -45,9 +44,11 @@ impl TFunctionVisitor {
         None
     }
 
-    //
+    // transform tagged template to call expression
+    // eg: t`hello ${name}`
+    // => t("hello {name}", { name: name })
     fn tagged_tpl_to_expr(&mut self, tagged_tpl: &mut TaggedTpl) -> Option<Expr> {
-        let TaggedTpl { tpl, tag, .. } = tagged_tpl;
+        let TaggedTpl { tpl, tag, span, .. } = tagged_tpl;
         let callee = Self::resolve_t_fn_callee(tag.as_ident())?;
         // initial args vec
         let mut args = vec![];
@@ -62,7 +63,8 @@ impl TFunctionVisitor {
         Some(Expr::Call(CallExpr {
             args,
             callee,
-            span: DUMMY_SP,
+            // 这里保留原始的span，方便后面获取行号等信息
+            span: *span,
             type_args: None,
         }))
     }

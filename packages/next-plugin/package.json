@@ -16,7 +16,9 @@
   "scripts": {
     "prebuild": "tsc --diagnostics",
     "build": "tsup --clean --splitting",
-    "dev": "pnpm run build --watch"
+    "dev": "pnpm run build --watch",
+    "test": "vitest run",
+    "test:u": "vitest -u"
   },
   "dependencies": {
     "@dune2/swc-plugin": "workspace:*",

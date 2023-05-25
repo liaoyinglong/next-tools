@@ -60,22 +60,25 @@ export default function beforeSwcLoader(
   }
 
   const isInSrcDir = inSrcDirReg.test(this.resourcePath);
+  const useEmotion = hasUseEmotionReg.test(source);
   if (isInSrcDir) {
     // 对应 src 中使用到了 emotion 的 css-in-js 的代码，需要加上 use client
-    if (options.enabledEmotionCompatForAppRouter) {
+    if (options.enabledEmotionCompatForAppRouter && useEmotion) {
       // 判断是否使用了 emotion 相关的代码
-      if (hasUseEmotionReg.test(source)) {
-        if (!hasJsxImportSourceReg.test(source)) {
-          transformedCode =
-            `/** @jsxImportSource @emotion/react */\n` + transformedCode;
-        }
-        appendUseClient(transformedCode);
+      if (!hasJsxImportSourceReg.test(source)) {
+        transformedCode =
+          `/** @jsxImportSource @emotion/react */\n` + transformedCode;
       }
     }
 
-    // 对应 src 中使用到了 i18n 的代码，需要加上 use client
-    if (options.enabledI18nCompat && hasUseI18nReg.test(source)) {
-      appendUseClient(transformedCode);
+    // 对应 src 中使用到了 i18n 的代码，
+    // 或者 使用 emotion 的代码
+    // 需要加上 use client
+    if (
+      (options.enabledI18nCompat && hasUseI18nReg.test(source)) ||
+      useEmotion
+    ) {
+      transformedCode = appendUseClient(transformedCode);
     }
   }
 

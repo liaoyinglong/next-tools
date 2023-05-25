@@ -44,7 +44,7 @@ export default function beforeSwcLoader(
   const options = this.getOptions();
   let transformedCode = source;
 
-  const shouldTransform = options.include.some((reg) => {
+  const shouldTransform = options.include?.some((reg) => {
     return reg.test(this.resourcePath);
   });
 

@@ -1,6 +1,6 @@
 import JoyCon from "joycon";
-import { resolveSheetId } from "./resolveSheetId";
-import { OpenAPIV3 } from "openapi-types";
+import { resolveSheetId } from "../resolveSheetId";
+import type { OpenAPIV3 } from "openapi-types";
 import path from "path";
 
 const joycon = new JoyCon();
@@ -168,17 +168,13 @@ export function defineConfig<T = Config>(c: T) {
 
 export const configName = "dune.config.js";
 
-export async function getConfig(): Promise<Config> {
-  const res = await joycon.load([configName]);
-
+export function normalizeConfig(config: Config): Config {
   const defaultI18nConfig: I18nConfig = {
     i18nDir: "./src/i18n",
     i18nFileName: "{locale}.i18n.json",
     position: { key: "B", zh: "C", en: "D", in: "E" },
     parseStartIndex: 2,
   };
-
-  let config = (res.data ?? {}) as Config;
   config.cwd ??= process.cwd();
   config.cacheDir ??= path.join(config.cwd, "node_modules/.cache/dune-cli");
 
@@ -205,8 +201,12 @@ export async function getConfig(): Promise<Config> {
   config.api ??= [];
   config.api = config.api.map(apiConfigNormalizer);
   //#endregion
-
   return config;
+}
+
+export async function getConfig(): Promise<Config> {
+  const res = await joycon.load([configName]);
+  return normalizeConfig(res.data ?? {});
 }
 
 export function apiConfigNormalizer(item: ApiConfig) {

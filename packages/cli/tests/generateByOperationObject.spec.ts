@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { generateApiRequestCode } from "../src/commands/generateApi";
-import { apiConfigNormalizer } from "../src/shared/config";
+import { apiConfigNormalizer } from "../src/shared/config/normalizeConfig";
 
 const paramsInQuery = {
   tags: ["后台用户管理相关接口"],

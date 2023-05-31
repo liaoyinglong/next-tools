@@ -6,10 +6,11 @@ export default defineConfig({
   sourcemap: true,
   tsconfig: "./tsconfig.json",
   format: ["esm"],
-  dts: {
-    // resolve: true,
-    // build types for `src/index.ts` only
-    // otherwise `Options` will not be exported by `tsup`, not sure how this happens, probably a bug in rollup-plugin-dts
-    entry: "./src/index.ts",
+  entry: {
+    // ["src/index.ts", "src/cli.ts", "src/shared/config/normalizeConfig.ts"]
+    index: "src/index.ts",
+    cli: "src/cli.ts",
+    normalizeConfig: "src/shared/config/normalizeConfig.ts",
   },
+  dts: true,
 });

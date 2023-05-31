@@ -19,7 +19,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/cli.ts src/index.ts --clean --splitting",
+    "build": "tsup --clean --splitting",
     "dev": "pnpm run build --watch",
     "lint": "tsc --diagnostics --noEmit",
     "test": "vitest run",

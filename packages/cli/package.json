@@ -9,6 +9,9 @@
     "./cli": {
       "import": "./dist/cli.js"
     },
+    "./normalizeConfig": {
+      "import": "./dist/normalizeConfig.js.js"
+    },
     "./package.json": "./package.json"
   },
   "types": "dist/index.d.ts",

@@ -162,7 +162,7 @@ export interface Config {
    */
   cacheDir?: string;
 }
-export function defineConfig<T = Config>(c: T) {
+export function defineConfig<T extends Config = Config>(c: T) {
   return c;
 }
 

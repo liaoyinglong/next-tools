@@ -10,7 +10,7 @@
       "import": "./dist/cli.js"
     },
     "./normalizeConfig": {
-      "import": "./dist/normalizeConfig.js.js"
+      "import": "./dist/normalizeConfig.js"
     },
     "./package.json": "./package.json"
   },

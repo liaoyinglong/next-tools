@@ -130,7 +130,7 @@ export class RequestBuilder<Req = any, Res = any> {
     }
     return [this.options.url, this.options.method!, params] as const;
   }
-  private async defaultQueryFn(
+  async defaultQueryFn(
     ctx: QueryFunctionContext<[string, string, Req]>
   ): Promise<Res> {
     return this.request(ctx.queryKey[2], {
@@ -172,6 +172,27 @@ export class RequestBuilder<Req = any, Res = any> {
     }
     // @ts-expect-error 后续处理类型问题
     return queryClient.prefetchQuery({
+      queryKey: this.getQueryKey(params),
+      queryFn: this.defaultQueryFn,
+      ...options,
+      meta: {
+        ...options?.meta,
+        requestFn: options?.requestFn,
+      },
+    });
+  }
+
+  /**
+   * 用来请求接口
+   * @see https://tanstack.com/query/v4/docs/react/reference/QueryClient#queryclientfetchquery
+   */
+  fetchQuery(params?: Req, options?: FetchQueryOptions<Res> & Basic) {
+    const queryClient = this.options.queryClient;
+    if (!queryClient) {
+      throw new Error("没有传入 queryClient，无法预请求，可以在构造函数中传入");
+    }
+    // @ts-expect-error 后续处理类型问题
+    return queryClient.fetchQuery({
       queryKey: this.getQueryKey(params),
       queryFn: this.defaultQueryFn,
       ...options,

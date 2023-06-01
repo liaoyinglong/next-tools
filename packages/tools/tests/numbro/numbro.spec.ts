@@ -64,6 +64,13 @@ describe("numbro", () => {
       ).toEqual(output);
     });
 
+    expect(
+      numbro("-0.0112").format({
+        mantissa: 2,
+        output: "percent",
+      })
+    ).toEqual("-1.12%");
+
     [
       ["1.000000", 2, "1 BTC"],
       ["1.000001", 2, "1.00 BTC"],

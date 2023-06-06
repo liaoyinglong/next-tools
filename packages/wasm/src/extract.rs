@@ -112,6 +112,9 @@ mod tests {
         source.push_str("obj.title = t`设置title`;\n");
         insert("设置title", "", 10, 12);
 
+        source.push_str("t(`{{ arg }}是模版字符串`, { arg: '参数' });\n");
+        insert("{{ arg }}是模版字符串", "", 11, 0);
+
         // 以下无法提取
         source.push_str("t(`error_${errorCode}`);\n"); // 提取不到
         source.push_str("i18n.t('welcome');\n");
@@ -123,7 +126,14 @@ mod tests {
 
         assert_eq!(res.data.len(), map.len());
 
-        assert_eq!(res.data, map);
+        map.iter().for_each(|(k, v)| {
+            let v2 = res.data.get(k);
+            if v2.is_none() {
+                println!("key: {} not found", k);
+            }
+            let v2 = v2.unwrap();
+            assert_eq!(v, v2);
+        });
         assert_eq!(res.filename, "test.tsx".to_string());
     }
 }

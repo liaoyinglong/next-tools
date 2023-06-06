@@ -121,6 +121,11 @@ impl VisitMut for ExtractVisitor {
             let mut default_msg = "".to_string();
             match *first_arg.expr.clone() {
                 Expr::Lit(lit) => id = self.lit_to_string(lit)?,
+                Expr::Tpl(tpl) => {
+                    if tpl.exprs.is_empty() {
+                        id = tpl.quasis.get(0)?.raw.to_string();
+                    }
+                }
                 Expr::Object(obj) => {
                     id = self.pick_object_value(obj.clone(), &self.config.id.clone())?;
                     default_msg = self.pick_object_value(obj, &self.config.message.clone())?;

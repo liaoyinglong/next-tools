@@ -64,6 +64,19 @@ export interface I18nConfig {
    * @default false
    */
   disableExtract?: boolean;
+
+  /**
+   * 翻译文案支持 namespace
+   * key 为 namespace
+   * value 为 对应的文件夹路径
+   * 使用场景：根据不同的业务模块，将翻译的key添加不同的前缀，并修改对应代码
+   */
+  namespace?: Record<string, string | string[]>;
+  /**
+   * namespace 分隔符
+   * @default "."
+   */
+  namespaceSeparator?: string;
 }
 
 export interface ApiConfig {

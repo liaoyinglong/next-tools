@@ -26,6 +26,10 @@ export function normalizeConfig(config: Config): Config {
       return a.localeCompare(b);
     };
     item.enabled ??= true;
+
+    //#region namespace
+    item.namespaceSeparator ??= ".";
+    //#endregion
     return item;
   });
   //#endregion

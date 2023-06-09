@@ -29,19 +29,8 @@ pub struct AutoNamespaceOption {
 }
 
 impl AutoNamespaceOption {
-    fn append_to_lit(&mut self, lit: Lit) -> Option<JSXAttrOrSpread> {
-        let v = match lit {
-            Lit::Str(mut str) => Some(JsWord::from(format!(
-                "{}{}{}",
-                self.namespace, self.separator, str.value
-            ))),
-            Lit::Num(str) => Some(JsWord::from(format!(
-                "{}{}{}",
-                self.namespace, self.separator, str.value
-            ))),
-            _ => None,
-        }?;
-
+    fn get_jsx_attr_or_spread(&mut self, str: String) -> Option<JSXAttrOrSpread> {
+        let v = JsWord::from(format!("{}{}{}", self.namespace, self.separator, str));
         Some(JSXAttrOrSpread::JSXAttr(JSXAttr {
             span: Default::default(),
             name: JSXAttrName::Ident(quote_ident!(self.id_attr.clone())),
@@ -51,6 +40,14 @@ impl AutoNamespaceOption {
                 raw: None,
             }))),
         }))
+    }
+
+    fn append_to_lit(&mut self, lit: Lit) -> Option<JSXAttrOrSpread> {
+        match lit {
+            Lit::Str(str) => self.get_jsx_attr_or_spread(str.value.to_string()),
+            Lit::Num(str) => self.get_jsx_attr_or_spread(str.value.to_string()),
+            _ => None,
+        }
     }
 
     fn find_attr_name(attr: JSXAttrOrSpread) -> Option<String> {
@@ -110,19 +107,21 @@ impl VisitMut for AutoNamespaceOption {
                             JSXAttrValue::JSXExprContainer(container) => match container.expr {
                                 JSXExpr::Expr(expr) => match *expr {
                                     Expr::Lit(lit) => self.append_to_lit(lit),
-                                    // Expr::Tpl(tpl) => {
-                                    //     if tpl.exprs.is_empty() {
-                                    //         return tpl
-                                    //             .quasis
-                                    //             .get(0)
-                                    //             .map(|item| item.raw.to_string());
-                                    //     }
-                                    //     // case <Trans id={`msg_${name}`} />, 这种不支持
-                                    //     None
-                                    // }
+                                    Expr::Tpl(tpl) => {
+                                        if tpl.exprs.is_empty() {
+                                            let v = tpl
+                                                .quasis
+                                                .get(0)
+                                                .map(|item| item.raw.to_string())?;
+
+                                            return self.get_jsx_attr_or_spread(v);
+                                        }
+                                        // case <Trans id={`msg_${name}`} />, 这种不支持
+                                        None
+                                    }
                                     _ => None,
                                 },
-                                JSXExpr::JSXEmptyExpr(_) => None,
+                                _ => None,
                             },
                             _ => None,
                         };
@@ -139,46 +138,6 @@ impl VisitMut for AutoNamespaceOption {
             };
             f();
         });
-
-        // let mut work = || -> Option<()> {
-        //     n.attrs.iter_mut().for_each(|attr| {
-        //         let mut find_attr_name = || {
-        //             if let JSXAttrOrSpread::JSXAttr(attr) = attr {
-        //                 if let JSXAttrName::Ident(id) = attr.name.clone() {
-        //                     return id.sym.to_string();
-        //                 }
-        //             };
-        //             "".to_string()
-        //         };
-        //         let attr_name = find_attr_name();
-        //         if attr_name == self.id_attr {
-        //             let get_new_attr = || -> JSXAttrOrSpread {
-        //                 match attr {
-        //                     JSXAttrOrSpread::JSXAttr(jsx_attr) => {
-        //                         match jsx_attr.value.clone() {
-        //                             Some(JSXAttrValue::Lit(lit)) => {
-        //                                 if let Some(lit) = self.append_to_lit(lit) {
-        //                                     jsx_attr.value = Some(JSXAttrValue::Lit(lit));
-        //                                 }
-        //                                 attr.clone()
-        //                             }
-        //                             _ => attr.clone(),
-        //                         };
-        //                     }
-        //                     _ => attr.clone(),
-        //                 }
-        //             };
-        //
-        //             let new_attr = get_new_attr();
-        //             new_attrs.push(new_attr);
-        //         } else {
-        //             new_attrs.push(attr.clone());
-        //         }
-        //     });
-        //
-        //     None
-        // };
-        // work();
 
         n.attrs.clear();
         n.attrs.extend_from_slice(&*new_attrs)

@@ -52,6 +52,7 @@ mod tests {
         let source = r#"
         export const msg = "";
         <Trans id={'msg1'} />;
+        <Trans id={`msg12`} />;
         <Trans id='msg2' />;
         t`mgs3`;
         t(`msg4`, { count: 1 });

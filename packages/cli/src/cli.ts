@@ -7,6 +7,7 @@ import { upload } from "./commands/upload";
 import { cli } from "./shared";
 import { version } from "../package.json";
 import { interactive } from "./commands/interactive";
+import { namespace } from "./commands/namespace";
 //#region 翻译相关
 
 cli
@@ -18,6 +19,11 @@ cli
   .option("--deleteUnused", "删除未使用的文案")
   .example("dune extract")
   .action(extract);
+
+cli
+  .command("namespace", "修改源代码添加namespace浅醉")
+  .example("dune namespace")
+  .action(namespace);
 
 cli.command("upload", "上传翻译文件").example("dune upload").action(upload);
 //#endregion

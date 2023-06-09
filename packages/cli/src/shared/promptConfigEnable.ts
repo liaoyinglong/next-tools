@@ -13,7 +13,7 @@ interface Opt<T> {
   checkIsEnabled: (enabledArr: string[], item: T) => boolean;
 }
 
-async function promptConfigEnable<T>(opt: Opt<T>) {
+export async function promptConfigEnable<T>(opt: Opt<T>) {
   const { configArr, getChoiceItem } = opt;
   // 只有一条配置的时候不用选择
   if (configArr.length <= 1) {

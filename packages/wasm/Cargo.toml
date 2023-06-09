@@ -27,5 +27,6 @@ swc_core = { workspace = true, features = [
 ] }
 serde-wasm-bindgen = "0.4.3"
 swc_error_reporters = { workspace = true }
+swc_ecma_codegen = { workspace = true }
 
 s_swc_visitor = { path = "../swc_visitor", version = "0.1.3" }

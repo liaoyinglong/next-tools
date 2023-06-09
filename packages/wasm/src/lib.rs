@@ -4,6 +4,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::prelude::JsValue;
 use wasm_bindgen_futures::future_to_promise;
 
+mod auto_namespace;
 mod extract;
 mod setup_handler;
 
@@ -13,6 +14,7 @@ fn convert_err(err: Error) -> JsValue {
     format!("{:?}", err).into()
 }
 
+//#region extract
 #[wasm_bindgen(js_name = "extractSync")]
 pub fn extract_sync(source: JsString, filename: JsString) -> Result<JsValue, JsValue> {
     console_error_panic_hook::set_once();
@@ -27,3 +29,7 @@ pub fn extract(source: JsString, filename: JsString) -> js_sys::Promise {
     // support.
     future_to_promise(async { extract_sync(source, filename) })
 }
+//#endregion
+
+//#region auto_namespace
+//#endregion

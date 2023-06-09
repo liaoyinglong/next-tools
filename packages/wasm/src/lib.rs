@@ -1,4 +1,3 @@
-use crate::extract::ExtractOptions;
 use anyhow::Error;
 use js_sys::JsString;
 use wasm_bindgen::prelude::wasm_bindgen;
@@ -6,9 +5,9 @@ use wasm_bindgen::prelude::JsValue;
 use wasm_bindgen_futures::future_to_promise;
 
 mod extract;
-mod extract_visitor;
-mod extracted;
 mod setup_handler;
+
+use crate::extract::ExtractOptions;
 
 fn convert_err(err: Error) -> JsValue {
     format!("{:?}", err).into()

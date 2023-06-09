@@ -9,7 +9,7 @@ use swc_core::ecma::ast::{
 use swc_core::ecma::visit::VisitMutWith;
 use swc_core::ecma::visit::{noop_visit_mut_type, VisitMut};
 
-use crate::extracted::Extracted;
+use crate::extract::extracted::Extracted;
 
 #[derive(Debug)]
 pub struct Config {

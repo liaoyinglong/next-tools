@@ -1,3 +1,7 @@
+pub mod extract_visitor;
+pub mod extracted;
+
+
 use anyhow::Error;
 use s_swc_visitor::get_folder;
 use swc_core::common::sync::Lrc;
@@ -7,8 +11,8 @@ use swc_core::ecma::parser::{Syntax, TsConfig};
 use swc_core::ecma::visit::FoldWith;
 use swc_core::ecma::visit::VisitMutWith;
 
-use crate::extract_visitor::ExtractVisitor;
-use crate::extracted::Extracted;
+use crate::extract::extract_visitor::ExtractVisitor;
+use crate::extract::extracted::Extracted;
 use crate::setup_handler::setup_handler;
 
 pub struct ExtractOptions {
@@ -62,7 +66,7 @@ pub fn extract(opts: ExtractOptions) -> Result<Extracted, Error> {
 mod tests {
     use swc_core::common::collections::AHashMap;
 
-    use crate::extracted::Item;
+    use crate::extract::extracted::Item;
 
     use super::*;
 

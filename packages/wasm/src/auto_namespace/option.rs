@@ -3,8 +3,8 @@ use swc_core::common::errors::HANDLER;
 use swc_core::common::sync::Lrc;
 use swc_core::common::SourceMap;
 use swc_core::ecma::ast::{
-    CallExpr, Expr, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName, JSXExpr,
-    JSXOpeningElement, Lit, ObjectLit, Str,
+    CallExpr, Expr, ExprOrSpread, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue,
+    JSXElementName, JSXExpr, JSXOpeningElement, Lit, ObjectLit, Str,
 };
 use swc_core::ecma::atoms::JsWord;
 use swc_core::ecma::utils::quote_ident;
@@ -26,20 +26,27 @@ pub struct AutoNamespaceOption {
     // Trans component  ia attr name
     // default is id
     pub id_attr: String,
+
+    // 默认的翻译函数 t
+    pub t_fn: String,
 }
 
 impl AutoNamespaceOption {
-    fn get_jsx_attr_or_spread(&mut self, str: String) -> Option<JSXAttrOrSpread> {
+    // 添加 namespace
+    fn add_namespace(&mut self, str: String) -> Option<String> {
         // 已经带有 namespace 前缀的不处理
-        let x:Vec<_> =  str.split(
-            self.separator.as_str()
-        ).collect();
+        let x: Vec<_> = str.split(self.separator.as_str()).collect();
         if x.len() > 1 {
             return None;
         }
-        
 
-        let v = JsWord::from(format!("{}{}{}", self.namespace, self.separator, str));
+        Some(format!("{}{}{}", self.namespace, self.separator, str))
+    }
+
+    // Trans 组件 处理
+    fn get_jsx_attr_or_spread(&mut self, str: String) -> Option<JSXAttrOrSpread> {
+        let v = self.add_namespace(str)?;
+        let v = JsWord::from(v);
         Some(JSXAttrOrSpread::JSXAttr(JSXAttr {
             span: Default::default(),
             name: JSXAttrName::Ident(quote_ident!(self.id_attr.clone())),
@@ -67,6 +74,8 @@ impl AutoNamespaceOption {
         };
         None
     }
+
+    // t fn 处理
 }
 
 impl Default for AutoNamespaceOption {
@@ -77,6 +86,7 @@ impl Default for AutoNamespaceOption {
             separator: ".".to_string(),
             trans_component: "Trans".to_string(),
             id_attr: "id".to_string(),
+            t_fn: "t".to_string(),
         }
     }
 }
@@ -86,6 +96,58 @@ impl VisitMut for AutoNamespaceOption {
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
     noop_visit_mut_type!();
+
+    /// 对应 t 方法调用的时候有以下：
+    /// ```js
+    /// t({ id: "Refresh inbox", message: "Refresh inbox" });
+    /// t({ id: "Refresh inbox" }, { name: "name" });
+    /// t({ id: "Refresh inbox", values: { name: "name" }});
+    /// t("Refresh inbox", { name: "name" });
+    /// ```
+    fn visit_mut_call_expr(&mut self, n: &mut CallExpr) {
+        n.visit_mut_children_with(self);
+        let new_args = vec![];
+
+        let mut work = || -> Option<()> {
+            let ident = n.callee.as_expr()?.as_ident()?;
+            if ident.sym.to_string() != self.t_fn {
+                return None;
+            }
+            let arg = &n.args;
+
+            let first_arg = arg.first()?;
+            let mut id = "".to_string();
+
+            match *first_arg.expr.clone() {
+                Expr::Lit(lit) => {
+                    let v = self.add_namespace(lit.value.to_string())?;
+
+                    let id_arg = ExprOrSpread {
+                        spread: first_arg.spread.clone(),
+                        expr: Box::new(Expr::Lit(Lit::Str(Str {
+                            span: Default::default(),
+                            value: JsWord::from(v),
+                            raw: None,
+                        }))),
+                    };
+                    // n.args.0 = id_arg;
+                    None
+                }
+                // Expr::Tpl(tpl) => {
+                //     if tpl.exprs.is_empty() {
+                //         id = tpl.quasis.get(0)?.raw.to_string();
+                //     }
+                // }
+                // TODO：目前代码里没有人用 t({ id: "Refresh inbox", message: "Refresh inbox" }) 这种写法
+                // Expr::Object(obj) => {
+                //     id = self.pick_object_value(obj.clone(), &self.config.id.clone())?;
+                //     default_msg = self.pick_object_value(obj, &self.config.message.clone())?;
+                // }
+                _ => None,
+            }
+        };
+        work();
+    }
 
     // case: <Trans id="msg.refresh" message="Refresh inbox" />
     fn visit_mut_jsx_opening_element(&mut self, n: &mut JSXOpeningElement) {

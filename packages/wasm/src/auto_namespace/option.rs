@@ -30,6 +30,15 @@ pub struct AutoNamespaceOption {
 
 impl AutoNamespaceOption {
     fn get_jsx_attr_or_spread(&mut self, str: String) -> Option<JSXAttrOrSpread> {
+        // 已经带有 namespace 前缀的不处理
+        let x:Vec<_> =  str.split(
+            self.separator.as_str()
+        ).collect();
+        if x.len() > 1 {
+            return None;
+        }
+        
+
         let v = JsWord::from(format!("{}{}{}", self.namespace, self.separator, str));
         Some(JSXAttrOrSpread::JSXAttr(JSXAttr {
             span: Default::default(),

@@ -2,6 +2,7 @@ mod option;
 
 use crate::auto_namespace::option::AutoNamespaceOption;
 use anyhow::Error;
+use swc_core::common::comments::{Comment, SingleThreadedComments};
 use swc_core::common::sync::Lrc;
 use swc_core::common::{FileName, SourceMap};
 use swc_core::ecma::ast::EsVersion::EsNext;
@@ -19,7 +20,9 @@ pub fn auto_namespace(mut opts: AutoNamespaceOption) -> Result<String, Error> {
         tsx: true,
         ..Default::default()
     });
-    let lexer = Lexer::new(syntax, EsNext, StringInput::from(&*source_file), None);
+    let comments = SingleThreadedComments::default();
+
+    let lexer = Lexer::new(syntax, EsNext, StringInput::from(&*source_file),  Some(&comments),);
     let mut parser = Parser::new_from(lexer);
     let mut module = parser
         .parse_typescript_module()
@@ -33,7 +36,7 @@ pub fn auto_namespace(mut opts: AutoNamespaceOption) -> Result<String, Error> {
         let mut emitter = Emitter {
             cfg: Default::default(),
             cm: cm.clone(),
-            comments: None,
+            comments:  Some(&comments),
             wr: JsWriter::new(cm, "\n", &mut buf, None),
         };
         emitter.emit_module(&module).unwrap();
@@ -57,6 +60,17 @@ mod tests {
         t`mgs3`;
         t(`msg4`, { count: 1 });
         t('msg5', { count: 1 });
+        
+        // 以下已经带有 namespace 无需添加
+        <Trans id='common.msg2'/>;
+        t('common.msg3');
+        t('common.msg4', { count: 1 });
+        t`common.msg5`;
+
+        // 以下无法解析
+        <Trans id={`${id}`} />;
+        t(id);
+        t(id, { count: 1 });
         "#;
 
         let code = auto_namespace(AutoNamespaceOption {
@@ -67,5 +81,34 @@ mod tests {
         })
         .unwrap();
         println!("{}", code);
+
+        assert_eq!(
+            code,
+            r##"export const msg = "";
+<Trans id="menu.msg1"/>;
+<Trans id="menu.msg12"/>;
+<Trans id="menu.msg2"/>;
+t`mgs3`;
+t(`msg4`, {
+    count: 1
+});
+t('msg5', {
+    count: 1
+});
+// 以下已经带有 namespace 无需添加
+<Trans id='common.msg2'/>;
+t('common.msg3');
+t('common.msg4', {
+    count: 1
+});
+t`common.msg5`;
+// 以下无法解析
+<Trans id={`${id}`}/>;
+t(id);
+t(id, {
+    count: 1
+});
+"##
+        )
     }
 }

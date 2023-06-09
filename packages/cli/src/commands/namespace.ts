@@ -79,12 +79,18 @@ export async function namespace() {
     await pMap(files, async (file) => {
       const content = await fs.readFile(file, "utf-8");
 
-      async function transform(content: string, param2: { namespace: string }) {
+      async function transform(
+        content: string,
+        param2: { namespace: string; separator: string }
+      ) {
         return content;
       }
 
       // TODO: 调用 wasm 处理 传递 namespace
-      const newContent = await transform(content, { namespace });
+      const newContent = await transform(content, {
+        namespace,
+        separator: i18nConfig!.namespaceSeparator!,
+      });
 
       await fs.writeFile(file, newContent);
     });

@@ -18,3 +18,16 @@ export function extractSync(source: string, filename: string): Extracted;
  * @returns {Promise<any>}
  */
 export function extract(source: string, filename: string): Promise<Extracted>;
+
+export function autoNamespaceSync(
+  source: string,
+  namespace: string,
+  separator: string
+): string;
+
+export function autoNamespace(
+  source: string,
+  namespace: string,
+  // TODO: 待实现
+  separator: string
+): Promise<string>;

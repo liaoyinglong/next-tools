@@ -1,10 +1,6 @@
-use std::sync::Arc;
-use swc_core::common::errors::HANDLER;
-use swc_core::common::sync::Lrc;
-use swc_core::common::SourceMap;
 use swc_core::ecma::ast::{
     CallExpr, Expr, ExprOrSpread, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue,
-    JSXElementName, JSXExpr, JSXOpeningElement, Lit, ObjectLit, Str, TaggedTpl, Tpl, TplElement,
+    JSXElementName, JSXExpr, JSXOpeningElement, Lit, Str, TaggedTpl, Tpl, TplElement,
 };
 use swc_core::ecma::atoms::JsWord;
 use swc_core::ecma::utils::quote_ident;

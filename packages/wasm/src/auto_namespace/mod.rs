@@ -2,7 +2,7 @@ mod option;
 
 use crate::auto_namespace::option::AutoNamespaceOption;
 use anyhow::Error;
-use swc_core::common::comments::{Comment, SingleThreadedComments};
+use swc_core::common::comments::SingleThreadedComments;
 use swc_core::common::sync::Lrc;
 use swc_core::common::{FileName, SourceMap};
 use swc_core::ecma::ast::EsVersion::EsNext;
@@ -13,7 +13,7 @@ use swc_ecma_codegen::text_writer::JsWriter;
 use swc_ecma_codegen::Emitter;
 
 /// 自动给 t 、 Trans 调用加上 namespace 前缀
-pub fn auto_namespace(mut opts: AutoNamespaceOption) -> Result<String, Error> {
+pub fn auto_namespace(opts: AutoNamespaceOption) -> Result<String, Error> {
     let cm = Lrc::<SourceMap>::default();
     let source_file = cm.new_source_file(FileName::Anon, opts.source.clone());
     let syntax = Syntax::Typescript(TsConfig {
@@ -55,29 +55,7 @@ pub fn auto_namespace(mut opts: AutoNamespaceOption) -> Result<String, Error> {
 mod tests {
     use super::*;
 
-    #[test]
-    fn tr() {
-        let source = r#"
-        export const msg = "";
-        <Trans id={'msg1'} />;
-        <Trans id={`msg12`} />;
-        <Trans id='msg2' />;
-        t`mgs3`;
-        t(`msg4`, { count: 1 });
-        t('msg5', { count: 1 });
-        
-        // 以下已经带有 namespace 无需添加
-        <Trans id='common.msg2'/>;
-        t('common.msg3');
-        t('common.msg4', { count: 1 });
-        t`common.msg5`;
-
-        // 以下无法解析
-        <Trans id={`${id}`} />;
-        t(id);
-        t(id, { count: 1 });
-        "#;
-
+    fn run_test(source: &str, expected: &str) {
         let code = auto_namespace(AutoNamespaceOption {
             source: source.to_string(),
             namespace: "menu".to_string(),
@@ -85,35 +63,41 @@ mod tests {
             ..Default::default()
         })
         .unwrap();
-        println!("{}", code);
+        let code = code.trim_end_matches("\n");
 
-        assert_eq!(
-            code,
-            r##"export const msg = "";
-<Trans id="menu.msg1"/>;
-<Trans id="menu.msg12"/>;
-<Trans id="menu.msg2"/>;
-t`menu.mgs3`;
-t(`menu.msg4`, {
-    count: 1
-});
-t("menu.msg5", {
-    count: 1
-});
-// 以下已经带有 namespace 无需添加
-<Trans id='common.msg2'/>;
-t('common.msg3');
-t('common.msg4', {
-    count: 1
-});
-t`common.msg5`;
-// 以下无法解析
-<Trans id={`${id}`}/>;
-t(id);
-t(id, {
-    count: 1
-});
-"##
-        )
+        assert_eq!(code, expected);
+    }
+
+    #[test]
+    fn t_fn_simple() {
+        // 模版字符串
+        run_test("t`msg3`;", "t`menu.msg3`;");
+        run_test(
+            "t(`msg4`, { count: 1 });",
+            "t(`menu.msg4`, {\n    count: 1\n});",
+        );
+
+        // 不需要转换
+        run_test(
+            "t('common.msg4', { count: 1 });",
+            "t('common.msg4', {\n    count: 1\n});",
+        );
+        run_test("t`common.msg5`;", "t`common.msg5`;");
+
+        // 不支持的转换
+        run_test("t(id);", "t(id);");
+        run_test("t(id, { count: 1 });", "t(id, {\n    count: 1\n});");
+    }
+
+    #[test]
+    fn trans_simple() {
+        run_test("<Trans id='msg1' />;", r#"<Trans id="menu.msg1"/>;"#);
+        run_test(
+            "<Trans id='msg1'>children</Trans>;",
+            r#"<Trans id="menu.msg1">children</Trans>;"#,
+        );
+        run_test("<Trans id={'msg1'} />;", r#"<Trans id="menu.msg1"/>;"#);
+        // 不支持的转换
+        run_test("<Trans id={`${id}`} />;", "<Trans id={`${id}`}/>;")
     }
 }

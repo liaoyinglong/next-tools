@@ -25,6 +25,9 @@ pub struct AutoNamespaceOption {
 
     // 默认的翻译函数 t
     pub t_fn: String,
+
+    // 判断yuanma是否发生了变化，发生了变化需要重新格式化
+    pub source_has_changed: bool,
 }
 
 impl AutoNamespaceOption {
@@ -35,6 +38,7 @@ impl AutoNamespaceOption {
         if x.len() > 1 {
             return None;
         }
+        self.source_has_changed = true;
 
         Some(format!("{}{}{}", self.namespace, self.separator, str))
     }
@@ -98,6 +102,7 @@ impl Default for AutoNamespaceOption {
             trans_component: "Trans".to_string(),
             id_attr: "id".to_string(),
             t_fn: "t".to_string(),
+            source_has_changed: false,
         }
     }
 }

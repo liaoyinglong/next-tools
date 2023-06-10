@@ -13,7 +13,7 @@ use swc_ecma_codegen::text_writer::JsWriter;
 use swc_ecma_codegen::Emitter;
 
 /// 自动给 t 、 Trans 调用加上 namespace 前缀
-pub fn auto_namespace(opts: AutoNamespaceOption) -> Result<String, Error> {
+pub fn auto_namespace(mut opts: AutoNamespaceOption) -> Result<String, Error> {
     let cm = Lrc::<SourceMap>::default();
     let source_file = cm.new_source_file(FileName::Anon, opts.source.clone());
     let syntax = Syntax::Typescript(TsConfig {
@@ -33,21 +33,24 @@ pub fn auto_namespace(opts: AutoNamespaceOption) -> Result<String, Error> {
         .parse_typescript_module()
         .expect("Failed to parse file");
 
-    module.visit_mut_with(&mut opts.clone());
+    module.visit_mut_with(&mut opts);
 
     // 生成代码
     let code = {
-        let mut buf = vec![];
-        let mut emitter = Emitter {
-            cfg: Default::default(),
-            cm: cm.clone(),
-            comments: Some(&comments),
-            wr: JsWriter::new(cm, "\n", &mut buf, None),
-        };
-        emitter.emit_module(&module).unwrap();
-        String::from_utf8(buf).unwrap()
+        if opts.source_has_changed {
+            let mut buf = vec![];
+            let mut emitter = Emitter {
+                cfg: Default::default(),
+                cm: cm.clone(),
+                comments: Some(&comments),
+                wr: JsWriter::new(cm, "\n", &mut buf, None),
+            };
+            emitter.emit_module(&module).unwrap();
+            String::from_utf8(buf).unwrap()
+        } else {
+            "".to_string()
+        }
     };
-
     Ok(code)
 }
 
@@ -81,16 +84,13 @@ mod tests {
         run_test("t`hello ${name}`;", "t`menu.hello ${name}`;");
 
         // 不需要转换
-        run_test(
-            "t('common.msg4', { count: 1 });",
-            "t('common.msg4', {\n    count: 1\n});",
-        );
-        run_test("t`common.msg5`;", "t`common.msg5`;");
-        run_test("t`common.msg5 ${name}`;", "t`common.msg5 ${name}`;");
+        run_test("t('common.msg4', { count: 1 });", "");
+        run_test("t`common.msg5`;", "");
+        run_test("t`common.msg5 ${name}`;", "");
 
         // 不支持的转换
-        run_test("t(id);", "t(id);");
-        run_test("t(id, { count: 1 });", "t(id, {\n    count: 1\n});");
+        run_test("t(id);", "");
+        run_test("t(id, { count: 1 });", "");
     }
 
     #[test]
@@ -102,7 +102,7 @@ mod tests {
         );
         run_test("<Trans id={'msg1'} />;", r#"<Trans id="menu.msg1"/>;"#);
         // 不支持的转换
-        run_test("<Trans id={`${id}`} />;", "<Trans id={`${id}`}/>;")
+        run_test("<Trans id={`${id}`} />;", "")
     }
 
     #[test]

@@ -76,23 +76,27 @@ export async function namespace() {
 
     log.info("预计共处理 %s 个文件", pc.green(files.length));
 
+    const { autoNamespace } = await import("@dune2/wasm");
+
+    let transformedFileSet = new Set<string>();
+
     await pMap(files, async (file) => {
       const content = await fs.readFile(file, "utf-8");
 
-      async function transform(
-        content: string,
-        param2: { namespace: string; separator: string }
-      ) {
-        return content;
-      }
-
-      // TODO: 调用 wasm 处理 传递 namespace
-      const newContent = await transform(content, {
+      const newContent = await autoNamespace(
+        content,
         namespace,
-        separator: i18nConfig!.namespaceSeparator!,
-      });
+        i18nConfig!.namespaceSeparator!
+      );
 
-      await fs.writeFile(file, newContent);
+      if (newContent) {
+        await fs.writeFile(file, newContent);
+        transformedFileSet.add(file);
+      }
     });
+    log.info(
+      "已为 %s 个文件 自动添加 namespace",
+      pc.green(transformedFileSet.size)
+    );
   }
 }

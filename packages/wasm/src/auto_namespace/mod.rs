@@ -22,7 +22,12 @@ pub fn auto_namespace(mut opts: AutoNamespaceOption) -> Result<String, Error> {
     });
     let comments = SingleThreadedComments::default();
 
-    let lexer = Lexer::new(syntax, EsNext, StringInput::from(&*source_file),  Some(&comments),);
+    let lexer = Lexer::new(
+        syntax,
+        EsNext,
+        StringInput::from(&*source_file),
+        Some(&comments),
+    );
     let mut parser = Parser::new_from(lexer);
     let mut module = parser
         .parse_typescript_module()
@@ -36,7 +41,7 @@ pub fn auto_namespace(mut opts: AutoNamespaceOption) -> Result<String, Error> {
         let mut emitter = Emitter {
             cfg: Default::default(),
             cm: cm.clone(),
-            comments:  Some(&comments),
+            comments: Some(&comments),
             wr: JsWriter::new(cm, "\n", &mut buf, None),
         };
         emitter.emit_module(&module).unwrap();
@@ -89,10 +94,10 @@ mod tests {
 <Trans id="menu.msg12"/>;
 <Trans id="menu.msg2"/>;
 t`mgs3`;
-t(`msg4`, {
+t(`menu.msg4`, {
     count: 1
 });
-t('msg5', {
+t("menu.msg5", {
     count: 1
 });
 // 以下已经带有 namespace 无需添加

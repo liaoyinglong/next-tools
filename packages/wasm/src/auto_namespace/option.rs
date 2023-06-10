@@ -4,7 +4,7 @@ use swc_core::common::sync::Lrc;
 use swc_core::common::SourceMap;
 use swc_core::ecma::ast::{
     CallExpr, Expr, ExprOrSpread, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue,
-    JSXElementName, JSXExpr, JSXOpeningElement, Lit, ObjectLit, Str,
+    JSXElementName, JSXExpr, JSXOpeningElement, Lit, ObjectLit, Str, Tpl, TplElement,
 };
 use swc_core::ecma::atoms::JsWord;
 use swc_core::ecma::utils::quote_ident;
@@ -43,27 +43,41 @@ impl AutoNamespaceOption {
         Some(format!("{}{}{}", self.namespace, self.separator, str))
     }
 
+    fn lit_app_namespace(&mut self, str: Lit) -> Option<String> {
+        match str {
+            Lit::Str(str) => self.add_namespace(str.value.to_string()),
+            Lit::Num(str) => self.add_namespace(str.value.to_string()),
+            _ => None,
+        }
+    }
+
+    fn tpl_add_namespace(&mut self, tpl: Tpl) -> Option<String> {
+        if tpl.exprs.is_empty() {
+            let v = tpl.quasis.get(0).map(|item| item.raw.to_string())?;
+
+            return self.add_namespace(v);
+        }
+        // case <Trans id={`msg_${name}`} />, 这种不支持
+        None
+    }
+
     // Trans 组件 处理
-    fn get_jsx_attr_or_spread(&mut self, str: String) -> Option<JSXAttrOrSpread> {
-        let v = self.add_namespace(str)?;
-        let v = JsWord::from(v);
+
+    fn string_to_jsx_attr_or_spread(&mut self, str: String) -> Option<JSXAttrOrSpread> {
         Some(JSXAttrOrSpread::JSXAttr(JSXAttr {
             span: Default::default(),
             name: JSXAttrName::Ident(quote_ident!(self.id_attr.clone())),
             value: Some(JSXAttrValue::Lit(Lit::Str(Str {
                 span: Default::default(),
-                value: v,
+                value: str.clone().into(),
                 raw: None,
             }))),
         }))
     }
 
-    fn append_to_lit(&mut self, lit: Lit) -> Option<JSXAttrOrSpread> {
-        match lit {
-            Lit::Str(str) => self.get_jsx_attr_or_spread(str.value.to_string()),
-            Lit::Num(str) => self.get_jsx_attr_or_spread(str.value.to_string()),
-            _ => None,
-        }
+    fn lit_to_jsx_attr_or_spread(&mut self, lit: Lit) -> Option<JSXAttrOrSpread> {
+        let v = self.lit_app_namespace(lit)?;
+        self.string_to_jsx_attr_or_spread(v)
     }
 
     fn find_attr_name(attr: JSXAttrOrSpread) -> Option<String> {
@@ -106,7 +120,6 @@ impl VisitMut for AutoNamespaceOption {
     /// ```
     fn visit_mut_call_expr(&mut self, n: &mut CallExpr) {
         n.visit_mut_children_with(self);
-        let new_args = vec![];
 
         let mut work = || -> Option<()> {
             let ident = n.callee.as_expr()?.as_ident()?;
@@ -116,11 +129,11 @@ impl VisitMut for AutoNamespaceOption {
             let arg = &n.args;
 
             let first_arg = arg.first()?;
-            let mut id = "".to_string();
 
             match *first_arg.expr.clone() {
+                // case: t("Refresh inbox", { name: "name" });
                 Expr::Lit(lit) => {
-                    let v = self.add_namespace(lit.value.to_string())?;
+                    let v = self.lit_app_namespace(lit)?;
 
                     let id_arg = ExprOrSpread {
                         spread: first_arg.spread.clone(),
@@ -130,21 +143,40 @@ impl VisitMut for AutoNamespaceOption {
                             raw: None,
                         }))),
                     };
-                    // n.args.0 = id_arg;
-                    None
+                    // 替换 第一个参数
+                    // n.args.remove(0);
+                    // n.args.insert(0, id_arg);
+                    let _ = std::mem::replace(&mut n.args[0], id_arg);
                 }
-                // Expr::Tpl(tpl) => {
-                //     if tpl.exprs.is_empty() {
-                //         id = tpl.quasis.get(0)?.raw.to_string();
-                //     }
-                // }
+                // case: t(`msg`,{ name: "name" });
+                Expr::Tpl(tpl) => {
+                    let v = self.tpl_add_namespace(tpl.clone())?;
+                    let id_arg = ExprOrSpread {
+                        spread: first_arg.spread.clone(),
+                        expr: Box::new(Expr::Tpl(Tpl {
+                            span: tpl.span.clone(),
+                            exprs: vec![],
+                            quasis: vec![TplElement {
+                                span: Default::default(),
+                                cooked: Some(v.clone().into()),
+                                raw: v.into(),
+                                tail: true,
+                            }],
+                        })),
+                    };
+                    // 替换 第一个参数
+                    // n.args.remove(0);
+                    // n.args.insert(0, id_arg);
+                    let _ = std::mem::replace(&mut n.args[0], id_arg);
+                }
                 // TODO：目前代码里没有人用 t({ id: "Refresh inbox", message: "Refresh inbox" }) 这种写法
                 // Expr::Object(obj) => {
                 //     id = self.pick_object_value(obj.clone(), &self.config.id.clone())?;
                 //     default_msg = self.pick_object_value(obj, &self.config.message.clone())?;
                 // }
-                _ => None,
-            }
+                _ => (),
+            };
+            None
         };
         work();
     }
@@ -174,21 +206,16 @@ impl VisitMut for AutoNamespaceOption {
                     if let JSXAttrOrSpread::JSXAttr(jsx_attr) = attr {
                         let v = jsx_attr.value.clone()?;
                         return match v {
-                            JSXAttrValue::Lit(lit) => self.append_to_lit(lit),
+                            // case:  <Trans id='msg2' />
+                            JSXAttrValue::Lit(lit) => self.lit_to_jsx_attr_or_spread(lit),
                             JSXAttrValue::JSXExprContainer(container) => match container.expr {
                                 JSXExpr::Expr(expr) => match *expr {
-                                    Expr::Lit(lit) => self.append_to_lit(lit),
+                                    // case: <Trans id={'msg1'} />
+                                    Expr::Lit(lit) => self.lit_to_jsx_attr_or_spread(lit),
+                                    // case: <Trans id={`msg12`} />
                                     Expr::Tpl(tpl) => {
-                                        if tpl.exprs.is_empty() {
-                                            let v = tpl
-                                                .quasis
-                                                .get(0)
-                                                .map(|item| item.raw.to_string())?;
-
-                                            return self.get_jsx_attr_or_spread(v);
-                                        }
-                                        // case <Trans id={`msg_${name}`} />, 这种不支持
-                                        None
+                                        let v = self.tpl_add_namespace(tpl)?;
+                                        self.string_to_jsx_attr_or_spread(v)
                                     }
                                     _ => None,
                                 },

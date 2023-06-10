@@ -47,6 +47,7 @@ impl AutoNamespaceOption {
         }
     }
 
+    // 这个方法不适于 t`hello ${name}` 这种情况
     fn tpl_add_namespace(&mut self, tpl: Tpl) -> Option<String> {
         if tpl.exprs.is_empty() {
             let v = tpl.quasis.get(0).map(|item| item.raw.to_string())?;
@@ -107,6 +108,8 @@ impl VisitMut for AutoNamespaceOption {
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
     noop_visit_mut_type!();
 
+    // case: t`Refresh inbox`
+    // case: t`Refresh inbox ${name}`
     fn visit_mut_tagged_tpl(&mut self, n: &mut TaggedTpl) {
         n.visit_mut_children_with(self);
         let mut work = || -> Option<()> {
@@ -116,14 +119,26 @@ impl VisitMut for AutoNamespaceOption {
                 return None;
             }
             let tpl = n.tpl.clone();
-            let v = self.tpl_add_namespace(*tpl)?;
 
-            n.tpl.quasis = vec![TplElement {
+            // 但是实际上 匹配不到这里
+            if tpl.quasis.is_empty() {
+                // case: t`${name}`
+                // 这种没有意义
+                return None;
+            }
+
+            // 先获取到 t`` 中的字符串，然后再添加 namespace
+            let tpl_0_str = tpl.quasis.get(0)?.raw.to_string();
+            let v = self.add_namespace(tpl_0_str)?;
+
+            let tpl_el = TplElement {
                 span: Default::default(),
                 cooked: Some(v.clone().into()),
                 raw: v.into(),
                 tail: true,
-            }];
+            };
+
+            let _ = std::mem::replace(&mut n.tpl.quasis[0], tpl_el);
 
             None
         };

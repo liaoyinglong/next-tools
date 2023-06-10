@@ -77,12 +77,16 @@ mod tests {
             "t(`menu.msg4`, {\n    count: 1\n});",
         );
 
+        // 模版字符串中有变量
+        run_test("t`hello ${name}`;", "t`menu.hello ${name}`;");
+
         // 不需要转换
         run_test(
             "t('common.msg4', { count: 1 });",
             "t('common.msg4', {\n    count: 1\n});",
         );
         run_test("t`common.msg5`;", "t`common.msg5`;");
+        run_test("t`common.msg5 ${name}`;", "t`common.msg5 ${name}`;");
 
         // 不支持的转换
         run_test("t(id);", "t(id);");

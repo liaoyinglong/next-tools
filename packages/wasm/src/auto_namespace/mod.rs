@@ -93,7 +93,7 @@ mod tests {
 <Trans id="menu.msg1"/>;
 <Trans id="menu.msg12"/>;
 <Trans id="menu.msg2"/>;
-t`mgs3`;
+t`menu.mgs3`;
 t(`menu.msg4`, {
     count: 1
 });

@@ -4,7 +4,7 @@ use swc_core::common::sync::Lrc;
 use swc_core::common::SourceMap;
 use swc_core::ecma::ast::{
     CallExpr, Expr, ExprOrSpread, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue,
-    JSXElementName, JSXExpr, JSXOpeningElement, Lit, ObjectLit, Str, Tpl, TplElement,
+    JSXElementName, JSXExpr, JSXOpeningElement, Lit, ObjectLit, Str, TaggedTpl, Tpl, TplElement,
 };
 use swc_core::ecma::atoms::JsWord;
 use swc_core::ecma::utils::quote_ident;
@@ -110,6 +110,29 @@ impl VisitMut for AutoNamespaceOption {
     // A comprehensive list of possible visitor methods can be found here:
     // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
     noop_visit_mut_type!();
+
+    fn visit_mut_tagged_tpl(&mut self, n: &mut TaggedTpl) {
+        n.visit_mut_children_with(self);
+        let mut work = || -> Option<()> {
+            // 判断是否 t`` 调用
+            let ident = n.tag.as_ident()?;
+            if ident.sym.to_string() != self.t_fn {
+                return None;
+            }
+            let tpl = n.tpl.clone();
+            let v = self.tpl_add_namespace(*tpl)?;
+
+            n.tpl.quasis = vec![TplElement {
+                span: Default::default(),
+                cooked: Some(v.clone().into()),
+                raw: v.into(),
+                tail: true,
+            }];
+
+            None
+        };
+        work();
+    }
 
     /// 对应 t 方法调用的时候有以下：
     /// ```js

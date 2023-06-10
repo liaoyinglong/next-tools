@@ -104,4 +104,25 @@ mod tests {
         // 不支持的转换
         run_test("<Trans id={`${id}`} />;", "<Trans id={`${id}`}/>;")
     }
+
+    #[test]
+    fn integrate() {
+        run_test(
+            r###"
+        const obj =  { msg: t`name` };
+        function fn() {
+            return t`name`;
+        };
+
+        function App(){
+
+            return <div>
+                <Trans id='msg1'>children</Trans>
+            </div>
+        }
+
+        "###,
+            "const obj = {\n    msg: t`menu.name`\n};\nfunction fn() {\n    return t`menu.name`;\n}\n;\nfunction App() {\n    return <div>\n\n                <Trans id=\"menu.msg1\">children</Trans>\n\n            </div>;\n}",
+        );
+    }
 }

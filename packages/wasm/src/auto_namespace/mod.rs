@@ -1,4 +1,4 @@
-mod option;
+pub mod option;
 
 use crate::auto_namespace::option::AutoNamespaceOption;
 use anyhow::Error;

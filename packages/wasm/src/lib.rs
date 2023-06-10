@@ -1,4 +1,5 @@
 use anyhow::Error;
+use auto_namespace::option::AutoNamespaceOption;
 use js_sys::JsString;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::prelude::JsValue;
@@ -32,4 +33,23 @@ pub fn extract(source: JsString, filename: JsString) -> js_sys::Promise {
 //#endregion
 
 //#region auto_namespace
+
+#[wasm_bindgen(js_name = "autoNamespaceSync")]
+pub fn auto_namespace_sync(source: JsString, namespace: JsString) -> Result<JsValue, JsValue> {
+    console_error_panic_hook::set_once();
+    let res = auto_namespace::auto_namespace(AutoNamespaceOption {
+        source: source.into(),
+        namespace: namespace.into(),
+
+        ..Default::default()
+    })
+    .map_err(convert_err)?;
+
+    Ok(res.into())
+}
+#[wasm_bindgen(js_name = "autoNamespace")]
+pub fn auto_namespace(source: JsString, namespace: JsString) -> js_sys::Promise {
+    future_to_promise(async { auto_namespace_sync(source, namespace) })
+}
+
 //#endregion

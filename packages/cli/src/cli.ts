@@ -21,7 +21,7 @@ cli
   .action(extract);
 
 cli
-  .command("namespace", "修改源代码添加namespace浅醉")
+  .command("namespace", "添加namespace前缀")
   .example("dune namespace")
   .action(namespace);
 

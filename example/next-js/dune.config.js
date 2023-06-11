@@ -20,6 +20,10 @@ module.exports = defineConfig({
         in: "F",
       },
       include: ["./pages/**/*.{js,jsx,ts,tsx}"],
+      namespace: {
+        login: ["./pages/login"],
+        user: ["./pages/user"],
+      },
     },
     {
       i18nDir: "./i18n2",

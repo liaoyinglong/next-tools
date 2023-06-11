@@ -6,7 +6,7 @@ import { globby } from "globby";
 import fs from "fs-extra";
 import pMap from "p-map";
 import pc from "picocolors";
-import path from "path";
+import { formatFile } from "../shared/formatFile";
 
 const { prompt } = enquirer;
 
@@ -59,9 +59,13 @@ export async function namespace() {
   for (const namespace of namespaces) {
     const namespaceConfig = i18nConfig.namespace?.[namespace];
 
-    const combined = _.map(_.castArray(namespaceConfig), (v) =>
-      path.join(`./${v}/**/**.{js,jsx,ts,tsx}`)
-    );
+    const suffix = `**/**.{js,jsx,ts,tsx}`;
+    const combined = _.map(_.castArray(namespaceConfig), (v) => {
+      v = v.endsWith("/") ? v : v + "/";
+      return v + suffix;
+    });
+    log.info("正在处理 namespace: %s", pc.green(namespace));
+    log.info("预计处理的文件路径: %s", pc.green(combined.join("\n")));
 
     const files = await globby(
       [
@@ -91,6 +95,7 @@ export async function namespace() {
 
       if (newContent) {
         await fs.writeFile(file, newContent);
+        await formatFile(file);
         transformedFileSet.add(file);
       }
     });

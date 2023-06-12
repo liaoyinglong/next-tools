@@ -136,7 +136,7 @@ mod tests {
         }
 
         "###,
-            "const obj = {\n    msg: t`menu.name`\n};\nfunction fn() {\n    return t`menu.name`;\n}\n;\nfunction App() {\n    return <div>\n\n                <Trans id=\"menu.msg1\">children</Trans>\n\n            </div>;\n}",
+        "const obj = {\n    msg: t`menu.name`\n};\nfunction fn() {\n    return t`menu.name`;\n}\n;\nfunction App() {\n    return <div>\n\n                <Trans id=\"menu.msg1\" message=\"children\"></Trans>\n\n            </div>;\n}",
         );
     }
 }

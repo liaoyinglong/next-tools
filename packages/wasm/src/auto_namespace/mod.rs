@@ -1,4 +1,5 @@
 pub mod option;
+use s_swc_visitor::trans::TransVisitor;
 
 use crate::auto_namespace::option::AutoNamespaceOption;
 use anyhow::Error;
@@ -33,6 +34,7 @@ pub fn auto_namespace(mut opts: AutoNamespaceOption) -> Result<String, Error> {
         .parse_typescript_module()
         .expect("Failed to parse file");
 
+    module.visit_mut_with(&mut TransVisitor {});
     module.visit_mut_with(&mut opts);
 
     // 生成代码
@@ -98,9 +100,21 @@ mod tests {
         run_test("<Trans id='msg1' />;", r#"<Trans id="menu.msg1"/>;"#);
         run_test(
             "<Trans id='msg1'>children</Trans>;",
-            r#"<Trans id="menu.msg1">children</Trans>;"#,
+            r#"<Trans id="menu.msg1" message="children"></Trans>;"#,
         );
         run_test("<Trans id={'msg1'} />;", r#"<Trans id="menu.msg1"/>;"#);
+
+        // Transform macro
+        run_test("<Trans>hello</Trans>", "<Trans id=\"menu.hello\"></Trans>;");
+        run_test(
+            "<Trans>hello {name}</Trans>",
+            "<Trans id=\"menu.hello {name}\" values={{\n    name: name\n}}></Trans>;",
+        );
+        run_test(
+            "<Trans> hello <span>{name}</span> </Trans>",
+            "<Trans id=\"menu.hello <0>{name}</0>\" values={{\n    name: name\n}} components={{\n    0: <span>{name}</span>\n}}></Trans>;"
+        );
+
         // 不支持的转换
         run_test("<Trans id={`${id}`} />;", "")
     }

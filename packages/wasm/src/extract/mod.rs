@@ -1,7 +1,6 @@
 pub mod extract_visitor;
 pub mod extracted;
 
-
 use anyhow::Error;
 use s_swc_visitor::get_folder;
 use swc_core::common::sync::Lrc;
@@ -118,6 +117,16 @@ mod tests {
 
         source.push_str("t(`{{ arg }}是模版字符串`, { arg: '参数' });\n");
         insert("{{ arg }}是模版字符串", "", 11, 0);
+
+        source.push_str(
+            r#"
+        var obj = [ {
+            title: t`项目` as string,
+            dataIndex: 'label',
+            width: 200,
+          }]
+        "#,
+        );
 
         // 以下无法提取
         source.push_str("t(`error_${errorCode}`);\n"); // 提取不到

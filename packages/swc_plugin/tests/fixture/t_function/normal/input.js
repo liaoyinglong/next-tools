@@ -31,6 +31,12 @@ const { node = t`hello ${name}` } = props;
 function a() {
   return t`hello ${name}`;
 }
+// as type 
+var obj = [{
+  title: t`项目` as string,
+  dataIndex: 'label',
+  width: 200,
+}];
 
 // ====================
 // should not transform

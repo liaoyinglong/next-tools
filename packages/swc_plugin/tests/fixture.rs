@@ -1,10 +1,8 @@
 use std::path::PathBuf;
+use swc_core::ecma::parser::TsConfig;
 use swc_core::ecma::visit::as_folder;
 use swc_core::ecma::visit::Fold;
-use swc_core::ecma::{
-    parser::{EsConfig, Syntax},
-    transforms::testing::test_fixture,
-};
+use swc_core::ecma::{parser::Syntax, transforms::testing::test_fixture};
 
 use s_swc_plugin::semi::semi_css_omit::SemiUiImportCssOmitVisitor;
 use s_swc_visitor::get_folder;
@@ -33,9 +31,9 @@ fn fixture(input: PathBuf) {
 
     //env::set_var("UPDATE", "1");
     test_fixture(
-        Syntax::Es(EsConfig {
+        Syntax::Typescript(TsConfig {
             //jsx: input.to_string_lossy().ends_with(".jsx"),
-            jsx: true,
+            tsx: true,
             ..Default::default()
         }),
         &|_| chain!(tr(), get_folder()),

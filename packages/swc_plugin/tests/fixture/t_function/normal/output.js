@@ -28,7 +28,7 @@ t("Attachment {0} saved", {
     0: props.age + 1
 });
 // other cases
-<div >{t("hello {name}", {
+<div>{t("hello {name}", {
     name: name
 })}</div>;
 <div title={t("hello {name}", {
@@ -81,6 +81,14 @@ function a() {
         name: name
     });
 }
+// as type 
+var obj = [
+    {
+        title: t("项目") as string,
+        dataIndex: 'label',
+        width: 200
+    }
+];
 // ====================
 // should not transform
 t("Refresh inbox");

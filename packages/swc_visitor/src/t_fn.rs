@@ -80,6 +80,10 @@ impl TFunctionVisitor {
             Expr::Paren(expr) => {
                 self.handle_expr(&mut expr.expr);
             }
+            // case: t`hello ${name}` as string
+            Expr::TsAs(expr) => {
+                self.handle_expr(&mut expr.expr);
+            }
             _ => {}
         }
     }

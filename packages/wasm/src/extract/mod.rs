@@ -120,13 +120,15 @@ mod tests {
 
         source.push_str(
             r#"
-        var obj = [ {
+        var obj = [{
             title: t`项目` as string,
             dataIndex: 'label',
             width: 200,
-          }]
+          }];
         "#,
         );
+        source.push_str("\n");
+        insert("项目", "", 14, 19);
 
         // 以下无法提取
         source.push_str("t(`error_${errorCode}`);\n"); // 提取不到

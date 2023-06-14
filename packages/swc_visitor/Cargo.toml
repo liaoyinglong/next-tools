@@ -6,5 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-swc_core = { workspace = true, features = ["ecma_quote", "ecma_utils"] }
+swc_core = { workspace = true, features = ["ecma_quote", "ecma_utils","ecma_visit" ]}
 tracing = { workspace = true, features = ["release_max_level_info"] }

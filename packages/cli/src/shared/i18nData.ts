@@ -68,6 +68,9 @@ export class I18nData {
       if (this.isDefaultLocale) {
         // 默认语言需要回退到key作为value
         newValue = newValue || value.messages || key;
+        //#region 对namespace的支持
+        newValue = this.normalizeNamespacedDefaultLocaleData(newValue);
+        //#endregion
       }
       newData[key] = newValue;
     });
@@ -83,6 +86,24 @@ export class I18nData {
         this.unUsedKeys.add(key);
       }
     });
+  }
+
+  private namespaceReg: RegExp;
+  /**
+   * 如果是默认语言，开启了 namespace的话
+   * 提取出来的 文案 是 `模块名.文案` 的形式
+   * 在这里需要把 `模块名.` 去掉
+   */
+  private normalizeNamespacedDefaultLocaleData(v: string) {
+    if (!this.namespaceReg && this.config.namespace) {
+      const names = Object.keys(this.config.namespace).join("|");
+      const separator = this.config.namespaceSeparator;
+      this.namespaceReg = new RegExp(`^(${names})\\${separator}`);
+    }
+    if (this.namespaceReg) {
+      return v.replace(this.namespaceReg, "");
+    }
+    return v;
   }
 
   async updateFromSheetData(sheetData: Record<string, string>) {

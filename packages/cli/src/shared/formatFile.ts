@@ -1,7 +1,7 @@
 import { createLogger } from ".";
 import * as child_process from "child_process";
 
-const log = createLogger("generateApi");
+const log = createLogger("formatFile");
 
 export function formatFile(filename: string) {
   // 格式化代码

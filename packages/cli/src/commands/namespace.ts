@@ -7,12 +7,29 @@ import fs from "fs-extra";
 import pMap from "p-map";
 import pc from "picocolors";
 import { formatFile } from "../shared/formatFile";
+import { autoNamespaceByReg } from "../shared/autoNamespaceByReg";
 
 const { prompt } = enquirer;
 
 const log = createLogger("namespace");
+interface Params {
+  /**
+   * 生成模式
+   *
+   * - swc 指的是用swc 插件来添加 前缀
+   *
+   * swc 生成的代码更加规范，但是会有一些问题
+   *
+   * - reg 指的是用正则来添加 前缀
+   *
+   * reg 目前只能初始 t function 的调用，不能处理 Trans 组件的复杂
+   * @default swc
+   */
+  mode?: "swc" | "reg";
+}
 
-export async function namespace() {
+export async function namespace(params: Params) {
+  const { mode = "swc" } = params;
   const config = await getConfig();
 
   // 不允许提取的 配置 不需要选择
@@ -56,6 +73,15 @@ export async function namespace() {
     }),
   });
 
+  const autoNamespace = await (() => {
+    if (mode === "swc") {
+      log.info("使用 swc 来处理");
+      return import("@dune2/wasm").then((m) => m.autoNamespace);
+    }
+    log.info("使用 reg 来处理");
+    return autoNamespaceByReg;
+  })();
+
   for (const namespace of namespaces) {
     const namespaceConfig = i18nConfig.namespace?.[namespace];
 
@@ -79,8 +105,6 @@ export async function namespace() {
     );
 
     log.info("预计共处理 %s 个文件", pc.green(files.length));
-
-    const { autoNamespace } = await import("@dune2/wasm");
 
     let transformedFileSet = new Set<string>();
 

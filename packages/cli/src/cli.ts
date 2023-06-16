@@ -21,9 +21,18 @@ cli
   .action(extract);
 
 cli
-  .command("namespace", "添加namespace前缀")
-  .example("dune namespace")
-  .action(namespace);
+  .command("namespaceSwc", "添加namespace前缀，由swc驱动")
+  .example("dune namespaceSwc")
+  .action(() => {
+    return namespace({ mode: "swc" });
+  });
+
+cli
+  .command("namespaceReg", "添加namespace前缀，由正则驱动")
+  .example("dune namespaceReg")
+  .action(() => {
+    return namespace({ mode: "reg" });
+  });
 
 cli.command("upload", "上传翻译文件").example("dune upload").action(upload);
 //#endregion

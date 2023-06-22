@@ -13,6 +13,13 @@ export default function Home() {
       <h2>
         <Trans id={`Plurals`}>Plurals</Trans>
       </h2>
+      <h2>
+        <Trans>
+          Plurals Plurals Plurals Plurals Plurals Plurals Plurals Plurals
+          Plurals Plurals Plurals Plurals Plurals Plurals Plurals Plurals
+          Plurals Plurals Plurals Plurals
+        </Trans>
+      </h2>
     </Layout>
   );
 }

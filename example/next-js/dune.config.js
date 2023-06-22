@@ -9,7 +9,7 @@ function defineConfig(config) {
 module.exports = defineConfig({
   i18n: [
     {
-      i18nDir: "./i18n",
+      i18nDir: "./src/i18n",
       sheetId:
         "https://docs.google.com/spreadsheets/d/1_xpkDxAfKDcyvFwXyELN4vlweSbO0DnClOk_TVHNjWw/edit#gid=971638239",
       sheetRange: "资金记录",
@@ -19,14 +19,15 @@ module.exports = defineConfig({
         en: "D",
         in: "F",
       },
-      include: ["./pages/**/*.{js,jsx,ts,tsx}"],
+      include: ["./src/pages/**/*.{js,jsx,ts,tsx}"],
+      defaultLocale: "zh",
       namespace: {
-        login: ["./pages/login"],
-        user: ["./pages/user"],
+        login: ["./src/pages/login"],
+        user: ["./src/pages/user"],
       },
     },
     {
-      i18nDir: "./i18n2",
+      i18nDir: "./src/i18n2",
       sheetId:
         "https://docs.google.com/spreadsheets/d/1_xpkDxAfKDcyvFwXyELN4vlweSbO0DnClOk_TVHNjWw/edit#gid=971638239",
       sheetRange: "资金记录2",
@@ -36,7 +37,7 @@ module.exports = defineConfig({
         en: "D",
         in: "F",
       },
-      include: ["./pages/**/*.{js,jsx,ts,tsx}"],
+      include: ["./src/pages/**/*.{js,jsx,ts,tsx}"],
     },
   ],
   api: [
@@ -44,7 +45,7 @@ module.exports = defineConfig({
       swaggerJSONPath: "http://192.168.104.10:31082/v1/admin/v3/api-docs",
       swaggerUiUrl:
         "http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API",
-      output: "apis",
+      output: "./src/apis",
     },
     {
       swaggerJSONPath:

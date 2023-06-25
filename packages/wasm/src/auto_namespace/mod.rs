@@ -58,9 +58,17 @@ pub fn auto_namespace(mut opts: AutoNamespaceOption) -> Result<String, Error> {
 
 #[cfg(test)]
 mod tests {
+    use insta::assert_debug_snapshot;
+
     use super::*;
 
-    fn run_test(source: &str, expected: &str) {
+    macro_rules! run_test {
+        ($source:expr) => {
+            assert_debug_snapshot!(run_test($source))
+        };
+    }
+
+    fn run_test(source: &str) -> String {
         let code = auto_namespace(AutoNamespaceOption {
             source: source.to_string(),
             namespace: "menu".to_string(),
@@ -68,60 +76,46 @@ mod tests {
             ..Default::default()
         })
         .unwrap();
-        let code = code.trim_end_matches("\n");
-
-        assert_eq!(code, expected);
+        code.trim_end_matches("\n").to_owned()
     }
 
     #[test]
     fn t_fn_simple() {
         // 模版字符串
-        run_test("t`msg3`;", "t`menu.msg3`;");
-        run_test(
-            "t(`msg4`, { count: 1 });",
-            "t(`menu.msg4`, {\n    count: 1\n});",
-        );
+        run_test!("t`msg3`");
+        run_test!("t(`msg4`, { count: 1 })");
 
         // 模版字符串中有变量
-        run_test("t`hello ${name}`;", "t`menu.hello ${name}`;");
+        run_test!("t`hello ${name}`");
 
         // 不需要转换
-        run_test("t('common.msg4', { count: 1 });", "");
-        run_test("t`common.msg5`;", "");
-        run_test("t`common.msg5 ${name}`;", "");
+        run_test!("t('common.msg4', { count: 1 })");
+        run_test!("t`common.msg5`");
+        run_test!("t`common.msg5 ${name}`");
 
         // 不支持的转换
-        run_test("t(id);", "");
-        run_test("t(id, { count: 1 });", "");
+        run_test!("t(id)");
+        run_test!("t(id, { count: 1 })");
     }
 
     #[test]
     fn trans_simple() {
-        run_test("<Trans id='msg1' />;", r#"<Trans id="menu.msg1"/>;"#);
-        run_test(
-            "<Trans id='msg1'>children</Trans>;",
-            r#"<Trans id="menu.msg1" message="children"></Trans>;"#,
-        );
-        run_test("<Trans id={'msg1'} />;", r#"<Trans id="menu.msg1"/>;"#);
+        run_test!("<Trans id='msg1' />;");
+        run_test!("<Trans id='msg1'>children</Trans>;");
+        run_test!("<Trans id={'msg1'} />;");
 
         // Transform macro
-        run_test("<Trans>hello</Trans>", "<Trans id=\"menu.hello\"></Trans>;");
-        run_test(
-            "<Trans>hello {name}</Trans>",
-            "<Trans id=\"menu.hello {name}\" values={{\n    name: name\n}}></Trans>;",
-        );
-        run_test(
-            "<Trans> hello <span>{name}</span> </Trans>",
-            "<Trans id=\"menu.hello <0>{name}</0>\" values={{\n    name: name\n}} components={{\n    0: <span>{name}</span>\n}}></Trans>;"
-        );
+        run_test!("<Trans>hello</Trans>");
+        run_test!("<Trans>hello {name}</Trans>");
+        run_test!("<Trans> hello <span>{name}</span> </Trans>");
 
         // 不支持的转换
-        run_test("<Trans id={`${id}`} />;", "")
+        run_test!("<Trans id={`${id}`} />;")
     }
 
     #[test]
     fn integrate() {
-        run_test(
+        run_test!(
             r###"
         const obj =  { msg: t`name` };
         function fn() {
@@ -134,14 +128,9 @@ mod tests {
                 <Trans id='msg1'>children</Trans>
             </div>
         }
-
-        "###,
-        "const obj = {\n    msg: t`menu.name`\n};\nfunction fn() {\n    return t`menu.name`;\n}\n;\nfunction App() {\n    return <div>\n\n                <Trans id=\"menu.msg1\" message=\"children\"></Trans>\n\n            </div>;\n}",
+        "###
         );
 
-        run_test(
-            "<LoginForm<ActivateFormData>>{t`hello`}</LoginForm>;",
-            "<LoginForm>{t`menu.hello`}</LoginForm>;",
-        );
+        run_test!("<LoginForm<ActivateFormData>>{t`hello`}</LoginForm>;");
     }
 }

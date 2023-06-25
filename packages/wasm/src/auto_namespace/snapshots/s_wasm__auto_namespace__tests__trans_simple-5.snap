@@ -1,0 +1,5 @@
+---
+source: packages/wasm/src/auto_namespace/mod.rs
+expression: "run_test(\"<Trans>hello {name}</Trans>\")"
+---
+"<Trans id=\"menu.hello {name}\" values={{\n    name: name\n}}></Trans>;"

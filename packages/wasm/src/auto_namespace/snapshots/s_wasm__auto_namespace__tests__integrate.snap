@@ -1,0 +1,5 @@
+---
+source: packages/wasm/src/auto_namespace/mod.rs
+expression: "run_test(r###\"\n        const obj =  { msg: t`name` };\n        function fn() {\n            return t`name`;\n        };\n\n        function App(){\n\n            return <div>\n                <Trans id='msg1'>children</Trans>\n            </div>\n        }\n        \"###)"
+---
+"const obj = {\n    msg: t`menu.name`\n};\nfunction fn() {\n    return t`menu.name`;\n}\n;\nfunction App() {\n    return <div>\n\n                <Trans id=\"menu.msg1\" message=\"children\"></Trans>\n\n            </div>;\n}"

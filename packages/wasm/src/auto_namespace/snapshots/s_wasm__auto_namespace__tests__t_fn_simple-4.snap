@@ -1,0 +1,5 @@
+---
+source: packages/wasm/src/auto_namespace/mod.rs
+expression: "run_test(\"t('common.msg4', { count: 1 })\")"
+---
+""

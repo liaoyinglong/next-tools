@@ -7,6 +7,9 @@ edition = "2021"
 [lib]
 bench = false
 crate-type = ["cdylib"]
+[dev-dependencies]
+insta = { workspace = true }
+
 [dependencies]
 anyhow = "1.0.42"
 console_error_panic_hook = "0.1.6"

@@ -1,0 +1,5 @@
+---
+source: packages/wasm/src/auto_namespace/mod.rs
+expression: "run_test(\"<Trans id='msg1'>children</Trans>;\")"
+---
+"<Trans id=\"menu.msg1\" message=\"children\"></Trans>;"

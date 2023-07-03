@@ -12,6 +12,10 @@
     "./normalizeConfig": {
       "import": "./dist/normalizeConfig.js"
     },
+    "./prettier": {
+      "import": "./dist/prettier.js",
+      "require": "./dist/prettier.cjs"
+    },
     "./package.json": "./package.json"
   },
   "types": "dist/index.d.ts",

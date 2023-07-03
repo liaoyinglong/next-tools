@@ -22,9 +22,7 @@ export function normalizeConfig(config: Config): Config {
     item.cwd ??= config.cwd;
     item.locales = Object.keys(item.position!).filter((item) => item !== "key");
     item.sheetId = resolveSheetId(item.sheetId);
-    item.keySorter = (a, b) => {
-      return a.localeCompare(b, "en");
-    };
+    item.keySorter = defaultKeySorter;
     item.enabled ??= true;
 
     //#region namespace
@@ -55,3 +53,10 @@ export function apiConfigNormalizer(item: ApiConfig) {
     schema.properties?.data ?? schema;
   return item;
 }
+
+/**
+ * 默认的 key 排序函数
+ */
+export const defaultKeySorter = (a: string, b: string) => {
+  return a.localeCompare(b, "en");
+};

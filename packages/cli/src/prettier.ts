@@ -1,5 +1,6 @@
 import { Plugin } from "prettier";
 import { parsers as prettierParsers } from "prettier/parser-babel";
+import { defaultKeySorter } from "./shared/config/normalizeConfig";
 
 const i18nJsonExt = ".i18n.json";
 
@@ -32,7 +33,7 @@ export const parsers: Plugin["parsers"] = {
       if (isI18nJson) {
         try {
           let obj = JSON.parse(text);
-          let keys = Object.keys(obj).sort((a, b) => a.localeCompare(b));
+          let keys = Object.keys(obj).sort(defaultKeySorter);
           let newObj = {};
           keys.forEach((key) => {
             newObj[key] = obj[key];

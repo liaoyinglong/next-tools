@@ -1,6 +1,6 @@
-import { ApiConfig, Config, I18nConfig } from "./types";
-import { resolveSheetId } from "../resolveSheetId";
 import path from "path";
+import { resolveSheetId } from "../resolveSheetId";
+import { ApiConfig, Config, I18nConfig } from "./types";
 export function normalizeConfig(config: Config): Config {
   const defaultI18nConfig: I18nConfig = {
     i18nDir: "./src/i18n",
@@ -23,7 +23,7 @@ export function normalizeConfig(config: Config): Config {
     item.locales = Object.keys(item.position!).filter((item) => item !== "key");
     item.sheetId = resolveSheetId(item.sheetId);
     item.keySorter = (a, b) => {
-      return a.localeCompare(b);
+      return a.localeCompare(b, "en");
     };
     item.enabled ??= true;
 

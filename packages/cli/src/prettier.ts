@@ -1,6 +1,6 @@
 import { Plugin } from "prettier";
 import { parsers as prettierParsers } from "prettier/parser-babel";
-import { defaultKeySorter } from "./shared/config/normalizeConfig";
+import { defaultJsonSorter } from "./shared/defaultJsonSorter";
 
 const i18nJsonExt = ".i18n.json";
 
@@ -28,16 +28,11 @@ export const parsers: Plugin["parsers"] = {
       if (jsonParser.preprocess) {
         text = jsonParser.preprocess(text, options);
       }
-
       const isI18nJson = options.filepath.endsWith(i18nJsonExt);
       if (isI18nJson) {
         try {
           let obj = JSON.parse(text);
-          let keys = Object.keys(obj).sort(defaultKeySorter);
-          let newObj = {};
-          keys.forEach((key) => {
-            newObj[key] = obj[key];
-          });
+          let newObj = defaultJsonSorter(obj);
           text = JSON.stringify(newObj, null, 2);
         } catch (error) {
           console.log(`JSON 格式错误：${error}`);

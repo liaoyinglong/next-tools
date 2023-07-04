@@ -1,10 +1,10 @@
+import Table from "cli-table3";
+import fs from "fs-extra";
 import pMap from "p-map";
+import path from "path";
+import pc from "picocolors";
 import { I18nConfig } from "./config";
 import { createLogger } from "./index";
-import fs from "fs-extra";
-import pc from "picocolors";
-import path from "path";
-import Table from "cli-table3";
 import { SheetData } from "./resolveSheetData";
 import { sleep } from "./sleep";
 
@@ -113,12 +113,7 @@ export class I18nData {
 
   private sortData() {
     //region 语言key按一定规则排序
-    const keys = Object.keys(this.data).sort(this.config.keySorter);
-    const newData = {};
-    keys.forEach((key) => {
-      newData[key] = this.data[key];
-    });
-    this.data = newData;
+    this.data = this.config.jsonSorter!(this.data);
     //endregion
   }
 

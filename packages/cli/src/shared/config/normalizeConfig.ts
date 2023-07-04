@@ -1,4 +1,5 @@
 import path from "path";
+import { defaultJsonSorter } from "../defaultJsonSorter";
 import { resolveSheetId } from "../resolveSheetId";
 import { ApiConfig, Config, I18nConfig } from "./types";
 export function normalizeConfig(config: Config): Config {
@@ -22,7 +23,7 @@ export function normalizeConfig(config: Config): Config {
     item.cwd ??= config.cwd;
     item.locales = Object.keys(item.position!).filter((item) => item !== "key");
     item.sheetId = resolveSheetId(item.sheetId);
-    item.keySorter = defaultKeySorter;
+    item.jsonSorter = defaultJsonSorter;
     item.enabled ??= true;
 
     //#region namespace
@@ -53,10 +54,3 @@ export function apiConfigNormalizer(item: ApiConfig) {
     schema.properties?.data ?? schema;
   return item;
 }
-
-/**
- * 默认的 key 排序函数
- */
-export const defaultKeySorter = (a: string, b: string) => {
-  return a.localeCompare(b, "en");
-};

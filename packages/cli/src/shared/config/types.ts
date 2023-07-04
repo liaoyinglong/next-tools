@@ -47,7 +47,7 @@ export interface I18nConfig {
    * 翻译key的排序
    * @internal
    */
-  keySorter?: (a: string, b: string) => number;
+  jsonSorter?: <T extends Record<string, any>>(obj: T) => T;
   /**
    * 是否启用
    * @internal

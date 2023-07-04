@@ -1,11 +1,12 @@
+import _ from "lodash";
 import pMap from "p-map";
 import { createLogger } from "../shared";
 import { getConfig, I18nConfig } from "../shared/config";
 import { googleSheet } from "../shared/google/sheet";
 import { I18nData } from "../shared/i18nData";
 import { letterToNumber } from "../shared/letters";
-import { resolveSheetData } from "../shared/resolveSheetData";
 import { promptI18nConfigEnable } from "../shared/promptConfigEnable";
+import { resolveSheetData } from "../shared/resolveSheetData";
 import { sleep } from "../shared/sleep";
 
 const log = createLogger("upload");
@@ -30,7 +31,7 @@ async function batchUpdateKeys(config: I18nConfig) {
     //  本地有新的key  服务器没有
     return !sheetData.keySet.has(key);
   });
-  needSyncKeys = needSyncKeys.sort(config.keySorter);
+  needSyncKeys = _.sortBy(needSyncKeys);
 
   if (needSyncKeys.length) {
     log.info(`即将同步本地新增加 ${needSyncKeys.length} 个 i18nKey 到云端`);

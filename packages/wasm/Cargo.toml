@@ -19,7 +19,6 @@ serde_json = { workspace = true }
 tracing = { workspace = true, features = ["release_max_level_off"] }
 wasm-bindgen = { version = "0.2", features = ["serde-serialize", "enable-interning"] }
 wasm-bindgen-futures = "0.4.8"
-getrandom = { version = "0.2.5", optional = true, default-features = false }
 js-sys = "0.3.59"
 
 swc_core = { workspace = true, features = [
@@ -33,3 +32,6 @@ swc_error_reporters = { workspace = true }
 swc_ecma_codegen = { workspace = true }
 
 s_swc_visitor = { path = "../swc_visitor" }
+
+[dependencies.getrandom]
+features = ["js"]

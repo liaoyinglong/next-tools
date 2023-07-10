@@ -1,5 +1,7 @@
-import { describe, it, expect } from "vitest";
-import { extract } from "..";
+import { describe, expect, it } from "vitest";
+// FIXME: has following error
+// panicked at 'getrandom::getrandom() failed.: Error { internal_code: 2147483660, description: "Node.js crypto module is unavailable" }',
+const { extract } = require("../");
 
 const str = [
   "t`hello ${name}`",

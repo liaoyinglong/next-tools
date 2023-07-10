@@ -15,8 +15,8 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "lingui-example/*": ["./lingui-example/*"],
-      "@/*": ["./*"]
+      "lingui-example/*": ["./src/lingui-example/*"],
+      "@/*": ["./src/*"]
     }
   },
   "include": ["next-env.d.ts", "auto-imports.d.ts", "**/*.ts", "**/*.tsx"],

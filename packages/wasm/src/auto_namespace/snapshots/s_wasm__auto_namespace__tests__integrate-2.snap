@@ -2,4 +2,4 @@
 source: packages/wasm/src/auto_namespace/mod.rs
 expression: "run_test(\"<LoginForm<ActivateFormData>>{t`hello`}</LoginForm>;\")"
 ---
-"<LoginForm>{t`menu.hello`}</LoginForm>;"
+"<LoginForm<ActivateFormData>>{t`menu.hello`}</LoginForm>;"

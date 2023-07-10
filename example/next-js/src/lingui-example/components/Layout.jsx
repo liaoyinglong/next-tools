@@ -1,5 +1,4 @@
 import Head from "next/head";
-import classnames from "classnames";
 
 import { activate } from "lingui-example/i18n";
 import styles from "./Layout.module.css";
@@ -21,7 +20,7 @@ export function Layout({ title = null, className = "", children }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={classnames(styles.main, className)}>{children}</main>
+      <main className={`${styles.main} ${className || ''}`}>{children}</main>
 
       <footer className={styles.footer}>
         <a

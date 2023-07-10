@@ -3,33 +3,27 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "dev": "next dev",
+    "dune": "dune",
+    "dune-help": "dune --help",
+    "dune:api": "dune generateApi",
     "export": "next export",
     "extract": "dune extract",
-    "dune": "dune",
-    "dune:api": "dune generateApi",
-    "dune-help": "dune --help"
+    "lint": "next lint",
+    "start": "next start"
   },
   "dependencies": {
     "@dune2/tools": "workspace:*",
-    "classnames": "^2.3.2",
     "next": "13.1.6",
-    "next-superjson-plugin": "^0.4.2",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "superjson": "^1.10.0"
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@dune2/cli": "workspace:*",
     "@dune2/next-plugin": "workspace:*",
     "@types/node": "18.7.18",
     "@types/react": "^18",
-    "@types/react-dom": "18.0.6",
-    "eslint": "8.23.1",
-    "eslint-config-next": "13.0.0",
-    "typescript": "4.8.3"
+    "@types/react-dom": "18.0.6"
   }
 }

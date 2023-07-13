@@ -30,8 +30,13 @@ interface Basic {
 
   meta?: RequestBuilderMeta;
 }
+interface QueryClientBasic {
+  queryClient?: QueryClient;
+}
 
-export interface RequestBuilderOptions<Req, Res> extends Basic {
+export interface RequestBuilderOptions<Req, Res>
+  extends Basic,
+    QueryClientBasic {
   /**
    * 请求方法
    * @default "get"
@@ -47,8 +52,6 @@ export interface RequestBuilderOptions<Req, Res> extends Basic {
 
   // 透传给 useMutation 的 options
   useMutationOptions?: UseMutationOptions<Res, unknown, Req>;
-
-  queryClient?: QueryClient;
 }
 
 type RequestConfig = Basic & AxiosRequestConfig;
@@ -65,6 +68,14 @@ export class RequestBuilder<Req = any, Res = any> {
     this.request = this.request.bind(this);
     this.requestWithConfig = this.requestWithConfig.bind(this);
     this.options.method ??= "get";
+  }
+  // 确保 queryClient 存在
+  ensureQueryClient(options?: { queryClient?: QueryClient }) {
+    const queryClient = options?.queryClient ?? this.options.queryClient;
+    if (!queryClient) {
+      throw new Error("queryClient is not defined");
+    }
+    return queryClient;
   }
   /**
    * 包装好的请求函数
@@ -99,7 +110,7 @@ export class RequestBuilder<Req = any, Res = any> {
     }
     this.options.urlPathParams?.forEach((param) => {
       let t = "";
-      //region config.params || config.data 在 queryHash 之后不变的话，会保持同一个引用，这里需要做个浅拷贝，将引用打破
+      //#region config.params || config.data 在 queryHash 之后不变的话，会保持同一个引用，这里需要做个浅拷贝，将引用打破
       if (config.params?.[param]) {
         config.params = { ...config.params };
         t = config.params[param];
@@ -109,7 +120,7 @@ export class RequestBuilder<Req = any, Res = any> {
         t = config.data[param];
         delete config.data[param];
       }
-      //endregion
+      //#endregion
       url = url.replace(`{${param}}`, t);
     });
     return requestFn<T>({
@@ -119,7 +130,8 @@ export class RequestBuilder<Req = any, Res = any> {
     });
   }
 
-  //region query
+  //#region query
+
   /**
    * 获取 queryKey
    * 通常配置react-query的queryKey
@@ -165,11 +177,11 @@ export class RequestBuilder<Req = any, Res = any> {
    * 用来预请求接口
    * @see https://tanstack.com/query/v4/docs/guides/prefetching
    */
-  prefetchQuery(params?: Req, options?: FetchQueryOptions<Res> & Basic) {
-    const queryClient = this.options.queryClient;
-    if (!queryClient) {
-      throw new Error("没有传入 queryClient，无法预请求，可以在构造函数中传入");
-    }
+  prefetchQuery(
+    params?: Req,
+    options?: FetchQueryOptions<Res> & Basic & QueryClientBasic
+  ) {
+    const queryClient = this.ensureQueryClient(options);
     // @ts-expect-error 后续处理类型问题
     return queryClient.prefetchQuery({
       queryKey: this.getQueryKey(params),
@@ -186,11 +198,11 @@ export class RequestBuilder<Req = any, Res = any> {
    * 用来请求接口
    * @see https://tanstack.com/query/v4/docs/react/reference/QueryClient#queryclientfetchquery
    */
-  fetchQuery(params?: Req, options?: FetchQueryOptions<Res> & Basic) {
-    const queryClient = this.options.queryClient;
-    if (!queryClient) {
-      throw new Error("没有传入 queryClient，无法预请求，可以在构造函数中传入");
-    }
+  fetchQuery(
+    params?: Req,
+    options?: FetchQueryOptions<Res> & Basic & QueryClientBasic
+  ) {
+    const queryClient = this.ensureQueryClient(options);
     // @ts-expect-error 后续处理类型问题
     return queryClient.fetchQuery({
       queryKey: this.getQueryKey(params),
@@ -202,27 +214,25 @@ export class RequestBuilder<Req = any, Res = any> {
       },
     });
   }
-  invalidateQuery(params?: Req, options?: InvalidateOptions) {
-    const queryClient = this.options.queryClient;
-    if (!queryClient) {
-      throw new Error("没有传入 queryClient，无法预请求，可以在构造函数中传入");
-    }
+  invalidateQuery(
+    params?: Req,
+    options?: InvalidateOptions & QueryClientBasic
+  ) {
+    const queryClient = this.ensureQueryClient(options);
     return queryClient.invalidateQueries({
       queryKey: this.getQueryKey(params),
       ...options,
     });
   }
-  refetchQueries(params?: Req, options?: RefetchOptions) {
-    const queryClient = this.options.queryClient;
-    if (!queryClient) {
-      throw new Error("没有传入 queryClient，无法预请求，可以在构造函数中传入");
-    }
+  refetchQueries(params?: Req, options?: RefetchOptions & QueryClientBasic) {
+    const queryClient = this.ensureQueryClient(options);
     return queryClient.refetchQueries({
       queryKey: this.getQueryKey(params),
       ...options,
     });
   }
-  //endregion
+
+  //#endregion
   //#region useInfiniteQuery
   useInfiniteQuery(
     params?: Req,

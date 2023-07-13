@@ -152,7 +152,7 @@ export class I18nData {
           // 避免频繁请求，Google sheet api 默认限制
           // • 每秒钟读操作数：100 请求/秒
           // • 每秒钟单元格写操作数：100 请求/秒
-          await sleep(500);
+          await sleep(1000);
         } else {
           log.error(
             "%s range %s not found key %s",

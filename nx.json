@@ -10,7 +10,7 @@
   },
   "namedInputs": {
     "default": ["{projectRoot}/src/**", "{projectRoot}/Cargo.toml"],
-    "testInput": ["{projectRoot}/{src,test}/**"],
+    "testInput": ["{projectRoot}/{src,test,tests,js-test}/**"],
     "swc_visitor": ["{workspaceRoot}/packages/swc_visitor/src/**"]
   },
   "targetDefaults": {

@@ -1,12 +1,12 @@
-import baseStore from "store2";
 import type { StoreType } from "store2";
+import baseStore from "store2";
 
 type StorageType = "local" | "session";
 
 interface CreateStorageConfig<T> {
   /**
    * key 是 存储在 storage 中的 key
-   * value 是默认值
+   * value 是默认值, 默认值是必须设置的
    * value 给 类型，用于类型推导
    */
   DataMap: new () => T;
@@ -66,7 +66,9 @@ export function createStorage<T extends Record<string, any>>(
 
   const store = baseStore[storageType].namespace(namespace);
 
-  const storage: any = {};
+  const storage: any = {
+    _store: store,
+  };
   const storageMap = new DataMap();
   Object.keys(storageMap).forEach((key) => {
     storage[key] = new StorageHelper(
@@ -78,5 +80,11 @@ export function createStorage<T extends Record<string, any>>(
   });
   return storage as {
     [key in keyof T]: StorageHelper<T[key]>;
+  } & {
+    /**
+     * store2 的实例
+     * 一般情况下不需要使用 这里暴露出去主要是写测试时使用
+     */
+    _store: typeof store;
   };
 }

@@ -77,6 +77,17 @@ export class RequestBuilder<Req = any, Res = any> {
     }
     return queryClient;
   }
+
+  /**
+   * 针对 meta 做一些处理 返回值可以直接传给 rq 的 meta
+   */
+  private normalizeMeta(option?: Basic) {
+    return {
+      ...option?.meta,
+      requestFn: option?.requestFn,
+    };
+  }
+
   /**
    * 包装好的请求函数
    * useQuery、useMutation 内部会调用这个
@@ -165,10 +176,7 @@ export class RequestBuilder<Req = any, Res = any> {
       ...useQueryOptions,
       ...options,
       // @ts-expect-error 后续处理类型问题
-      meta: {
-        ...options?.meta,
-        requestFn: options?.requestFn,
-      },
+      meta: this.normalizeMeta(options),
     });
     return res as UseQueryResult<T>;
   }
@@ -187,10 +195,7 @@ export class RequestBuilder<Req = any, Res = any> {
       queryKey: this.getQueryKey(params),
       queryFn: this.defaultQueryFn,
       ...options,
-      meta: {
-        ...options?.meta,
-        requestFn: options?.requestFn,
-      },
+      meta: this.normalizeMeta(options),
     });
   }
 
@@ -208,10 +213,7 @@ export class RequestBuilder<Req = any, Res = any> {
       queryKey: this.getQueryKey(params),
       queryFn: this.defaultQueryFn,
       ...options,
-      meta: {
-        ...options?.meta,
-        requestFn: options?.requestFn,
-      },
+      meta: this.normalizeMeta(options),
     });
   }
   invalidateQuery(
@@ -258,10 +260,7 @@ export class RequestBuilder<Req = any, Res = any> {
       queryKey: this.getQueryKey(params),
       queryFn: this.defaultQueryFn,
       ...option,
-      meta: {
-        ...option?.meta,
-        requestFn: option?.requestFn,
-      },
+      meta: this.normalizeMeta(option),
     });
   }
   //#endregion
@@ -300,10 +299,7 @@ export class RequestBuilder<Req = any, Res = any> {
         return allPages.length + 1;
       },
       ...options,
-      meta: {
-        ...options?.meta,
-        requestFn: options?.requestFn,
-      },
+      meta: this.normalizeMeta(options),
     });
 
     const rawData = res.data;

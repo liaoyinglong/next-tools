@@ -1,5 +1,5 @@
-import Cookies from "js-cookie";
 import type { CookieAttributes, CookiesStatic } from "js-cookie";
+import Cookies from "js-cookie";
 
 interface CreateStorageConfig<T> {
   /**
@@ -34,7 +34,7 @@ class StorageHelper<V = any> {
   }
 
   get(): V | undefined {
-    return (this.store.get(this.baseKey) ?? this.defaultValue) as never;
+    return (this.store.get(this.key) ?? this.defaultValue) as never;
   }
 
   /**
@@ -43,11 +43,11 @@ class StorageHelper<V = any> {
   set(v: V, options?: CookieAttributes): void {
     v === undefined
       ? this.remove(options)
-      : this.store.set(this.baseKey, v as never, options);
+      : this.store.set(this.key, v as never, options);
   }
 
   remove(options?: CookieAttributes): void {
-    this.store.remove(this.baseKey, options);
+    this.store.remove(this.key, options);
   }
 }
 

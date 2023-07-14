@@ -232,6 +232,38 @@ export class RequestBuilder<Req = any, Res = any> {
     });
   }
 
+  /**
+   * https://tanstack.com/query/v5/docs/react/reference/QueryClient#queryclientgetquerydata
+   */
+  getQueryData(params?: Req, option?: QueryClientBasic) {
+    const queryClient = this.ensureQueryClient(option);
+    return queryClient.getQueryData(this.getQueryKey(params));
+  }
+
+  /**
+   * https://tanstack.com/query/v5/docs/react/reference/QueryClient#queryclientsetquerydata
+   */
+  setQueryData(params?: Req, data?: Res, option?: QueryClientBasic) {
+    const queryClient = this.ensureQueryClient(option);
+    return queryClient.setQueryData(this.getQueryKey(params), data);
+  }
+
+  /**
+   * https://tanstack.com/query/v5/docs/react/reference/QueryClient#queryclientensurequerydata
+   */
+  ensureQueryData(params?: Req, option?: Basic & QueryClientBasic) {
+    const queryClient = this.ensureQueryClient(option);
+    // @ts-expect-error 后续处理类型问题
+    return queryClient.ensureQueryData({
+      queryKey: this.getQueryKey(params),
+      queryFn: this.defaultQueryFn,
+      ...option,
+      meta: {
+        ...option?.meta,
+        requestFn: option?.requestFn,
+      },
+    });
+  }
   //#endregion
   //#region useInfiniteQuery
   useInfiniteQuery(

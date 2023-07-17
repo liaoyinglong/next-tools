@@ -15,7 +15,9 @@ interface CreateStorageConfig<T> {
   namespace: string;
 }
 
-class StorageHelper<V = any> {
+// cookie 只能存 string
+type V = string;
+class StorageHelper {
   /**
    * 存的key 包含 namespace
    * @example
@@ -28,13 +30,18 @@ class StorageHelper<V = any> {
     public store: CookiesStatic,
     public namespace: string,
     public baseKey: string,
-    public defaultValue: V
+    public defaultValue: string
   ) {
     this.key = `${namespace}.${baseKey}`;
   }
 
   get(): V | undefined {
-    return (this.store.get(this.key) ?? this.defaultValue) as never;
+    let r = this.store.get(this.key);
+    // 这里返回的是 string | undefined 所有可以用 !r
+    if (!r) {
+      r = this.defaultValue;
+    }
+    return r;
   }
 
   /**
@@ -53,8 +60,10 @@ class StorageHelper<V = any> {
 
 /**
  * 创建 cookie 的存储
+ * cookie 有 大小限制，所以不要存太多数据
+ * 默认情况下 key/value 都会被转为 string
  */
-export function createCookieStorage<T extends Record<string, any>>(
+export function createCookieStorage<T extends Record<any, any>>(
   config: CreateStorageConfig<T>
 ) {
   const { DataMap, namespace } = config;
@@ -66,10 +75,10 @@ export function createCookieStorage<T extends Record<string, any>>(
       Cookies,
       namespace,
       String(key),
-      storageMap[key]
+      // cookie 只能存 string
+      storageMap[key] + ""
     );
   });
-  return storage as {
-    [key in keyof T]: StorageHelper<T[key]>;
-  };
+
+  return storage as Record<keyof T, StorageHelper>;
 }

@@ -13,7 +13,7 @@ export interface BeforeSwcLoaderOptions {
    */
   enabledEmotionCompatForAppRouter?: boolean;
   /**
-   * 是否启用 i18n 相代码的兼容，自动加上 use client
+   * 是否启用 i18n 代码的兼容，自动加上 use client
    * @tips 以上只对于 src 目录下的代码生效
    */
   enabledI18nCompat?: boolean;

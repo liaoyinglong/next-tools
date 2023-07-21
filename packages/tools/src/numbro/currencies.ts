@@ -1,0 +1,20 @@
+import { LocalesEnum } from "../i18n";
+import { CurrencyFormat } from "./shared";
+
+export const currencies: Record<LocalesEnum, Omit<CurrencyFormat, "locale">> = {
+  [LocalesEnum.en]: {
+    symbol: "$",
+    position: "prefix",
+    mantissa: 2,
+  },
+  [LocalesEnum.id]: {
+    symbol: "Rp",
+    position: "prefix",
+    mantissa: 2,
+  },
+  [LocalesEnum.zh]: {
+    symbol: "¥",
+    position: "prefix",
+    mantissa: 2,
+  },
+};

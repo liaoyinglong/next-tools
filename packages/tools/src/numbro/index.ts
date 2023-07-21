@@ -1,5 +1,7 @@
 import BigNumber from "bignumber.js";
-import { Format, RoundingMode } from "./shared";
+import { LocalesEnum } from "../i18n";
+import { currencies } from "./currencies";
+import { CurrencyFormat, Format, RoundingMode } from "./shared";
 
 export * from "./shared";
 
@@ -45,6 +47,16 @@ export class Numbro {
     return new Numbro(this.bigNumber);
   }
 
+  //#region number format
+  /**
+   * 默认的格式化配置
+   */
+  static defaultFormat: Format = {
+    thousandSeparated: true,
+  };
+  static setDefaultFormat(format: Format) {
+    Numbro.defaultFormat = format;
+  }
   format(format: Format = {}): string {
     format = {
       ...Numbro.defaultFormat,
@@ -120,20 +132,41 @@ export class Numbro {
 
     return outputFormat;
   }
+  //#endregion
 
-  formatCurrency(
-    format: Format & {
-      /**
-       * 货币符号，默认为 Rp
-       * @default Rp
-       */
-      currencySymbol?: string;
-    }
-  ) {
-    // TODO: 未来可以考虑支持多种货币符号
-    const { currencySymbol = "Rp", ...rest } = format;
-    return `${currencySymbol}${this.format(rest)}`;
+  //#region  currency format
+  /**
+   * currency format default
+   */
+  static locale = LocalesEnum.id;
+  static setLocale(locale: LocalesEnum) {
+    Numbro.locale = locale;
   }
+  formatCurrency(format: CurrencyFormat) {
+    // 根据语言解析出来的默认格式
+    const defaultCurrencyFormat = currencies[format.locale ?? Numbro.locale];
+
+    format = {
+      ...defaultCurrencyFormat,
+      ...format,
+    };
+    let {
+      position = "prefix",
+      currencySymbol,
+      symbol,
+      spaceSeparated,
+
+      ...rest
+    } = format;
+    symbol ??= currencySymbol;
+    let space = spaceSeparated ? " " : "";
+    let formattedString = this.format(rest);
+    if (position === "prefix") {
+      return `${symbol}${space}${formattedString}`;
+    }
+    return `${formattedString}${space}${symbol}`;
+  }
+  //#endregion
 
   private computeAverage(num: BigNumber) {
     const powers = {
@@ -254,16 +287,6 @@ export class Numbro {
 
   toString() {
     return this.bigNumber.toString();
-  }
-
-  /**
-   * 默认的格式化配置
-   */
-  static defaultFormat: Format = {
-    thousandSeparated: true,
-  };
-  static setDefaultFormat(format: Format) {
-    Numbro.defaultFormat = format;
   }
 }
 

@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { LocalesEnum } from "../i18n";
 
 export interface Format extends BigNumber.Format {
   output?: "percent";
@@ -56,6 +57,34 @@ export interface Format extends BigNumber.Format {
    * - 1.2001 保留2位小数后 => 1.2 (不会管初始数字，直接移除格式化后的数字尾数0)
    */
   deleteEndZero?: boolean;
+}
+
+export interface CurrencyFormat extends Format {
+  /**
+   * 货币符号
+   */
+  currencySymbol?: string;
+  /**
+   * 货币符号
+   */
+  symbol?: string;
+
+  /**
+   * 货币符号位置
+   */
+  position?: "prefix" | "postfix";
+
+  /**
+   * 按哪种语言格式化，会根据传入的语言去 currencies 里获取对应的配置项
+   * 一般用在以下情况：
+   * - 当前设置的语言是 en，但是需要格式化成 id 的货币
+   */
+  locale?: LocalesEnum;
+
+  /**
+   * symbol 和 数字 之间是否需要空格
+   */
+  spaceSeparated?: boolean;
 }
 
 /**

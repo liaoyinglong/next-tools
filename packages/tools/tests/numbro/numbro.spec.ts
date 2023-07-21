@@ -1,6 +1,14 @@
 import BigNumber from "bignumber.js";
-import { describe, it, expect } from "vitest";
-import { numbro } from "../../src";
+import { afterEach, describe, expect, it } from "vitest";
+import { Numbro, numbro } from "../../src";
+
+//#region reset to default format
+let defaultFormat = Numbro.defaultFormat;
+afterEach(() => {
+  Numbro.setDefaultFormat(defaultFormat);
+});
+//#endregion
+
 describe("numbro", () => {
   it("normalizeInput", () => {
     [
@@ -150,9 +158,7 @@ describe("numbro", () => {
       ["2131232131231232312312", 2, "2,131,232,131,231,232,312,312.00"],
     ] as const;
     a.forEach(([num, precision, output]) => {
-      expect(
-        numbro(num).format({ mantissa: precision, thousandSeparated: true })
-      ).toEqual(output);
+      expect(numbro(num).format({ mantissa: precision })).toEqual(output);
     });
   });
 
@@ -224,9 +230,7 @@ describe("numbro", () => {
       ["99999999999", "99B"],
       ["999999999999", "999B"],
     ].forEach(([input, output]) => {
-      expect(
-        numbro(input).format({ average: true, thousandSeparated: true })
-      ).toEqual(output);
+      expect(numbro(input).format({ average: true })).toEqual(output);
     });
   });
 
@@ -315,7 +319,6 @@ describe("numbro", () => {
         numbro(input).formatCurrency({
           mantissa,
           currencySymbol: "Rp",
-          thousandSeparated: true,
         })
       ).toEqual(output);
     });
@@ -328,5 +331,13 @@ describe("numbro", () => {
         mantissa: NaN,
       })
     ).toEqual("1.2345");
+  });
+
+  it("can set default by setDefaultFormat", () => {
+    Numbro.setDefaultFormat({
+      thousandSeparated: true,
+      mantissa: 2,
+    });
+    expect(numbro(1000).format()).toEqual("1,000.00");
   });
 });

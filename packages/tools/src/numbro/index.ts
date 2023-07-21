@@ -3,11 +3,6 @@ import { Format, RoundingMode } from "./shared";
 
 export * from "./shared";
 
-export function numbro(number: any) {
-  return new Numbro(number);
-}
-numbro.RoundingMode = RoundingMode;
-
 // 可以参与运算的参数
 type OperationParams =
   | BigNumber
@@ -50,7 +45,11 @@ export class Numbro {
     return new Numbro(this.bigNumber);
   }
 
-  format(format: Format): string {
+  format(format: Format = {}): string {
+    format = {
+      ...Numbro.defaultFormat,
+      ...format,
+    };
     let {
       output,
       thousandSeparated,
@@ -256,4 +255,19 @@ export class Numbro {
   toString() {
     return this.bigNumber.toString();
   }
+
+  /**
+   * 默认的格式化配置
+   */
+  static defaultFormat: Format = {
+    thousandSeparated: true,
+  };
+  static setDefaultFormat(format: Format) {
+    Numbro.defaultFormat = format;
+  }
 }
+
+export function numbro(number: any) {
+  return new Numbro(number);
+}
+numbro.RoundingMode = RoundingMode;

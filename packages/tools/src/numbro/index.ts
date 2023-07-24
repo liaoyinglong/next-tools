@@ -138,8 +138,8 @@ export class Numbro {
   /**
    * currency format default
    */
-  static locale = LocalesEnum.id;
-  static setLocale(locale: LocalesEnum) {
+  static locale: string = LocalesEnum.id;
+  static setLocale(locale: string) {
     Numbro.locale = locale;
   }
 
@@ -152,7 +152,7 @@ export class Numbro {
   static setDefaultCurrencies(currencies: typeof defaultCurrencies) {
     Numbro.defaultCurrencies = currencies;
   }
-  formatCurrency(format: CurrencyFormat) {
+  formatCurrency(format: CurrencyFormat = {}) {
     // 根据语言解析出来的默认格式
     const defaultCurrencyFormat =
       Numbro.defaultCurrencies[format.locale ?? Numbro.locale];

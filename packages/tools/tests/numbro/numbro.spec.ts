@@ -1,11 +1,14 @@
 import BigNumber from "bignumber.js";
 import { afterEach, describe, expect, it } from "vitest";
-import { Numbro, numbro } from "../../src";
+import { LocalesEnum, Numbro, numbro } from "../../src";
 
 //#region reset to default format
 let defaultFormat = Numbro.defaultFormat;
+const defaultCurrencies = Numbro.defaultCurrencies;
 afterEach(() => {
   Numbro.setDefaultFormat(defaultFormat);
+  Numbro.setLocale(LocalesEnum.id);
+  Numbro.setDefaultCurrencies(defaultCurrencies);
 });
 //#endregion
 
@@ -309,19 +312,54 @@ describe("numbro", () => {
   it("formatCurrency", function () {
     (
       [
-        [0, 2, "Rp0.00"],
-        [0.1, 2, "Rp0.10"],
-        [1000, 2, "Rp1,000.00"],
-        [1000.1, 2, "Rp1,000.10"],
+        [0, "Rp0.00"],
+        [0.1, "Rp0.10"],
+        [1000, "Rp1,000.00"],
+        [1000.1, "Rp1,000.10"],
       ] as const
-    ).forEach(([input, mantissa, output]) => {
+    ).forEach(([input, output]) => {
+      expect(numbro(input).formatCurrency()).toEqual(output);
+    });
+  });
+
+  it("formatCurrency with builtin locale config", function () {
+    (
+      [
+        [1000, LocalesEnum.en, "$1,000.00"],
+        [1000, LocalesEnum.id, "Rp1,000.00"],
+        [1000, LocalesEnum.zh, "¥1,000.00"],
+      ] as const
+    ).forEach(([input, locale, output]) => {
       expect(
         numbro(input).formatCurrency({
-          mantissa,
-          currencySymbol: "Rp",
+          locale,
         })
-      ).toEqual(output);
+      ).toBe(output);
     });
+  });
+
+  it("formatCurrency with custom locale config", function () {
+    Numbro.setDefaultCurrencies({
+      "de-AT": {
+        mantissa: 2,
+        position: "prefix",
+        symbol: "€",
+      },
+      "de-DE": {
+        mantissa: 2,
+        position: "postfix",
+        symbol: "€",
+        decimalSeparator: ",",
+        groupSeparator: " ",
+      },
+    });
+    Numbro.setLocale("de-AT");
+    expect(numbro(1000).formatCurrency()).toEqual("€1,000.00");
+    expect(
+      numbro(1000).formatCurrency({
+        locale: "de-DE",
+      })
+    ).toEqual("1 000,00€");
   });
 
   it("异常情况兼容", function () {

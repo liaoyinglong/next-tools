@@ -62,6 +62,7 @@ export interface Format extends BigNumber.Format {
 export interface CurrencyFormat extends Format {
   /**
    * 货币符号
+   * @deprecated 请使用 symbol
    */
   currencySymbol?: string;
   /**
@@ -79,7 +80,7 @@ export interface CurrencyFormat extends Format {
    * 一般用在以下情况：
    * - 当前设置的语言是 en，但是需要格式化成 id 的货币
    */
-  locale?: LocalesEnum;
+  locale?: LocalesEnum | (string & {});
 
   /**
    * symbol 和 数字 之间是否需要空格

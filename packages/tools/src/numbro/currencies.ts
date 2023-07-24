@@ -2,7 +2,7 @@ import { LocalesEnum } from "../i18n";
 import { CurrencyFormat } from "./shared";
 
 export const defaultCurrencies: Record<
-  LocalesEnum,
+  string,
   Omit<CurrencyFormat, "locale">
 > = {
   [LocalesEnum.en]: {

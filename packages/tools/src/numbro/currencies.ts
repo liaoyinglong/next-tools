@@ -1,7 +1,10 @@
 import { LocalesEnum } from "../i18n";
 import { CurrencyFormat } from "./shared";
 
-export const currencies: Record<LocalesEnum, Omit<CurrencyFormat, "locale">> = {
+export const defaultCurrencies: Record<
+  LocalesEnum,
+  Omit<CurrencyFormat, "locale">
+> = {
   [LocalesEnum.en]: {
     symbol: "$",
     position: "prefix",

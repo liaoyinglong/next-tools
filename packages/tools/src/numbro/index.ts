@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { LocalesEnum } from "../i18n";
-import { currencies } from "./currencies";
+import { defaultCurrencies } from "./currencies";
 import { CurrencyFormat, Format, RoundingMode } from "./shared";
 
 export * from "./shared";
@@ -142,9 +142,20 @@ export class Numbro {
   static setLocale(locale: LocalesEnum) {
     Numbro.locale = locale;
   }
+
+  /**
+   * 默认的货币格式化配置
+   * key: locale
+   * value: currency format
+   */
+  static defaultCurrencies = defaultCurrencies;
+  static setDefaultCurrencies(currencies: typeof defaultCurrencies) {
+    Numbro.defaultCurrencies = currencies;
+  }
   formatCurrency(format: CurrencyFormat) {
     // 根据语言解析出来的默认格式
-    const defaultCurrencyFormat = currencies[format.locale ?? Numbro.locale];
+    const defaultCurrencyFormat =
+      Numbro.defaultCurrencies[format.locale ?? Numbro.locale];
 
     format = {
       ...defaultCurrencyFormat,

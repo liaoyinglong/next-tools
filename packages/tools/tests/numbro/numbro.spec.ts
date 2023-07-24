@@ -7,8 +7,8 @@ let defaultFormat = Numbro.defaultFormat;
 const defaultCurrencies = Numbro.defaultCurrencies;
 afterEach(() => {
   Numbro.setDefaultFormat(defaultFormat);
-  Numbro.setLocale(LocalesEnum.id);
   Numbro.setDefaultCurrencies(defaultCurrencies);
+  Numbro.setLocale(LocalesEnum.id);
 });
 //#endregion
 

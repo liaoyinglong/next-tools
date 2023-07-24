@@ -140,6 +140,10 @@ export class Numbro {
    */
   static locale: string = LocalesEnum.id;
   static setLocale(locale: string) {
+    // check locale is valid
+    if (!(locale in Numbro.defaultCurrencies)) {
+      throw new Error(`在 defaultCurrencies 中，找不到 ${locale}，请先检查`);
+    }
     Numbro.locale = locale;
   }
 

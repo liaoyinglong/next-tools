@@ -32,8 +32,10 @@ describe("numbro", () => {
   });
 
   it("default format", function () {
-    expect(numbro("1.230000").format({})).toEqual("1.23");
+    expect(numbro("1.230000").format()).toEqual("1.23");
+    expect(numbro("1234.230000").format()).toEqual("1,234.23");
     expect(numbro("1.230000").toString()).toEqual("1.23");
+    expect(numbro("1234.230000").toString()).toEqual("1234.23");
   });
 
   it("deleteInvalidZero 支持 删除尾数 0", function () {

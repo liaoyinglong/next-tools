@@ -17,11 +17,11 @@ describe("numbro", () => {
   it("normalizeInput", () => {
     [
       [1, 1],
-      ["", 0],
-      [null, 0],
-      [undefined, 0],
-      [NaN, 0],
-      [false, 0],
+      ["", NaN],
+      [null, NaN],
+      [undefined, NaN],
+      [NaN, NaN],
+      [false, NaN],
       [Infinity, Infinity],
       [-Infinity, -Infinity],
 

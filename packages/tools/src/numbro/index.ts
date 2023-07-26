@@ -21,16 +21,7 @@ export class Numbro {
   static BN = BigNumber.clone({
     ROUNDING_MODE: BigNumber.ROUND_DOWN,
   });
-  bigNumber!: BigNumber;
-
-  /**
-   * 初始值是否是 NaN
-   * 主要场景是给 format 的时候需要判断
-   * 原始值如果是NaN，那么 format 后，
-   * 按目前业务场景应该是显示 '-' ,而不能是 0
-   * 另外需要支持配置为任意
-   */
-  private rawValueIsNan = false;
+  bigNumber: BigNumber;
 
   constructor(number: any) {
     this.bigNumber = this.castToBigNumber(number);
@@ -44,12 +35,7 @@ export class Numbro {
       // case: "1,000" => "1000"
       other = other.trim().replace(/,/g, "");
     }
-
     const res = new Numbro.BN(other as never);
-    if (res.isNaN()) {
-      this.rawValueIsNan = true;
-      return new Numbro.BN(0);
-    }
     return res;
   }
 
@@ -83,9 +69,15 @@ export class Numbro {
       NaNFormat,
       ...rest
     } = format;
-    // 如果原始值是 NaN，那么直接返回 NaNFormat
-    if (this.rawValueIsNan && NaNFormat) {
-      return NaNFormat;
+    let num = this.bigNumber;
+
+    // NaN 的 fallback
+    if (num.isNaN()) {
+      if (NaNFormat) {
+        return NaNFormat;
+      }
+      // 如果没有指定 NaNFormat，那么就当做 0 处理
+      num = new Numbro.BN(0);
     }
 
     const combinedFormat: BigNumber.Format = {
@@ -103,7 +95,6 @@ export class Numbro {
       }
     }
 
-    let num = this.bigNumber;
     // 百分比
     if (output === "percent") {
       num = num.multipliedBy(100);
@@ -321,4 +312,5 @@ export class Numbro {
 export function numbro(number: any) {
   return new Numbro(number);
 }
+
 numbro.RoundingMode = RoundingMode;

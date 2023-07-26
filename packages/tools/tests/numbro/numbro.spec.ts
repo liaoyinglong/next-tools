@@ -47,6 +47,25 @@ describe("numbro", () => {
     expect(numbro("1234.230000").toString()).toEqual("1234.23");
   });
 
+  it("运算之后为 NaN 时的 format", () => {
+    expect(numbro(null).add(1).format()).toBe("0");
+    expect(numbro(null).subtract(1).format()).toBe("0");
+    expect(numbro(null).difference(1).format()).toBe("0");
+    expect(numbro(null).multiply(1).format()).toBe("0");
+    expect(numbro(null).divide(1).format()).toBe("0");
+
+    // after set default format to NaNFormat with "-"
+    let NaNFormat = "N/A";
+    Numbro.setDefaultFormat({
+      NaNFormat,
+    });
+    expect(numbro(null).add(1).format()).toBe(NaNFormat);
+    expect(numbro(null).subtract(1).format()).toBe(NaNFormat);
+    expect(numbro(null).difference(1).format()).toBe(NaNFormat);
+    expect(numbro(null).multiply(1).format()).toBe(NaNFormat);
+    expect(numbro(null).divide(1).format()).toBe(NaNFormat);
+  });
+
   it("deleteInvalidZero 支持 删除尾数 0", function () {
     [
       ["1.000000", 2, "1"],

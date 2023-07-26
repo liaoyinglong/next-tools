@@ -48,22 +48,28 @@ describe("numbro", () => {
   });
 
   it("运算之后为 NaN 时的 format", () => {
-    expect(numbro(null).add(1).format()).toBe("0");
-    expect(numbro(null).subtract(1).format()).toBe("0");
-    expect(numbro(null).difference(1).format()).toBe("0");
-    expect(numbro(null).multiply(1).format()).toBe("0");
-    expect(numbro(null).divide(1).format()).toBe("0");
+    expect(numbro(1).add(null).format()).toBe("0");
+    expect(numbro(1).subtract(null).format()).toBe("0");
+    expect(numbro(1).difference(null).format()).toBe("0");
+    expect(numbro(1).multiply(null).format()).toBe("0");
+    expect(numbro(1).divide(null).format()).toBe("0");
 
-    // after set default format to NaNFormat with "-"
     let NaNFormat = "N/A";
+    expect(numbro(1).add(null).format({ NaNFormat })).toBe(NaNFormat);
+    expect(numbro(1).subtract(null).format({ NaNFormat })).toBe(NaNFormat);
+    expect(numbro(1).difference(null).format({ NaNFormat })).toBe(NaNFormat);
+    expect(numbro(1).multiply(null).format({ NaNFormat })).toBe(NaNFormat);
+    expect(numbro(1).divide(null).format({ NaNFormat })).toBe(NaNFormat);
+
+    // with set default NaNFormat
     Numbro.setDefaultFormat({
       NaNFormat,
     });
-    expect(numbro(null).add(1).format()).toBe(NaNFormat);
-    expect(numbro(null).subtract(1).format()).toBe(NaNFormat);
-    expect(numbro(null).difference(1).format()).toBe(NaNFormat);
-    expect(numbro(null).multiply(1).format()).toBe(NaNFormat);
-    expect(numbro(null).divide(1).format()).toBe(NaNFormat);
+    expect(numbro(1).add(null).format()).toBe(NaNFormat);
+    expect(numbro(1).subtract(null).format()).toBe(NaNFormat);
+    expect(numbro(1).difference(null).format()).toBe(NaNFormat);
+    expect(numbro(1).multiply(null).format()).toBe(NaNFormat);
+    expect(numbro(1).divide(null).format()).toBe(NaNFormat);
   });
 
   it("deleteInvalidZero 支持 删除尾数 0", function () {

@@ -1,10 +1,10 @@
 import BigNumber from "bignumber.js";
-import { afterEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { LocalesEnum, Numbro, numbro } from "../../src";
 
 //#region reset to default format
 const defaultCurrencies = Numbro.defaultCurrencies;
-afterEach(() => {
+beforeEach(() => {
   Numbro.setDefaultFormat({
     thousandSeparated: true,
   });
@@ -35,6 +35,14 @@ describe("numbro", () => {
   it("default format", function () {
     expect(numbro("1.230000").format()).toEqual("1.23");
     expect(numbro("1234.230000").format()).toEqual("1,234.23");
+    expect(numbro(0).format()).toEqual("0");
+    expect(numbro(+0).format()).toEqual("0");
+    expect(numbro(-0).format()).toEqual("0");
+    expect(numbro("0.00").format()).toEqual("0");
+    expect(numbro(null).format()).toEqual("0");
+    expect(numbro(undefined).format()).toEqual("0");
+    expect(numbro(NaN).format()).toEqual("0");
+
     expect(numbro("1.230000").toString()).toEqual("1.23");
     expect(numbro("1234.230000").toString()).toEqual("1234.23");
   });

@@ -398,6 +398,32 @@ describe("numbro", () => {
     ).toEqual("1 000,00€");
   });
 
+  it("业务场景：通用法币、主法币", () => {
+    Numbro.setDefaultCurrencies({
+      common: {
+        symbol: "$",
+        position: "prefix",
+        mantissa: 2,
+      },
+      main: {
+        symbol: "Rp",
+        position: "prefix",
+        mantissa: 2,
+      },
+    });
+
+    expect(
+      numbro(1000).formatCurrency({
+        locale: "common",
+      })
+    ).toEqual("$1,000.00");
+    expect(
+      numbro(1000).formatCurrency({
+        locale: "main",
+      })
+    ).toEqual("Rp1,000.00");
+  });
+
   it("异常情况兼容", function () {
     const n = numbro(1.2345);
     expect(

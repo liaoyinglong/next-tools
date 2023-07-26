@@ -69,9 +69,24 @@ export class RequestBuilder<Req = any, Res = any> {
     this.requestWithConfig = this.requestWithConfig.bind(this);
     this.options.method ??= "get";
   }
-  // 确保 queryClient 存在
+  // 这是默认的 Query Client 实例
+  static queryClient: QueryClient | null = null;
+  static setQueryClient(queryClient: QueryClient) {
+    RequestBuilder.queryClient = queryClient;
+  }
+
+  /**
+   * 确保 queryClient 的存在
+   * 会依次从以下地方获取
+   * - options
+   * - 当前实例 options
+   * - RequestBuilder.queryClient
+   */
   ensureQueryClient(options?: { queryClient?: QueryClient }) {
-    const queryClient = options?.queryClient ?? this.options.queryClient;
+    const queryClient =
+      options?.queryClient ??
+      this.options.queryClient ??
+      RequestBuilder.queryClient;
     if (!queryClient) {
       throw new Error("queryClient is not defined");
     }

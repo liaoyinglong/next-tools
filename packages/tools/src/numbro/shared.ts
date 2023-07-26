@@ -57,6 +57,13 @@ export interface Format extends BigNumber.Format {
    * - 1.2001 保留2位小数后 => 1.2 (不会管初始数字，直接移除格式化后的数字尾数0)
    */
   deleteEndZero?: boolean;
+
+  /**
+   * 传过来的是值 NaN 时，显示的格式
+   * 一般情况是是传过来为 null/undefined 时，显示的格式
+   * 没有配置的时候，会按照 0 来做 format
+   */
+  NaNFormat?: string;
 }
 
 export interface CurrencyFormat extends Format {

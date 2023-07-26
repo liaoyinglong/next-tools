@@ -380,4 +380,24 @@ describe("numbro", () => {
     });
     expect(numbro(1000).format()).toEqual("1,000.00");
   });
+
+  it("support NaNFormat", () => {
+    expect(numbro(NaN).format()).toEqual("0");
+    expect(numbro(NaN).format({ NaNFormat: "-" })).toEqual("-");
+    expect(numbro(undefined).format({ NaNFormat: "-" })).toEqual("-");
+    expect(numbro(null).format({ NaNFormat: "-" })).toEqual("-");
+
+    // with default format
+    Numbro.setDefaultFormat({
+      NaNFormat: "-",
+    });
+  });
+  it("support NaNFormat with default format", () => {
+    Numbro.setDefaultFormat({
+      NaNFormat: "-",
+    });
+    expect(numbro(NaN).format()).toEqual("-");
+    expect(numbro(undefined).format()).toEqual("-");
+    expect(numbro(null).format()).toEqual("-");
+  });
 });

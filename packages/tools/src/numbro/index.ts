@@ -294,13 +294,16 @@ export class Numbro {
    * @see https://mikemcl.github.io/bignumber.js/#toNumber
    */
   value(): number {
-    return this.bigNumber.toNumber();
+    return this.valueOf();
   }
 
   /**
    * 转换为数字
    */
   valueOf(): number {
+    if (this.bigNumber.isNaN()) {
+      return 0;
+    }
     return this.bigNumber.toNumber();
   }
 

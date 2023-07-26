@@ -3,10 +3,11 @@ import { afterEach, describe, expect, it } from "vitest";
 import { LocalesEnum, Numbro, numbro } from "../../src";
 
 //#region reset to default format
-let defaultFormat = Numbro.defaultFormat;
 const defaultCurrencies = Numbro.defaultCurrencies;
 afterEach(() => {
-  Numbro.setDefaultFormat(defaultFormat);
+  Numbro.setDefaultFormat({
+    thousandSeparated: true,
+  });
   Numbro.setDefaultCurrencies(defaultCurrencies);
   Numbro.setLocale(LocalesEnum.id);
 });
@@ -386,11 +387,6 @@ describe("numbro", () => {
     expect(numbro(NaN).format({ NaNFormat: "-" })).toEqual("-");
     expect(numbro(undefined).format({ NaNFormat: "-" })).toEqual("-");
     expect(numbro(null).format({ NaNFormat: "-" })).toEqual("-");
-
-    // with default format
-    Numbro.setDefaultFormat({
-      NaNFormat: "-",
-    });
   });
   it("support NaNFormat with default format", () => {
     Numbro.setDefaultFormat({

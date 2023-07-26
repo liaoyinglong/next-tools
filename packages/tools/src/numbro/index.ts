@@ -61,9 +61,7 @@ export class Numbro {
   /**
    * 默认的格式化配置
    */
-  static defaultFormat: Format = {
-    thousandSeparated: true,
-  };
+  static defaultFormat: Format = {};
   static setDefaultFormat(format: Format) {
     Numbro.defaultFormat = format;
   }

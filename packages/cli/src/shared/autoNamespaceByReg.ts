@@ -9,7 +9,7 @@ export function autoNamespaceByReg(code: string, namespace: string) {
    * t`login` => t`Merchants.login`
    * t`hello ${name}` => t`Merchants.hello ${name}`
    */
-  code = code.replace(/t`(.+?)`/gm, (match, p1) => {
+  code = code.replace(/^t`(.+?)`/gm, (match, p1) => {
     // 如果 当前 有 $b. 则不替换
     if (/.+\./.test(p1)) {
       return match;
@@ -23,7 +23,7 @@ export function autoNamespaceByReg(code: string, namespace: string) {
    * t('login') => t('Merchants.login')
    * t("login") => t('Merchants.login')
    */
-  code = code.replace(/t\((["'])(.+?)\1\)/gm, (match, p1, p2) => {
+  code = code.replace(/^t\((["'])(.+?)\1\)/gm, (match, p1, p2) => {
     // 如果 当前 有 $b. 则不替换
     if (/.+\./.test(p2)) {
       return match;
@@ -37,7 +37,7 @@ export function autoNamespaceByReg(code: string, namespace: string) {
    * t('login',{ id:'1' }) => t('Merchants.login',{ id:'1' })
    * t("login",{ id:'1' }) => t('Merchants.login',{ id:'1' })
    */
-  code = code.replace(/t\((["'])(.+?)\1(,|.*\))/gm, (match, p1, p2, p3) => {
+  code = code.replace(/^t\((["'])(.+?)\1(,|.*\))/gm, (match, p1, p2, p3) => {
     // 如果 当前 有 $b. 则不替换
     if (/.+\./.test(p2)) {
       return match;

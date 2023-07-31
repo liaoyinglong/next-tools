@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { autoNamespaceByReg } from "../src/shared/autoNamespaceByReg";
 
 describe("autoNamespaceByReg", () => {
@@ -48,6 +48,7 @@ describe("autoNamespaceByReg", () => {
           "t`login`",
           't("login")',
           `t('login')`,
+          `arr.split('login')`,
         ].join("\n"),
         "Menu"
       )
@@ -55,12 +56,13 @@ describe("autoNamespaceByReg", () => {
       "t\`Merchants.login\`
       t('Merchants.login')
       t(\\"Merchants.login\\")
-      set\`Menu.login\`
-      set('Menu.login')
-      set('Menu.login')
+      set\`login\`
+      set('login')
+      set(\\"login\\")
       t\`Menu.login\`
       t('Menu.login')
-      t('Menu.login')"
+      t('Menu.login')
+      arr.split('login')"
     `);
   });
 });

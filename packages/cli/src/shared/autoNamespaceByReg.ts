@@ -11,7 +11,7 @@ export function autoNamespaceByReg(code: string, namespace: string) {
    */
   code = code.replace(/\Wt`(.+?)`/gm, (match, p1) => {
     // 如果 当前 有 $b. 则不替换
-    if (/.+\./.test(p1)) {
+    if (/\S\.\S/.test(p1)) {
       return match;
     }
     hasChanged = true;
@@ -25,7 +25,7 @@ export function autoNamespaceByReg(code: string, namespace: string) {
    */
   code = code.replace(/\Wt\(['"](.+?)['"][),]/gm, (match, p1) => {
     // 如果 当前 有 $b. 则不替换
-    if (/.+\./.test(p1)) {
+    if (/\S\.\S/.test(p1)) {
       return match;
     }
     hasChanged = true;
@@ -40,7 +40,7 @@ export function autoNamespaceByReg(code: string, namespace: string) {
    */
   // code = code.replace(/\Wt\((["'])(.+?)\1(,|.*\))/gm, (match, p1, p2, p3) => {
   //   // 如果 当前 有 $b. 则不替换
-  //   if (/.+\./.test(p2)) {
+  //   if (/\S\.\S/.test(p2)) {
   //     return match;
   //   }
   //   hasChanged = true;

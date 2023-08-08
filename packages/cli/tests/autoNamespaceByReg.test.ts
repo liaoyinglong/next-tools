@@ -17,10 +17,7 @@ describe("autoNamespaceByReg", () => {
 
   it("引号", function () {
     expect(
-      autoNamespaceByReg(
-        ["{t('引号')}", `(t("引号"))`].join("\n"),
-        "Merchants"
-      )
+      autoNamespaceByReg(["{t('引号')}", `(t("引号"))`].join("\n"), "Merchants")
     ).toMatchInlineSnapshot(`
       "{t('Merchants.引号')}
       (t(\\"Merchants.引号\\"))"
@@ -34,7 +31,7 @@ describe("autoNamespaceByReg", () => {
         "Merchants"
       )
     ).toMatchInlineSnapshot('"{t(\'Merchants.hello: {name}\',{ name:\'zhangsan\' })}"');
-  })
+  });
 
   it("不应该替换已经有 namespace 的", function () {
     expect(
@@ -67,5 +64,28 @@ describe("autoNamespaceByReg", () => {
       arr.split('login')"
     `);
   });
-
+  it("集成测试", () => {
+    const code = `
+    const a = t\`login\`
+    const b = {
+        c: t('login'),
+        d: t("app.login"),
+    }
+    function App() {
+    return <div>{t('login')}</div>
+    }
+    `;
+    expect(autoNamespaceByReg(code, "Merchants")).toMatchInlineSnapshot(`
+      "
+          const a = t\`Merchants.login\`
+          const b = {
+              c: t('Merchants.login'),
+              d: t(\\"app.login\\"),
+          }
+          function App() {
+          return <div>{t('Merchants.login')}</div>
+          }
+          "
+    `);
+  });
 });

@@ -62,8 +62,10 @@ export interface Format extends BigNumber.Format {
    * 传过来的是值 NaN 时，显示的格式
    * 一般情况是是传过来为 null/undefined 时，显示的格式
    * 没有配置的时候，会按照 0 来做 format
+   *
+   * 设置 false 时，为禁用该功能
    */
-  NaNFormat?: string;
+  NaNFormat?: string | false;
 }
 
 export interface CurrencyFormat extends Format {

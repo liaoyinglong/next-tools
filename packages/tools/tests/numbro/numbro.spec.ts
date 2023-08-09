@@ -356,6 +356,7 @@ describe("numbro", () => {
     ).forEach(([input, output]) => {
       expect(numbro(input).formatCurrency()).toEqual(output);
     });
+    expect(numbro(null).formatCurrency()).toEqual("Rp0.00");
   });
 
   it("formatCurrency with builtin locale config", function () {
@@ -446,6 +447,11 @@ describe("numbro", () => {
     expect(numbro(NaN).format({ NaNFormat: "-" })).toEqual("-");
     expect(numbro(undefined).format({ NaNFormat: "-" })).toEqual("-");
     expect(numbro(null).format({ NaNFormat: "-" })).toEqual("-");
+    expect(
+      numbro(null).formatCurrency({
+        NaNFormat: "-",
+      })
+    ).toEqual("-");
   });
   it("support NaNFormat with default format", () => {
     Numbro.setDefaultFormat({
@@ -454,5 +460,11 @@ describe("numbro", () => {
     expect(numbro(NaN).format()).toEqual("-");
     expect(numbro(undefined).format()).toEqual("-");
     expect(numbro(null).format()).toEqual("-");
+    expect(numbro(null).formatCurrency()).toEqual("-");
+    expect(
+      numbro(null).formatCurrency({
+        NaNFormat: false,
+      })
+    ).toEqual("Rp0.00");
   });
 });

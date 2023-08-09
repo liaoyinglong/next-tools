@@ -51,11 +51,16 @@ export class Numbro {
   static setDefaultFormat(format: Format) {
     Numbro.defaultFormat = format;
   }
-  format(format: Format = {}): string {
-    format = {
+
+  private combineFormatOptions(format: Format = {}): Format {
+    return {
       ...Numbro.defaultFormat,
       ...format,
     };
+  }
+
+  format(format: Format = {}): string {
+    format = this.combineFormatOptions(format);
     let {
       output,
       thousandSeparated,
@@ -180,6 +185,14 @@ export class Numbro {
     symbol ??= currencySymbol;
     let space = spaceSeparated ? " " : "";
     let formattedString = this.format(rest);
+
+    //#region NaN 的 fallback
+    const { NaNFormat } = this.combineFormatOptions(rest);
+    if (formattedString === NaNFormat) {
+      return formattedString;
+    }
+    //#endregion
+
     if (position === "prefix") {
       return `${symbol}${space}${formattedString}`;
     }

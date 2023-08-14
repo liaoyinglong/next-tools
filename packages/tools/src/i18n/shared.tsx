@@ -1,4 +1,4 @@
-import { i18n } from "@lingui/core";
+import { i18n, MessageDescriptor, MessageOptions } from "@lingui/core";
 import {
   I18nProviderProps,
   I18nProvider as I18nProviderRaw,
@@ -15,7 +15,13 @@ import { enableDetectLocale } from "./enableDetectLocale";
  */
 export let t = initT();
 interface TFunction {
-  (literals: TemplateStringsArray | string, ...placeholders: any[]): string;
+  (
+    id: string,
+    values?: Record<string, unknown>,
+    options?: MessageOptions
+  ): string;
+  (descriptor: MessageDescriptor): string;
+  (literals: TemplateStringsArray, ...placeholders: any[]): string;
 
   /**
    * 使用这个方法将被cli不会提取出来翻译

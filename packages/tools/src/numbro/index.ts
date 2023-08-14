@@ -182,7 +182,10 @@ export class Numbro {
 
       ...rest
     } = format;
-    symbol ??= currencySymbol;
+    // TODO: 兼容之前的逻辑 后面会移除
+    if (currencySymbol) {
+      symbol = currencySymbol;
+    }
     let space = spaceSeparated ? " " : "";
     let formattedString = this.format(rest);
 

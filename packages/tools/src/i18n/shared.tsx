@@ -1,7 +1,7 @@
 import { i18n } from "@lingui/core";
 import {
-  I18nProvider as I18nProviderRaw,
   I18nProviderProps,
+  I18nProvider as I18nProviderRaw,
 } from "@lingui/react";
 import { useEffect } from "react";
 import { enableDetectLocale } from "./enableDetectLocale";
@@ -66,10 +66,7 @@ export const I18nProvider = (props: Partial<I18nProviderPropsCustom>) => {
     });
   }, [props.defaultLocale]);
   return (
-    <I18nProviderRaw
-      i18n={props.i18n ?? i18n}
-      forceRenderOnLocaleChange={props.forceRenderOnLocaleChange ?? false}
-    >
+    <I18nProviderRaw i18n={props.i18n ?? i18n}>
       {props.children}
     </I18nProviderRaw>
   );

@@ -3,23 +3,13 @@ import { TransProps, Trans as TransRaw } from "@lingui/react";
 import { FC } from "react";
 import { LocalesEnum } from "./enums";
 
+export { useLingui } from "@lingui/react";
+export type { I18nContext, I18nProviderProps } from "@lingui/react";
 export { enableDetectLocale } from "./enableDetectLocale";
-export { useT, useLocale } from "./hooks";
-export { t, I18nProvider } from "./shared";
-
-export { useLingui, withI18n } from "@lingui/react";
-export type {
-  I18nProviderProps,
-  I18nContext,
-  withI18nProps,
-} from "@lingui/react";
-
+export { useLocale, useT } from "./hooks";
+export { I18nProvider, t } from "./shared";
 export { i18n, LocalesEnum };
 
-const defaultPlurals = () => "";
-Object.values(LocalesEnum).forEach((locale) => {
-  i18n.loadLocaleData(locale, { plurals: defaultPlurals as never });
-});
 /**
  * @example
  * ```tsx

@@ -141,6 +141,9 @@ mod tests {
             .push_str("msg({ id: 'msg.Refresh inbox2', message: 'msg.Refresh inbox message' });\n");
         insert("msg.Refresh inbox2", "msg.Refresh inbox message", 21, 0);
 
+        source.push_str("msg`msg.tpl.Refresh inbox`;\n");
+        insert("msg.tpl.Refresh inbox", "", 22, 0);
+
         // 以下无法提取
         source.push_str("t(`error_${errorCode}`);\n"); // 提取不到
         source.push_str("i18n.t('welcome');\n");
@@ -150,8 +153,6 @@ mod tests {
         let res = extract(ExtractOptions::new(source, "test.tsx".to_string()))
             .expect("failed to extract");
 
-        assert_eq!(res.data.len(), map.len());
-
         map.iter().for_each(|(k, v)| {
             let v2 = res.data.get(k);
             if v2.is_none() {
@@ -160,6 +161,8 @@ mod tests {
             let v2 = v2.unwrap();
             assert_eq!(v, v2);
         });
+
+        assert_eq!(res.data.len(), map.len());
         assert_eq!(res.filename, "test.tsx".to_string());
     }
 }

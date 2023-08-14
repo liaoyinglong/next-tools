@@ -4,8 +4,9 @@ use swc_core::common::sync::Lrc;
 use swc_core::common::SourceMap;
 use swc_core::ecma::ast::{
     CallExpr, Expr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName, JSXExpr,
-    JSXOpeningElement, Lit, ObjectLit,
+    JSXOpeningElement, Lit, ObjectLit, TaggedTpl,
 };
+use swc_core::ecma::atoms::JsWord;
 use swc_core::ecma::visit::VisitMutWith;
 use swc_core::ecma::visit::{noop_visit_mut_type, VisitMut};
 
@@ -142,7 +143,6 @@ impl VisitMut for ExtractVisitor {
                 HANDLER.with(|handler| {
                     handler.span_note_without_error(n.span, "msg id is not string literal, skip");
                 });
-                println!("找不到");
             } else {
                 self.extracted.try_add(
                     id,
@@ -151,6 +151,25 @@ impl VisitMut for ExtractVisitor {
                 );
             }
 
+            None
+        };
+        work();
+    }
+
+    // case: msg`hello name`
+    fn visit_mut_tagged_tpl(&mut self, n: &mut TaggedTpl) {
+        n.visit_mut_children_with(self);
+        let mut work = || -> Option<()> {
+            let ident = n.tag.as_ident()?.clone().sym;
+            if ident != JsWord::from(self.config.msg_fn.clone()) {
+                return None;
+            }
+            let id = n.tpl.quasis.get(0)?.raw.to_string();
+            self.extracted.try_add(
+                id,
+                "".to_string(),
+                self.source_map.lookup_char_pos(n.span.lo()),
+            );
             None
         };
         work();
@@ -202,6 +221,4 @@ impl VisitMut for ExtractVisitor {
         };
         work();
     }
-
-    // case: msg`hello name`
 }

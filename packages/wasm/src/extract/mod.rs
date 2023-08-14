@@ -118,6 +118,9 @@ mod tests {
         source.push_str("t(`{{ arg }}是模版字符串`, { arg: '参数' });\n");
         insert("{{ arg }}是模版字符串", "", 11, 0);
 
+        source.push_str("t({id: 'obj.msgId', message:'obj.msgId content'})");
+        insert("obj.msgId", "obj.msgId content", 12, 0);
+
         source.push_str(
             r#"
         var obj = [{

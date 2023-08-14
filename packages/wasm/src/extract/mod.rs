@@ -118,7 +118,7 @@ mod tests {
         source.push_str("t(`{{ arg }}是模版字符串`, { arg: '参数' });\n");
         insert("{{ arg }}是模版字符串", "", 11, 0);
 
-        source.push_str("t({id: 'obj.msgId', message:'obj.msgId content'})");
+        source.push_str("t({id: 'obj.msgId', message:'obj.msgId content'});\n");
         insert("obj.msgId", "obj.msgId content", 12, 0);
 
         source.push_str(
@@ -131,7 +131,15 @@ mod tests {
         "#,
         );
         source.push_str("\n");
-        insert("项目", "", 14, 19);
+        insert("项目", "", 15, 19);
+
+        // msg fn
+        source.push_str("msg('msg.Refresh inbox');\n");
+        insert("msg.Refresh inbox", "", 20, 0);
+
+        source
+            .push_str("msg({ id: 'msg.Refresh inbox2', message: 'msg.Refresh inbox message' });\n");
+        insert("msg.Refresh inbox2", "msg.Refresh inbox message", 21, 0);
 
         // 以下无法提取
         source.push_str("t(`error_${errorCode}`);\n"); // 提取不到

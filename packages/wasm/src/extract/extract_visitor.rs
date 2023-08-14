@@ -17,6 +17,7 @@ pub struct Config {
     pub message: String,
     pub trans_component: String,
     pub t_fn: String,
+    pub msg_fn: String,
 }
 
 impl Default for Config {
@@ -26,6 +27,7 @@ impl Default for Config {
             t_fn: "t".to_string(),
             id: "id".to_string(),
             message: "message".to_string(),
+            msg_fn: "msg".to_string(),
         }
     }
 }
@@ -106,12 +108,15 @@ impl VisitMut for ExtractVisitor {
     /// t({ id: "Refresh inbox" }, { name: "name" });
     /// t({ id: "Refresh inbox", values: { name: "name" }});
     /// t("Refresh inbox", { name: "name" });
+    /// msg("msg.Refresh inbox");
+    /// msg({ id: "msg.Refresh inbox", message: "msg.Refresh inbox message" });
     /// ```
     fn visit_mut_call_expr(&mut self, n: &mut CallExpr) {
         n.visit_mut_children_with(self);
         let mut work = || -> Option<()> {
             let ident = n.callee.as_expr()?.as_ident()?;
-            if ident.sym.to_string() != self.config.t_fn {
+            let ident = ident.sym.to_string();
+            if ident != self.config.t_fn && ident != self.config.msg_fn {
                 return None;
             }
             let arg = &n.args;
@@ -197,4 +202,6 @@ impl VisitMut for ExtractVisitor {
         };
         work();
     }
+
+    // case: msg`hello name`
 }

@@ -72,6 +72,7 @@ export class Numbro {
       deleteInvalidZero,
       deleteEndZero,
       NaNFormat,
+      absoluteValue,
       ...rest
     } = format;
     let num = this.bigNumber;
@@ -118,7 +119,8 @@ export class Numbro {
       }
     }
 
-    let outputFormat = num.toFormat(
+    // 在 currency format 中，需要使用绝对值来格式化
+    let outputFormat = (absoluteValue ? num.abs() : num).toFormat(
       mantissa as never,
       roundingMode as never,
       combinedFormat
@@ -140,6 +142,13 @@ export class Numbro {
     }
 
     return outputFormat;
+  }
+
+  private getPrefixSign(forceSign: boolean | undefined) {
+    if (forceSign === undefined) {
+      return "";
+    }
+    return this.bigNumber.isPositive() ? "+" : "-";
   }
   //#endregion
 
@@ -182,11 +191,18 @@ export class Numbro {
 
       ...rest
     } = format;
+    // 是否强制显示正负号
+    const sign = this.getPrefixSign(rest.forceSign);
+
     // TODO: 兼容之前的逻辑 后面会移除
-    if (currencySymbol) {
+    if (typeof currencySymbol !== "undefined") {
       symbol = currencySymbol;
     }
     let space = spaceSeparated ? " " : "";
+    // 在 currency format 中，需要使用绝对值来格式化
+    // 方便后续添加 正负号
+    rest.absoluteValue = true;
+    rest.forceSign = false;
     let formattedString = this.format(rest);
 
     //#region NaN 的 fallback
@@ -197,9 +213,9 @@ export class Numbro {
     //#endregion
 
     if (position === "prefix") {
-      return `${symbol}${space}${formattedString}`;
+      return `${sign}${symbol}${space}${formattedString}`;
     }
-    return `${formattedString}${space}${symbol}`;
+    return `${sign}${formattedString}${space}${symbol}`;
   }
   //#endregion
 

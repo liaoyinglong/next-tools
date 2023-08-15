@@ -357,6 +357,24 @@ describe("numbro", () => {
       expect(numbro(input).formatCurrency()).toEqual(output);
     });
     expect(numbro(null).formatCurrency()).toEqual("Rp0.00");
+
+    // FIXME: 兼容老的写法
+    expect(
+      numbro("1").formatCurrency({
+        currencySymbol: "$",
+      })
+    ).toEqual("$1.00");
+
+    expect(
+      numbro("1").formatCurrency({
+        forceSign: true,
+      })
+    ).toEqual("+Rp1.00");
+    expect(
+      numbro("-1").formatCurrency({
+        forceSign: true,
+      })
+    ).toEqual("-Rp1.00");
   });
 
   it("formatCurrency with builtin locale config", function () {

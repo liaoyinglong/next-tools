@@ -66,6 +66,11 @@ export interface Format extends BigNumber.Format {
    * 设置 false 时，为禁用该功能
    */
   NaNFormat?: string | false;
+
+  /**
+   * 是否显示绝对值
+   */
+  absoluteValue?: boolean;
 }
 
 export interface CurrencyFormat extends Format {

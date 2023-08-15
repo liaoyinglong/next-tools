@@ -364,17 +364,19 @@ describe("numbro", () => {
         currencySymbol: "$",
       })
     ).toEqual("$1.00");
-
-    expect(
-      numbro("1").formatCurrency({
-        forceSign: true,
-      })
-    ).toEqual("+Rp1.00");
-    expect(
-      numbro("-1").formatCurrency({
-        forceSign: true,
-      })
-    ).toEqual("-Rp1.00");
+    (
+      [
+        [0, "Rp0.00"],
+        [1, "+Rp1.00"],
+        [-1, "-Rp1.00"],
+      ] as const
+    ).forEach(([input, output]) => {
+      expect(
+        numbro(input).formatCurrency({
+          forceSign: true,
+        })
+      ).toEqual(output);
+    });
   });
 
   it("formatCurrency with builtin locale config", function () {

@@ -145,7 +145,11 @@ export class Numbro {
   }
 
   private getPrefixSign(forceSign: boolean | undefined) {
-    if (forceSign === undefined) {
+    if (
+      forceSign === undefined ||
+      this.bigNumber.isNaN() ||
+      this.bigNumber.eq(0)
+    ) {
       return "";
     }
     return this.bigNumber.isPositive() ? "+" : "-";

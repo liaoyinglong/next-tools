@@ -4,7 +4,10 @@ import {
   I18nProvider as I18nProviderRaw,
 } from "@lingui/react";
 import { useEffect } from "react";
-import { enableDetectLocale } from "./enableDetectLocale";
+import {
+  enableDetectLocale,
+  EnableDetectLocaleOptions,
+} from "./enableDetectLocale";
 
 /**
  * Translates a template string using the global I18n instance
@@ -57,9 +60,9 @@ i18n.on("change", () => {
   t = initT();
 });
 
-interface I18nProviderPropsCustom extends I18nProviderProps {
-  defaultLocale?: string;
-}
+interface I18nProviderPropsCustom
+  extends I18nProviderProps,
+    EnableDetectLocaleOptions {}
 
 /**
  * 这里封装好了 传递给 Lingui 的 i18n 实例
@@ -69,8 +72,16 @@ export const I18nProvider = (props: Partial<I18nProviderPropsCustom>) => {
   useEffect(() => {
     enableDetectLocale({
       defaultLocale: props.defaultLocale,
+      storageKey: props.storageKey,
+      queryKey: props.queryKey,
+      detectFromPath: props.detectFromPath,
     });
-  }, [props.defaultLocale]);
+  }, [
+    props.defaultLocale,
+    props.storageKey,
+    props.queryKey,
+    props.detectFromPath,
+  ]);
   return (
     <I18nProviderRaw i18n={props.i18n ?? i18n}>
       {props.children}

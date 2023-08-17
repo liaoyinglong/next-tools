@@ -1,14 +1,14 @@
 import { i18n } from "@lingui/core";
 import {
-  detect,
-  fromUrl,
-  fromStorage,
   fromNavigator,
+  fromPath,
+  fromStorage,
+  fromUrl,
 } from "@lingui/detect-locale";
-import { isServer, isBrowser } from "../shared";
+import { isBrowser, isServer } from "../shared";
 import { LocalesEnum } from "./enums";
 
-interface Options {
+export interface EnableDetectLocaleOptions {
   // 推导失败后的默认语言
   defaultLocale?: string;
   /**
@@ -22,6 +22,12 @@ interface Options {
    * @default lang
    */
   queryKey?: string;
+
+  /**
+   * 是否从 url 中获取语言 默认为 false
+   * 在后管系统中，一般不需要
+   */
+  detectFromPath?: boolean;
 }
 
 /**
@@ -32,9 +38,12 @@ interface Options {
  *
  * @tips 最好在 useEffect 中调用，否则可能会导致 ssr 时，html 和执行完成后的语言不一致
  */
-export function enableDetectLocale(options: Options = {}) {
-  const storageKey = options.storageKey ?? "dune-lang";
-  const queryKey = options.queryKey ?? "lang";
+export function enableDetectLocale(options: EnableDetectLocaleOptions = {}) {
+  const {
+    detectFromPath = false,
+    storageKey = "dune-lang",
+    queryKey = "lang",
+  } = options;
 
   if (isBrowser) {
     //#region 启用语言方法重写
@@ -63,16 +72,29 @@ export function enableDetectLocale(options: Options = {}) {
     }
     //#endregion
   }
-  options.defaultLocale ??= LocalesEnum.en;
-
-  let defaultLocale = isServer
+  // 判断 传过来的语言 是否可用
+  let defaultLocale = isAvailableLocale(options.defaultLocale)
     ? options.defaultLocale
-    : detect(fromStorage(storageKey), fromUrl(queryKey));
-  if (
-    !defaultLocale ||
-    !Object.values(LocalesEnum).includes(defaultLocale as never)
-  ) {
-    defaultLocale = options.defaultLocale;
+    : LocalesEnum.en;
+
+  if (!isServer) {
+    let arr = [
+      detectFromPath && fromPath(0, location),
+      fromStorage(storageKey),
+      fromUrl(queryKey),
+    ];
+    for (let i = 0; i < arr.length; i++) {
+      const locale = arr[i];
+      if (isAvailableLocale(locale)) {
+        defaultLocale = locale;
+        break;
+      }
+    }
   }
-  i18n.activate(defaultLocale);
+  i18n.activate(defaultLocale!);
+}
+
+// 判断是否可用的语言
+function isAvailableLocale(locale: unknown): locale is LocalesEnum {
+  return Object.values(LocalesEnum).includes(locale as never);
 }

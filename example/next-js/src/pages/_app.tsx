@@ -1,8 +1,8 @@
-import { I18nProvider, i18n, enableDetectLocale } from "@dune2/tools";
+import { I18nProvider, detectLocale, i18n } from "@dune2/tools";
 import "lingui-example/styles.css";
 import { AppProps } from "next/app";
 
-enableDetectLocale();
+detectLocale();
 
 export default function Page({ Component, pageProps }: AppProps) {
   return (

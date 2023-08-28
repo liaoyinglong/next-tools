@@ -8,7 +8,7 @@ import {
 import { isBrowser, isServer } from "../shared";
 import { LocalesEnum } from "./enums";
 
-export interface EnableDetectLocaleOptions {
+export interface DetectLocaleOptions {
   // 推导失败后的默认语言
   defaultLocale?: string;
   /**
@@ -38,7 +38,7 @@ export interface EnableDetectLocaleOptions {
  *
  * @tips 最好在 useEffect 中调用，否则可能会导致 ssr 时，html 和执行完成后的语言不一致
  */
-export function enableDetectLocale(options: EnableDetectLocaleOptions = {}) {
+export function detectLocale(options: DetectLocaleOptions = {}) {
   const {
     detectFromPath = false,
     storageKey = "dune-lang",
@@ -96,5 +96,6 @@ export function enableDetectLocale(options: EnableDetectLocaleOptions = {}) {
 
 // 判断是否可用的语言
 function isAvailableLocale(locale: unknown): locale is LocalesEnum {
-  return Object.values(LocalesEnum).includes(locale as never);
+  const locales = Array.isArray(i18n.locales) ? i18n.locales : [i18n.locales];
+  return locales.includes(locale as never);
 }

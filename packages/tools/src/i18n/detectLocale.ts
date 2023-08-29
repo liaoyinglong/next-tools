@@ -61,6 +61,8 @@ export function detectLocale(options: DetectLocaleOptions = {}) {
       const mappers = [
         ["id-", LocalesEnum.id],
         ["en-", LocalesEnum.en],
+        ["zh-", LocalesEnum.zh],
+        ["lt-", LocalesEnum.lt],
       ];
       for (let i = 0; i < mappers.length; i++) {
         const [prefix, locale] = mappers[i];

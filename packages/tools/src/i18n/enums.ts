@@ -6,4 +6,6 @@ export enum LocalesEnum {
   id = "id",
   // 英文
   en = "en",
+  // 立陶宛
+  lt = "lt",
 }

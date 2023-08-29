@@ -68,8 +68,9 @@ interface I18nProviderPropsCustom
  * 以及在组件挂载时自动开启语言检测
  */
 export const I18nProvider = (props: Partial<I18nProviderPropsCustom>) => {
+  const { enableDetectLocale = true } = props;
   useEffect(() => {
-    if (props.enableDetectLocale) {
+    if (enableDetectLocale) {
       detectLocale({
         defaultLocale: props.defaultLocale,
         storageKey: props.storageKey,
@@ -78,7 +79,7 @@ export const I18nProvider = (props: Partial<I18nProviderPropsCustom>) => {
       });
     }
   }, [
-    props.enableDetectLocale,
+    enableDetectLocale,
     props.defaultLocale,
     props.storageKey,
     props.queryKey,

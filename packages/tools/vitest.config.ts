@@ -4,4 +4,7 @@ export default defineConfig({
   test: {
     environment: "happy-dom",
   },
+  esbuild: {
+    jsx: "automatic",
+  },
 });

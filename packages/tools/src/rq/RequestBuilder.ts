@@ -15,6 +15,7 @@ import {
 
 import { AxiosRequestConfig, Method } from "axios";
 import { useDebugValue, useMemo } from "react";
+import { queryClient } from "./defaultQueryClient";
 
 // 外部可以重写这个类型
 export interface RequestBuilderMeta {}
@@ -70,8 +71,8 @@ export class RequestBuilder<Req = any, Res = any> {
     this.options.method ??= "get";
   }
   // 这是默认的 Query Client 实例
-  static queryClient: QueryClient | null = null;
-  static setQueryClient(queryClient: QueryClient) {
+  static queryClient: QueryClient | null = queryClient;
+  static setQueryClient(queryClient: QueryClient | null) {
     RequestBuilder.queryClient = queryClient;
   }
 

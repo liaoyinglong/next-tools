@@ -2,21 +2,44 @@ import type { ComponentProps, ComponentType, FC } from "react";
 import { forwardRef } from "react";
 
 /**
- * @example
- ```tsx
- const MappedCard2 = mapProps(Card, (p) => {
- return { ...p, className: "newClassName" };
- });
- ```
+ * ```js
+ * mapProps('div', { className: "newClassName" });
+ * ```
+ */
+export function mapProps<C extends keyof JSX.IntrinsicElements>(
+  BaseComponent: C,
+  mapper: JSX.IntrinsicElements[C]
+): FC<JSX.IntrinsicElements[C]>;
+/**
+ * ```js
+ * mapProps('div', p => ({ ...p, className: "newClassName" }));
+ * ```
  */
 export function mapProps<
   C extends keyof JSX.IntrinsicElements,
   P extends JSX.IntrinsicElements[C]
->(BaseComponent: C, mapper: P | ((p: P) => P)): FC<P>;
+>(BaseComponent: C, mapper: (p: P) => P): FC<P>;
+/**
+ * ```js
+ * mapProps(Card, { className: "newClassName" });
+ * ```
+ */
+export function mapProps<P>(
+  BaseComponent: ComponentType<P>,
+  mapper: Partial<P>
+): FC<P>;
+/**
+ * ```js
+ * mapProps(Card, p => ({ ...p, className: "newClassName" }));
+ * ```
+ */
 export function mapProps<
   C extends ComponentType<any>,
   P extends ComponentProps<C>
->(BaseComponent: C, mapper: P | ((p: P) => P)): FC<P>;
+>(BaseComponent: C, mapper: (p: P) => P): FC<P>;
+/**
+ * 给组件添加默认props 或者 重写props
+ */
 export function mapProps<C, P extends Record<any, any>>(
   BaseComponent: any,
   mapper: P | ((p: P) => P)

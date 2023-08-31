@@ -2,7 +2,6 @@ export * from "./factory/createStateContext";
 export * from "./factory/mapProps";
 export * from "./i18n";
 export * from "./numbro";
-export * from "./rq";
 export * from "./rq/RequestBuilder";
 export * from "./rq/defaultQueryClient";
 export * from "./storage";

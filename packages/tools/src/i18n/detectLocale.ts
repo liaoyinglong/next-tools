@@ -61,8 +61,8 @@ export function detectLocale(options: DetectLocaleOptions = {}) {
   if (!isServer) {
     let arr = [
       detectFromPath && fromPath(0, location),
-      fromStorage(storageKey),
       fromUrl(queryKey),
+      fromStorage(storageKey),
       fromNavigator(),
     ];
     for (let i = 0; i < arr.length; i++) {
@@ -74,6 +74,7 @@ export function detectLocale(options: DetectLocaleOptions = {}) {
     }
   }
   i18n.activate(defaultLocale!);
+  return defaultLocale;
 }
 
 // 判断是否可用的语言

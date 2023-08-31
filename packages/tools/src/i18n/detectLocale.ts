@@ -1,6 +1,6 @@
 import { i18n } from "@lingui/core";
 import {
-  fromNavigator,
+  fromNavigator as fromNavigatorBase,
   fromPath,
   fromStorage,
   fromUrl,
@@ -10,7 +10,7 @@ import { LocalesEnum } from "./enums";
 
 export interface DetectLocaleOptions {
   // 推导失败后的默认语言
-  defaultLocale?: string;
+  defaultLocale?: LocalesEnum;
   /**
    * 存储的 key
    * @default dune-lang
@@ -54,36 +54,16 @@ export function detectLocale(options: DetectLocaleOptions = {}) {
       oldActivateLocale.call(i18n, locale);
     };
     //#endregion
-
-    //#region 获取浏览器语言
-    if (!options.defaultLocale) {
-      const browserLocale = fromNavigator();
-      const mappers = [
-        ["id-", LocalesEnum.id],
-        ["en-", LocalesEnum.en],
-        ["zh-", LocalesEnum.zh],
-        ["lt-", LocalesEnum.lt],
-      ];
-      for (let i = 0; i < mappers.length; i++) {
-        const [prefix, locale] = mappers[i];
-        if (browserLocale.startsWith(prefix)) {
-          options.defaultLocale = locale;
-          break;
-        }
-      }
-    }
-    //#endregion
   }
   // 判断 传过来的语言 是否可用
-  let defaultLocale = isAvailableLocale(options.defaultLocale)
-    ? options.defaultLocale
-    : LocalesEnum.en;
+  let defaultLocale = options.defaultLocale;
 
   if (!isServer) {
     let arr = [
       detectFromPath && fromPath(0, location),
       fromStorage(storageKey),
       fromUrl(queryKey),
+      fromNavigator(),
     ];
     for (let i = 0; i < arr.length; i++) {
       const locale = arr[i];
@@ -98,6 +78,23 @@ export function detectLocale(options: DetectLocaleOptions = {}) {
 
 // 判断是否可用的语言
 function isAvailableLocale(locale: unknown): locale is LocalesEnum {
-  const locales = Array.isArray(i18n.locales) ? i18n.locales : [i18n.locales];
+  // @ts-expect-error 这是一个私有属性
+  const locales = Object.keys(i18n._messages);
   return locales.includes(locale as never);
+}
+
+function fromNavigator() {
+  const browserLocale = fromNavigatorBase();
+  const mappers = [
+    ["id-", LocalesEnum.id],
+    ["en-", LocalesEnum.en],
+    ["zh-", LocalesEnum.zh],
+    ["lt-", LocalesEnum.lt],
+  ];
+  for (let i = 0; i < mappers.length; i++) {
+    const [prefix, locale] = mappers[i];
+    if (browserLocale.startsWith(prefix)) {
+      return locale;
+    }
+  }
 }

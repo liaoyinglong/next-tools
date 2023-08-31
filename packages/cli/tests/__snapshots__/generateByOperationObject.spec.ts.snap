@@ -200,12 +200,12 @@ import { RequestBuilder } from '@dune2/tools';
   * @tags 后台用户管理相关接口
   * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/后台用户管理相关接口/queryUserById
   */
-export const apiV1UsersGetApi = new RequestBuilder<apiV1UsersGetApi.Req, apiV1UsersGetApi.Res>({
+export const usersGetApi = new RequestBuilder<usersGetApi.Req, usersGetApi.Res>({
   url: '/api/v1/users',
   method: 'get',
 });
 
-export namespace apiV1UsersGetApi {
+export namespace usersGetApi {
  export interface Req {
   /**
    * 用户id

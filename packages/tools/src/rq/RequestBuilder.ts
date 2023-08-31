@@ -70,6 +70,14 @@ export class RequestBuilder<Req = any, Res = any> {
     this.requestWithConfig = this.requestWithConfig.bind(this);
     this.options.method ??= "get";
   }
+
+  //#region default requestFn
+  static requestFn: Basic["requestFn"] | null = null;
+  static setRequestFn(requestFn: Basic["requestFn"] | null) {
+    RequestBuilder.requestFn = requestFn;
+  }
+  //#endregion
+
   // 这是默认的 Query Client 实例
   static queryClient: QueryClient | null = queryClient;
   static setQueryClient(queryClient: QueryClient | null) {
@@ -131,7 +139,8 @@ export class RequestBuilder<Req = any, Res = any> {
     let { url } = this.options;
     // 优先使用传入的 requestFn
     // 其次使用实例化时候的 requestFn
-    let requestFn = config.requestFn ?? this.options.requestFn;
+    let requestFn =
+      config.requestFn ?? this.options.requestFn ?? RequestBuilder.requestFn;
     if (!requestFn) {
       throw new Error("request function is not defined");
     }

@@ -151,6 +151,8 @@ export interface ApiConfig {
    * 字符串会被当成prefix, 会在url前面加上
    *
    * 函数会被当成转换器
+   *
+   * @tips 不会影响文件名，只会影响生成的代码里的url字段
    */
   urlTransformer?: string | ((url: string) => string);
 }

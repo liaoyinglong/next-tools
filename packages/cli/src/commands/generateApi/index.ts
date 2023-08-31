@@ -1,15 +1,15 @@
+import SwaggerParser from "@apidevtools/swagger-parser";
+import fs from "fs-extra";
+import { compile } from "json-schema-to-typescript";
 import _ from "lodash";
 import { OpenAPIV3 } from "openapi-types";
-import pMap from "p-map";
-import { createLogger } from "../../shared";
-import { getConfig, ApiConfig } from "../../shared/config";
-import fs from "fs-extra";
 import * as os from "os";
-import SwaggerParser from "@apidevtools/swagger-parser";
-import { compile } from "json-schema-to-typescript";
+import pMap from "p-map";
 import path from "path";
-import { promptApiConfigEnable } from "../../shared/promptConfigEnable";
+import { createLogger } from "../../shared";
+import { ApiConfig, getConfig } from "../../shared/config";
 import { formatFile } from "../../shared/formatFile";
+import { promptApiConfigEnable } from "../../shared/promptConfigEnable";
 
 const log = createLogger("generateApi");
 
@@ -92,7 +92,8 @@ export async function generateApiRequestCode(options: {
       }`
     : "";
 
-  let requestBuilderName = _.camelCase(`${url}_${method}_api`);
+  // 生成的请求构造器的名称，需要使用原始url
+  let requestBuilderName = _.camelCase(`${options.url}_${method}_api`);
 
   // 判断是否有效的js变量
   if (!/^[a-zA-Z_$][0-9a-zA-Z_$]*$/.test(requestBuilderName)) {

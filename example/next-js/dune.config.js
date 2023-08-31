@@ -53,6 +53,7 @@ module.exports = defineConfig({
       swaggerUiUrl:
         "https://test-kiwi-user-api.cyra.exchange/swagger/?urls.primaryName=service-spot-order",
       output: "apis2",
+      urlTransformer: "/v1/order",
     },
   ],
 });

@@ -36,8 +36,9 @@ export function mapProps<
  */
 export function mapProps<
   C extends ComponentType<any>,
-  P extends ComponentProps<C>
->(BaseComponent: C, mapper: (p: P) => P): FC<P>;
+  RawP extends ComponentProps<C>,
+  ExtP extends Partial<RawP>
+>(BaseComponent: C, mapper: (p: ExtP) => ExtP): Comp<RawP, ExtP>;
 /**
  * 给组件添加默认props 或者 重写props
  */

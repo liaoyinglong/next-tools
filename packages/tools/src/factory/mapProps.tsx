@@ -1,5 +1,6 @@
-import type { ComponentProps, ComponentType, FC } from "react";
+import type { ComponentProps, ComponentType, FC, JSX } from "react";
 import { forwardRef } from "react";
+import { OptionalKeys } from "../shared/OptionalKeys";
 
 /**
  * ```js
@@ -24,10 +25,10 @@ export function mapProps<
  * mapProps(Card, { className: "newClassName" });
  * ```
  */
-export function mapProps<P>(
-  BaseComponent: ComponentType<P>,
-  mapper: Partial<P>
-): FC<P>;
+export function mapProps<
+  RawP extends object,
+  ExtP extends Partial<RawP> = Partial<RawP>
+>(BaseComponent: ComponentType<RawP>, mapper: ExtP): Comp<RawP, ExtP>;
 /**
  * ```js
  * mapProps(Card, p => ({ ...p, className: "newClassName" }));
@@ -66,3 +67,15 @@ function getDisplayName(Component: ComponentType<any>): string {
     ? Component
     : Component.displayName || Component.name || "Unknown";
 }
+
+// type helper
+
+type CombinedProps<
+  A extends object,
+  B extends object,
+  Keys extends keyof A = OptionalKeys<A, B>
+> = Omit<A, Keys> & {
+  [K in Keys]?: A[K];
+};
+
+type Comp<A extends object, B extends object> = FC<CombinedProps<A, B>>;

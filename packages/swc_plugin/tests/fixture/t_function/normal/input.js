@@ -34,6 +34,7 @@ function a() {
 // as type 
 var obj = [{
   title: t`项目` as string,
+  title2: `${t`用户总共手续费`}(%)`,
   dataIndex: 'label',
   width: 200,
 }];

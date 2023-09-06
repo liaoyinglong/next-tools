@@ -196,4 +196,11 @@ impl VisitMut for TFunctionVisitor {
             self.handle_expr(&mut *value);
         }
     }
+    // case: `${t`用户总共手续费`}(%)`
+    fn visit_mut_tpl(&mut self, n: &mut Tpl) {
+        n.visit_mut_children_with(self);
+        for expr in n.exprs.iter_mut() {
+            self.handle_expr(&mut *expr);
+        }
+    }
 }

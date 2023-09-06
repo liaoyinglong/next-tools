@@ -72,9 +72,9 @@ console.log(t("hello {name}", {
 new VerifyPlaceOrderParamError(t("hello {name}", {
     name: name
 }));
-const { node =t("hello {name}", {
+const { node = t("hello {name}", {
     name: name
-})  } = props;
+}) } = props;
 // return statement
 function a() {
     return t("hello {name}", {
@@ -85,6 +85,7 @@ function a() {
 var obj = [
     {
         title: t("项目") as string,
+        title2: `${t("用户总共手续费")}(%)`,
         dataIndex: 'label',
         width: 200
     }

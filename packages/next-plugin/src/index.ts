@@ -1,12 +1,13 @@
-import { Options as AutoImportOptions } from "unplugin-auto-import/types";
-import { i18nResourcePlugin } from "@dune2/unplugin/dist/i18nResource";
 import { PreBuildDepsPluginOptions } from "@dune2/unplugin/dist/PreBuildDeps";
+import { i18nResourcePlugin } from "@dune2/unplugin/dist/i18nResource";
 import { NextConfig } from "next";
+import { WebpackConfigContext } from "next/dist/server/config-shared";
+import { Options as AutoImportOptions } from "unplugin-auto-import/types";
 import {
   autoImportPlugin,
   defaultAutoImports,
-  defaultTranspileModules,
   defaultSwcPluginPath,
+  defaultTranspileModules,
 } from "./shared";
 
 import { BeforeSwcLoaderOptions } from "./beforeSwcLoader";
@@ -15,6 +16,9 @@ export * from "./shared";
 
 export interface DunePresetsOptions {
   autoImport?: AutoImportOptions;
+  /**
+   * 目前只会在 dev 环境下生效
+   */
   preBuildDeps?: PreBuildDepsPluginOptions;
 
   swcPluginOptions?: {
@@ -65,7 +69,7 @@ export const withDunePresets = (options: DunePresetsOptions = {}) => {
 
     const combinedConfig = {
       ...nextConfig,
-      webpack: (config, webpackFnOptions) => {
+      webpack: (config, webpackFnOptions: WebpackConfigContext) => {
         config.plugins.unshift(
           autoImportPlugin({
             ...options.autoImport,
@@ -75,7 +79,7 @@ export const withDunePresets = (options: DunePresetsOptions = {}) => {
           }),
           i18nResourcePlugin.webpack()
         );
-        if (options.preBuildDeps) {
+        if (options.preBuildDeps && webpackFnOptions.dev) {
           const {
             preBuildDepsPlugin,
           } = require("@dune2/unplugin/dist/PreBuildDeps");

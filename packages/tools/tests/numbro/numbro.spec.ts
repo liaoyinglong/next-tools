@@ -487,4 +487,9 @@ describe("numbro", () => {
       })
     ).toEqual("Rp0.00");
   });
+
+  it("valueOf correct", () => {
+    expect(numbro(NaN).valueOf()).toEqual(0);
+    expect(numbro(1).valueOf()).toEqual(1);
+  });
 });

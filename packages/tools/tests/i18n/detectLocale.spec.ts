@@ -7,6 +7,7 @@ i18n.load({
   [LocalesEnum.en]: {},
   [LocalesEnum.id]: {},
 });
+const storageKey = "lang";
 
 function updateLocation(pathname: string, query: Record<string, any> = {}) {
   localStorage.clear();
@@ -24,24 +25,32 @@ afterEach(() => {
 
 describe("detectLocale", () => {
   it("should work with path", () => {
+    // 即使 localStorage 有值，也不会使用 , localStorage 优先级不够
+    localStorage.setItem(storageKey, "en");
     updateLocation("/zh/abc");
     expect(detectLocale({ detectFromPath: true })).toBe("zh");
 
+    // 即使 localStorage 有值，也不会使用 , localStorage 优先级不够
+    localStorage.setItem(storageKey, "zh");
     updateLocation("/en/abc");
     expect(detectLocale({ detectFromPath: true })).toBe("en");
   });
 
   it("should work with query", () => {
     const queryKey = "lang2";
+
+    // 即使 localStorage 有值，也不会使用 , localStorage 优先级不够
+    localStorage.setItem(storageKey, "en");
     updateLocation("/", { [queryKey]: "zh" });
     expect(detectLocale({ queryKey })).toBe("zh");
 
+    // 即使 localStorage 有值，也不会使用 , localStorage 优先级不够
+    localStorage.setItem(storageKey, "zh");
     updateLocation("/", { [queryKey]: "en" });
     expect(detectLocale({ queryKey })).toBe("en");
   });
 
   it("should work with storage", () => {
-    const storageKey = "lang";
     localStorage.setItem(storageKey, "zh");
     expect(detectLocale({ storageKey })).toBe("zh");
     localStorage.setItem(storageKey, "en");

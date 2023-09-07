@@ -52,7 +52,6 @@
     "picocolors": "^1.0.0"
   },
   "devDependencies": {
-    "@dune2/swc-visitor": "workspace:*",
     "@types/debug": "^4.1.7",
     "@types/lodash": "^4.14.186",
     "gaxios": "*",

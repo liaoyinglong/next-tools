@@ -20,6 +20,9 @@
     "test": "vitest run",
     "test:u": "vitest -u"
   },
+  "devDependencies": {
+    "@dune2/swc-visitor": "workspace:*"
+  },
   "publishConfig": {
     "access": "public"
   }

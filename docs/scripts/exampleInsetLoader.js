@@ -41,14 +41,15 @@ const exampleInsetLoader = async function (content) {
     );
     const newContent = replaceWithExample(content, (match, p1) => {
       const files = filesMap[match];
-      return `import { LiveCode } from "@/components/LiveCode";
+      return `# Example
+
+import { LiveCode } from "@/components/LiveCode";
 
 <LiveCode
   files={${JSON.stringify(files)}}
-/>
-  `;
+/>`;
     });
-    console.log(`newContent`, newContent);
+    log(`newContent`, newContent);
     callback(null, newContent);
   } catch (e) {
     console.error("exampleInsetLoader error, fall back to default");

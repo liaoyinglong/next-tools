@@ -35,6 +35,7 @@ importers:
   docs:
     specifiers:
       '@codesandbox/sandpack-react': ^2.6.9
+      '@dune2/tools': workspace:*
       '@types/node': 18.7.18
       '@types/react': ^18
       '@types/react-dom': 18.0.6
@@ -46,6 +47,7 @@ importers:
       react-dom: 18.2.0
     dependencies:
       '@codesandbox/sandpack-react': 2.6.9_biqbaboplfbrettd7655fr4n2y
+      '@dune2/tools': link:../packages/tools
       dedent: 1.5.1
       next: 13.4.19_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0

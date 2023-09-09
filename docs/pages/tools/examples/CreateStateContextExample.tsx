@@ -1,4 +1,4 @@
-import { Sandpack } from "@codesandbox/sandpack-react";
+import { LiveCode } from "../../../components/LiveCode";
 
 export function CreateStateContextExample() {
   // language=JSX
@@ -9,9 +9,7 @@ export function CreateStateContextExample() {
 }`;
 
   return (
-    <Sandpack
-      template={"react"}
-      theme={"auto"}
+    <LiveCode
       files={{
         "/App.js": app,
       }}

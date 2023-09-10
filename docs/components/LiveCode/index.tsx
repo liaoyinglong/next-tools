@@ -1,5 +1,12 @@
-import { Sandpack } from "@codesandbox/sandpack-react";
 import { mapProps } from "@dune2/tools";
+import dynamic from "next/dynamic";
+
+const Sandpack = dynamic(
+  () => import("@codesandbox/sandpack-react").then((r) => r.Sandpack),
+  {
+    ssr: false,
+  }
+);
 
 export const LiveCode = mapProps(Sandpack, {
   theme: "auto",
@@ -12,6 +19,7 @@ export const LiveCode = mapProps(Sandpack, {
   customSetup: {
     dependencies: {
       "@dune2/tools": "latest",
+      "@tanstack/react-query": "^4.29.7",
     },
   },
 });

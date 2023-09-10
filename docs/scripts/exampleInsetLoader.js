@@ -25,18 +25,18 @@ const exampleInsetLoader = async function (content) {
         log("examplePath", examplePath);
 
         const fileNames = await fs.readdir(examplePath);
+        const files = {};
 
         await Promise.all(
           fileNames.map(async (file) => {
-            const files = {};
             const s = await fs.readFile(
               path.resolve(examplePath, file),
               "utf-8"
             );
             files[`/${file}`] = s;
-            filesMap[match] = files;
           })
         );
+        filesMap[match] = files;
       })
     );
     const newContent = replaceWithExample(content, (match, p1) => {
@@ -46,7 +46,7 @@ const exampleInsetLoader = async function (content) {
 import { LiveCode } from "@/components/LiveCode";
 
 <LiveCode
-  files={${JSON.stringify(files)}}
+  files={${JSON.stringify(files, null, 2)}}
 />`;
     });
     log(`newContent`, newContent);

@@ -1,6 +1,6 @@
 import { mapProps } from "@dune2/tools/src/factory/mapProps";
 
-export const MappedDiv = mapProps("div", {
+export const MappedDiv1 = mapProps("div", {
   style: {
     color: "red",
   },

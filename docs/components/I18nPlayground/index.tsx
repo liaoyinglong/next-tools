@@ -1,9 +1,15 @@
 import { loadWasm } from "@/shared/wasm-pkg";
 import { Extracted } from "@dune2/wasm";
 
+import styled from "@emotion/styled";
 import Editor from "@monaco-editor/react";
 import { useMDXComponents } from "nextra/mdx";
 import { useEffect, useState } from "react";
+
+const Item = styled.div`
+  display: grid;
+  grid-row-gap: 12px;
+`;
 
 export function I18nPlayground() {
   const components = useMDXComponents();
@@ -58,9 +64,6 @@ export function I18nPlayground() {
       const wasm = await loadWasm();
       try {
         const code = wasm.transformSync(inputtedCode);
-        console.log({
-          code,
-        });
         setTransformed(code);
       } catch (e) {
         setTransformed("");
@@ -73,34 +76,40 @@ export function I18nPlayground() {
   }, [inputtedCode]);
 
   return (
-    <div>
-      <Title>输入代码</Title>
-      <Editor
-        width="100%"
-        height="400px"
-        language="javascript"
-        theme={"vs-dark"}
-        defaultValue={inputtedCode}
-        onChange={(value) => setInputtedCode(value || "")}
-      />
+    <>
+      <Item>
+        <Title>输入代码</Title>
+        <Editor
+          width="100%"
+          height="400px"
+          language="javascript"
+          theme={"vs-dark"}
+          defaultValue={inputtedCode}
+          onChange={(value) => setInputtedCode(value || "")}
+        />
+      </Item>
 
-      <Title>编译后的代码</Title>
-      <Editor
-        width="100%"
-        height="400px"
-        language="javascript"
-        theme={"vs-dark"}
-        value={transformed}
-      />
+      <Item>
+        <Title>编译后的代码</Title>
+        <Editor
+          width="100%"
+          height="400px"
+          language="javascript"
+          theme={"vs-dark"}
+          value={transformed}
+        />
+      </Item>
 
-      <Title>提取到的文案</Title>
-      <Editor
-        width="100%"
-        height="300px"
-        language="json"
-        theme={"vs-dark"}
-        value={JSON.stringify(extracted.data, null, 2)}
-      />
-    </div>
+      <Item>
+        <Title>提取到的文案</Title>
+        <Editor
+          width="100%"
+          height="300px"
+          language="json"
+          theme={"vs-dark"}
+          value={JSON.stringify(extracted.data, null, 2)}
+        />
+      </Item>
+    </>
   );
 }

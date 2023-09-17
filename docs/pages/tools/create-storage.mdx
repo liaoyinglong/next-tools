@@ -1,0 +1,35 @@
+# createStorage
+
+一个用于创建和管理本地存储（localStorage 或 sessionStorage）的工具。
+
+类型定义
+
+- CreateStorageConfig: 创建存储的配置对象，包含以下属性：
+
+  - DataMap: 用于生成存储映射的构造函数。
+  - namespace: 命名空间，会在存储的 key 前面加上命名空间。
+  - storageType: 存储类型，可以是 "local"（对应 localStorage）或 "session"（对应 sessionStorage），默认为 "local"。
+
+## Example
+
+```ts
+class DataMap {
+  token = "";
+  age: number | undefined = undefined;
+}
+const storage = createStorage({
+  DataMap,
+  namespace: "myApp",
+});
+
+// 获取存储项
+const token = storage.token.get();
+// 设置存储项
+storage.token.set("new_token");
+// 删除存储项
+storage.token.remove();
+// 获取存储项的默认值
+storage.token.defaultValue;
+// 获取储存项的key
+storage.token.key;
+```

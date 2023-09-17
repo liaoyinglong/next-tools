@@ -8,8 +8,10 @@ use wasm_bindgen_futures::future_to_promise;
 mod auto_namespace;
 mod extract;
 mod setup_handler;
+mod transform;
 
 use crate::extract::ExtractOptions;
+use crate::transform::transform;
 
 fn convert_err(err: Error) -> JsValue {
     format!("{:?}", err).into()
@@ -53,3 +55,10 @@ pub fn auto_namespace(source: JsString, namespace: JsString) -> js_sys::Promise 
 }
 
 //#endregion
+#[wasm_bindgen(js_name = "transformSync")]
+pub fn transform_sync(source: JsString) -> Result<JsValue, JsValue> {
+    console_error_panic_hook::set_once();
+    let res = transform(source.into()).map_err(convert_err)?;
+    Ok(res.into())
+}
+//#region format

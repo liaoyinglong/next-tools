@@ -1,0 +1,44 @@
+# mapProps
+
+提供了一个名为 mapProps 的函数，该函数用于映射和修改 React 组件的 props。
+
+## 函数签名
+
+mapProps 函数有多个重载，可以接受不同类型的参数：
+
+1. 当第一个参数为 JSX 元素的键名时，第二个参数可以是一个对象或者一个函数，返回一个函数组件：
+
+```tsx
+function mapProps<C extends keyof JSX.IntrinsicElements>(
+  BaseComponent: C,
+  mapper: JSX.IntrinsicElements[C]
+): FC<JSX.IntrinsicElements[C]>;
+
+function mapProps<
+  C extends keyof JSX.IntrinsicElements,
+  P extends JSX.IntrinsicElements[C]
+>(BaseComponent: C, mapper: (p: P) => P): FC<P>;
+```
+
+2. 当第一个参数为一个 React 组件时，第二个参数可以是一个对象或者一个函数，返回一个函数组件：
+
+```tsx
+function mapProps<
+  RawP extends object,
+  ExtP extends Partial<RawP> = Partial<RawP>
+>(BaseComponent: ComponentType<RawP>, mapper: ExtP): Comp<RawP, ExtP>;
+
+function mapProps<
+  C extends ComponentType<any>,
+  RawP extends ComponentProps<C>,
+  ExtP extends Partial<RawP>
+>(BaseComponent: C, mapper: (p: ExtP) => ExtP): Comp<RawP, ExtP>;
+```
+
+<emaple-inset>./examples/mapProps</emaple-inset>
+
+## 注意事项
+
+- mapProps 函数不会修改原始组件，而是创建一个新的组件。
+- 如果映射函数或对象中的 props 与原始组件的 props 有冲突，那么映射函数或对象中的 props 会覆盖原始组件的 props。
+- 映射函数会接收到原始组件的 props 作为参数，可以根据这些 props 动态生成新的 props。

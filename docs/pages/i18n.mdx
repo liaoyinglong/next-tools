@@ -1,0 +1,24 @@
+# i18n
+
+import { I18nPlayground } from "../components/I18nPlayground";
+
+分为以下几个模块：
+
+## 运行时
+
+从 `@dune2/tools` 导入
+
+- 通过 `useT` `i18n` `t` 等实现 `t` 函数的调用
+- 通过 `Trans` 组件调用
+
+## 编译时
+
+对 `t` `Trans` 等做编译
+
+## `cli`提取代码中使用的文案
+
+对代码中出现的`t` `Trans` 等调用抽取其中的文案，生成 `json` 文件
+
+# playground
+
+<I18nPlayground></I18nPlayground>

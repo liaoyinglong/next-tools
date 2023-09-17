@@ -1,0 +1,19 @@
+# createStateContext
+
+createStateContext 是一个工具函数，用于在 React 中创建 Context 和 Provider。
+
+它接收一个参数，包含以下部分：
+
+- useValueHooks：这是一个函数，返回我们想要在 Context 中共享的值。
+- defaultValue：这是当 useValueHooks 未提供时，Context 的默认值。
+
+这个函数返回一个对象，包含以下四个部分：
+
+- useContextValue：一个 hook，用于在组件中获取 Context 的值。
+- Provider：一个 React 组件，用于在应用中提供 Context。
+- withProvider：一个高阶函数，用于将 Provider 包裹到指定的组件上。
+- Context：创建的 React Context 对象。
+
+这个工具函数的主要作用是简化 Context 和 Provider 的创建过程，使得在 React 应用中共享状态变得更加方便。
+
+<emaple-inset>./examples/createStateContext</emaple-inset>

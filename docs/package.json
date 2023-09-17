@@ -15,12 +15,12 @@
     "@codesandbox/sandpack-react": "^2.6.9",
     "@dune2/tools": "workspace:*",
     "@radix-ui/themes": "^1.1.2",
-    "dedent": "^1.5.1",
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
+    "@dune2/wasm": "workspace:*",
     "@types/node": "18.7.18",
     "@types/react": "^18",
     "@types/react-dom": "18.0.6",

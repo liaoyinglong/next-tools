@@ -2,7 +2,6 @@ import { loadWasm } from "@/shared/wasm-pkg";
 import { Extracted } from "@dune2/wasm";
 
 import Editor from "@monaco-editor/react";
-import { Pre } from "nextra/components";
 import { useMDXComponents } from "nextra/mdx";
 import { useEffect, useState } from "react";
 
@@ -21,6 +20,7 @@ export function I18nPlayground() {
       "// Trans 调用",
       "<Trans>trans.hello</Trans>;",
       "<Trans>trans.hello {name}</Trans>;",
+      "<Trans>trans.hello <h1>{name}</h1></Trans>;",
     ].join("\n");
   });
 
@@ -28,6 +28,8 @@ export function I18nPlayground() {
     data: {},
     errMsg: "",
   });
+
+  const [transformed, setTransformed] = useState("");
 
   useEffect(() => {
     const extract = async () => {
@@ -55,8 +57,13 @@ export function I18nPlayground() {
     const transform = async () => {
       const wasm = await loadWasm();
       try {
-        //   TODO: not implemented
+        const code = wasm.transformSync(inputtedCode);
+        console.log({
+          code,
+        });
+        setTransformed(code);
       } catch (e) {
+        setTransformed("");
         console.log(`transform error: `, e);
       }
     };
@@ -78,10 +85,13 @@ export function I18nPlayground() {
       />
 
       <Title>编译后的代码</Title>
-      <Pre
-        data-language={"ts"}
-        hasCopyCode
-      >{`import { useIntl } from 'react-intl';`}</Pre>
+      <Editor
+        width="100%"
+        height="400px"
+        language="javascript"
+        theme={"vs-dark"}
+        value={transformed}
+      />
 
       <Title>提取到的文案</Title>
       <Editor
@@ -90,7 +100,6 @@ export function I18nPlayground() {
         language="json"
         theme={"vs-dark"}
         value={JSON.stringify(extracted.data, null, 2)}
-        // value={extracted.errMsg}
       />
     </div>
   );

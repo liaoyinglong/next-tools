@@ -1,7 +1,8 @@
 import { loadWasm } from "@/shared/wasm-pkg";
 import { Extracted } from "@dune2/wasm";
-import { TextArea } from "@radix-ui/themes";
-import { Code as NextraCode, Pre } from "nextra/components";
+
+import Editor from "@monaco-editor/react";
+import { Pre } from "nextra/components";
 import { useMDXComponents } from "nextra/mdx";
 import { useEffect, useState } from "react";
 
@@ -10,8 +11,8 @@ export function I18nPlayground() {
   const Title = components.h3;
 
   const [inputtedCode, setInputtedCode] = useState(() => {
-    // `t(ddd);`,
     return [
+      `t(ddd);`,
       "// t fn 调用",
       "t`tag.hello`;",
       "t`tag.hello ${name}`;",
@@ -37,30 +38,43 @@ export function I18nPlayground() {
           "/test.tsx"
         );
         const data = {};
-        extracted.data.forEach((v, k) => {
+        const keys = [...extracted.data.keys()].sort();
+        keys.forEach((k) => {
+          const v = extracted.data.get(k);
           data[k] = v.messages || v.id;
         });
         setExtracted({
           errMsg: extracted.errMsg,
           data,
         });
-      } catch (e) {}
+      } catch (e) {
+        console.log(`extract error: `, e);
+      }
+    };
+
+    const transform = async () => {
+      const wasm = await loadWasm();
+      try {
+        //   TODO: not implemented
+      } catch (e) {
+        console.log(`transform error: `, e);
+      }
     };
 
     extract();
+    transform();
   }, [inputtedCode]);
 
   return (
     <div>
       <Title>输入代码</Title>
-      <TextArea
-        mt={"4"}
-        size={"3"}
-        value={inputtedCode}
-        rows={10}
-        onChange={(e) => {
-          setInputtedCode(e.target.value);
-        }}
+      <Editor
+        width="100%"
+        height="400px"
+        language="javascript"
+        theme={"vs-dark"}
+        defaultValue={inputtedCode}
+        onChange={(value) => setInputtedCode(value || "")}
       />
 
       <Title>编译后的代码</Title>
@@ -69,45 +83,15 @@ export function I18nPlayground() {
         hasCopyCode
       >{`import { useIntl } from 'react-intl';`}</Pre>
 
-      <Pre data-language={"ts"}>{`import { useIntl } from 'react-intl';`}</Pre>
-
       <Title>提取到的文案</Title>
-      <Code>{extracted.data}</Code>
+      <Editor
+        width="100%"
+        height="300px"
+        language="json"
+        theme={"vs-dark"}
+        value={JSON.stringify(extracted.data, null, 2)}
+        // value={extracted.errMsg}
+      />
     </div>
   );
 }
-
-interface CodeProps {
-  children: string | Record<any, any> | any[];
-  language?: "ansi" | "json";
-}
-const Code = (props: CodeProps) => {
-  const arr = (() => {
-    try {
-      const str =
-        typeof props.children === "string"
-          ? props.children
-          : JSON.stringify(props.children, null, 2);
-      return str.split("\n");
-    } catch (e) {
-      console.log(`解析 code children 失败：`, e);
-      return null;
-    }
-  })();
-
-  return (
-    <Pre data-language={props.language ?? "json"} hasCopyCode>
-      <NextraCode>
-        {arr
-          ? arr.map((v) => {
-              return (
-                <span className={"line"} key={v}>
-                  {v}
-                </span>
-              );
-            })
-          : `ERROR: 解析失败，打开控制台查看报错`}
-      </NextraCode>
-    </Pre>
-  );
-};

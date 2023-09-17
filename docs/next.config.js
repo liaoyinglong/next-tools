@@ -6,9 +6,20 @@ const withNextra = require("nextra")({
 
 module.exports = withNextra({
   transpilePackages: ["@dune2/tools"],
+  output: "export",
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   compiler: {
     emotion: true,
   },
+  images: {
+    unoptimized: true,
+  },
+  pageExtensions: ["mdx", "md", "page.tsx"],
   webpack: (config) => {
     config.module.rules.forEach((rule) => {
       if (rule.test?.test(".mdx")) {

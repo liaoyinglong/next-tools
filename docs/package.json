@@ -3,7 +3,8 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "build": "pnpm run build:wasm && next build",
+    "build": "pnpm build:wasm && pnpm build:next",
+    "build:next": "next build",
     "build:wasm": "node scripts/buildWasm.mjs",
     "dev": "next dev",
     "lint": "next lint",

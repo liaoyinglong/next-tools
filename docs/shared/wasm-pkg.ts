@@ -1,7 +1,11 @@
-import * as wasm from "@/shared/wasm-pkg/s_wasm";
-const initPromise = wasm.default();
+// fix ssg
+const initPromise = process.browser
+  ? import("@/shared/wasm-pkg/s_wasm").then((wasm) => {
+      return wasm.default();
+    })
+  : Promise.resolve();
 
 export const loadWasm = async () => {
   await initPromise;
-  return wasm;
+  return await import("@/shared/wasm-pkg/s_wasm");
 };

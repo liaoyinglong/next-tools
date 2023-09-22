@@ -1,4 +1,3 @@
-import { i18n } from "@lingui/core";
 import {
   fromNavigator as fromNavigatorBase,
   fromPath,
@@ -7,6 +6,7 @@ import {
 } from "@lingui/detect-locale";
 import { isBrowser, isServer } from "../shared";
 import { LocalesEnum } from "./enums";
+import { i18n } from "./i18n";
 
 export interface DetectLocaleOptions {
   // 推导失败后的默认语言
@@ -48,10 +48,15 @@ export function detectLocale(options: DetectLocaleOptions = {}) {
   if (isBrowser) {
     //#region 启用语言方法重写
     const oldActivateLocale = i18n.activate;
-    i18n.activate = (locale) => {
-      // sync to localStorage
-      localStorage.setItem(storageKey, locale);
-      oldActivateLocale.call(i18n, locale);
+
+    // 重写方法，添加了第三个参数
+    i18n.activate = (locale, locales, opts = {}) => {
+      const { syncToStorage = true } = opts;
+      if (syncToStorage) {
+        // sync to localStorage
+        localStorage.setItem(storageKey, locale);
+      }
+      oldActivateLocale.call(i18n, locale, locales);
     };
     //#endregion
   }

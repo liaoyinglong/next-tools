@@ -34,23 +34,28 @@ interface TFunction {
    * 翻译后端错误信息
    *
    * 传入错误码，会补齐 `error_` 前缀
-   * 传入 function，会调用 function 返回的字符串去翻译
+   * 传入对象，会使用对象的 code 字段去翻译, 如果没有对应的文案，则使用 message 字段返回
    */
-  displayError: (errorCode: number | string | (() => string)) => string;
+  displayError: (
+    arg: number | string | { code?: string | number; message?: string | number }
+  ) => string;
 }
 
 function initT() {
-  let r = i18n._.bind(i18n) as unknown as TFunction;
-  r.ignoreExtract = r;
-  r.displayError = (key) => {
-    if (typeof key === "function") {
-      key = key();
-    } else {
-      key = `error_${key}`;
+  let t = i18n._.bind(i18n) as unknown as TFunction;
+  t.ignoreExtract = t;
+  t.displayError = (arg) => {
+    let normalizedArg = typeof arg === "object" ? arg : { code: arg };
+
+    let key = `error_${normalizedArg.code}`;
+    const translated = t(key);
+    // 如果没有对应的文案，则使用 message 字段返回
+    if (translated === key && !!normalizedArg.message) {
+      return normalizedArg.message + "";
     }
-    return r.ignoreExtract(key);
+    return translated;
   };
-  return r;
+  return t;
 }
 // 修复 更换语言的时候 t 没有重新生成，导致某些写在 useMemo 的 t 调用没有更新语言
 i18n.on("change", () => {

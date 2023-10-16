@@ -159,7 +159,7 @@ export namespace ${requestBuilderName} {
  ${responseParamsTypeCode}
 };`);
 
-    if (isGenrateFieldsMap) {
+    if (isGenrateFieldsMap && !_.isEmpty(requestParamsTypeCode.fieldsMap)) {
       // 生成表单fieldsMap
       code.push(`
 export const ${requestBuilderName}FieldsMap = ${JSON.stringify(

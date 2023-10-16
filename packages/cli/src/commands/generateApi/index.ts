@@ -143,7 +143,7 @@ export const ${requestBuilderName} = new RequestBuilder({
 
   if (apiConfig.enableTs) {
     // post和put请求需要生成表单fieldsMap
-    const isGenrateFieldsMap = ['post', 'put'].includes(method as OpenAPIV3.HttpMethods);
+    const isGenrateFieldsMap = ['post', 'put'].includes(method);
     // 请求参数类型
     // 响应参数类型
     const [requestParamsTypeCode, responseParamsTypeCode] = await Promise.all([

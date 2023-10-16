@@ -143,11 +143,11 @@ export const ${requestBuilderName} = new RequestBuilder({
 
   if (apiConfig.enableTs) {
     // post和put请求需要生成表单fieldsMap
-    const generateFieldsMethod = [OpenAPIV3.HttpMethods.POST, OpenAPIV3.HttpMethods.PUT];
+    const isGenrateFieldsMap = [OpenAPIV3.HttpMethods.POST, OpenAPIV3.HttpMethods.PUT].includes(method as OpenAPIV3.HttpMethods);
     // 请求参数类型
     // 响应参数类型
     const [requestParamsTypeCode, responseParamsTypeCode] = await Promise.all([
-      compileRequestParams(operationObject, generateFieldsMethod.includes(method as OpenAPIV3.HttpMethods)),
+      compileRequestParams(operationObject, isGenrateFieldsMap),
       compileResponseParams(operationObject, apiConfig),
     ]);
 
@@ -155,13 +155,16 @@ export const ${requestBuilderName} = new RequestBuilder({
 export namespace ${requestBuilderName} {
  ${requestParamsTypeCode.code}
  
- ${responseParamsTypeCode};
+ ${responseParamsTypeCode}
 };`);
 
-    // 生成表单fieldsMap
-    code.push(`
+    if (isGenrateFieldsMap) {
+      // 生成表单fieldsMap
+      code.push(`
 export const ${requestBuilderName}FieldsMap = ${JSON.stringify(requestParamsTypeCode.fieldsMap)}
 `)
+    }
+
   }
 
   return code.join(os.EOL);
@@ -251,9 +254,10 @@ async function compileRequestParams(
           _.get(data, 'required', []).filter(item => keys.includes(item)).length === keys.length
       }
 
-      if (generateFieldsMap && !isPageSearchRequest(schema)) {
-        const shcemaKeys = Object.keys(schema.properties);
-        shcemaKeys.forEach(field => {
+      if (generateFieldsMap) {
+        // 分页查询接口取params字段
+        const params = isPageSearchRequest(schema) ? _.get(schema, 'properties.params.properties', {}) : schema.properties;
+        _.forEach(params, (_, field) => {
           fieldsMap[field] = field
         })
       }

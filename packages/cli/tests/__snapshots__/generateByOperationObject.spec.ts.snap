@@ -117,7 +117,11 @@ export interface Res {
   }[];
 }
 
-};"
+export type ResultItem = Res['result'][0]
+};
+
+export const usersPostApiFieldsMap = {\\"nameOrCode\\":\\"nameOrCode\\",\\"status\\":\\"status\\"}
+"
 `;
 
 exports[`api 生成 > 参数在url上 1`] = `
@@ -189,7 +193,10 @@ export namespace usersPostApi {
 
  
  export type Res = any;
-};"
+};
+
+export const usersPostApiFieldsMap = {}
+"
 `;
 
 exports[`api 生成 > 支持 urlTransformer 1`] = `

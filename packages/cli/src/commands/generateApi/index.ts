@@ -143,7 +143,7 @@ export const ${requestBuilderName} = new RequestBuilder({
 
   if (apiConfig.enableTs) {
     // post和put请求需要生成表单fieldsMap
-    const isGenrateFieldsMap = ['post', 'put'].includes(method);
+    const isGenrateFieldsMap = ["post", "put"].includes(method);
     // 请求参数类型
     // 响应参数类型
     const [requestParamsTypeCode, responseParamsTypeCode] = await Promise.all([
@@ -161,10 +161,11 @@ export namespace ${requestBuilderName} {
     if (isGenrateFieldsMap) {
       // 生成表单fieldsMap
       code.push(`
-export const ${requestBuilderName}FieldsMap = ${JSON.stringify(requestParamsTypeCode.fieldsMap)}
-`)
+export const ${requestBuilderName}FieldsMap = ${JSON.stringify(
+        requestParamsTypeCode.fieldsMap
+      )}
+`);
     }
-
   }
 
   return code.join(os.EOL);
@@ -249,17 +250,22 @@ async function compileRequestParams(
       // 判断接口是否是分页请求
       const isPageSearchRequest = (data: any) => {
         // 入参有这些字段就认为是分页查询接口
-        const keys = ['pageNum', 'pageSize', 'count'];
-        return _.get(data, 'type') === 'object' &&
-          _.get(data, 'required', []).filter(item => keys.includes(item)).length === keys.length
-      }
+        const keys = ["pageNum", "pageSize", "count"];
+        return (
+          _.get(data, "type") === "object" &&
+          _.get(data, "required", []).filter((item) => keys.includes(item))
+            .length === keys.length
+        );
+      };
 
       if (generateFieldsMap) {
         // 分页查询接口取params字段
-        const params = isPageSearchRequest(schema) ? _.get(schema, 'properties.params.properties', {}) : schema.properties;
+        const params = isPageSearchRequest(schema)
+          ? _.get(schema, "properties.params.properties", {})
+          : schema.properties;
         _.forEach(params, (_, field) => {
-          fieldsMap[field] = field
-        })
+          fieldsMap[field] = field;
+        });
       }
     } catch (e) {
       log.error("生成请求参数类型失败，请检查 %o", {
@@ -271,8 +277,8 @@ async function compileRequestParams(
 
   return {
     code: code || "export type Req = any;",
-    fieldsMap
-  }
+    fieldsMap,
+  };
 }
 
 async function compileResponseParams(
@@ -302,12 +308,15 @@ async function compileResponseParams(
         // 通过响应数据判断是否是分页查询接口
         const isPageSearchResponse = (data: any) => {
           // 有result字段且为数组，就认为是分页查询接口
-          return _.get(data, 'type') === 'object' && _.get(data, 'properties.result.type') === 'array'
-        }
+          return (
+            _.get(data, "type") === "object" &&
+            _.get(data, "properties.result.type") === "array"
+          );
+        };
 
         // 新增后端分页查询返回的数据类型
         if (isPageSearchResponse(data)) {
-          code += `${os.EOL}export type ResultItem = Res['result'][0]`
+          code += `${os.EOL}export type ResultItem = Res['result'][0]`;
         }
       } catch (e) {
         log.error("转换响应参数类型失败, 请检查 %o", {

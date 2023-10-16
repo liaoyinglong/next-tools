@@ -87,9 +87,8 @@ export async function generateApiRequestCode(options: {
   })();
 
   const seeUrl = apiConfig.swaggerUiUrl
-    ? `${apiConfig.swaggerUiUrl}#/${operationObject.tags?.join("/") ?? ""}/${
-        operationObject.operationId
-      }`
+    ? `${apiConfig.swaggerUiUrl}#/${operationObject.tags?.join("/") ?? ""}/${operationObject.operationId
+    }`
     : "";
 
   // 生成的请求构造器的名称，需要使用原始url
@@ -143,19 +142,26 @@ export const ${requestBuilderName} = new RequestBuilder({
   code.push(builderCode);
 
   if (apiConfig.enableTs) {
+    // post和put请求需要生成表单fieldsMap
+    const generateFieldsMethod = [OpenAPIV3.HttpMethods.POST, OpenAPIV3.HttpMethods.PUT];
     // 请求参数类型
     // 响应参数类型
     const [requestParamsTypeCode, responseParamsTypeCode] = await Promise.all([
-      compileRequestParams(operationObject),
+      compileRequestParams(operationObject, generateFieldsMethod.includes(method as OpenAPIV3.HttpMethods)),
       compileResponseParams(operationObject, apiConfig),
     ]);
 
     code.push(`
 export namespace ${requestBuilderName} {
- ${requestParamsTypeCode}
+ ${requestParamsTypeCode.code}
  
- ${responseParamsTypeCode}
+ ${responseParamsTypeCode};
 };`);
+
+    // 生成表单fieldsMap
+    code.push(`
+export const ${requestBuilderName}FieldsMap = ${JSON.stringify(requestParamsTypeCode.fieldsMap)}
+`)
   }
 
   return code.join(os.EOL);
@@ -171,7 +177,8 @@ function getUrlPathParams(parameters: OpenAPIV3.ParameterObject[]) {
  * 这个方法还不完善，只能处理简单的请求参数
  */
 async function compileRequestParams(
-  operationObject: OpenAPIV3.OperationObject
+  operationObject: OpenAPIV3.OperationObject,
+  generateFieldsMap = false
 ) {
   let schema;
   if (operationObject.requestBody) {
@@ -226,6 +233,7 @@ async function compileRequestParams(
   }
 
   let code = "";
+  const fieldsMap: Record<string, string> = {};
   if (schema) {
     try {
       code = await compile(schema, "Req", {
@@ -234,6 +242,21 @@ async function compileRequestParams(
         additionalProperties: false,
         // format: false,
       });
+
+      // 判断接口是否是分页请求
+      const isPageSearchRequest = (data: any) => {
+        // 入参有这些字段就认为是分页查询接口
+        const keys = ['pageNum', 'pageSize', 'count'];
+        return _.get(data, 'type') === 'object' &&
+          _.get(data, 'required', []).filter(item => keys.includes(item)).length === keys.length
+      }
+
+      if (generateFieldsMap && !isPageSearchRequest(schema)) {
+        const shcemaKeys = Object.keys(schema.properties);
+        shcemaKeys.forEach(field => {
+          fieldsMap[field] = field
+        })
+      }
     } catch (e) {
       log.error("生成请求参数类型失败，请检查 %o", {
         summary: operationObject.summary,
@@ -242,7 +265,10 @@ async function compileRequestParams(
     }
   }
 
-  return code ? code : "export type Req = any;";
+  return {
+    code: code || "export type Req = any;",
+    fieldsMap
+  }
 }
 
 async function compileResponseParams(
@@ -268,6 +294,17 @@ async function compileResponseParams(
           additionalProperties: false,
           // format: false,
         });
+
+        // 通过响应数据判断是否是分页查询接口
+        const isPageSearchResponse = (data: any) => {
+          // 有result字段且为数组，就认为是分页查询接口
+          return _.get(data, 'type') === 'object' && _.get(data, 'properties.result.type') === 'array'
+        }
+
+        // 新增后端分页查询返回的数据类型
+        if (isPageSearchResponse(data)) {
+          code += `${os.EOL}export type ResultItem = Res['result'][0]`
+        }
       } catch (e) {
         log.error("转换响应参数类型失败, 请检查 %o", {
           summary: operationObject.summary,

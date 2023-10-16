@@ -193,10 +193,7 @@ export namespace usersPostApi {
 
  
  export type Res = any;
-};
-
-export const usersPostApiFieldsMap = {}
-"
+};"
 `;
 
 exports[`api 生成 > 支持 urlTransformer 1`] = `

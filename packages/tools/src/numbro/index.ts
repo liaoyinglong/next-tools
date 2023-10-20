@@ -145,14 +145,16 @@ export class Numbro {
   }
 
   private getPrefixSign(forceSign: boolean | undefined) {
-    if (
-      forceSign === undefined ||
-      this.bigNumber.isNaN() ||
-      this.bigNumber.eq(0)
-    ) {
+    // 如果是 NaN 或者 0，那么不显示正负号
+    if (forceSign === false || this.bigNumber.isNaN() || this.bigNumber.eq(0)) {
       return "";
     }
-    return this.bigNumber.isPositive() ? "+" : "-";
+    // 强制显示正负号
+    if (forceSign) {
+      return this.bigNumber.isPositive() ? "+" : "-";
+    }
+    // 如果没有指定 forceSign，那么需要判断是否小于0
+    return this.bigNumber.isPositive() ? "" : "-";
   }
   //#endregion
 

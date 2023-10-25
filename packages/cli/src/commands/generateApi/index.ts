@@ -223,7 +223,7 @@ async function compileRequestParams(
           return [
             p.name,
             {
-              type: schema.type,
+              ...schema,
               description: p.description,
               // enum: schema.enum ?? [],
             },

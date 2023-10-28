@@ -1,22 +1,25 @@
-import { parse } from "messageformat-parser";
+import { Content, parse, Token } from "@messageformat/parser";
 
-const isString = (s): s is string => typeof s === "string";
+export type CompiledIcuChoices = Record<string, CompiledMessage> & {
+  offset: number | undefined;
+};
 
-type CompiledMessage =
+export type CompiledMessageToken =
   | string
-  | Array<
-      string | Array<string | (string | undefined) | Record<string, unknown>>
-    >;
+  | [name: string, type?: string, format?: null | string | CompiledIcuChoices];
 
-// [Tokens] -> (CTX -> String)
-function processTokens(tokens) {
-  if (!tokens.filter((token) => !isString(token)).length) {
-    return tokens.join("");
+export type CompiledMessage = string | CompiledMessageToken[];
+
+type MapTextFn = (value: string) => string;
+
+function processTokens(tokens: Token[], mapText?: MapTextFn): CompiledMessage {
+  if (!tokens.filter((token) => token.type !== "content").length) {
+    return tokens.map((token) => mapText((token as Content).value)).join("");
   }
 
-  return tokens.map((token) => {
-    if (isString(token)) {
-      return token;
+  return tokens.map<CompiledMessageToken>((token) => {
+    if (token.type === "content") {
+      return mapText(token.value);
 
       // # in plural case
     } else if (token.type === "octothorpe") {
@@ -28,17 +31,24 @@ function processTokens(tokens) {
 
       // argument with custom format (date, number)
     } else if (token.type === "function") {
-      const _param = token.param && token.param.tokens[0];
-      const param = typeof _param === "string" ? _param.trim() : _param;
-      return [token.arg, token.key, param].filter(Boolean);
+      const _param = token?.param?.[0] as Content;
+
+      if (_param) {
+        return [token.arg, token.key, _param.value.trim()];
+      } else {
+        return [token.arg, token.key];
+      }
     }
 
-    const offset = token.offset ? parseInt(token.offset) : undefined;
+    const offset = token.pluralOffset;
 
     // complex argument with cases
-    const formatProps = {};
+    const formatProps: Record<string, CompiledMessage> = {};
     token.cases.forEach((item) => {
-      formatProps[item.key] = processTokens(item.tokens);
+      formatProps[item.key.replace(/^=(.)+/, "$1")] = processTokens(
+        item.tokens,
+        mapText
+      );
     });
 
     return [
@@ -47,19 +57,19 @@ function processTokens(tokens) {
       {
         offset,
         ...formatProps,
-      },
+      } as CompiledIcuChoices,
     ];
   });
 }
 
-// Message -> (Params -> String)
-export default function compile(message: string): CompiledMessage {
+export default function compileMessage(
+  message: string,
+  mapText: MapTextFn = (v) => v
+): CompiledMessage {
   try {
-    const tokens = parse(message);
-    // console.log("tokens", tokens);
-    return processTokens(tokens);
+    return processTokens(parse(message), mapText);
   } catch (e) {
-    console.error(`Message cannot be parsed due to syntax errors: ${message}`);
+    console.error(`${(e as Error).message} \n\nMessage: ${message}`);
     return message;
   }
 }

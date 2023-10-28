@@ -176,6 +176,7 @@ importers:
       '@lingui/core': ^4.4.0
       '@lingui/detect-locale': ^4.4.0
       '@lingui/react': ^4.4.0
+      '@messageformat/parser': ^5
       '@tanstack/react-query': ^4.29.7
       '@types/js-cookie': 3.0.3
       '@types/react': ^18.2.6
@@ -188,6 +189,7 @@ importers:
       '@lingui/core': 4.4.0
       '@lingui/detect-locale': 4.4.0
       '@lingui/react': 4.4.0_react@18.2.0
+      '@messageformat/parser': 5.0.0
       '@types/js-cookie': 3.0.3
       bignumber.js: 9.1.1
       js-cookie: 3.0.5

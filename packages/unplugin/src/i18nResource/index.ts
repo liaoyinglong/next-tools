@@ -1,6 +1,10 @@
 import { createUnplugin } from "unplugin";
 import compile from "./compile";
 
+/**
+ * 后续翻译从云端获取后
+ * 就需要将预编译的动作集成在运行时的代码中
+ */
 export const i18nResourcePlugin = createUnplugin((options: unknown) => {
   return {
     name: "i18nResource",

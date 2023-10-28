@@ -1,7 +1,6 @@
 import { TransProps, Trans as TransRaw } from "@lingui/react";
 import { FC } from "react";
 import { LocalesEnum } from "./enums";
-export { useLingui } from "@lingui/react";
 export type { I18nContext, I18nProviderProps } from "@lingui/react";
 export { detectLocale } from "./detectLocale";
 export { useLocale, useT } from "./hooks";

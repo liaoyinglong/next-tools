@@ -84,6 +84,7 @@ export function detectLocale(options: DetectLocaleOptions = {}) {
 
 // 判断是否可用的语言
 function isAvailableLocale(locale: unknown): locale is LocalesEnum {
+  // FIXME: 这里使用了私有属性
   // @ts-expect-error 这是一个私有属性
   const locales = Object.keys(i18n._messages);
   return locales.includes(locale as never);

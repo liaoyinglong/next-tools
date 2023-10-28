@@ -62,7 +62,7 @@ function processTokens(tokens: Token[], mapText: MapTextFn): CompiledMessage {
   });
 }
 
-export default function compileMessage(
+export function compileMessage(
   message: string,
   mapText: MapTextFn = (v) => v
 ): CompiledMessage {

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { LocalesEnum } from "../i18n/enums";
+import { LocalesEnum } from "../../i18n/enums";
 
 export interface Format extends BigNumber.Format {
   output?: "percent";

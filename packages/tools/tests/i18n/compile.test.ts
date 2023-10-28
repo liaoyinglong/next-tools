@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import compile from "../../src/i18n/compile";
+import { compileMessage } from "../../i18n/compile";
 
 describe("i18nResource.compile", () => {
   it("变量", function () {
-    expect(compile("Hello, {name}!")).toMatchInlineSnapshot(`
+    expect(compileMessage("Hello, {name}!")).toMatchInlineSnapshot(`
       [
         "Hello, ",
         [
@@ -15,7 +15,7 @@ describe("i18nResource.compile", () => {
   });
 
   it("组件", () => {
-    expect(compile("Hello, <0>{name}</0>!")).toMatchInlineSnapshot(`
+    expect(compileMessage("Hello, <0>{name}</0>!")).toMatchInlineSnapshot(`
       [
         "Hello, <0>",
         [
@@ -27,6 +27,6 @@ describe("i18nResource.compile", () => {
   });
 
   it("不需要转换的", function () {
-    expect(compile("hello")).toMatchInlineSnapshot(`"hello"`);
+    expect(compileMessage("hello")).toMatchInlineSnapshot(`"hello"`);
   });
 });

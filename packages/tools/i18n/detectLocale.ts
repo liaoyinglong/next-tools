@@ -4,7 +4,7 @@ import {
   fromStorage,
   fromUrl,
 } from "@lingui/detect-locale";
-import { isBrowser, isServer } from "../shared";
+import { isBrowser, isServer } from "../src/shared";
 import { LocalesEnum } from "./enums";
 import { i18n } from "./i18n";
 

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { LocalesEnum } from "../i18n";
+import { LocalesEnum } from "../../i18n";
 import { defaultCurrencies } from "./currencies";
 import { CurrencyFormat, Format, RoundingMode } from "./shared";
 

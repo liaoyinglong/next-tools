@@ -1,8 +1,8 @@
 import { i18n } from "@lingui/core";
 import { PropsWithChildren } from "react";
 import { describe, expect, it } from "vitest";
+import { compileMessage } from "../../i18n/compile";
 import { I18nProvider, LocalesEnum, t } from "../../src";
-import { compileMessage } from "../../src/i18n/compile";
 
 // setup i18n
 const wrapper = (props: PropsWithChildren) => {

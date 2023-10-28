@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { LocalesEnum, i18n } from "../../src/i18n";
-import { detectLocale } from "../../src/i18n/detectLocale";
+import { LocalesEnum, i18n } from "../../i18n";
+import { detectLocale } from "../../i18n/detectLocale";
 
 i18n.load({
   [LocalesEnum.zh]: {},

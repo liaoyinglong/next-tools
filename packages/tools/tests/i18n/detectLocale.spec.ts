@@ -1,11 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { LocalesEnum, i18n } from "../../i18n";
 
-i18n.load({
-  [LocalesEnum.zh]: {},
-  [LocalesEnum.en]: {},
-  [LocalesEnum.id]: {},
-});
+i18n.register(LocalesEnum.zh, {});
+i18n.register(LocalesEnum.en, {});
+i18n.register(LocalesEnum.id, {});
+
 const storageKey = "lang";
 
 function updateLocation(pathname: string, query: Record<string, any> = {}) {

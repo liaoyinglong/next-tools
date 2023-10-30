@@ -40,7 +40,7 @@ interface TFunction {
 }
 
 function initT() {
-  let t = i18n._.bind(i18n) as unknown as TFunction;
+  let t = i18n.t as unknown as TFunction;
   t.ignoreExtract = t;
   t.displayError = (arg) => {
     let normalizedArg = typeof arg === "object" ? arg : { code: arg };
@@ -78,7 +78,9 @@ export const I18nProvider = (
     }
   }, [enableDetectLocale]);
 
-  return <I18nProviderRaw i18n={i18n}>{props.children}</I18nProviderRaw>;
+  return (
+    <I18nProviderRaw i18n={i18n.baseI18n}>{props.children}</I18nProviderRaw>
+  );
 };
 
 //#region msg fn

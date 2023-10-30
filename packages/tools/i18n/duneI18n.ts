@@ -1,4 +1,4 @@
-import { I18n as BaseI18n } from "@lingui/core";
+import { setupI18n } from "@lingui/core";
 import {
   fromNavigator as fromNavigatorBase,
   fromPath,
@@ -6,6 +6,7 @@ import {
   fromUrl,
 } from "@lingui/detect-locale";
 import { isServer } from "../src/shared";
+import { compileMessage } from "./compile";
 import { LocalesEnum } from "./enums";
 import { Config } from "./shared";
 
@@ -17,10 +18,12 @@ const defaultConfig: Config = {
   supportedLocales: [],
 };
 
-export class DuneI18n extends BaseI18n {
-  constructor() {
-    super({});
-  }
+// 这个 i18n 是对 lingui/core 的封装
+export class DuneI18n {
+  baseI18n = setupI18n();
+
+  t = this.baseI18n.t.bind(this.baseI18n);
+  on = this.baseI18n.on.bind(this.baseI18n);
 
   //#region 一些配置
   private config: Config = defaultConfig;
@@ -36,8 +39,7 @@ export class DuneI18n extends BaseI18n {
   //#region 支持的语言
   // 用户可以额外设置，同时也会从已加载的语言包中获取
   getSupportedLocales() {
-    // @ts-expect-error 这是私有属性，获取已经加载了哪些 语言
-    const loadedLocales = Object.keys(this._messages);
+    const loadedLocales = Object.keys(this.registeredMessages);
     return this.config.supportedLocales.concat(loadedLocales);
   }
   isSupportedLocale(locale: string) {
@@ -69,8 +71,7 @@ export class DuneI18n extends BaseI18n {
     return defaultLocale;
   }
   //#endregion
-
-  activate(
+  async activate(
     locale:
       | string
       | {
@@ -88,14 +89,50 @@ export class DuneI18n extends BaseI18n {
     const combinedLocale = opts.locale;
     const syncToStorage = opts.syncToStorage ?? true;
 
-    super.activate(combinedLocale);
+    //  try load message
+    await this.tryLoadMessage(combinedLocale);
 
+    this.baseI18n.activate(combinedLocale);
     // 默认需要 同步到 localStorage
     if (syncToStorage) {
       localStorage.setItem(this.config.storageKey, combinedLocale);
     }
   }
+
+  //#region 注册语言包，并不一定会加载
+  private registeredMessages: Record<string, Msg> = {};
+  register(locale: LocalesEnum, message: Msg) {
+    this.registeredMessages[locale] = message;
+  }
+  private async tryLoadMessage(locale: string) {
+    const message = this.registeredMessages[locale];
+    if (typeof message === "object") {
+      this.baseI18n.load(locale, this.compileMessage(message));
+      return;
+    }
+    try {
+      const r = await message();
+      this.baseI18n.load(locale, this.compileMessage(r));
+    } catch (error) {
+      this.baseI18n.load(locale, {});
+      console.error(`load ${locale} translate failed: `, {
+        error,
+      });
+    }
+  }
+  private compileMessage(msg: BaseMsg) {
+    const obj: BaseMsg = {};
+    Object.keys(msg).forEach((k) => {
+      obj[k] = compileMessage(msg[k] || k);
+    });
+    return obj;
+  }
+  //#endregion
 }
+
+type BaseMsg = Record<string, any>;
+type AsyncMsg = () => Promise<BaseMsg>;
+type Msg = BaseMsg | AsyncMsg;
 
 export const i18n = new DuneI18n();
 

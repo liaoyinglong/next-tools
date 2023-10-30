@@ -1,60 +1,37 @@
-import { i18n } from "@lingui/core";
-import { PropsWithChildren } from "react";
 import { describe, expect, it } from "vitest";
-import { compileMessage } from "../../i18n/compile";
-import { I18nProvider, LocalesEnum, t } from "../../src";
+import { LocalesEnum, i18n, t } from "../../i18n";
 
-// setup i18n
-const wrapper = (props: PropsWithChildren) => {
-  return <I18nProvider>{props.children}</I18nProvider>;
+const enMessage = {
+  hello: "hello",
+  "hello {name}": "hello {name}",
 };
-const rawMessages = {
-  [LocalesEnum.en]: {
-    hello: "hello",
-    "hello {name}": "hello {name}",
-  },
-  [LocalesEnum.zh]: {
-    hello: "你好",
-    "hello {name}": "你好 {name}",
-  },
+const zhMessage = {
+  hello: "你好",
+  "hello {name}": "你好 {name}",
 };
 
-function compliedMessages(messages: typeof rawMessages) {
-  let res: Record<string, any> = {};
-  Object.keys(messages).forEach((locale) => {
-    const data = messages[locale as keyof typeof messages];
-    let obj: Record<string, any> = {};
-    Object.keys(data).forEach((k) => {
-      const v = data[k as keyof typeof data];
-      obj[k] = compileMessage(v || k);
-    });
-    res[locale] = obj;
-  });
-  return res;
-}
+i18n.register(LocalesEnum.en, enMessage);
+// 模拟中文是 异步加载的
+i18n.register(LocalesEnum.zh, () => {
+  return Promise.resolve(zhMessage);
+});
 
 describe("i18n", () => {
-  it("load message and activate success", () => {
-    // TODO: 当前版本在加载的 语言包 是在编译时预编译好的
-    // 这里需要模拟一下
-    i18n.load(compliedMessages(rawMessages));
-    i18n.activate(LocalesEnum.en);
+  it("load message and activate success", async () => {
+    await i18n.activate(LocalesEnum.en);
 
     expect(i18n.t("hello")).toBe("hello");
     expect(i18n.t("hello {name}", { name: "world" })).toBe("hello world");
 
-    i18n.activate(LocalesEnum.zh);
+    await i18n.activate(LocalesEnum.zh);
     expect(i18n.t("hello")).toBe("你好");
     expect(i18n.t("hello {name}", { name: "world" })).toBe("你好 world");
   });
 
-  it("load message success", () => {
-    // TODO: 当前版本在加载的 语言包 是在编译时预编译好的
-    // 这里需要模拟一下
-    i18n.load(compliedMessages(rawMessages));
-    i18n.activate(LocalesEnum.en);
+  it("load message success", async () => {
+    await i18n.activate(LocalesEnum.en);
 
-    expect(i18n.messages).toMatchInlineSnapshot(`
+    expect(i18n.baseI18n.messages).toMatchInlineSnapshot(`
       {
         "hello": "hello",
         "hello {name}": [

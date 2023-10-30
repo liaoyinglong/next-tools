@@ -8,7 +8,7 @@ import {
 import { isServer } from "../src/shared";
 import { compileMessage } from "./compile";
 import { LocalesEnum } from "./enums";
-import { Config } from "./shared";
+import type { Config } from "./shared";
 
 const defaultConfig: Config = {
   defaultLocale: LocalesEnum.en,

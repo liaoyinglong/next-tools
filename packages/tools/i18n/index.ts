@@ -2,9 +2,11 @@ import { TransProps, Trans as TransRaw } from "@lingui/react";
 import { FC } from "react";
 import { LocalesEnum } from "./enums";
 export type { I18nContext, I18nProviderProps } from "@lingui/react";
+export { I18nProvider } from "./I18nProvider";
 export { i18n } from "./duneI18n";
-export { useLocale, useT } from "./hooks";
-export { I18nProvider, t } from "./shared";
+export { msg } from "./msg";
+export { t, useT } from "./t";
+export { useLocale } from "./useLocale";
 export { LocalesEnum };
 
 /**

@@ -1,5 +1,5 @@
 import { useLingui } from "@lingui/react";
-import { useMemo } from "react";
+import { i18n as globalI18n } from "./duneI18n";
 import { LocalesEnum } from "./enums";
 import { t } from "./shared";
 
@@ -15,9 +15,7 @@ export function useLocale() {
     isID: i18n.locale === LocalesEnum.id,
     isEn: i18n.locale === LocalesEnum.en,
     isLt: i18n.locale === LocalesEnum.lt,
-    activate: useMemo(() => {
-      return i18n.activate.bind(i18n);
-    }, [i18n.activate]),
+    activate: globalI18n.activate,
   };
 }
 

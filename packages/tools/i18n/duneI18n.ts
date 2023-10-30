@@ -71,7 +71,7 @@ export class DuneI18n {
     return defaultLocale;
   }
   //#endregion
-  async activate(
+  activate = async (
     locale:
       | string
       | {
@@ -83,42 +83,50 @@ export class DuneI18n {
           syncToStorage?: boolean;
           locale: string;
         }
-  ) {
+  ) => {
     const opts = typeof locale !== "object" ? { locale } : locale;
 
     const combinedLocale = opts.locale;
     const syncToStorage = opts.syncToStorage ?? true;
 
-    //  try load message
-    await this.tryLoadMessage(combinedLocale);
+    // try load message
+    // 需要兼容 同步和异步加载的语言
+    // 原因是 同步的语言包不能再 下一个事件循环后再去激活语言
+    // 不然会导致 ssr 时 无法同步获取到语言
+    const loadPromise = this.tryLoadMessage(combinedLocale);
+    if (typeof loadPromise?.then === "function") {
+      await loadPromise;
+    }
 
     this.baseI18n.activate(combinedLocale);
     // 默认需要 同步到 localStorage
     if (syncToStorage) {
       localStorage.setItem(this.config.storageKey, combinedLocale);
     }
-  }
+  };
 
   //#region 注册语言包，并不一定会加载
   private registeredMessages: Record<string, Msg> = {};
   register(locale: LocalesEnum, message: Msg) {
     this.registeredMessages[locale] = message;
   }
-  private async tryLoadMessage(locale: string) {
+  // 这里不能变成 async 方法，因为在 ssg 时，需要同步加载语言包
+  private tryLoadMessage(locale: string) {
     const message = this.registeredMessages[locale];
     if (typeof message === "object") {
       this.baseI18n.load(locale, this.compileMessage(message));
       return;
     }
-    try {
-      const r = await message();
-      this.baseI18n.load(locale, this.compileMessage(r));
-    } catch (error) {
-      this.baseI18n.load(locale, {});
-      console.error(`load ${locale} translate failed: `, {
-        error,
+    return message()
+      .then((r) => {
+        this.baseI18n.load(locale, this.compileMessage(r));
+      })
+      .catch((error) => {
+        this.baseI18n.load(locale, {});
+        console.error(`load ${locale} translate failed: `, {
+          error,
+        });
       });
-    }
   }
   private compileMessage(msg: BaseMsg) {
     const obj: BaseMsg = {};

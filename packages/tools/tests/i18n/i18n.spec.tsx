@@ -20,10 +20,13 @@ describe("i18n", () => {
   it("load message and activate success", async () => {
     await i18n.activate(LocalesEnum.en);
 
+    expect(i18n.locale).toBe(LocalesEnum.en);
     expect(i18n.t("hello")).toBe("hello");
     expect(i18n.t("hello {name}", { name: "world" })).toBe("hello world");
 
     await i18n.activate(LocalesEnum.zh);
+
+    expect(i18n.locale).toBe(LocalesEnum.zh);
     expect(i18n.t("hello")).toBe("你好");
     expect(i18n.t("hello {name}", { name: "world" })).toBe("你好 world");
   });
@@ -31,6 +34,7 @@ describe("i18n", () => {
   it("load message success", async () => {
     await i18n.activate(LocalesEnum.en);
 
+    expect(i18n.locale).toBe(LocalesEnum.en);
     expect(i18n.baseI18n.messages).toMatchInlineSnapshot(`
       {
         "hello": "hello",

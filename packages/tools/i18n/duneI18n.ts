@@ -25,6 +25,10 @@ export class DuneI18n {
   t = this.baseI18n.t.bind(this.baseI18n);
   on = this.baseI18n.on.bind(this.baseI18n);
 
+  get locale() {
+    return this.baseI18n.locale;
+  }
+
   //#region 一些配置
   private config: Config = defaultConfig;
   updateConfig(config: Partial<Config>) {

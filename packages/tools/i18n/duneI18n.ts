@@ -106,7 +106,7 @@ export class DuneI18n {
   };
 
   //#region 注册语言包，并不一定会加载
-  private registeredMessages: Record<string, Msg> = {};
+  registeredMessages: Record<string, Msg> = {};
   register(locale: LocalesEnum, message: Msg) {
     this.registeredMessages[locale] = message;
   }

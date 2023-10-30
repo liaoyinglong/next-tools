@@ -1,10 +1,8 @@
-import { i18n, MessageDescriptor, MessageOptions } from "@lingui/core";
-import {
-  I18nProviderProps,
-  I18nProvider as I18nProviderRaw,
-} from "@lingui/react";
-import { useEffect } from "react";
-import { detectLocale, DetectLocaleOptions } from "./detectLocale";
+import { MessageDescriptor, MessageOptions } from "@lingui/core";
+import { I18nProvider as I18nProviderRaw } from "@lingui/react";
+import { PropsWithChildren, useEffect } from "react";
+import { i18n } from "./duneI18n";
+import { LocalesEnum } from "./enums";
 
 /**
  * Translates a template string using the global I18n instance
@@ -62,9 +60,7 @@ i18n.on("change", () => {
   t = initT();
 });
 
-interface I18nProviderPropsCustom
-  extends I18nProviderProps,
-    DetectLocaleOptions {
+interface I18nProviderPropsCustom {
   enableDetectLocale?: boolean;
 }
 
@@ -72,29 +68,17 @@ interface I18nProviderPropsCustom
  * 这里封装好了 传递给 Lingui 的 i18n 实例
  * 以及在组件挂载时自动开启语言检测
  */
-export const I18nProvider = (props: Partial<I18nProviderPropsCustom>) => {
+export const I18nProvider = (
+  props: PropsWithChildren<I18nProviderPropsCustom>
+) => {
   const { enableDetectLocale = true } = props;
   useEffect(() => {
     if (enableDetectLocale) {
-      detectLocale({
-        defaultLocale: props.defaultLocale,
-        storageKey: props.storageKey,
-        queryKey: props.queryKey,
-        detectFromPath: props.detectFromPath,
-      });
+      i18n.activate(i18n.detectLocale());
     }
-  }, [
-    enableDetectLocale,
-    props.defaultLocale,
-    props.storageKey,
-    props.queryKey,
-    props.detectFromPath,
-  ]);
-  return (
-    <I18nProviderRaw i18n={props.i18n ?? i18n}>
-      {props.children}
-    </I18nProviderRaw>
-  );
+  }, [enableDetectLocale]);
+
+  return <I18nProviderRaw i18n={i18n}>{props.children}</I18nProviderRaw>;
 };
 
 //#region msg fn
@@ -136,3 +120,30 @@ export const msg: MsgFn = (...args: any[]) => {
 };
 
 //#endregion
+
+export interface Config {
+  // 推导失败后的默认语言
+  defaultLocale: LocalesEnum;
+  /**
+   * 存储的 key
+   * @default dune-lang
+   */
+  storageKey: string;
+
+  /**
+   * url 参数
+   * @default lang
+   */
+  queryKey: string;
+
+  /**
+   * 是否从 url 中获取语言 默认为 false
+   * 在后管系统中，一般不需要
+   */
+  detectFromPath: boolean;
+
+  /**
+   * 用户可以额外设置，同时也会从已加载的语言包中获取
+   */
+  supportedLocales: string[];
+}

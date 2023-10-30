@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { PropsWithChildren } from "react";
-import { afterEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { I18nProvider, LocalesEnum, i18n, useT } from "../../i18n";
 
 const enMessage = {
@@ -11,10 +11,6 @@ const zhMessage = {
   hello: "你好",
   "hello {name}": "你好 {name}",
 };
-
-afterEach(() => {
-  i18n.registeredMessages = {};
-});
 
 describe("useT", () => {
   // setup i18n

@@ -142,14 +142,12 @@ importers:
   packages/next-plugin:
     specifiers:
       '@dune2/swc-plugin': workspace:*
-      '@dune2/unplugin': workspace:*
       next: '*'
       tsup: ^6.2.3
       unplugin-auto-import: ^0.11.2
       webpack: ^5.75.0
     dependencies:
       '@dune2/swc-plugin': link:../swc_plugin
-      '@dune2/unplugin': link:../unplugin
       unplugin-auto-import: 0.11.2_webpack@5.75.0
     devDependencies:
       next: 12.3.1
@@ -186,9 +184,9 @@ importers:
       react: ^18.2.0
       store2: ^2.14.2
     dependencies:
-      '@lingui/core': 4.4.0
-      '@lingui/detect-locale': 4.4.0
-      '@lingui/react': 4.4.0_react@18.2.0
+      '@lingui/core': 4.5.0
+      '@lingui/detect-locale': 4.5.0
+      '@lingui/react': 4.5.0_react@18.2.0
       '@messageformat/parser': 5.0.0
       '@types/js-cookie': 3.0.3
       bignumber.js: 9.1.1
@@ -1701,35 +1699,35 @@ packages:
       '@lezer/common': 1.0.4
     dev: false
 
-  /@lingui/core/4.4.0:
-    resolution: {integrity: sha512-0ngEP+g4bt6f3cNqEzkU5796VkEEamxNXF/JD/QV9Ftxp8QBw91WqAoHjNYs3aYZOctCsRBR7FlvRQ6o2fDWDg==}
+  /@lingui/core/4.5.0:
+    resolution: {integrity: sha512-8zTuIXJo5Qvjato7LWE6Q4RHiO4LjTBVOoRlqfOGYDp8VZ9w9P7Z7IJgxI7UP5Z1wiuEvnMdVF9I1C4acqXGlQ==}
     engines: {node: '>=16.0.0'}
     dependencies:
       '@babel/runtime': 7.21.5
-      '@lingui/message-utils': 4.4.0
-      unraw: 2.0.1
+      '@lingui/message-utils': 4.5.0
+      unraw: 3.0.0
     dev: false
 
-  /@lingui/detect-locale/4.4.0:
-    resolution: {integrity: sha512-Mh4oLJ4KHSwcyWw7+bhQ8ErUCZjXDrZyILyHCcgq2S+HE2NG8M8OD/VBFajLW3dEUJPC9sRE8L2XTxYRNKlK6g==}
+  /@lingui/detect-locale/4.5.0:
+    resolution: {integrity: sha512-yiscpMZnAi5Sih1uow6tA3hZRTef7nX8lcQmMVEyTAvDjyY4T1TDcK599Rz1HaAb1NnLGuFUqZhn0aeULLGccw==}
     engines: {node: '>=16.0.0'}
     dev: false
 
-  /@lingui/message-utils/4.4.0:
-    resolution: {integrity: sha512-SScnNuemsyHx2vyLvLsHgmAaCBHwnaAxUg3LkKoulqXe2Po8CmLBh1/28oNQ20ZhjwadUmy0unGalp9qqEBOkw==}
+  /@lingui/message-utils/4.5.0:
+    resolution: {integrity: sha512-iRqh2wvNtzJO3NStB77nEXEfeI53aVVjzD7/mBrEm/P0lC7sqPHk0WBQCfzE0N9xm6a+XHmHu3J+x2nnQ2OjcA==}
     engines: {node: '>=16.0.0'}
     dependencies:
       '@messageformat/parser': 5.0.0
     dev: false
 
-  /@lingui/react/4.4.0_react@18.2.0:
-    resolution: {integrity: sha512-d8Pr2usy6HrLBGheGU++JGFxx8qYy0LqEetZdizuctGWxyNzexTR+R2Kfs8sMLcRr825e203jOAhx0jZh+gFAw==}
+  /@lingui/react/4.5.0_react@18.2.0:
+    resolution: {integrity: sha512-dv/oxBshyaVJ3XzbPDnWn3abhwtaS1sx8cEO2qDjs+OhW0AeWD9hyVDrduf5SBIuXFJfJQNNA8+2P2nO0lxRbQ==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@babel/runtime': 7.21.5
-      '@lingui/core': 4.4.0
+      '@lingui/core': 4.5.0
       react: 18.2.0
     dev: false
 
@@ -10520,8 +10518,8 @@ packages:
       webpack-virtual-modules: 0.4.5
     dev: false
 
-  /unraw/2.0.1:
-    resolution: {integrity: sha512-tdOvLfRzHolwYcHS6HIX860MkK9LQ4+oLuNwFYL7bpgTEO64PZrcQxkisgwJYCfF8sKiWLwwu1c83DvMkbefIQ==}
+  /unraw/3.0.0:
+    resolution: {integrity: sha512-08/DA66UF65OlpUDIQtbJyrqTR0jTAlJ+jsnkQ4jxR7+K5g5YG1APZKQSMCE1vqqmD+2pv6+IdEjmopFatacvg==}
     dev: false
 
   /untildify/4.0.0:

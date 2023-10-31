@@ -135,7 +135,10 @@ export class DuneI18n {
   private compileMessage(msg: BaseMsg) {
     const obj: BaseMsg = {};
     Object.keys(msg).forEach((k) => {
-      obj[k] = compileMessage(msg[k] || k);
+      const v = msg[k];
+      if (typeof v === "string") {
+        obj[k] = compileMessage(v || k);
+      }
     });
     return obj;
   }

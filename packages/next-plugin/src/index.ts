@@ -1,5 +1,3 @@
-import { PreBuildDepsPluginOptions } from "@dune2/unplugin/dist/PreBuildDeps";
-import { i18nResourcePlugin } from "@dune2/unplugin/dist/i18nResource";
 import { NextConfig } from "next";
 import { WebpackConfigContext } from "next/dist/server/config-shared";
 import { Options as AutoImportOptions } from "unplugin-auto-import/types";
@@ -16,10 +14,6 @@ export * from "./shared";
 
 export interface DunePresetsOptions {
   autoImport?: AutoImportOptions;
-  /**
-   * 目前只会在 dev 环境下生效
-   */
-  preBuildDeps?: PreBuildDepsPluginOptions;
 
   swcPluginOptions?: {
     /// 是否开启 semi-css-omit，即是否移除 js 中的 css import/require
@@ -76,17 +70,8 @@ export const withDunePresets = (options: DunePresetsOptions = {}) => {
             imports: defaultAutoImports
               .concat(options.autoImport?.imports as never)
               .filter(Boolean) as never,
-          }),
-          i18nResourcePlugin.webpack()
+          })
         );
-        if (options.preBuildDeps && webpackFnOptions.dev) {
-          const {
-            preBuildDepsPlugin,
-          } = require("@dune2/unplugin/dist/PreBuildDeps");
-          config.plugins.unshift(
-            preBuildDepsPlugin.webpack(options.preBuildDeps)
-          );
-        }
 
         if (options.beforeSwcLoader) {
           const beforeSwcLoader = require.resolve("./beforeSwcLoader");

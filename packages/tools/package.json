@@ -8,30 +8,13 @@
   "license": "ISC",
   "author": "",
   "exports": {
-    "./factory": {
-      "types": "./factory/index.ts",
-      "default": "./factory/index.ts"
-    },
-    "./i18n": {
-      "types": "./i18n/index.ts",
-      "default": "./i18n/index.ts"
-    },
-    "./numbro": {
-      "types": "./numbro/index.ts",
-      "default": "./numbro/index.ts"
-    },
-    "./rq": {
-      "types": "./rq/index.ts",
-      "default": "./rq/index.ts"
-    },
-    "./shared": {
-      "types": "./shared/index.ts",
-      "default": "./shared/index.ts"
-    },
-    "./storage": {
-      "types": "./storage/index.ts",
-      "default": "./storage/index.ts"
-    },
+    "./factory/*": "./factory/*.tsx",
+    "./i18n": "./i18n/index.ts",
+    "./numbro": "./numbro/index.ts",
+    "./rq": "./rq/index.ts",
+    "./shared": "./shared/index.ts",
+    "./storage": "./storage/index.ts",
+    "./storage/*": "./storage/*.ts",
     "./package.json": "./package.json"
   },
   "files": [
@@ -48,16 +31,7 @@
     "test:u": "vitest -u",
     "typecheck": "vitest typecheck"
   },
-  "devDependencies": {
-    "@tanstack/react-query": "^4.29.7",
-    "@types/react": "^18.2.6",
-    "axios": "^0.27.2",
-    "react": "^18.2.0"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "dependencis": {
+  "dependencies": {
     "@lingui/core": "^4.4.0",
     "@lingui/detect-locale": "^4.4.0",
     "@lingui/react": "^4.4.0",
@@ -66,5 +40,14 @@
     "bignumber.js": "^9.1.1",
     "js-cookie": "^3.0.5",
     "store2": "^2.14.2"
+  },
+  "devDependencies": {
+    "@tanstack/react-query": "^4.29.7",
+    "@types/react": "^18.2.6",
+    "axios": "^0.27.2",
+    "react": "^18.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

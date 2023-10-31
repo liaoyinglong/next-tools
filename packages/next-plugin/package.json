@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "@dune2/swc-plugin": "workspace:*",
-    "@dune2/unplugin": "workspace:*",
     "unplugin-auto-import": "^0.11.2"
   },
   "devDependencies": {

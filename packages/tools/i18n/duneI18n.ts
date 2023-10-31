@@ -5,7 +5,7 @@ import {
   fromStorage,
   fromUrl,
 } from "@lingui/detect-locale";
-import { isServer } from "../src/shared";
+import { isServer } from "../shared";
 import { compileMessage } from "./compile";
 import { LocalesEnum } from "./enums";
 import type { Config } from "./shared";

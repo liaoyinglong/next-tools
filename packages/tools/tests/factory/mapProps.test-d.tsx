@@ -1,6 +1,6 @@
 import { ComponentProps, PropsWithChildren } from "react";
 import { assertType, describe, it } from "vitest";
-import { mapProps } from "../../src/factory/mapProps";
+import { mapProps } from "../../factory/mapProps";
 
 interface Props {
   age?: number;

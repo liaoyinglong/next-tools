@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import { PropsWithChildren } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mapProps } from "../../src/factory/mapProps";
+import { mapProps } from "../../factory/mapProps";
 
 interface Props {
   age?: number;

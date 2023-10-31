@@ -11,7 +11,11 @@
   "types": "./src/index.ts",
   "files": [
     "src",
-    "i18n"
+    "i18n",
+    "numbro",
+    "rq",
+    "factory",
+    "storage"
   ],
   "scripts": {
     "build": "tsc --diagnostics",

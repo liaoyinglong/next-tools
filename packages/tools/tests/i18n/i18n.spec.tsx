@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { LocalesEnum, i18n, t } from "../../i18n";
+import { describe,expect,it } from "vitest";
+import { LocalesEnum,i18n,t } from "../../i18n";
 
 const enMessage = {
   hello: "hello",
@@ -10,11 +10,9 @@ const zhMessage = {
   "hello {name}": "你好 {name}",
 };
 
-i18n.register(LocalesEnum.en, enMessage);
+i18n.register(LocalesEnum.en, [enMessage]);
 // 模拟中文是 异步加载的
-i18n.register(LocalesEnum.zh, () => {
-  return Promise.resolve(zhMessage);
-});
+i18n.register(LocalesEnum.zh, () => [Promise.resolve(zhMessage)]);
 
 describe("i18n", () => {
   it("load message and activate success", async () => {

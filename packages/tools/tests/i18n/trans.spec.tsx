@@ -42,8 +42,8 @@ describe("trans", () => {
   );
 
   it("work with sync message loader", () => {
-    i18n.register(LocalesEnum.en, enMessage);
-    i18n.register(LocalesEnum.zh, zhMessage);
+    i18n.register(LocalesEnum.en, [enMessage]);
+    i18n.register(LocalesEnum.zh, [zhMessage]);
     i18n.activate(LocalesEnum.en);
 
     const { container } = render(ui, {
@@ -89,8 +89,8 @@ describe("trans", () => {
   });
 
   it("work with async message loader", async () => {
-    i18n.register(LocalesEnum.en, () => Promise.resolve(enMessage));
-    i18n.register(LocalesEnum.zh, () => Promise.resolve(zhMessage));
+    i18n.register(LocalesEnum.en, () => [Promise.resolve(enMessage)]);
+    i18n.register(LocalesEnum.zh, () => [Promise.resolve(zhMessage)]);
     await i18n.activate(LocalesEnum.en);
 
     const { container } = render(ui, {

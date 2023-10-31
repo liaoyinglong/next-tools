@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { LocalesEnum, i18n } from "../../i18n";
 
-i18n.register(LocalesEnum.zh, {});
-i18n.register(LocalesEnum.en, {});
-i18n.register(LocalesEnum.id, {});
+i18n.register(LocalesEnum.zh, [{}]);
+i18n.register(LocalesEnum.en, [{}]);
+i18n.register(LocalesEnum.id, [{}]);
 
 const storageKey = "lang";
 

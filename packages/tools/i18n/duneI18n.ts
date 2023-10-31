@@ -43,7 +43,7 @@ export class DuneI18n {
   //#region 支持的语言
   // 用户可以额外设置，同时也会从已加载的语言包中获取
   getSupportedLocales() {
-    const loadedLocales = Object.keys(this.registeredMessages);
+    const loadedLocales = Object.keys(this.messageLoader);
     return this.config.supportedLocales.concat(loadedLocales);
   }
   isSupportedLocale(locale: string) {
@@ -110,27 +110,43 @@ export class DuneI18n {
   };
 
   //#region 注册语言包，并不一定会加载
-  private registeredMessages: Record<string, Msg> = {};
-  register(locale: LocalesEnum, message: Msg) {
-    this.registeredMessages[locale] = message;
+  private messageLoader: Record<string, MsgLoader> = {};
+
+  register(locale: LocalesEnum, message: MsgLoader) {
+    this.messageLoader[locale] = message;
   }
   // 这里不能变成 async 方法，因为在 ssg 时，需要同步加载语言包
-  private tryLoadMessage(locale: string) {
-    const message = this.registeredMessages[locale];
-    if (typeof message === "object") {
-      this.baseI18n.load(locale, this.compileMessage(message));
+  private tryLoadMessage(
+    locale: string,
+    loader = this.messageLoader[locale]
+  ): Promise<void> | void {
+    if (!loader) {
       return;
     }
-    return message()
-      .then((r) => {
-        this.baseI18n.load(locale, this.compileMessage(r));
-      })
-      .catch((error) => {
-        this.baseI18n.load(locale, {});
+    // case: i18n.register(LocalesEnum.zh, [{},{}]);
+    if (typeof loader === "object") {
+      const messages = Array.isArray(loader) ? loader : [loader];
+      return this.tryLoadMessage(locale, () => messages);
+    }
+
+    const p = loader();
+    if (!isAsyncMsg(p)) {
+      const msg = Object.assign({}, ...p);
+      this.baseI18n.load(locale, this.compileMessage(msg));
+      return;
+    }
+    const caughtLoaderPromises = p.map((v) =>
+      v.catch((error) => {
         console.error(`load ${locale} translate failed: `, {
           error,
         });
-      });
+        return {};
+      })
+    );
+    return Promise.all(caughtLoaderPromises).then((res) => {
+      const msg = Object.assign({}, ...res);
+      this.baseI18n.load(locale, this.compileMessage(msg));
+    });
   }
   private compileMessage(msg: BaseMsg) {
     const obj: BaseMsg = {};
@@ -146,8 +162,15 @@ export class DuneI18n {
 }
 
 type BaseMsg = Record<string, any>;
-type AsyncMsg = () => Promise<BaseMsg>;
-type Msg = BaseMsg | AsyncMsg;
+
+type MsgLoader = BaseMsg[] | (() => Promise<BaseMsg>[] | BaseMsg[]);
+
+const isAsyncMsg = (
+  p: Promise<BaseMsg>[] | BaseMsg[]
+): p is Promise<BaseMsg>[] => {
+  let first = Array.isArray(p) ? p[0] : p;
+  return typeof first?.then === "function";
+};
 
 export const i18n = new DuneI18n();
 

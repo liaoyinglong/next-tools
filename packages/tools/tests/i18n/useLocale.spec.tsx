@@ -12,8 +12,8 @@ describe("useLocale", () => {
   };
 
   it("work with sync message loader", () => {
-    i18n.register(LocalesEnum.en, {});
-    i18n.register(LocalesEnum.zh, {});
+    i18n.register(LocalesEnum.en, [{}]);
+    i18n.register(LocalesEnum.zh, [{}]);
     i18n.activate(LocalesEnum.en);
 
     const { result } = renderHook(() => useLocale(), {
@@ -47,8 +47,8 @@ describe("useLocale", () => {
   });
 
   it("work with async message loader", async () => {
-    i18n.register(LocalesEnum.en, () => Promise.resolve({}));
-    i18n.register(LocalesEnum.zh, () => Promise.resolve({}));
+    i18n.register(LocalesEnum.en, () => [Promise.resolve({})]);
+    i18n.register(LocalesEnum.zh, () => [Promise.resolve({})]);
     await i18n.activate(LocalesEnum.en);
 
     const { result } = renderHook(() => useLocale(), {

@@ -46,7 +46,7 @@ export function apiConfigNormalizer(item: ApiConfig) {
   if (!item.urlTransformer) {
     item.requestFnImportPath ??= `import requestFn from '@/utils/request';`;
   }
-  item.RequestBuilderImportPath ??= `import { RequestBuilder } from '@dune2/tools';`;
+  item.RequestBuilderImportPath ??= `import { RequestBuilder } from '@dune2/tools/rq';`;
   item.enableTs ??= true;
   item.enabled ??= true;
   item.format ??= true;

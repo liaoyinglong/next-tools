@@ -7,8 +7,33 @@
   ],
   "license": "ISC",
   "author": "",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "exports": {
+    "./factory": {
+      "types": "./factory/index.ts",
+      "default": "./factory/index.ts"
+    },
+    "./i18n": {
+      "types": "./i18n/index.ts",
+      "default": "./i18n/index.ts"
+    },
+    "./numbro": {
+      "types": "./numbro/index.ts",
+      "default": "./numbro/index.ts"
+    },
+    "./rq": {
+      "types": "./rq/index.ts",
+      "default": "./rq/index.ts"
+    },
+    "./shared": {
+      "types": "./shared/index.ts",
+      "default": "./shared/index.ts"
+    },
+    "./storage": {
+      "types": "./storage/index.ts",
+      "default": "./storage/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "src",
     "i18n",
@@ -23,16 +48,6 @@
     "test:u": "vitest -u",
     "typecheck": "vitest typecheck"
   },
-  "dependencies": {
-    "@lingui/core": "^4.4.0",
-    "@lingui/detect-locale": "^4.4.0",
-    "@lingui/react": "^4.4.0",
-    "@messageformat/parser": "^5",
-    "@types/js-cookie": "3.0.3",
-    "bignumber.js": "^9.1.1",
-    "js-cookie": "^3.0.5",
-    "store2": "^2.14.2"
-  },
   "devDependencies": {
     "@tanstack/react-query": "^4.29.7",
     "@types/react": "^18.2.6",
@@ -41,5 +56,15 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencis": {
+    "@lingui/core": "^4.4.0",
+    "@lingui/detect-locale": "^4.4.0",
+    "@lingui/react": "^4.4.0",
+    "@messageformat/parser": "^5",
+    "@types/js-cookie": "3.0.3",
+    "bignumber.js": "^9.1.1",
+    "js-cookie": "^3.0.5",
+    "store2": "^2.14.2"
   }
 }

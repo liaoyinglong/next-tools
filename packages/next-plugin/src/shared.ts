@@ -11,5 +11,8 @@ export const defaultSwcPlugins = [[defaultSwcPluginPath, {}]];
 
 export const defaultAutoImports = [
   "react",
-  { "@dune2/tools": ["useT", "Trans"] },
+  {
+    "@dune2/tools/i18n": ["useT", "Trans", "useLocale"],
+    "@dune2/tools/numbro": ["numbro"],
+  },
 ];

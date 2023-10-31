@@ -25,4 +25,7 @@ export interface Config {
    * 用户可以额外设置，同时也会从已加载的语言包中获取
    */
   supportedLocales: string[];
+
+  // [ 浏览器语言 , dune 语言 ]
+  navigatorMapper: [string, string][];
 }

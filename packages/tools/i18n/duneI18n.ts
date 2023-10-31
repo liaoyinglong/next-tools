@@ -16,6 +16,12 @@ const defaultConfig: Config = {
   storageKey: "dune-lang",
   queryKey: "lang",
   supportedLocales: [],
+  navigatorMapper: [
+    ["id-", LocalesEnum.id],
+    ["en-", LocalesEnum.en],
+    ["zh-", LocalesEnum.zh],
+    ["lt-", LocalesEnum.lt],
+  ],
 };
 
 // 这个 i18n 是对 lingui/core 的封装
@@ -58,6 +64,16 @@ export class DuneI18n {
     let defaultLocale = this.config.defaultLocale;
 
     if (!isServer) {
+      const fromNavigator = () => {
+        const browserLocale = fromNavigatorBase();
+        const mappers = this.config.navigatorMapper;
+        for (let i = 0; i < mappers.length; i++) {
+          const [prefix, locale] = mappers[i];
+          if (browserLocale.startsWith(prefix)) {
+            return locale;
+          }
+        }
+      };
       let arr = [
         detectFromPath && fromPath(0, location),
         fromUrl(queryKey),
@@ -126,14 +142,15 @@ export class DuneI18n {
     // case: i18n.register(LocalesEnum.zh, [{},{}]);
     if (typeof loader === "object") {
       const messages = Array.isArray(loader) ? loader : [loader];
-      return this.tryLoadMessage(locale, () => messages);
+      const compiledMessage = this.compileMessage(messages);
+      this.baseI18n.load(locale, compiledMessage);
+      return;
     }
 
     const p = loader();
     if (!isAsyncMsg(p)) {
-      const msg = Object.assign({}, ...p);
-      this.baseI18n.load(locale, this.compileMessage(msg));
-      return;
+      // case: i18n.register(LocalesEnum.zh, () => [{},{}]);
+      return this.tryLoadMessage(locale, p);
     }
     const caughtLoaderPromises = p.map((v) =>
       v.catch((error) => {
@@ -143,18 +160,21 @@ export class DuneI18n {
         return {};
       })
     );
+    // case: i18n.register(LocalesEnum.zh, () => [Promise.resolve({})]);
+    // case: i18n.register(LocalesEnum.zh, () => [import('./i18n.json')]);
     return Promise.all(caughtLoaderPromises).then((res) => {
-      const msg = Object.assign({}, ...res);
-      this.baseI18n.load(locale, this.compileMessage(msg));
+      return this.tryLoadMessage(locale, res);
     });
   }
-  private compileMessage(msg: BaseMsg) {
+  private compileMessage(messages: BaseMsg[]) {
     const obj: BaseMsg = {};
-    Object.keys(msg).forEach((k) => {
-      const v = msg[k];
-      if (typeof v === "string") {
-        obj[k] = compileMessage(v || k);
-      }
+    messages.forEach((msg) => {
+      Object.keys(msg).forEach((k) => {
+        const v = msg[k];
+        if (typeof v === "string") {
+          obj[k] = compileMessage(v || k);
+        }
+      });
     });
     return obj;
   }
@@ -173,19 +193,3 @@ const isAsyncMsg = (
 };
 
 export const i18n = new DuneI18n();
-
-function fromNavigator() {
-  const browserLocale = fromNavigatorBase();
-  const mappers = [
-    ["id-", LocalesEnum.id],
-    ["en-", LocalesEnum.en],
-    ["zh-", LocalesEnum.zh],
-    ["lt-", LocalesEnum.lt],
-  ];
-  for (let i = 0; i < mappers.length; i++) {
-    const [prefix, locale] = mappers[i];
-    if (browserLocale.startsWith(prefix)) {
-      return locale;
-    }
-  }
-}

@@ -152,18 +152,17 @@ export class DuneI18n {
       // case: i18n.register(LocalesEnum.zh, () => [{},{}]);
       return this.tryLoadMessage(locale, p);
     }
-    const caughtLoaderPromises = p.map((v) =>
-      v.catch((error) => {
-        console.error(`load ${locale} translate failed: `, {
-          error,
-        });
-        return {};
-      })
-    );
     // case: i18n.register(LocalesEnum.zh, () => [Promise.resolve({})]);
     // case: i18n.register(LocalesEnum.zh, () => [import('./i18n.json')]);
-    return Promise.all(caughtLoaderPromises).then((res) => {
-      return this.tryLoadMessage(locale, res);
+    return Promise.allSettled(p).then((res) => {
+      const loadSuccess = res.reduce((acc, v) => {
+        if (v.status === "rejected") {
+          console.error(`load ${locale} translate failed: `, v.reason);
+          return acc;
+        }
+        return [...acc, v.value];
+      }, [] as BaseMsg[]);
+      return this.tryLoadMessage(locale, loadSuccess);
     });
   }
   private compileMessage(messages: BaseMsg[]) {

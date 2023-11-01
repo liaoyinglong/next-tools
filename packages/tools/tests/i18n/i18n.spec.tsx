@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { LocalesEnum, i18n, t } from "../../i18n";
 
 const enMessage = {
@@ -72,6 +72,43 @@ describe("i18n", () => {
         ],
       }
     `);
+  });
+
+  it("load message with error", async () => {
+    // 劫持 console.error
+    const consoleErrorMock = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => void 0);
+    // 重新注册语言包，让其中报错一个
+    i18n.register(LocalesEnum.zh, () => [
+      Promise.resolve(zhMessage),
+      Promise.reject(`network error`),
+    ]);
+
+    await i18n.activate(LocalesEnum.zh);
+    expect(i18n.messageLoadResult[LocalesEnum.zh]).toMatchInlineSnapshot(`
+      {
+        "hello": "你好",
+        "hello {name}": "你好 {name}",
+      }
+    `);
+    expect(i18n.baseI18n.messages).toMatchInlineSnapshot(`
+      {
+        "hello": "你好",
+        "hello {name}": [
+          "你好 ",
+          [
+            "name",
+          ],
+        ],
+      }
+    `);
+    // 确认打印相关错误信息方便 debug
+    expect(consoleErrorMock).toBeCalledTimes(1);
+    expect(consoleErrorMock).toHaveBeenCalledWith(
+      "load zh translate failed: ",
+      "network error"
+    );
   });
 
   it("t.ignoreExtract", () => {

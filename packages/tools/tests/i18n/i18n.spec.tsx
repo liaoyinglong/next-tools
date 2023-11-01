@@ -1,5 +1,5 @@
-import { describe,expect,it } from "vitest";
-import { LocalesEnum,i18n,t } from "../../i18n";
+import { beforeEach, describe, expect, it } from "vitest";
+import { LocalesEnum, i18n, t } from "../../i18n";
 
 const enMessage = {
   hello: "hello",
@@ -10,9 +10,11 @@ const zhMessage = {
   "hello {name}": "你好 {name}",
 };
 
-i18n.register(LocalesEnum.en, [enMessage]);
-// 模拟中文是 异步加载的
-i18n.register(LocalesEnum.zh, () => [Promise.resolve(zhMessage)]);
+beforeEach(() => {
+  i18n.register(LocalesEnum.en, [enMessage]);
+  // 模拟中文是 异步加载的
+  i18n.register(LocalesEnum.zh, () => [Promise.resolve(zhMessage)]);
+});
 
 describe("i18n", () => {
   it("load message and activate success", async () => {
@@ -33,11 +35,37 @@ describe("i18n", () => {
     await i18n.activate(LocalesEnum.en);
 
     expect(i18n.locale).toBe(LocalesEnum.en);
+    expect(i18n.messageLoadResult[LocalesEnum.en]).toMatchInlineSnapshot(`
+      {
+        "hello": "hello",
+        "hello {name}": "hello {name}",
+      }
+    `);
     expect(i18n.baseI18n.messages).toMatchInlineSnapshot(`
       {
         "hello": "hello",
         "hello {name}": [
           "hello ",
+          [
+            "name",
+          ],
+        ],
+      }
+    `);
+
+    await i18n.activate(LocalesEnum.zh);
+    expect(i18n.locale).toBe(LocalesEnum.zh);
+    expect(i18n.messageLoadResult[LocalesEnum.zh]).toMatchInlineSnapshot(`
+      {
+        "hello": "你好",
+        "hello {name}": "你好 {name}",
+      }
+    `);
+    expect(i18n.baseI18n.messages).toMatchInlineSnapshot(`
+      {
+        "hello": "你好",
+        "hello {name}": [
+          "你好 ",
           [
             "name",
           ],

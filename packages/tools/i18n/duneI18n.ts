@@ -127,7 +127,8 @@ export class DuneI18n {
 
   //#region 注册语言包，并不一定会加载
   private messageLoader: Record<string, MsgLoader> = {};
-
+  // 后续需要暴露给 浏览器插件读取，方便做反查翻译
+  messageLoadResult: Record<string, BaseMsg> = {};
   register(locale: LocalesEnum, message: MsgLoader) {
     this.messageLoader[locale] = message;
   }
@@ -142,8 +143,9 @@ export class DuneI18n {
     // case: i18n.register(LocalesEnum.zh, [{},{}]);
     if (typeof loader === "object") {
       const messages = Array.isArray(loader) ? loader : [loader];
-      const compiledMessage = this.compileMessage(messages);
-      this.baseI18n.load(locale, compiledMessage);
+      const { compiled, raw } = this.compileMessage(messages);
+      this.messageLoadResult[locale] = raw;
+      this.baseI18n.load(locale, compiled);
       return;
     }
 
@@ -166,16 +168,18 @@ export class DuneI18n {
     });
   }
   private compileMessage(messages: BaseMsg[]) {
-    const obj: BaseMsg = {};
+    const compiled: BaseMsg = {};
+    const raw: BaseMsg = {};
     messages.forEach((msg) => {
       Object.keys(msg).forEach((k) => {
         const v = msg[k];
+        raw[k] = v;
         if (typeof v === "string") {
-          obj[k] = compileMessage(v || k);
+          compiled[k] = compileMessage(v || k);
         }
       });
     });
-    return obj;
+    return { compiled, raw };
   }
   //#endregion
 }

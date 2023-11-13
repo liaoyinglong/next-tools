@@ -33,7 +33,15 @@ interface TFunction {
    * 传入对象，会使用对象的 code 字段去翻译, 如果没有对应的文案，则使用 message 字段返回
    */
   displayError: (
-    arg: number | string | { code?: string | number; message?: string | number }
+    arg:
+      | number
+      | string
+      | {
+          code?: string | number;
+          message?: string | number;
+          // 后端某些错误信息需要替换变量，这个字段用来传入变量
+          errorVars?: Record<string, string>;
+        }
   ) => string;
 }
 
@@ -44,7 +52,7 @@ function initT() {
     let normalizedArg = typeof arg === "object" ? arg : { code: arg };
 
     let key = `error_${normalizedArg.code}`;
-    const translated = t(key);
+    const translated = t(key, normalizedArg.errorVars);
     // 如果没有对应的文案，则使用 message 字段返回
     if (translated === key && !!normalizedArg.message) {
       return normalizedArg.message + "";

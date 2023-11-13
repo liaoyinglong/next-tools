@@ -1,15 +1,19 @@
 import { act, renderHook } from "@testing-library/react";
 import { PropsWithChildren } from "react";
 import { describe, expect, it } from "vitest";
-import { I18nProvider, LocalesEnum, i18n, useT } from "../../i18n";
+import { I18nProvider, LocalesEnum, i18n, t, useT } from "../../i18n";
 
 const enMessage = {
   hello: "hello",
   "hello {name}": "hello {name}",
+  error_221040: "Nama variabel sudah ada: {0}",
+  error_221041: "Variabel belum didefinisikan: {0}",
 };
 const zhMessage = {
   hello: "你好",
   "hello {name}": "你好 {name}",
+  error_221040: "变量名已存在: {0}",
+  error_221041: "未定义的变量: {0}",
 };
 
 describe("useT", () => {
@@ -86,5 +90,33 @@ describe("useT", () => {
         "variable": "你好 world",
       }
     `);
+  });
+
+  it("t.ignoreExtract", () => {
+    expect(t.ignoreExtract).toBe(t);
+  });
+
+  it("t.displayError", () => {
+    i18n.register(LocalesEnum.zh, [zhMessage]);
+    i18n.activate(LocalesEnum.zh);
+    expect(t.displayError(1)).toBe("error_1");
+    expect(t.displayError("1")).toBe("error_1");
+    expect(t.displayError({ code: 1 })).toBe("error_1");
+    expect(t.displayError({ code: 1, message: "message" })).toBe("message");
+
+    expect(
+      t.displayError({
+        code: `221040`,
+        message: "message",
+        errorVars: { "0": "abc" },
+      })
+    ).toBe("变量名已存在: abc");
+    expect(
+      t.displayError({
+        code: `221041`,
+        message: "message",
+        errorVars: { "0": "abc" },
+      })
+    ).toBe("未定义的变量: abc");
   });
 });

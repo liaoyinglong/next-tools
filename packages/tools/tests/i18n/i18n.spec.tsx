@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { LocalesEnum, i18n, t } from "../../i18n";
+import { LocalesEnum, i18n } from "../../i18n";
 
 const enMessage = {
   hello: "hello",
@@ -109,16 +109,5 @@ describe("i18n", () => {
       "load zh translate failed: ",
       "network error"
     );
-  });
-
-  it("t.ignoreExtract", () => {
-    expect(t.ignoreExtract).toBe(t);
-  });
-
-  it("t.displayError", () => {
-    expect(t.displayError(1)).toBe("error_1");
-    expect(t.displayError("1")).toBe("error_1");
-    expect(t.displayError({ code: 1 })).toBe("error_1");
-    expect(t.displayError({ code: 1, message: "message" })).toBe("message");
   });
 });

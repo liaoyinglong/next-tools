@@ -197,9 +197,9 @@ export class DuneI18n {
   //#endregion
 }
 
-type BaseMsg = Record<string, any>;
+export type BaseMsg = Record<string, any>;
 
-type MsgLoader = BaseMsg[] | (() => Promise<BaseMsg>[] | BaseMsg[]);
+export type MsgLoader = BaseMsg[] | (() => Promise<BaseMsg>[] | BaseMsg[]);
 
 const isAsyncMsg = (
   p: Promise<BaseMsg>[] | BaseMsg[]

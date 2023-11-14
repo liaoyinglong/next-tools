@@ -132,6 +132,18 @@ export class DuneI18n {
   register(locale: LocalesEnum, message: MsgLoader) {
     this.messageLoader[locale] = message;
   }
+
+  /**
+   * 外部可以直接调用，加载语言包
+   * 这是一个同步方法
+   */
+  loadMessage(locale: string, message: BaseMsg[] | BaseMsg) {
+    const messages = Array.isArray(message) ? message : [message];
+    const { compiled, raw } = this.compileMessage(messages);
+    this.messageLoadResult[locale] = raw;
+    this.baseI18n.load(locale, compiled);
+  }
+
   // 这里不能变成 async 方法，因为在 ssg 时，需要同步加载语言包
   private tryLoadMessage(
     locale: string,
@@ -142,10 +154,7 @@ export class DuneI18n {
     }
     // case: i18n.register(LocalesEnum.zh, [{},{}]);
     if (typeof loader === "object") {
-      const messages = Array.isArray(loader) ? loader : [loader];
-      const { compiled, raw } = this.compileMessage(messages);
-      this.messageLoadResult[locale] = raw;
-      this.baseI18n.load(locale, compiled);
+      this.loadMessage(locale, loader);
       return;
     }
 
@@ -167,6 +176,10 @@ export class DuneI18n {
       return this.tryLoadMessage(locale, loadSuccess);
     });
   }
+
+  /**
+   * 将多个语言包合并成一个
+   */
   private compileMessage(messages: BaseMsg[]) {
     const compiled: BaseMsg = {};
     const raw: BaseMsg = {};

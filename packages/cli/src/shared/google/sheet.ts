@@ -89,6 +89,28 @@ class GoogleSheet {
       ...values.map((v) => [v]),
     ]);
   }
+  /**
+   * This method is used to get the titles of all the ranges in a Google Spreadsheet.
+   *
+   * @async
+   * @param {string} spreadsheetId - The ID of the Google Spreadsheet.
+   * @returns {Promise<string[]>} - A promise that resolves to an array of titles of all the ranges in the Google Spreadsheet.
+   * @throws {Error} - Throws an error if the initialization of the Google Sheets API client fails.
+   */
+  async getRangeTitles(spreadsheetId: string) {
+    // Initialize the Google Sheets API client
+    await this.init();
+    // Get the details of the Google Spreadsheet
+    const res = await this.sheets.spreadsheets.get({
+      spreadsheetId,
+    });
+    // Extract the titles of all the ranges in the Google Spreadsheet
+    const titles = res.data.sheets
+      ?.map((v) => v.properties?.title)
+      .filter((v): v is string => !!v);
+
+    return titles;
+  }
 }
 
 export const googleSheet = new GoogleSheet();

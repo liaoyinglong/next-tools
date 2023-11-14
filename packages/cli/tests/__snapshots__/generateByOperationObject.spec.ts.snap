@@ -2,7 +2,7 @@
 
 exports[`api 生成 > 参数在body里 1`] = `
 "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖
-import { RequestBuilder } from '@dune2/tools';
+import { RequestBuilder } from '@dune2/tools/rq';
 import requestFn from '@/utils/request';
 /**
   * 分页查询币种信息
@@ -126,7 +126,7 @@ export const usersPostApiFieldsMap = {\\"nameOrCode\\":\\"nameOrCode\\",\\"statu
 
 exports[`api 生成 > 参数在url上 1`] = `
 "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖
-import { RequestBuilder } from '@dune2/tools';
+import { RequestBuilder } from '@dune2/tools/rq';
 import requestFn from '@/utils/request';
 /**
   * 查询单个后台用户信息
@@ -175,7 +175,7 @@ export interface Res {
 
 exports[`api 生成 > 参数或响应为空 1`] = `
 "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖
-import { RequestBuilder } from '@dune2/tools';
+import { RequestBuilder } from '@dune2/tools/rq';
 import requestFn from '@/utils/request';
 /**
   * 分页查询币种信息
@@ -198,7 +198,7 @@ export namespace usersPostApi {
 
 exports[`api 生成 > 支持 urlTransformer 1`] = `
 "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖
-import { RequestBuilder } from '@dune2/tools';
+import { RequestBuilder } from '@dune2/tools/rq';
 /**
   * 查询单个后台用户信息
   * @tags 后台用户管理相关接口

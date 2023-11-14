@@ -23,7 +23,8 @@
     "numbro",
     "rq",
     "factory",
-    "storage"
+    "storage",
+    "shared"
   ],
   "scripts": {
     "build": "tsc --diagnostics",

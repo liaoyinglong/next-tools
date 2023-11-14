@@ -1,4 +1,4 @@
-import { createStateContext } from "@dune2/tools/src/factory/createStateContext";
+import { createStateContext } from "@dune2/tools/factory/createStateContext";
 import { useState } from "react";
 
 export const { Provider, useContextValue } = createStateContext({

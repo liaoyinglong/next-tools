@@ -1,4 +1,4 @@
-import { mapProps } from "@dune2/tools/src/factory/mapProps";
+import { mapProps } from "@dune2/tools/factory/mapProps";
 
 export const MappedDiv1 = mapProps("div", {
   style: {

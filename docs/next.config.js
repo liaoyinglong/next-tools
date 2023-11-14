@@ -3,8 +3,8 @@ const withNextra = require("nextra")({
   theme: "nextra-theme-docs",
   themeConfig: "./theme.config.jsx",
 });
-let basePath = "/";
-//#region in github action build
+let basePath = "";
+//#region in GitHub action build
 if (process.env.GITHUB_REPOSITORY) {
   // eg: GITHUB_REPOSITORY = "dune2/some-tools"
   basePath = `/${process.env.GITHUB_REPOSITORY.split("/")[1]}`;

@@ -1,4 +1,4 @@
-import { mapProps } from "@dune2/tools";
+import { mapProps } from "@dune2/tools/factory/mapProps";
 import dynamic from "next/dynamic";
 
 const Sandpack = dynamic(

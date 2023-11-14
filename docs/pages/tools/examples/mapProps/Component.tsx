@@ -1,4 +1,4 @@
-import { mapProps } from "@dune2/tools/src/factory/mapProps";
+import { mapProps } from "@dune2/tools/factory/mapProps";
 import React, { PropsWithChildren } from "react";
 
 function Comp(

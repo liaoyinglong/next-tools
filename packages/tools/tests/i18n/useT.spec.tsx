@@ -118,5 +118,13 @@ describe("useT", () => {
         errorVars: { "0": "abc" },
       })
     ).toBe("未定义的变量: abc");
+    expect(
+      t.displayError({
+        code: `221041`,
+        message: "message",
+        // @ts-expect-error 也是支持数组的
+        errorVars: ["abc"],
+      })
+    ).toBe("未定义的变量: abc");
   });
 });

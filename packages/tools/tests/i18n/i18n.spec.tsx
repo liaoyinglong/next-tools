@@ -110,4 +110,18 @@ describe("i18n", () => {
       "network error"
     );
   });
+
+  it("extra loadMessage", async () => {
+    await i18n.activate(LocalesEnum.en);
+
+    i18n.loadMessage(LocalesEnum.en, {
+      ...enMessage,
+      "Attachment {name} saved": "Attachment {name} saved",
+    });
+
+    expect(i18n.t("hello {name}", { name: "world" })).toBe("hello world");
+    expect(i18n.t("Attachment {name} saved", { name: "world" })).toBe(
+      "Attachment world saved"
+    );
+  });
 });

@@ -209,3 +209,8 @@ const isAsyncMsg = (
 };
 
 export const i18n = new DuneI18n();
+
+if (typeof window !== "undefined") {
+  //@ts-expect-error 暴露给浏览器插件使用
+  window["__d_i18n"] = i18n;
+}

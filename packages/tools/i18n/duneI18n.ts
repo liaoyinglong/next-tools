@@ -140,7 +140,10 @@ export class DuneI18n {
   loadMessage(locale: string, message: BaseMsg[] | BaseMsg) {
     const messages = Array.isArray(message) ? message : [message];
     const { compiled, raw } = this.compileMessage(messages);
-    this.messageLoadResult[locale] = raw;
+    this.messageLoadResult[locale] = Object.assign(
+      this.messageLoadResult[locale] || {},
+      raw
+    );
     this.baseI18n.load(locale, compiled);
   }
 

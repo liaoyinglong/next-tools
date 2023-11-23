@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useMemo } from "react";
 import { describe, expect, it } from "vitest";
 import { I18nProvider, LocalesEnum, i18n, t, useT } from "../../i18n";
 
@@ -83,6 +83,41 @@ describe("useT", () => {
     // change locale
     await act(() => {
       return i18n.activate(LocalesEnum.zh);
+    });
+    expect(result.current).toMatchInlineSnapshot(`
+      {
+        "simple": "你好",
+        "variable": "你好 world",
+      }
+    `);
+  });
+
+  it("work with useMemo", () => {
+    i18n.register(LocalesEnum.en, [enMessage]);
+    i18n.register(LocalesEnum.zh, [zhMessage]);
+    i18n.activate(LocalesEnum.en);
+
+    const { result } = renderHook(
+      () => {
+        const t = useT();
+        return useMemo(() => {
+          return {
+            simple: t("hello"),
+            variable: t("hello {name}", { name: "world" }),
+          };
+        }, [t]);
+      },
+      { wrapper }
+    );
+    expect(result.current).toMatchInlineSnapshot(`
+      {
+        "simple": "hello",
+        "variable": "hello world",
+      }
+    `);
+    // change locale
+    act(() => {
+      i18n.activate(LocalesEnum.zh);
     });
     expect(result.current).toMatchInlineSnapshot(`
       {

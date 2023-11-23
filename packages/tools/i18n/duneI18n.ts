@@ -28,7 +28,10 @@ const defaultConfig: Config = {
 export class DuneI18n {
   baseI18n = setupI18n();
 
-  t = this.baseI18n.t.bind(this.baseI18n);
+  initT() {
+    return this.baseI18n.t.bind(this.baseI18n);
+  }
+  t = this.initT();
   on = this.baseI18n.on.bind(this.baseI18n);
 
   get locale() {

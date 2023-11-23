@@ -46,7 +46,7 @@ interface TFunction {
 }
 
 function initT() {
-  let t = i18n.t as unknown as TFunction;
+  let t = i18n.initT() as unknown as TFunction;
   t.ignoreExtract = t;
   t.displayError = (arg) => {
     let normalizedArg = typeof arg === "object" ? arg : { code: arg };

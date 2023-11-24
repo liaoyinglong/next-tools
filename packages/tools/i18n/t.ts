@@ -1,4 +1,4 @@
-import { MessageDescriptor, MessageOptions } from "@lingui/core";
+import { type MessageDescriptor, type MessageOptions } from "@lingui/core";
 import { useLingui } from "@lingui/react";
 import { i18n } from "./duneI18n";
 

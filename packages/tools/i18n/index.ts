@@ -1,5 +1,5 @@
-import { TransProps, Trans as TransRaw } from "@lingui/react";
-import { FC } from "react";
+import { Trans as TransRaw, type TransProps } from "@lingui/react";
+import { type FC } from "react";
 import { LocalesEnum } from "./enums";
 
 export type { I18nContext, I18nProviderProps } from "@lingui/react";

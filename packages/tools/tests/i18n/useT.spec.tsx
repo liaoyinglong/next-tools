@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { PropsWithChildren, useMemo } from "react";
+import { useMemo, type PropsWithChildren } from "react";
 import { describe, expect, it } from "vitest";
 import { I18nProvider, LocalesEnum, i18n, t, useT } from "../../i18n";
 

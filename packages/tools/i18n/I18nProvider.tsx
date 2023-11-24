@@ -1,5 +1,6 @@
 import { I18nProvider as I18nProviderRaw } from "@lingui/react";
-import { PropsWithChildren, useEffect } from "react";
+import type { PropsWithChildren } from "react";
+import { useEffect } from "react";
 import { i18n } from "./duneI18n";
 
 interface I18nProviderPropsCustom {

@@ -1,7 +1,8 @@
 import BigNumber from "bignumber.js";
 import { LocalesEnum } from "../i18n/enums";
 import { defaultCurrencies } from "./currencies";
-import { CurrencyFormat, Format, RoundingMode } from "./shared";
+import type { CurrencyFormat, Format } from "./shared";
+import { RoundingMode } from "./shared";
 
 export * from "./shared";
 

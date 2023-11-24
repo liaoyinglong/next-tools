@@ -1,4 +1,4 @@
-import { ComponentProps, PropsWithChildren } from "react";
+import type { ComponentProps, PropsWithChildren } from "react";
 import { assertType, describe, it } from "vitest";
 import { mapProps } from "../../factory/mapProps";
 

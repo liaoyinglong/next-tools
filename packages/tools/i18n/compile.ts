@@ -1,4 +1,5 @@
-import { Content, parse, Token } from "@messageformat/parser";
+import type { Content, Token } from "@messageformat/parser";
+import { parse } from "@messageformat/parser";
 
 export type CompiledIcuChoices = Record<string, CompiledMessage> & {
   offset: number | undefined;

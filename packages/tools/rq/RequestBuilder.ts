@@ -1,4 +1,4 @@
-import {
+import type {
   FetchQueryOptions,
   InvalidateOptions,
   QueryClient,
@@ -8,12 +8,10 @@ import {
   UseMutationOptions,
   UseQueryOptions,
   UseQueryResult,
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
 } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
-import { AxiosRequestConfig, Method } from "axios";
+import type { AxiosRequestConfig, Method } from "axios";
 import { useDebugValue, useMemo } from "react";
 import { queryClient } from "./defaultQueryClient";
 

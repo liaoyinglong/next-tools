@@ -1,5 +1,5 @@
 import { LocalesEnum } from "../i18n/enums";
-import { CurrencyFormat } from "./shared";
+import type { CurrencyFormat } from "./shared";
 
 export const defaultCurrencies: Record<
   string,

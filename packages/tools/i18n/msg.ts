@@ -1,5 +1,5 @@
 //#region msg fn
-import { MessageDescriptor } from "@lingui/core";
+import type { MessageDescriptor } from "@lingui/core";
 
 interface MsgFn {
   (descriptor: MessageDescriptor): string;

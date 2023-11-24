@@ -1,6 +1,6 @@
 import type { ComponentProps, ComponentType, FC, JSX } from "react";
 import { forwardRef } from "react";
-import { OptionalKeys } from "../shared/OptionalKeys";
+import type { OptionalKeys } from "../shared/OptionalKeys";
 
 /**
  * ```js

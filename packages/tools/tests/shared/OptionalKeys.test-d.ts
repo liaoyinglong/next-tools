@@ -1,5 +1,5 @@
 import { assertType, describe, it } from "vitest";
-import { OptionalKeys } from "../../shared/OptionalKeys";
+import type { OptionalKeys } from "../../shared/OptionalKeys";
 
 describe("OptionalKeys", () => {
   it("should be ok", () => {

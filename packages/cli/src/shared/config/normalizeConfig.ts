@@ -1,3 +1,4 @@
+import _ from "lodash";
 import path from "path";
 import { defaultJsonSorter } from "../defaultJsonSorter";
 import { resolveSheetId } from "../resolveSheetId";
@@ -25,10 +26,15 @@ export function normalizeConfig(config: Config): Config {
     item.sheetId = resolveSheetId(item.sheetId);
     item.jsonSorter = defaultJsonSorter;
     item.enabled ??= true;
+    item.defaultLocale ??= "zh";
 
     //#region namespace
     item.namespaceSeparator ??= ".";
     //#endregion
+
+    _.defaults(item.translatePlatform, {
+      url: "https://test-transfer.duneproject.xyz",
+    });
     return item;
   });
   //#endregion

@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-import { extract } from "./commands/extract";
+import { version } from "../package.json";
 import { download } from "./commands/download";
+import { extract } from "./commands/extract";
 import { generateApi } from "./commands/generateApi";
 import { initConfig } from "./commands/initConfig";
-import { upload } from "./commands/upload";
-import { cli } from "./shared";
-import { version } from "../package.json";
 import { interactive } from "./commands/interactive";
 import { namespace } from "./commands/namespace";
+import { upload } from "./commands/upload";
+import { cli } from "./shared";
 //#region 翻译相关
 
 cli

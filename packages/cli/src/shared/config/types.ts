@@ -77,6 +77,18 @@ export interface I18nConfig {
    * @default "."
    */
   namespaceSeparator?: string;
+
+  translatePlatform?: {
+    /**
+     * 在翻译平台注册的
+     * 项目名称
+     */
+    project?: string;
+    /**
+     * 翻译平台的 url
+     */
+    url?: string;
+  };
 }
 
 export interface ApiConfig {

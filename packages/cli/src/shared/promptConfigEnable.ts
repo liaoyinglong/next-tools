@@ -32,6 +32,7 @@ export async function promptConfigEnable<T>(opt: Opt<T>) {
   const res = await prompt<{ enabled: string[] }>({
     type: "multiselect",
     message: "选择要生效的配置项",
+    // @ts-ignore
     hint: "(空格选中，回车确认)",
     name: "enabled",
     validate(value) {

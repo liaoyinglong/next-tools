@@ -16,7 +16,7 @@ export async function uploadToTranslatePlatform(
 ) {
   const { translatePlatform, defaultLocale } = config;
 
-  if (translatePlatform?.url && translatePlatform?.project) {
+  if (translatePlatform?.enable) {
     log.info(pc.bold("开始上传至翻译平台"));
     const defaultII18nData = i18nDataArr.find(
       (item) => item.locale === defaultLocale

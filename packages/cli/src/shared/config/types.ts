@@ -80,6 +80,10 @@ export interface I18nConfig {
 
   translatePlatform?: {
     /**
+     * 是否启用翻译平台
+     */
+    enable?: boolean;
+    /**
      * 在翻译平台注册的
      * 项目名称
      */

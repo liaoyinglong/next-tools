@@ -32,9 +32,11 @@ export function normalizeConfig(config: Config): Config {
     item.namespaceSeparator ??= ".";
     //#endregion
 
-    _.defaults(item.translatePlatform, {
+    const defaultTranslatePlatform: I18nConfig["translatePlatform"] = {
       url: "https://test-transfer.duneproject.xyz",
-    });
+      enable: !!item.translatePlatform?.project,
+    };
+    _.defaults(item.translatePlatform, defaultTranslatePlatform);
     return item;
   });
   //#endregion

@@ -1,13 +1,13 @@
 import fs from "fs-extra";
 import { globby } from "globby";
-import pMap from "p-map";
-import { createLogger } from "../shared";
-import { getConfig, I18nConfig } from "../shared/config";
-import { ExtractedMap, I18nData } from "../shared/i18nData";
-import pc from "picocolors";
 import os from "os";
-import { promptI18nConfigEnable } from "../shared/promptConfigEnable";
+import pMap from "p-map";
 import path from "path";
+import pc from "picocolors";
+import { createLogger } from "../../shared";
+import { getConfig, I18nConfig } from "../../shared/config";
+import { ExtractedMap, I18nData } from "../../shared/i18nData";
+import { promptI18nConfigEnable } from "../../shared/promptConfigEnable";
 
 const log = createLogger("extract");
 
@@ -86,6 +86,10 @@ export async function extract(opts?: { deleteUnused: boolean }) {
       console.log(errMsgs.join(os.EOL));
     }
     I18nData.printStatistic("提取结果: ", i18nDataArr);
+
+    await import("./uploadToTranslatePlatform").then((mod) =>
+      mod.uploadToTranslatePlatform(configItem, i18nDataArr)
+    );
   }
 }
 

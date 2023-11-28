@@ -1,17 +1,17 @@
 {
   "Checkout LinguiJS examples and usecases.": "",
   "Documentation →": "",
-  "example": "",
   "Example project using LinguiJS": "",
   "Examples": "",
   "Examples →": "",
   "Find in-depth information about LinguiJS features and API.": "",
   "Get started by editing <0>locale/en/messages.po</0>": "",
-  "hello {name}": "",
   "Hello {name}": "",
   "Plurals": "",
   "Plurals Plurals Plurals Plurals Plurals Plurals Plurals Plurals\n\n          Plurals Plurals Plurals Plurals Plurals Plurals Plurals Plurals\n\n          Plurals Plurals Plurals Plurals": "",
   "Powered by <0/>": "",
   "Welcome to <0>LinguiJS!</0>": "",
+  "example": "",
+  "hello {name}": "",
   "what is this?": ""
 }

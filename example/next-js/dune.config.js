@@ -25,6 +25,9 @@ module.exports = defineConfig({
         login: ["./src/pages/login"],
         user: ["./src/pages/user"],
       },
+      translatePlatform: {
+        project: "dune",
+      },
     },
     {
       i18nDir: "./src/i18n2",
@@ -38,6 +41,9 @@ module.exports = defineConfig({
         in: "F",
       },
       include: ["./src/pages/**/*.{js,jsx,ts,tsx}"],
+      translatePlatform: {
+        project: "dune",
+      },
     },
   ],
   api: [

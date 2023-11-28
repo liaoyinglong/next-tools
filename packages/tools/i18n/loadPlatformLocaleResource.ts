@@ -1,15 +1,27 @@
 import { i18n } from "./duneI18n";
 
-let controller: AbortController;
+type Data = Record<string, Record<string, string>>;
+
 let cache = {
   time: 0,
-  data: {} as Record<string, Record<string, string>>,
+  data: {} as Data,
+  dataPromise: null as Promise<Data | void> | null,
 };
 
-function initRequestUrl(url: string, projectName: string) {
-  const urlObj = new URL(url);
-  urlObj.searchParams.set("projectName", projectName);
-  return urlObj.toString();
+async function initFetch(opts: Opts): Promise<Data | void> {
+  const urlObj = new URL(opts.url);
+  urlObj.searchParams.set("projectName", opts.projectName);
+  try {
+    const res = await fetch(urlObj.toString()).then((res) => res.json());
+    if (res.code !== 200) {
+      console.error(`load translate failed: `, res);
+      return;
+    }
+    return res.data;
+  } catch (e) {
+    console.error(`load translate error: `, e);
+    return;
+  }
 }
 
 interface Opts {
@@ -36,11 +48,6 @@ interface Opts {
  * 从翻译平台加载翻译资源
  */
 export async function loadPlatformLocaleResource(opts: Opts) {
-  if (controller) {
-    controller.abort();
-  }
-  controller = new AbortController();
-  const url = initRequestUrl(opts.url, opts.projectName);
   const locale = opts.locale;
   const now = Date.now();
   const cacheTime = opts.cacheTime || 5 * 1000;
@@ -51,21 +58,15 @@ export async function loadPlatformLocaleResource(opts: Opts) {
     return;
   }
 
-  try {
-    const res = await fetch(url, {
-      signal: controller.signal,
-    }).then((res) => res.json());
-    const item = res.data[locale];
-    if (res.code !== 200 || !item) {
-      console.error(`load ${locale} translate failed: `, res);
-      return;
-    }
-
-    cache.data = res.data;
+  if (!cache.dataPromise) {
+    cache.dataPromise = initFetch(opts);
+  }
+  const data = await cache.dataPromise;
+  // 用完后需要清空，否则会一直缓存
+  cache.dataPromise = null;
+  if (data) {
+    cache.data = data;
     cache.time = Date.now();
-
-    i18n.loadMessage(locale, item);
-  } catch (e) {
-    console.error(`load ${locale} translate error: `, e);
+    i18n.loadMessage(locale, data[locale]);
   }
 }

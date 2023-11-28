@@ -6,6 +6,7 @@ import {
   fromUrl,
 } from "@lingui/detect-locale";
 import { isServer } from "../shared";
+import type { EventEmitter } from "./EventEmitterType";
 import { compileMessage } from "./compile";
 import { LocalesEnum } from "./enums";
 import type { Config } from "./shared";
@@ -32,7 +33,8 @@ export class DuneI18n {
     return this.baseI18n.t.bind(this.baseI18n);
   }
   t = this.initT();
-  on = this.baseI18n.on.bind(this.baseI18n);
+  on = this.baseI18n.on.bind(this.baseI18n) as EventEmitter["on"];
+  emit = this.baseI18n.emit.bind(this.baseI18n) as EventEmitter["emit"];
 
   get locale() {
     return this.baseI18n.locale;
@@ -122,6 +124,7 @@ export class DuneI18n {
     }
 
     this.baseI18n.activate(combinedLocale);
+    this.emit("localeChange", combinedLocale);
     // 默认需要 同步到 localStorage
     if (syncToStorage) {
       localStorage.setItem(this.config.storageKey, combinedLocale);

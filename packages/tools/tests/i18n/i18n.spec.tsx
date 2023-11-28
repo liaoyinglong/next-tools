@@ -124,4 +124,23 @@ describe("i18n", () => {
       "Attachment world saved"
     );
   });
+
+  it("eventEmitter", async () => {
+    const onLocaleChange = vi.fn();
+    i18n.on("localeChange", onLocaleChange);
+
+    const onChange = vi.fn();
+    i18n.on("change", onChange);
+
+    await i18n.activate(LocalesEnum.en);
+    expect(onLocaleChange).toBeCalledTimes(1);
+    expect(onLocaleChange).toBeCalledWith(LocalesEnum.en);
+
+    expect(onChange.mock.calls.length >= 1).toBeTruthy();
+    expect(onChange).toBeCalledWith();
+
+    i18n.loadMessage(LocalesEnum.en, {});
+    expect(onLocaleChange).toBeCalledTimes(1);
+    expect(onChange.mock.calls.length >= 2).toBeTruthy();
+  });
 });

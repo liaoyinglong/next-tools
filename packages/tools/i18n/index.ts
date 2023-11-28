@@ -10,6 +10,8 @@ export { t, useT } from "./t";
 export { useLocale } from "./useLocale";
 export { LocalesEnum };
 
+export { loadPlatformLocaleResource } from "./loadPlatformLocaleResource";
+
 /**
  * @example
  * ```tsx

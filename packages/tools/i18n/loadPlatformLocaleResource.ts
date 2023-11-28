@@ -20,9 +20,8 @@ interface Opts {
 export async function loadPlatformLocaleResource(opts: Opts) {
   if (controller) {
     controller.abort();
-  } else {
-    controller = new AbortController();
   }
+  controller = new AbortController();
   const url = initRequestUrl(opts.url, opts.projectName);
   const locale = opts.locale;
   try {

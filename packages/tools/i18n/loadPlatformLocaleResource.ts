@@ -26,8 +26,8 @@ interface Opts {
    */
   url: string;
   /**
-   * 缓存时间
-   * @default 5 * 60 * 1000
+   * 缓存时间 5s
+   * @default 5 * 1000
    */
   cacheTime?: number;
 }
@@ -43,7 +43,7 @@ export async function loadPlatformLocaleResource(opts: Opts) {
   const url = initRequestUrl(opts.url, opts.projectName);
   const locale = opts.locale;
   const now = Date.now();
-  const cacheTime = opts.cacheTime || 5 * 60 * 1000;
+  const cacheTime = opts.cacheTime || 5 * 1000;
 
   // 有缓存且未过期
   if (cache.data[locale] && now - cache.time < cacheTime) {

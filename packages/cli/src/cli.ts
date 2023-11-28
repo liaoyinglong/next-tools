@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { version } from "../package.json";
 import { download } from "./commands/download";
+import { downloadFromPlatform } from "./commands/downloadFromPlatform";
 import { extract } from "./commands/extract";
 import { generateApi } from "./commands/generateApi";
 import { initConfig } from "./commands/initConfig";
@@ -35,6 +36,11 @@ cli
   });
 
 cli.command("upload", "上传翻译文件").example("dune upload").action(upload);
+
+cli
+  .command("downloadFromPlatform", "从翻译平台下载文件")
+  .example("dune downloadFromPlatform")
+  .action(downloadFromPlatform);
 //#endregion
 
 //#region api 相关

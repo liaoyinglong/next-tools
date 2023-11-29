@@ -167,7 +167,15 @@ export class DuneI18n {
       return;
     }
 
-    const p = loader();
+    const p = (() => {
+      try {
+        return loader();
+      } catch (e) {
+        console.error(`load ${locale} translate failed`);
+        console.error(e);
+        return [];
+      }
+    })();
     if (!isAsyncMsg(p)) {
       // case: i18n.register(LocalesEnum.zh, () => [{},{}]);
       return this.tryLoadMessage(locale, p);

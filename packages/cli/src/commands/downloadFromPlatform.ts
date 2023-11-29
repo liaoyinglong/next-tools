@@ -23,23 +23,19 @@ export async function downloadFromPlatform() {
     logger.info("translatePlatform.enable 为 false，不会下载");
     return;
   }
-
   const res = await axios({
     baseURL: translatePlatform.url,
     url: "/v1/dune-i18n/public/findAll",
     params: {
       projectName: translatePlatform.project,
     },
-  }).catch((e) => {
-    logger.error("获取翻译平台数据失败: %o", e);
-    logger.info("将使用默认数据生成 json 文件");
-    return { data: {} };
+  }).catch((err) => {
+    throw new TransError(err, "请求翻译平台失败");
   });
 
   const data = res.data.data;
   if (!data) {
-    logger.error("获取翻译平台数据失败: %o", res.data);
-    logger.info("将使用默认数据生成 json 文件");
+    throw new TransError(res.data, "data 为空");
   }
 
   await pMap(locales ?? [], async (locale) => {
@@ -48,4 +44,10 @@ export async function downloadFromPlatform() {
     await i18nData.saveToDisk();
     return i18nData;
   });
+}
+
+class TransError extends Error {
+  constructor(public data: any, message: string = "") {
+    super(`获取翻译平台数据失败: ${message}`);
+  }
 }

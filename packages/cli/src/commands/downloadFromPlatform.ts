@@ -23,6 +23,7 @@ export async function downloadFromPlatform() {
     logger.info("translatePlatform.enable 为 false，不会下载");
     return;
   }
+  logger.info("开始从翻译平台下载翻译文件");
   const res = await axios({
     baseURL: translatePlatform.url,
     url: "/v1/dune-i18n/public/findAll",
@@ -44,6 +45,7 @@ export async function downloadFromPlatform() {
     await i18nData.saveToDisk();
     return i18nData;
   });
+  logger.info("从翻译平台下载翻译文件完成");
 }
 
 class TransError extends Error {

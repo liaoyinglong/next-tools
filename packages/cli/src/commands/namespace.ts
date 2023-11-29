@@ -1,13 +1,13 @@
-import { createLogger } from "../shared";
-import { getConfig } from "../shared/config";
 import enquirer from "enquirer";
-import _ from "lodash";
-import { globby } from "globby";
 import fs from "fs-extra";
+import { globby } from "globby";
+import _ from "lodash";
 import pMap from "p-map";
 import pc from "picocolors";
-import { formatFile } from "../shared/formatFile";
+import { createLogger } from "../shared";
 import { autoNamespaceByReg } from "../shared/autoNamespaceByReg";
+import { getConfig } from "../shared/config";
+import { formatFile } from "../shared/formatFile";
 
 const { prompt } = enquirer;
 
@@ -61,6 +61,7 @@ export async function namespace(params: Params) {
   const { namespaces } = await prompt<{ namespaces: string[] }>({
     type: "multiselect",
     message: "选择要生效的配置项",
+    //@ts-ignore
     hint: "(空格选中，回车确认)",
     name: "namespaces",
     validate(value) {

@@ -30,12 +30,15 @@ export async function downloadFromPlatform() {
     params: {
       projectName: translatePlatform.project,
     },
+  }).catch((e) => {
+    logger.error("获取翻译平台数据失败: %o", e);
+    logger.info("将使用默认数据生成 json 文件");
+    return { data: {} };
   });
 
   const data = res.data.data;
   if (!data) {
     logger.error("获取翻译平台数据失败: %o", res.data);
-    logger.error("请检查 translatePlatform 配置是否正确");
     logger.info("将使用默认数据生成 json 文件");
   }
 

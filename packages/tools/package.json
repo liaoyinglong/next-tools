@@ -13,6 +13,7 @@
     "./numbro": "./numbro/index.ts",
     "./rq": "./rq/index.ts",
     "./shared": "./shared/index.ts",
+    "./shared/*": "./shared/*.ts",
     "./storage": "./storage/index.ts",
     "./storage/*": "./storage/*.ts",
     "./package.json": "./package.json"

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { createStorage } from "../../src";
+import { createStorage } from "../../storage";
 
 class DataMap {
   name = "";

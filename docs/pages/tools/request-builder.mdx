@@ -1,5 +1,46 @@
 # Request Builder
 
-import { Callout } from "nextra/components";
+基于 `react-query`常用的 `hook` 封装的 `api code gen runtime`，提供如下能力：
 
-<Callout emoji="🚨">work in progress</Callout>
+### example
+
+```ts
+// 一般情况下，这些代码是通过 api code gen 工具生成的
+export const coinsPostApi = new RequestBuilder<
+  coinsPostApi.Req,
+  coinsPostApi.Res
+>({
+  url: "/coins",
+  method: "post",
+});
+```
+
+**普通 promise 调用，不走 react-query 的缓存**
+
+```ts
+const res = await coinsPostApi.request();
+// do something
+console.log(res);
+```
+
+**hooks 调用，走 react-query 的缓存**
+
+```ts
+const { data } = coinsPostApi.useQuery();
+// or
+const {} = coinsPostApi.useMutation();
+// or 分页能力
+const {} = coinsPostApi.useInfiniteQuery();
+```
+
+**支持 react-query 的能力**
+
+```ts
+coinsPostApi.prefetchQuery();
+coinsPostApi.fetchQuery();
+coinsPostApi.invalidateQuery();
+coinsPostApi.refetchQueries();
+coinsPostApi.getQueryData();
+coinsPostApi.setQueryData();
+coinsPostApi.ensureQueryData();
+```

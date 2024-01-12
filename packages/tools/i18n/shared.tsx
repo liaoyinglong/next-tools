@@ -8,6 +8,10 @@ export interface Config {
    * @default dune-lang
    */
   storageKey: string;
+  /**
+   * 是否开启 debug 模式
+   */
+  debug: boolean;
 
   /**
    * url 参数

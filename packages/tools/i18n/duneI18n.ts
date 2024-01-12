@@ -17,6 +17,7 @@ const defaultConfig: Config = {
   storageKey: "dune-lang",
   queryKey: "lang",
   supportedLocales: [],
+  debug: false,
   navigatorMapper: [
     ["id-", LocalesEnum.id],
     ["en-", LocalesEnum.en],
@@ -40,14 +41,23 @@ export class DuneI18n {
     return this.baseI18n.locale;
   }
 
+  log(...args: any[]) {
+    if (this.config.debug) {
+      console.log(`[dune-i18n]: `, ...args);
+    }
+  }
+
   //#region 一些配置
   private config: Config = defaultConfig;
   updateConfig(config: Partial<Config>) {
+    this.log("updateConfig ", config);
     this.config = { ...this.config, ...config };
+    this.log("updateConfig result ", this.config);
   }
   // 主要给测试用例使用
   resetConfig() {
     this.config = defaultConfig;
+    this.log("reset to defaultConfig ", this.config);
   }
   //#endregion
 
@@ -55,10 +65,14 @@ export class DuneI18n {
   // 用户可以额外设置，同时也会从已加载的语言包中获取
   getSupportedLocales() {
     const loadedLocales = Object.keys(this.messageLoader);
-    return this.config.supportedLocales.concat(loadedLocales);
+    const r = this.config.supportedLocales.concat(loadedLocales);
+    this.log("getSupportedLocales ", r);
+    return r;
   }
   isSupportedLocale(locale: string) {
-    return this.getSupportedLocales().includes(locale);
+    const r = this.getSupportedLocales().includes(locale);
+    this.log("isSupportedLocale ", locale, r);
+    return r;
   }
   //#endregion
 
@@ -93,6 +107,7 @@ export class DuneI18n {
         }
       }
     }
+    this.log("detectLocale ", defaultLocale);
     return defaultLocale;
   }
   //#endregion
@@ -110,6 +125,7 @@ export class DuneI18n {
         }
   ) => {
     const opts = typeof locale !== "object" ? { locale } : locale;
+    this.log("activate ", opts);
 
     const combinedLocale = opts.locale;
     const syncToStorage = opts.syncToStorage ?? true;
@@ -137,6 +153,7 @@ export class DuneI18n {
   messageLoadResult: Record<string, BaseMsg> = {};
   register(locale: LocalesEnum, message: MsgLoader) {
     this.messageLoader[locale] = message;
+    this.log("register ", locale, message);
   }
 
   /**

@@ -1,5 +1,4 @@
 import { type MessageDescriptor, type MessageOptions } from "@lingui/core";
-import { useLingui } from "@lingui/react";
 import { i18n } from "./duneI18n";
 
 /**
@@ -65,11 +64,3 @@ function initT() {
 i18n.on("change", () => {
   t = initT();
 });
-
-/**
- * 这个hook主要是为了解决在`jsx`使用`t`方法的时候，语言切换了并没有重新渲染的问题
- */
-export function useT() {
-  useLingui();
-  return t;
-}

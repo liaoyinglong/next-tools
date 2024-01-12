@@ -10,6 +10,7 @@
   "exports": {
     "./factory/*": "./factory/*.tsx",
     "./i18n": "./i18n/index.ts",
+    "./i18n/*": "./i18n/*",
     "./numbro": "./numbro/index.ts",
     "./rq": "./rq/index.ts",
     "./shared": "./shared/index.ts",

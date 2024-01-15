@@ -49,7 +49,7 @@ describe("beforeSwcLoader", () => {
       enableAutoUseClient: true,
     });
     expect(res).toMatchInlineSnapshot(`
-      'use client';
+      "'use client';
       const Widget = styled.div\`\`"
     `);
   });

@@ -16,7 +16,7 @@ const isHasJsxCommentReg = /\/\*\*.*@jsx.+jsx.*\*\//;
 const hasUseClientReg = /['"]use client["']/;
 
 // 判断是否在 src 目录下
-const inSrcDirReg = /[\\\/]src[\\\/]/;
+const inSrcDirReg = /[\\\/]src[\\\/]|@dune2[\\\/]tools/;
 
 // case: css={{}} | styled.div``
 const hasUseEmotionReg = /\scss=\{|\sstyled.*`/;

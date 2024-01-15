@@ -7,16 +7,6 @@ export interface BeforeSwcLoaderOptions {
    * @tips 对于 include 匹配的文件生效
    */
   enableAutoUseClient?: boolean;
-  /**
-   * 是否启用 emotion 的兼容 next 13 的 App Router 的代码
-   * @tips 以上只对于 src 目录下的代码生效
-   */
-  enabledEmotionCompatForAppRouter?: boolean;
-  /**
-   * 是否启用 i18n 代码的兼容，自动加上 use client
-   * @tips 以上只对于 src 目录下的代码生效
-   */
-  enabledI18nCompat?: boolean;
 }
 
 // 判断是否包含 /** @jsx jsx */ 注释
@@ -28,12 +18,11 @@ const hasUseClientReg = /['"]use client["']/;
 // 判断是否在 src 目录下
 const inSrcDirReg = /[\\\/]src[\\\/]/;
 
-// case: /** @jsxImportSource @emotion/react */
-const hasJsxImportSourceReg = /\/\*\*.*@jsxImportSource.*\*\//;
 // case: css={{}} | styled.div``
 const hasUseEmotionReg = /\scss=\{|\sstyled.*`/;
-// case: useT()
-const hasUseI18nReg = /useT\(\)/;
+
+// case: use hooks
+const hasUseHooksReg = /use[A-Z][a-zA-Z0-9]*\([^)]*\)/;
 
 export default function beforeSwcLoader(
   this: LoaderContext<BeforeSwcLoaderOptions>,
@@ -60,26 +49,13 @@ export default function beforeSwcLoader(
   }
 
   const isInSrcDir = inSrcDirReg.test(this.resourcePath);
-  const useEmotion = hasUseEmotionReg.test(source);
   if (isInSrcDir) {
-    // 对应 src 中使用到了 i18n 的代码，
-    // 或者 使用 emotion 的代码
-    // 需要加上 use client
-    if (
-      (options.enabledI18nCompat && hasUseI18nReg.test(source)) ||
-      useEmotion
-    ) {
+    // 使用 emotion 的代码
+    const useEmotion = hasUseEmotionReg.test(source);
+    // 使用 hooks 的代码
+    const useHooks = hasUseHooksReg.test(source);
+    if (useEmotion || useHooks) {
       transformedCode = appendUseClient(transformedCode);
-    }
-
-    // jsxImportSource 要记在最前面才有效
-    // 对应 src 中使用到了 emotion 的 css-in-js 的代码，需要加上 use client
-    if (options.enabledEmotionCompatForAppRouter && useEmotion) {
-      // 判断是否使用了 emotion 相关的代码
-      if (!hasJsxImportSourceReg.test(source)) {
-        transformedCode =
-          `/** @jsxImportSource @emotion/react */\n` + transformedCode;
-      }
     }
   }
 

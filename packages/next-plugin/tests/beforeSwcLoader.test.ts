@@ -1,7 +1,7 @@
+import { describe, expect, it } from "vitest";
 import beforeSwcLoader, {
   BeforeSwcLoaderOptions,
 } from "../src/beforeSwcLoader";
-import { describe, it, expect } from "vitest";
 
 describe("beforeSwcLoader", () => {
   it("auto add use client", async () => {
@@ -37,31 +37,42 @@ describe("beforeSwcLoader", () => {
 
   it("emotion css= ", async function () {
     const res = await runWithContext("<div css={css`width: 100px;`} />", {
-      enabledEmotionCompatForAppRouter: true,
+      enableAutoUseClient: true,
     });
     expect(res).toMatchInlineSnapshot(`
-      "/** @jsxImportSource @emotion/react */
-      'use client';
+      "'use client';
       <div css={css\`width: 100px;\`} />"
     `);
   });
   it("emotion styled ", async function () {
     const res = await runWithContext("const Widget = styled.div``", {
-      enabledEmotionCompatForAppRouter: true,
+      enableAutoUseClient: true,
     });
     expect(res).toMatchInlineSnapshot(`
-      "/** @jsxImportSource @emotion/react */
       'use client';
       const Widget = styled.div\`\`"
     `);
   });
   it("useT()", async function () {
     const res = await runWithContext(`const App = () => { const t = useT();}`, {
-      enabledI18nCompat: true,
+      enableAutoUseClient: true,
     });
     expect(res).toMatchInlineSnapshot(`
       "'use client';
       const App = () => { const t = useT();}"
+    `);
+  });
+
+  it("useState()", async function () {
+    const res = await runWithContext(
+      `const App = () => { const t = useState();}`,
+      {
+        enableAutoUseClient: true,
+      }
+    );
+    expect(res).toMatchInlineSnapshot(`
+      "'use client';
+      const App = () => { const t = useState();}"
     `);
   });
 });

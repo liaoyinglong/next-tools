@@ -1,5 +1,7 @@
 import type {
+  DefaultError,
   FetchQueryOptions,
+  InfiniteData,
   InvalidateOptions,
   QueryClient,
   QueryFunctionContext,
@@ -176,10 +178,10 @@ export class RequestBuilder<Req = any, Res = any> {
     }
     return [this.options.url, this.options.method!, params] as const;
   }
-  async defaultQueryFn(
-    ctx: QueryFunctionContext<[string, string, Req]>
-  ): Promise<Res> {
-    return this.request(ctx.queryKey[2], {
+  async defaultQueryFn<T = Res>(ctx: QueryFunctionContext): Promise<T> {
+    const queryKey = ctx.queryKey as [url: string, method: string, Req];
+
+    return this.request(queryKey[2], {
       signal: ctx.signal,
       meta: ctx.meta,
       requestFn: ctx.meta?.requestFn as never,
@@ -193,12 +195,12 @@ export class RequestBuilder<Req = any, Res = any> {
    */
   useQuery<T = Res>(params?: Req, options?: UseQueryOptions<T> & Basic) {
     const { useQueryOptions } = this.options;
-    const res = useQuery({
+    const res = useQuery<T>({
+      // @ts-expect-error 后续处理类型问题
       queryFn: this.defaultQueryFn,
       queryKey: this.getQueryKey(params),
       ...useQueryOptions,
       ...options,
-      // @ts-expect-error 后续处理类型问题
       meta: this.normalizeMeta(options),
     });
     return res as UseQueryResult<T>;
@@ -213,7 +215,6 @@ export class RequestBuilder<Req = any, Res = any> {
     options?: FetchQueryOptions<Res> & Basic & QueryClientBasic
   ) {
     const queryClient = this.ensureQueryClient(options);
-    // @ts-expect-error 后续处理类型问题
     return queryClient.prefetchQuery({
       queryKey: this.getQueryKey(params),
       queryFn: this.defaultQueryFn,
@@ -231,7 +232,6 @@ export class RequestBuilder<Req = any, Res = any> {
     options?: FetchQueryOptions<Res> & Basic & QueryClientBasic
   ) {
     const queryClient = this.ensureQueryClient(options);
-    // @ts-expect-error 后续处理类型问题
     return queryClient.fetchQuery({
       queryKey: this.getQueryKey(params),
       queryFn: this.defaultQueryFn,
@@ -278,7 +278,6 @@ export class RequestBuilder<Req = any, Res = any> {
    */
   ensureQueryData(params?: Req, option?: Basic & QueryClientBasic) {
     const queryClient = this.ensureQueryClient(option);
-    // @ts-expect-error 后续处理类型问题
     return queryClient.ensureQueryData({
       queryKey: this.getQueryKey(params),
       queryFn: this.defaultQueryFn,
@@ -290,7 +289,8 @@ export class RequestBuilder<Req = any, Res = any> {
   //#region useInfiniteQuery
   useInfiniteQuery(
     params?: Req,
-    options?: UseInfiniteQueryOptions<Res> & Basic
+    options?: UseInfiniteQueryOptions<Res, DefaultError, InfiniteData<Res>> &
+      Basic
   ) {
     // @ts-expect-error 后续处理类型问题
     const pageSize = params?.pageSize ?? 10;
@@ -310,8 +310,8 @@ export class RequestBuilder<Req = any, Res = any> {
           }
         );
       },
+      initialPageParam: 1,
       queryKey: this.getQueryKey(params),
-
       getNextPageParam: (_lastPage, _allPages) => {
         let lastPage = _lastPage as PageData;
         let allPages = _allPages as PageData[];

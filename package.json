@@ -11,16 +11,22 @@
     "build": "lerna run build --scope @dune2/*",
     "example:next-js": "lerna run build --scope=next-js",
     "graph": "nx graph",
+    "prepare": "husky install",
     "release": "pnpm test && lerna version --no-private && pnpm publish -r",
     "reset:cache": "nx reset",
     "test": "lerna run test --scope @dune2/*"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,md,html,css,json,yaml}": "prettier --write"
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",
     "@types/fs-extra": "^9.0.13",
     "@types/node": "18.7.18",
     "happy-dom": "^10.3.2",
+    "husky": "^8.0.0",
     "lerna": "^6.0.1",
+    "lint-staged": "^13.0.3",
     "nx": "^15.0.2",
     "prettier": "^2.8.8",
     "prettier-plugin-organize-imports": "^3.2.2",
@@ -30,5 +36,6 @@
     "vitest": "^0.33.0",
     "zx": "^7.0.8"
   },
-  "packageManager": "pnpm@8.10.2"
+  "packageManager": "pnpm@8.10.2",
+  "prepare": "husky install"
 }

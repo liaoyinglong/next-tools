@@ -1,5 +1,5 @@
 import { Plugin } from "prettier";
-import { parsers as prettierParsers } from "prettier/parser-babel";
+import { parsers as prettierParsers } from "prettier/plugins/babel";
 import { defaultJsonSorter } from "./shared/defaultJsonSorter";
 
 const i18nJsonExt = ".i18n.json";

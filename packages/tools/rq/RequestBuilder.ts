@@ -107,6 +107,7 @@ export class RequestBuilder<Req = any, Res = any> {
    */
   private normalizeMeta(option?: Basic) {
     return {
+      ...this.options.meta,
       ...option?.meta,
       requestFn: option?.requestFn,
     };
@@ -212,7 +213,7 @@ export class RequestBuilder<Req = any, Res = any> {
    */
   prefetchQuery(
     params?: Req,
-    options?: FetchQueryOptions<Res> & Basic & QueryClientBasic
+    options?: FetchQueryOptions<Res> & Basic & QueryClientBasic,
   ) {
     const queryClient = this.ensureQueryClient(options);
     return queryClient.prefetchQuery({
@@ -229,7 +230,7 @@ export class RequestBuilder<Req = any, Res = any> {
    */
   fetchQuery(
     params?: Req,
-    options?: FetchQueryOptions<Res> & Basic & QueryClientBasic
+    options?: FetchQueryOptions<Res> & Basic & QueryClientBasic,
   ) {
     const queryClient = this.ensureQueryClient(options);
     return queryClient.fetchQuery({
@@ -241,7 +242,7 @@ export class RequestBuilder<Req = any, Res = any> {
   }
   invalidateQuery(
     params?: Req,
-    options?: InvalidateOptions & QueryClientBasic
+    options?: InvalidateOptions & QueryClientBasic,
   ) {
     const queryClient = this.ensureQueryClient(options);
     return queryClient.invalidateQueries({
@@ -290,7 +291,7 @@ export class RequestBuilder<Req = any, Res = any> {
   useInfiniteQuery(
     params?: Req,
     options?: UseInfiniteQueryOptions<Res, DefaultError, InfiniteData<Res>> &
-      Basic
+      Basic,
   ) {
     // @ts-expect-error 后续处理类型问题
     const pageSize = params?.pageSize ?? 10;
@@ -307,7 +308,7 @@ export class RequestBuilder<Req = any, Res = any> {
             ...ctx.meta,
             signal: ctx.signal,
             requestFn: options?.requestFn,
-          }
+          },
         );
       },
       initialPageParam: 1,

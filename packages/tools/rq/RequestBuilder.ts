@@ -348,7 +348,11 @@ export class RequestBuilder<Req = any, Res = any> {
   //#region mutation
 
   private getMutationFn(config?: Basic) {
-    return (params: Req) => this.request(params, config);
+    return (params: Req) =>
+      this.request(params, {
+        ...config,
+        meta: this.normalizeMeta(config),
+      });
   }
 
   /**

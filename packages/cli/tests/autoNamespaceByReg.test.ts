@@ -6,8 +6,8 @@ describe("autoNamespaceByReg", () => {
     expect(
       autoNamespaceByReg(
         ["{t`login`}", " t`login`", "(t`hello ${name}`)"].join("\n"),
-        "Merchants"
-      )
+        "Merchants",
+      ),
     ).toMatchInlineSnapshot(`
       "{t\`Merchants.login\`}
        t\`Merchants.login\`
@@ -17,7 +17,10 @@ describe("autoNamespaceByReg", () => {
 
   it("引号", function () {
     expect(
-      autoNamespaceByReg(["{t('引号')}", `(t("引号"))`].join("\n"), "Merchants")
+      autoNamespaceByReg(
+        ["{t('引号')}", `(t("引号"))`].join("\n"),
+        "Merchants",
+      ),
     ).toMatchInlineSnapshot(`
       "{t('Merchants.引号')}
       (t(\\"Merchants.引号\\"))"
@@ -28,9 +31,11 @@ describe("autoNamespaceByReg", () => {
     expect(
       autoNamespaceByReg(
         ["{t('hello: {name}',{ name:'zhangsan' })}"].join("\n"),
-        "Merchants"
-      )
-    ).toMatchInlineSnapshot('"{t(\'Merchants.hello: {name}\',{ name:\'zhangsan\' })}"');
+        "Merchants",
+      ),
+    ).toMatchInlineSnapshot(
+      "\"{t('Merchants.hello: {name}',{ name:'zhangsan' })}\"",
+    );
   });
 
   it("不应该替换已经有 namespace 的", function () {
@@ -40,24 +45,28 @@ describe("autoNamespaceByReg", () => {
           " t`Merchants.login`",
           ` t('Merchants.login')`,
           ' t("Merchants.login")',
+          ' t("Merchants.user.login")',
           "set`login`",
           `set('login')`,
           `set("login")`,
+          `set("user.login")`,
           //
           " t`login`",
           ' t("login")',
           ` t('login')`,
           `arr.split('login')`,
         ].join("\n"),
-        "Menu"
-      )
+        "Menu",
+      ),
     ).toMatchInlineSnapshot(`
       " t\`Merchants.login\`
        t('Merchants.login')
        t(\\"Merchants.login\\")
+       t(\\"Merchants.user.login\\")
       set\`login\`
       set('login')
       set(\\"login\\")
+      set(\\"user.login\\")
        t\`Menu.login\`
        t(\\"Menu.login\\")
        t('Menu.login')
@@ -65,7 +74,8 @@ describe("autoNamespaceByReg", () => {
     `);
   });
   it("集成测试", () => {
-    const code = `
+    {
+      const code = `
     const a = t\`login\`
     const b = {
         c: t('login'),
@@ -75,7 +85,7 @@ describe("autoNamespaceByReg", () => {
     return <div>{t('login')}</div>
     }
     `;
-    expect(autoNamespaceByReg(code, "Merchants")).toMatchInlineSnapshot(`
+      expect(autoNamespaceByReg(code, "Merchants")).toMatchInlineSnapshot(`
       "
           const a = t\`Merchants.login\`
           const b = {
@@ -87,5 +97,30 @@ describe("autoNamespaceByReg", () => {
           }
           "
     `);
+    }
+    {
+      const code = `
+    const a = t\`login\`
+    const b = {
+        c: t('login'),
+        d: t("app.login"),
+    }
+    function App() {
+    return <div>{t('login')}</div>
+    }
+    `;
+      expect(autoNamespaceByReg(code, "Merchants.user")).toMatchInlineSnapshot(`
+        "
+            const a = t\`Merchants.user.login\`
+            const b = {
+                c: t('Merchants.user.login'),
+                d: t(\\"app.login\\"),
+            }
+            function App() {
+            return <div>{t('Merchants.user.login')}</div>
+            }
+            "
+      `);
+    }
   });
 });

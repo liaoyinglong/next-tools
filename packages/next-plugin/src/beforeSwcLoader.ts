@@ -7,6 +7,11 @@ export interface BeforeSwcLoaderOptions {
    * @tips 对于 include 匹配的文件生效
    */
   enableAutoUseClient?: boolean;
+  /**
+   * 是否需要匹配emotion的代码,只对 src 目录下的文件生效
+   * case: css={{}} | styled.div`` | styled.div(Component)``
+   */
+  enableEmotionUseClient?: boolean;
 }
 
 // 判断是否包含 /** @jsx jsx */ 注释
@@ -18,8 +23,8 @@ const hasUseClientReg = /['"]use client["']/;
 // 判断是否在 src 目录下
 const inSrcDirReg = /[\\\/]src[\\\/]|@dune2[\\\/]tools/;
 
-// case: css={{}} | styled.div``
-const hasUseEmotionReg = /\scss=\{|\sstyled.*`/;
+// case: css={{}} | styled.div`` | styled.div(Component)``
+const hasUseEmotionReg = /\scss=\{|\sstyled.*`|styled.*\(.+\)`/;
 
 // case: use hooks
 const hasUseHooksReg = /use[A-Z][a-zA-Z0-9]*\([^)]*\)/;
@@ -27,7 +32,7 @@ const hasUseHooksReg = /use[A-Z][a-zA-Z0-9]*\([^)]*\)/;
 export default function beforeSwcLoader(
   this: LoaderContext<BeforeSwcLoaderOptions>,
   source: string,
-  sourceMap: any
+  sourceMap: any,
 ) {
   const callback = this.async();
   const options = this.getOptions();
@@ -51,7 +56,8 @@ export default function beforeSwcLoader(
   const isInSrcDir = inSrcDirReg.test(this.resourcePath);
   if (isInSrcDir) {
     // 使用 emotion 的代码
-    const useEmotion = hasUseEmotionReg.test(source);
+    const useEmotion =
+      options.enableEmotionUseClient && hasUseEmotionReg.test(source);
     // 使用 hooks 的代码
     const useHooks = hasUseHooksReg.test(source);
     if (useEmotion || useHooks) {

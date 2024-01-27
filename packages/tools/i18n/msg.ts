@@ -35,6 +35,10 @@ export const msg: MsgFn = (...args: any[]) => {
       throw new Error("msg函数只能接受字符串常量");
     }
   }
+  let first = args[0];
+  if (first.raw) {
+    return first.raw[0];
+  }
   return args[0];
 };
 

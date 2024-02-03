@@ -5,10 +5,10 @@ import type {
   InvalidateOptions,
   QueryClient,
   QueryFunctionContext,
+  QueryObserverOptions,
   RefetchOptions,
   UseInfiniteQueryOptions,
   UseMutationOptions,
-  UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
@@ -49,7 +49,7 @@ export interface RequestBuilderOptions<Req, Res>
   urlPathParams?: string[];
 
   // 透传给 useQuery 的 options
-  useQueryOptions?: Omit<UseQueryOptions, "queryKey">;
+  useQueryOptions?: QueryObserverOptions;
 
   // 透传给 useMutation 的 options
   useMutationOptions?: UseMutationOptions<Res, unknown, Req>;
@@ -194,7 +194,7 @@ export class RequestBuilder<Req = any, Res = any> {
    * 获取数据的时候可以直接调用这个
    * @see https://tanstack.com/query/v4/docs/guides/queries
    */
-  useQuery<T = Res>(params?: Req, options?: UseQueryOptions<T> & Basic) {
+  useQuery<T = Res>(params?: Req, options?: QueryObserverOptions<T> & Basic) {
     const { useQueryOptions } = this.options;
     const res = useQuery<T>({
       // @ts-expect-error 后续处理类型问题

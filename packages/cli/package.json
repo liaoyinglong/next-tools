@@ -32,6 +32,11 @@
     "test": "vitest run",
     "test:u": "vitest -u"
   },
+  "repository": {
+    "url": "https://bitbucket.org/vigossliao/next-tools.git",
+    "type": "git",
+    "directory": "packages/cli"
+  },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
     "@dune2/wasm": "workspace:*",

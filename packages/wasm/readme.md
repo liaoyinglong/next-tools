@@ -17,4 +17,5 @@ see test file [extract.spec.ts](js-test/extract.spec.ts)
 ```bash
 # https://rustwasm.github.io/wasm-pack/installer/
 cargo install wasm-pack
+rustup target add wasm32-wasi
 ```

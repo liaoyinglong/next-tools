@@ -1,6 +1,11 @@
 {
   "name": "@dune2/next-plugin",
-  "version": "0.4.4",
+  "version": "0.4.5",
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/vigossliao/next-tools.git",
+    "directory": "packages/next-plugin"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
@@ -31,10 +36,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "url": "https://bitbucket.org/vigossliao/next-tools.git",
-    "type": "git",
-    "directory": "packages/next-plugin"
   }
 }

@@ -1,10 +1,15 @@
 {
   "name": "@dune2/swc-plugin",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "",
   "keywords": [
     "swc-plugin"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/vigossliao/next-tools.git",
+    "directory": "packages/swc-plugin"
+  },
   "license": "ISC",
   "author": "",
   "main": "./dist/swc_plugin.wasm",
@@ -24,10 +29,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "url": "https://bitbucket.org/vigossliao/next-tools.git",
-    "type": "git",
-    "directory": "packages/swc-plugin"
   }
 }

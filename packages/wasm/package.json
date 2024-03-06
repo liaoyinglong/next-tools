@@ -1,6 +1,11 @@
 {
   "name": "@dune2/wasm",
-  "version": "0.3.7",
+  "version": "0.3.8",
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/vigossliao/next-tools.git",
+    "directory": "packages/wasm"
+  },
   "exports": {
     ".": {
       "import": "./pkg/s_wasm.js",
@@ -25,10 +30,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "url": "https://bitbucket.org/vigossliao/next-tools.git",
-    "type": "git",
-    "directory": "packages/wasm"
   }
 }

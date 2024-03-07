@@ -112,7 +112,7 @@ export class Logger {
     const data = this.combineArgs(Level.Error, "ERROR", args);
     this.onLog(data);
     if (data.shouldLog) {
-      console.warn(...this.formatArgs(data));
+      console.error(...this.formatArgs(data));
     }
   }
 }

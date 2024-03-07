@@ -63,21 +63,3 @@ export function createLogger<Name extends string>(config: Config<Name>) {
     ...loggerMap,
   };
 }
-
-const logger = createLogger({
-  loggers: ["foo", "foo.login", "bar"],
-  storageKey: "logger",
-  onLog: (data) => {
-    console.log("onLog", data);
-  },
-});
-
-window.logger = logger;
-console.log(logger);
-
-logger.foo.debug("1");
-logger.foo.info(
-  "23123131213123213213122dsadasdsadsafdgewgewgew gfew  gew gewgwegew gewgew ewgewf ewr ew   ",
-);
-logger.foo.warn("3");
-logger.foo.error("4");

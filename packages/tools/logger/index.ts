@@ -1,16 +1,16 @@
 import _ from "lodash";
-import { Logger } from "./Logger";
+import { Logger, type OnLog } from "./Logger";
 import { Level } from "./shared";
 
 interface Config<Name extends string = string> {
+  // 创建的 logger 名称
   loggers: Name[];
+  // 默认日志级别
   level?: Level;
-  onLog?: (data: {
-    level: Level;
-    msg: any[];
-    tag: string;
-    time: number;
-  }) => void;
+  // 日志回调，用于上报日志
+  onLog?: OnLog;
+  // 存储到本地的 key，用于存储日志级别
+  storageKey?: string;
 }
 
 type NormalizeName<T extends string> = T extends `${infer A}.${infer B}`
@@ -28,7 +28,12 @@ export function createLogger<Name extends string>(config: Config<Name>) {
     if (keywords.includes(name)) {
       throw new Error(`logger name can't be ${name}`);
     }
-    const logger = new Logger(name, config.level ?? Level.Debug, config.onLog);
+    const logger = new Logger(
+      name,
+      config.storageKey,
+      config.level ?? Level.Debug,
+      config.onLog,
+    );
     // 输入：foo.login
     // 输出：fooLogin
     const key = _.camelCase(name) as Key;
@@ -61,11 +66,13 @@ export function createLogger<Name extends string>(config: Config<Name>) {
 
 const logger = createLogger({
   loggers: ["foo", "foo.login", "bar"],
+  storageKey: "logger",
   onLog: (data) => {
     console.log("onLog", data);
   },
 });
 
+window.logger = logger;
 console.log(logger);
 
 logger.foo.debug("1");

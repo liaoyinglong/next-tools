@@ -1,4 +1,5 @@
 import _ from "lodash";
+import store2 from "store2";
 import { Level } from "./shared";
 
 type OnLogParams = {
@@ -15,12 +16,14 @@ type OnLogParams = {
   // 日志内容
   msg: any[];
 };
+type StorageState = Record<string, Level>;
 
 export type OnLog = (data: OnLogParams) => void;
 
 export class Logger {
   constructor(
     public name: string,
+    public storageKey?: string,
     /**
      * 当前启用的等级
      * 如果设置为 Silent 则不输出任何日志
@@ -28,9 +31,25 @@ export class Logger {
      */
     public level = Level.Debug,
     public onLog: OnLog = _.noop,
-  ) {}
+  ) {
+    this.level = this.getStorageLevel() ?? level;
+  }
+
+  private getStorageLevel() {
+    if (this.storageKey) {
+      const state = store2.get(this.storageKey) as StorageState;
+      return state?.[this.name];
+    }
+  }
+  private setStorageLevel(level: Level) {
+    if (this.storageKey) {
+      const state = store2.get(this.storageKey) as StorageState;
+      store2.set(this.storageKey, { ...state, [this.name]: level });
+    }
+  }
   setLevel(level: Level) {
     this.level = level;
+    this.setStorageLevel(level);
   }
   enable() {
     this.setLevel(Level.Debug);

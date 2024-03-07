@@ -22,6 +22,8 @@
     "./shared/*": "./shared/*.ts",
     "./storage": "./storage/index.ts",
     "./storage/*": "./storage/*.ts",
+    "./logger": "./logger/index.ts",
+    "./logger/*": "./logger/*.ts",
     "./package.json": "./package.json"
   },
   "files": [
@@ -31,7 +33,8 @@
     "rq",
     "factory",
     "storage",
-    "shared"
+    "shared",
+    "logger"
   ],
   "scripts": {
     "build": "tsc --diagnostics",

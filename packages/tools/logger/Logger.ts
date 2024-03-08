@@ -75,8 +75,16 @@ export class Logger {
     return data;
   }
   private formatArgs(data: OnLogParams) {
-    const time = new Date(data.time).toLocaleTimeString();
-    return [`[${time}] ${data.tag} ${data.name}: `, ...data.msg];
+    const time = new Date(data.time).toLocaleTimeString("zh-CN");
+    const prefix = `[${time}] ${data.tag} ${data.name}: `;
+
+    const first = data.msg[0];
+
+    if (typeof first === "string") {
+      // 确保 %o %O 等占位符正常工作
+      return [`${prefix}${first}`, ...data.msg.slice(1)];
+    }
+    return [`${prefix}`, ...data.msg];
   }
 
   debug(...args: any[]) {

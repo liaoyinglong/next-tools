@@ -14,6 +14,9 @@ const logsSpy = {
 
 describe("Logger", () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(1998, 11, 19));
+
     logsSpy.error.mockReset();
     logsSpy.warn.mockReset();
     logsSpy.log.mockReset();
@@ -21,6 +24,7 @@ describe("Logger", () => {
   });
   afterEach(() => {
     store2.clearAll();
+    vi.useRealTimers();
   });
 
   it("should construct with default values", () => {
@@ -89,5 +93,23 @@ describe("Logger", () => {
     expect(logsSpy.log).toBeCalledTimes(2);
     expect(logsSpy.warn).toBeCalledTimes(3);
     expect(logsSpy.error).toBeCalledTimes(4);
+  });
+
+  it("should create correct loggers", () => {
+    const logger = new Logger("test");
+
+    logger.debug("debug message");
+    expect(logsSpy.debug).toBeCalledWith(
+      "[00:00:00] DEBUG test: debug message",
+      undefined,
+    );
+
+    // make sure %o %O work, it should be in the first argument
+    logger.debug("debug message %o", { foo: "bar" });
+    expect(logsSpy.debug).toBeCalledWith(
+      "[00:00:00] DEBUG test: debug message %o",
+      { foo: "bar" },
+      undefined,
+    );
   });
 });

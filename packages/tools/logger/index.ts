@@ -28,15 +28,20 @@ export function createLogger<Name extends string>(config: Config<Name>) {
     if (keywords.includes(name)) {
       throw new Error(`logger name can't be ${name}`);
     }
+    // 输入：foo.login
+    // 输出：fooLogin
+    const key = (name.includes(".") ? _.camelCase(name) : name) as Key;
+
+    if (loggerMap[key]) {
+      throw new Error(`logger name "${name}" is duplicated`);
+    }
+
     const logger = new Logger(
       name,
       config.storageKey,
       config.level ?? Level.Debug,
       config.onLog,
     );
-    // 输入：foo.login
-    // 输出：fooLogin
-    const key = _.camelCase(name) as Key;
     loggerMap[key] = logger;
   });
 

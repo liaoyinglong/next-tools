@@ -23,6 +23,26 @@ describe("Logger", () => {
     store2.clearAll();
   });
 
+ it("should create correct loggers", () => {
+   const logger = createLogger({
+     loggers: [
+       // 只对 . 分割符生效
+       "foo.bar",
+       // 保留原样
+       "BaseTV",
+       // 首字母大写
+       "Area",
+       "foo",
+     ],
+   });
+
+   expect(logger.foo).toBeTruthy();
+   expect(logger.fooBar).toBeTruthy();
+   expect(logger.BaseTV).toBeTruthy();
+   expect(logger.Area).toBeTruthy();
+ });
+
+
   it("should save level to storage", () => {
     const logger = createLogger({
       loggers: ["foo", "foo.bar"],

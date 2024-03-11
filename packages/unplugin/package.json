@@ -3,7 +3,7 @@
   "version": "0.3.2",
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/vigossliao/next-tools.git",
+    "url": "https://github.com/liaoyinglong/next-tools.git",
     "directory": "packages/unplugin"
   },
   "files": [

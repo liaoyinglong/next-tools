@@ -43,19 +43,19 @@
     "typecheck": "vitest typecheck"
   },
   "dependencies": {
-    "@lingui/core": "^4.4.0",
-    "@lingui/detect-locale": "^4.4.0",
-    "@lingui/react": "^4.4.0",
-    "@messageformat/parser": "^5",
-    "@types/js-cookie": "3.0.3",
-    "bignumber.js": "^9.1.1",
+    "@lingui/core": "^4.7.1",
+    "@lingui/detect-locale": "^4.7.1",
+    "@lingui/react": "^4.7.1",
+    "@messageformat/parser": "^5.1.0",
+    "bignumber.js": "^9.1.2",
     "js-cookie": "^3.0.5",
     "lodash": "^4",
-    "store2": "^2.14.2"
+    "store2": "^2.14.3"
   },
   "devDependencies": {
-    "@tanstack/react-query": "^5",
-    "@types/lodash": "^4.14.202",
+    "@tanstack/react-query": "^5.27.5",
+    "@types/js-cookie": "3.0.3",
+    "@types/lodash": "^4.17.0",
     "@types/react": "^18.2.6",
     "axios": "^0.27.2",
     "react": "^18.2.0"

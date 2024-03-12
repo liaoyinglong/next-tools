@@ -5,10 +5,10 @@ import type {
   InvalidateOptions,
   QueryClient,
   QueryFunctionContext,
-  QueryObserverOptions,
   RefetchOptions,
   UseInfiniteQueryOptions,
   UseMutationOptions,
+  UseQueryOptions as RQUseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
@@ -35,6 +35,12 @@ interface QueryClientBasic {
   queryClient?: QueryClient;
 }
 
+type OmitMetaAndPartial<T> = Partial<Omit<T, "meta">>;
+
+interface UseQueryOptions<T>
+  extends OmitMetaAndPartial<RQUseQueryOptions<T>>,
+    Basic {}
+
 export interface RequestBuilderOptions<Req, Res>
   extends Basic,
     QueryClientBasic {
@@ -49,7 +55,7 @@ export interface RequestBuilderOptions<Req, Res>
   urlPathParams?: string[];
 
   // 透传给 useQuery 的 options
-  useQueryOptions?: QueryObserverOptions;
+  useQueryOptions?: RQUseQueryOptions;
 
   // 透传给 useMutation 的 options
   useMutationOptions?: UseMutationOptions<Res, unknown, Req>;
@@ -117,13 +123,13 @@ export class RequestBuilder<Req = any, Res = any> {
    * 包装好的请求函数
    * useQuery、useMutation 内部会调用这个
    * 另外也可以直接调用这个函数来发送请求
-   * @param params 请求参数 默认会根据请求方法来放到url上或者body里
-   * @param config axios的配置，一般不需要传，内部用
+   * @param params 请求参数 默认会根据请求方法来放到 url 上或者 body 里
+   * @param config axios 的配置，一般不需要传，内部用
    */
   request<P extends Req, T = Res>(params?: P, config?: RequestConfig) {
     const method = this.options.method!;
     let data;
-    // 根据请求方法来放到url上或者body里
+    // 根据请求方法来放到 url 上或者 body 里
     if (!["get", "head", "options"].includes(method)) {
       data = params;
       params = undefined;
@@ -133,7 +139,7 @@ export class RequestBuilder<Req = any, Res = any> {
 
   /**
    * 常规情况下使用 request 方法就可以了
-   * 特殊情况，如：url上有query参数，又需要传body参数
+   * 特殊情况，如：url 上有 query 参数，又需要传 body 参数
    */
   requestWithConfig<T = Res>(config: RequestConfig) {
     const method = this.options.method!;
@@ -171,7 +177,7 @@ export class RequestBuilder<Req = any, Res = any> {
 
   /**
    * 获取 queryKey
-   * 通常配置react-query的queryKey
+   * 通常配置 react-query 的 queryKey
    */
   getQueryKey(params?: Req) {
     if (typeof params === "undefined") {
@@ -194,7 +200,7 @@ export class RequestBuilder<Req = any, Res = any> {
    * 获取数据的时候可以直接调用这个
    * @see https://tanstack.com/query/v4/docs/guides/queries
    */
-  useQuery<T = Res>(params?: Req, options?: QueryObserverOptions<T> & Basic) {
+  useQuery<T = Res>(params?: Req, options?: UseQueryOptions<T>) {
     const { useQueryOptions } = this.options;
     const res = useQuery<T>({
       // @ts-expect-error 后续处理类型问题
@@ -316,7 +322,7 @@ export class RequestBuilder<Req = any, Res = any> {
       getNextPageParam: (_lastPage, _allPages) => {
         let lastPage = _lastPage as PageData;
         let allPages = _allPages as PageData[];
-        // 如果最后一页的数据不满足pageSize，说明没有下一页了
+        // 如果最后一页的数据不满足 pageSize，说明没有下一页了
         if (lastPage.result.length < pageSize) {
           return undefined;
         }

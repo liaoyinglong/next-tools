@@ -134,7 +134,12 @@ export class RequestBuilder<Req = any, Res = any> {
       data = params;
       params = undefined;
     }
-    return this.requestWithConfig<T>({ ...config, data, params });
+    return this.requestWithConfig<T>({
+      meta: this.options.meta,
+      ...config,
+      data,
+      params,
+    });
   }
 
   /**

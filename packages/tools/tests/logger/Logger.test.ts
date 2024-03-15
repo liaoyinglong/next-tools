@@ -101,7 +101,6 @@ describe("Logger", () => {
     logger.debug("debug message");
     expect(logsSpy.debug).toBeCalledWith(
       "[00:00:00] DEBUG test: debug message",
-      undefined,
     );
 
     // make sure %o %O work, it should be in the first argument
@@ -109,7 +108,6 @@ describe("Logger", () => {
     expect(logsSpy.debug).toBeCalledWith(
       "[00:00:00] DEBUG test: debug message %o",
       { foo: "bar" },
-      undefined,
     );
   });
 });

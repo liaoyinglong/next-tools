@@ -77,22 +77,14 @@ export class Logger {
     const data = this.combineArgs(Level.Debug, "DEBUG", args);
     this.onLog(data);
     if (data.shouldLog) {
-      const callSite =
-        process.env.NODE_ENV === "development"
-          ? "\n" + new Error().stack!.split("\n")[2].trim()
-          : undefined;
-      console.debug(...this.formatArgs(data), callSite);
+      console.debug(...this.formatArgs(data));
     }
   }
   info(...args: any[]) {
     const data = this.combineArgs(Level.Info, "INFO", args);
     this.onLog(data);
     if (data.shouldLog) {
-      const callSite =
-        process.env.NODE_ENV === "development"
-          ? "\n" + new Error().stack!.split("\n")[2].trim()
-          : undefined;
-      console.log(...this.formatArgs(data), callSite);
+      console.log(...this.formatArgs(data));
     }
   }
   warn(...args: any[]) {

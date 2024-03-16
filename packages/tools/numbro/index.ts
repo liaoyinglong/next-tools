@@ -126,7 +126,7 @@ export class Numbro {
     let outputFormat = (absoluteValue ? num.abs() : num).toFormat(
       mantissa as never,
       roundingMode as never,
-      combinedFormat
+      combinedFormat,
     );
 
     outputFormat = this.tryDeleteEndZero(
@@ -134,7 +134,7 @@ export class Numbro {
       deleteInvalidZero,
       mantissa,
       outputFormat,
-      combinedFormat.suffix
+      combinedFormat.suffix,
     );
 
     // 强制显示正负号
@@ -262,7 +262,7 @@ export class Numbro {
     deleteInvalidZero: boolean | undefined,
     mantissa: number | undefined | null | string,
     outputFormat: string,
-    suffix = ""
+    suffix = "",
   ) {
     const num = this.bigNumber;
     let shouldDeleteEndZero = false;
@@ -350,6 +350,19 @@ export class Numbro {
 
   toString() {
     return this.bigNumber.toString();
+  }
+
+  /**
+   * 获取 字符串 快捷方式
+   */
+  get str() {
+    return this.toString();
+  }
+  /**
+   * 获取 数字 快捷方式
+   */
+  get num() {
+    return this.valueOf();
   }
 }
 

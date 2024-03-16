@@ -28,6 +28,8 @@ describe("numbro", () => {
 
       ["1,000", 1000],
       ["1,000.000", 1000],
+
+      [100n, 100],
     ].forEach(([input, output]) => {
       expect(numbro(input).bigNumber).toEqual(new BigNumber(output as never));
     });
@@ -92,7 +94,7 @@ describe("numbro", () => {
       ["0.1234567800000", 4, "0.1234"],
     ].forEach(([input, mantissa, output]) => {
       expect(
-        numbro(input).format({ mantissa, deleteInvalidZero: true })
+        numbro(input).format({ mantissa, deleteInvalidZero: true }),
       ).toEqual(output);
     });
 
@@ -108,7 +110,7 @@ describe("numbro", () => {
           mantissa,
           deleteInvalidZero: true,
           output: "percent",
-        })
+        }),
       ).toEqual(output);
     });
 
@@ -116,7 +118,7 @@ describe("numbro", () => {
       numbro("-0.0112").format({
         mantissa: 2,
         output: "percent",
-      })
+      }),
     ).toEqual("-1.12%");
 
     [
@@ -131,7 +133,7 @@ describe("numbro", () => {
           mantissa,
           deleteInvalidZero: true,
           suffix: " BTC",
-        })
+        }),
       ).toEqual(output);
     });
   });
@@ -155,7 +157,7 @@ describe("numbro", () => {
       ["0.1234567800000", 4, "0.1234"],
     ].forEach(([input, mantissa, output]) => {
       expect(numbro(input).format({ mantissa, deleteEndZero: true })).toEqual(
-        output
+        output,
       );
     });
 
@@ -169,7 +171,7 @@ describe("numbro", () => {
           mantissa,
           deleteEndZero: true,
           output: "percent",
-        })
+        }),
       ).toEqual(output);
     });
 
@@ -183,7 +185,7 @@ describe("numbro", () => {
           mantissa,
           deleteEndZero: true,
           suffix: " BTC",
-        })
+        }),
       ).toEqual(output);
     });
   });
@@ -196,6 +198,7 @@ describe("numbro", () => {
       ["24411725.000021970552501575", 18, "24,411,725.000021970552501575"],
       ["24411725.000021970552501575", 8, "24,411,725.00002197"],
       ["2131232131231232312312", 2, "2,131,232,131,231,232,312,312.00"],
+      [10000000000000000000000n, 2, "10,000,000,000,000,000,000,000.00"],
     ] as const;
     a.forEach(([num, precision, output]) => {
       expect(numbro(num).format({ mantissa: precision })).toEqual(output);
@@ -275,7 +278,7 @@ describe("numbro", () => {
   });
 
   it("add correct", function () {
-    [
+    const testCase: [any, any, number][] = [
       [0.1, 0.2, 0.3],
       [new BigNumber(0.1), new BigNumber(0.2), 0.3],
       [0.1, new BigNumber(0.2), 0.3],
@@ -284,13 +287,18 @@ describe("numbro", () => {
       [0.5, 3, 3.5],
       [-100, 200, 100],
       [0.1, 0.2, 0.3],
-    ].forEach(([a, b, output]) => {
+
+      [100n, 1, 101],
+      [100n, 1n, 101],
+    ];
+
+    testCase.forEach(([a, b, output]) => {
       expect(numbro(a).add(b).bigNumber).toEqual(new BigNumber(output));
     });
   });
 
   it("subtract correct", function () {
-    [
+    const testCase: [any, any, number][] = [
       [0.3, 0.2, 0.1],
       [new BigNumber(0.3), new BigNumber(0.2), 0.1],
       [0.3, new BigNumber(0.2), 0.1],
@@ -299,13 +307,17 @@ describe("numbro", () => {
       [3, 0.5, 2.5],
       [200, -100, 300],
       [0.3, 0.2, 0.1],
-    ].forEach(([a, b, output]) => {
+
+      [100n, 1, 99],
+      [100n, 1n, 99],
+    ];
+    testCase.forEach(([a, b, output]) => {
       expect(numbro(a).subtract(b).bigNumber).toEqual(new BigNumber(output));
     });
   });
 
   it("multiply correct", function () {
-    [
+    const testCase: [any, any, number][] = [
       [0.1, 0.2, 0.02],
       [new BigNumber(0.1), new BigNumber(0.2), 0.02],
       [0.1, new BigNumber(0.2), 0.02],
@@ -314,13 +326,18 @@ describe("numbro", () => {
       [0.5, 3, 1.5],
       [-100, 200, -20000],
       [0.1, 0.2, 0.02],
-    ].forEach(([a, b, output]) => {
+
+      [100n, 1, 100],
+      [100n, 1n, 100],
+    ];
+
+    testCase.forEach(([a, b, output]) => {
       expect(numbro(a).multiply(b).bigNumber).toEqual(new BigNumber(output));
     });
   });
 
   it("divide correct", function () {
-    [
+    const testCase: [any, any, number][] = [
       [0.1, 0.2, 0.5],
       [new BigNumber(0.1), new BigNumber(0.2), 0.5],
       [0.1, new BigNumber(0.2), 0.5],
@@ -328,7 +345,11 @@ describe("numbro", () => {
       [1000, 10, 100],
       [-100, 200, -0.5],
       [0.1, 0.2, 0.5],
-    ].forEach(([a, b, output]) => {
+
+      [100n, 1, 100],
+      [100n, 1n, 100],
+    ];
+    testCase.forEach(([a, b, output]) => {
       expect(numbro(a).divide(b).bigNumber).toEqual(new BigNumber(output));
     });
   });
@@ -364,7 +385,7 @@ describe("numbro", () => {
     expect(
       numbro("1").formatCurrency({
         currencySymbol: "$",
-      })
+      }),
     ).toEqual("$1.00");
     (
       [
@@ -376,7 +397,7 @@ describe("numbro", () => {
       expect(
         numbro(input).formatCurrency({
           forceSign: true,
-        })
+        }),
       ).toEqual(output);
     });
   });
@@ -392,7 +413,7 @@ describe("numbro", () => {
       expect(
         numbro(input).formatCurrency({
           locale,
-        })
+        }),
       ).toBe(output);
     });
   });
@@ -417,7 +438,7 @@ describe("numbro", () => {
     expect(
       numbro(1000).formatCurrency({
         locale: "de-DE",
-      })
+      }),
     ).toEqual("1 000,00€");
   });
 
@@ -438,12 +459,12 @@ describe("numbro", () => {
     expect(
       numbro(1000).formatCurrency({
         locale: "common",
-      })
+      }),
     ).toEqual("$1,000.00");
     expect(
       numbro(1000).formatCurrency({
         locale: "main",
-      })
+      }),
     ).toEqual("Rp1,000.00");
   });
 
@@ -452,7 +473,7 @@ describe("numbro", () => {
     expect(
       n.format({
         mantissa: NaN,
-      })
+      }),
     ).toEqual("1.2345");
   });
 
@@ -472,7 +493,7 @@ describe("numbro", () => {
     expect(
       numbro(null).formatCurrency({
         NaNFormat: "-",
-      })
+      }),
     ).toEqual("-");
   });
   it("support NaNFormat with default format", () => {
@@ -486,7 +507,7 @@ describe("numbro", () => {
     expect(
       numbro(null).formatCurrency({
         NaNFormat: false,
-      })
+      }),
     ).toEqual("Rp0.00");
   });
 

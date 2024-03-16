@@ -14,7 +14,9 @@ type OperationParams =
   | Numbro
   | undefined
   | null
-  | boolean;
+  | boolean
+  | bigint
+  | BigInt
 
 export class Numbro {
   static rawBigNumber = BigNumber;
@@ -154,7 +156,7 @@ export class Numbro {
     if (forceSign) {
       return this.bigNumber.isPositive() ? "+" : "-";
     }
-    // 如果没有指定 forceSign，那么需要判断是否小于0
+    // 如果没有指定 forceSign，那么需要判断是否小于 0
     return this.bigNumber.isPositive() ? "" : "-";
   }
   //#endregion
@@ -271,12 +273,12 @@ export class Numbro {
       // case: 1.00100 => 1.001
       let cloned = num.toString();
       let clonedDecimal = cloned.split(".")[1]?.length ?? 0;
-      // 移除无效0后，小数位数还比指定的小数位数多，那么就不用删除尾数0
+      // 移除无效 0 后，小数位数还比指定的小数位数多，那么就不用删除尾数 0
       shouldDeleteEndZero = !(clonedDecimal > (mantissa as number));
     }
 
     if (shouldDeleteEndZero) {
-      // 移除尾数0
+      // 移除尾数 0
       // outputFormat = outputFormat.replace(/\.?0+$/, "");
       const reg = new RegExp(`\\.?0+${suffix}$`);
       outputFormat = outputFormat.replace(reg, suffix);

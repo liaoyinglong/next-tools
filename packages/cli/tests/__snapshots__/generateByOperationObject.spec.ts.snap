@@ -1,13 +1,12 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`api 生成 > 参数在body里 1`] = `
+exports[`api 生成 > 参数在 body 里 1`] = `
 "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖
 import { RequestBuilder } from '@dune2/tools/rq';
 import requestFn from '@/utils/request';
 /**
   * 分页查询币种信息
   * @tags 币种管理相关接口
-  * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/币种管理相关接口/pageSearch_4
   */
 export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Res>({
   url: '/users',
@@ -21,15 +20,15 @@ export namespace usersPostApi {
  */
 export interface Req {
   /**
-   * 页码数, 该值的范围是1~1024
+   * 页码数，该值的范围是 1~1024
    */
   pageNum: number;
   /**
-   * 页大小, 该值的范围是1~99999
+   * 页大小，该值的范围是 1~99999
    */
   pageSize: number;
   /**
-   * 是否查询总记录数。查询总记录数会严重影响性能，非必要不查询.
+   * 是否查询总记录数。查询总记录数会严重影响性能，非必要不查询。
    */
   count: boolean;
   /**
@@ -41,12 +40,12 @@ export interface Req {
      */
     nameOrCode?: string;
     /**
-     * 币种状态(NEW, ACTIVE, INACTIVE)
+     * 币种状态 (NEW, ACTIVE, INACTIVE)
      */
     status?: \\"NEW\\" | \\"ACTIVE\\" | \\"INACTIVE\\";
   };
   /**
-   * 分页查询的排序规则, 最大不能超过10个排序字段
+   * 分页查询的排序规则，最大不能超过 10 个排序字段
    *
    * @minItems 0
    * @maxItems 10
@@ -69,7 +68,7 @@ export interface Req {
  */
 export interface Res {
   /**
-   * 总记录数。如果请求参数中'是否查询总记录数'为true则此参数将会返回.
+   * 总记录数。如果请求参数中'是否查询总记录数'为 true 则此参数将会返回。
    */
   total?: number;
   /**
@@ -81,23 +80,23 @@ export interface Res {
      */
     coin?: {
       /**
-       * 币种id
+       * 币种 id
        */
       id?: number;
       /**
-       * crypto来源Id，crypto_datasource表的Id
+       * crypto 来源 Id，crypto_datasource 表的 Id
        */
       sourceId?: number;
       /**
-       * Coin的名称，如：Bitcoin
+       * Coin 的名称，如：Bitcoin
        */
       name?: string;
       /**
-       * Coin的符号，如：BTC
+       * Coin 的符号，如：BTC
        */
       code?: string;
       /**
-       * 币种状态(NEW,ACTIVE,INACTIVE)
+       * 币种状态 (NEW,ACTIVE,INACTIVE)
        */
       status?: string;
     };
@@ -106,7 +105,7 @@ export interface Res {
      */
     networks?: {
       /**
-       * 表Id，coin唯一标识
+       * 表 Id，coin 唯一标识
        */
       id?: number;
       /**
@@ -124,14 +123,13 @@ export const usersPostApiFieldsMap = {\\"nameOrCode\\":\\"nameOrCode\\",\\"statu
 "
 `;
 
-exports[`api 生成 > 参数在url上 1`] = `
+exports[`api 生成 > 参数在 url 上 1`] = `
 "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖
 import { RequestBuilder } from '@dune2/tools/rq';
 import requestFn from '@/utils/request';
 /**
   * 查询单个后台用户信息
   * @tags 后台用户管理相关接口
-  * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/后台用户管理相关接口/queryUserById
   */
 export const usersGetApi = new RequestBuilder<usersGetApi.Req, usersGetApi.Res>({
   url: '/users',
@@ -142,7 +140,7 @@ export const usersGetApi = new RequestBuilder<usersGetApi.Req, usersGetApi.Res>(
 export namespace usersGetApi {
  export interface Req {
   /**
-   * 用户id
+   * 用户 id
    */
   id: number;
 }
@@ -153,7 +151,7 @@ export namespace usersGetApi {
  */
 export interface Res {
   /**
-   * 用户id
+   * 用户 id
    */
   id?: number;
   /**
@@ -165,7 +163,7 @@ export interface Res {
    */
   realName?: string;
   /**
-   * 用户状态(ACTIVE, INACTIVE)
+   * 用户状态 (ACTIVE, INACTIVE)
    */
   status?: \\"NEW\\" | \\"ACTIVE\\" | \\"INACTIVE\\";
 }
@@ -180,7 +178,6 @@ import requestFn from '@/utils/request';
 /**
   * 分页查询币种信息
   * @tags 币种管理相关接口
-  * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/币种管理相关接口/pageSearch_4
   */
 export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Res>({
   url: '/users',
@@ -202,7 +199,6 @@ import { RequestBuilder } from '@dune2/tools/rq';
 /**
   * 查询单个后台用户信息
   * @tags 后台用户管理相关接口
-  * @see http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API#/后台用户管理相关接口/queryUserById
   */
 export const usersGetApi = new RequestBuilder<usersGetApi.Req, usersGetApi.Res>({
   url: '/api/v1/users',
@@ -212,7 +208,7 @@ export const usersGetApi = new RequestBuilder<usersGetApi.Req, usersGetApi.Res>(
 export namespace usersGetApi {
  export interface Req {
   /**
-   * 用户id
+   * 用户 id
    */
   id: number;
 }
@@ -223,7 +219,7 @@ export namespace usersGetApi {
  */
 export interface Res {
   /**
-   * 用户id
+   * 用户 id
    */
   id?: number;
   /**
@@ -235,7 +231,7 @@ export interface Res {
    */
   realName?: string;
   /**
-   * 用户状态(ACTIVE, INACTIVE)
+   * 用户状态 (ACTIVE, INACTIVE)
    */
   status?: \\"NEW\\" | \\"ACTIVE\\" | \\"INACTIVE\\";
 }

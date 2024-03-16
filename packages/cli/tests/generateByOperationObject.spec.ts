@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { generateApiRequestCode } from "../src/commands/generateApi";
 import { apiConfigNormalizer } from "../src/shared/config/normalizeConfig";
 
@@ -11,7 +11,7 @@ const paramsInQuery = {
       name: "id",
       in: "query",
       required: true,
-      description: "用户id",
+      description: "用户 id",
       example: 1,
       schema: {
         type: "integer",
@@ -31,13 +31,13 @@ const paramsInQuery = {
               code: {
                 type: "string",
                 description:
-                  "请求结果的状态码.如果这个值返回的是200, 那么就代表业务处理成功了",
+                  "请求结果的状态码。如果这个值返回的是 200, 那么就代表业务处理成功了",
                 example: "200",
               },
               message: {
                 type: "string",
                 description:
-                  "请求结果的描述. 如果业务处理失败，将会描述失败的原因.",
+                  "请求结果的描述。如果业务处理失败，将会描述失败的原因。",
                 example: "success",
               },
               data: {
@@ -45,7 +45,7 @@ const paramsInQuery = {
                 properties: {
                   id: {
                     type: "integer",
-                    description: "用户id",
+                    description: "用户 id",
                     format: "int64",
                   },
                   email: {
@@ -58,7 +58,7 @@ const paramsInQuery = {
                   },
                   status: {
                     type: "string",
-                    description: "用户状态(ACTIVE, INACTIVE)",
+                    description: "用户状态 (ACTIVE, INACTIVE)",
                     enum: ["NEW", "ACTIVE", "INACTIVE"],
                   },
                 },
@@ -66,11 +66,11 @@ const paramsInQuery = {
               },
               requestId: {
                 type: "string",
-                description: "请求ID",
+                description: "请求 ID",
                 example: "00000001",
               },
             },
-            description: "HTTP响应的统一结构体",
+            description: "HTTP 响应的统一结构体",
           },
         },
       },
@@ -93,7 +93,7 @@ const paramsInBody = {
               maximum: 1024,
               minimum: 1,
               type: "integer",
-              description: "页码数, 该值的范围是1~1024",
+              description: "页码数，该值的范围是 1~1024",
               format: "int32",
               example: 1,
             },
@@ -101,14 +101,14 @@ const paramsInBody = {
               maximum: 99999,
               minimum: 1,
               type: "integer",
-              description: "页大小, 该值的范围是1~99999",
+              description: "页大小，该值的范围是 1~99999",
               format: "int32",
               example: 1,
             },
             count: {
               type: "boolean",
               description:
-                "是否查询总记录数。查询总记录数会严重影响性能，非必要不查询. ",
+                "是否查询总记录数。查询总记录数会严重影响性能，非必要不查询。",
               example: false,
             },
             params: {
@@ -120,7 +120,7 @@ const paramsInBody = {
                 },
                 status: {
                   type: "string",
-                  description: "币种状态(NEW, ACTIVE, INACTIVE)",
+                  description: "币种状态 (NEW, ACTIVE, INACTIVE)",
                   enum: ["NEW", "ACTIVE", "INACTIVE"],
                 },
               },
@@ -130,7 +130,7 @@ const paramsInBody = {
               maxItems: 10,
               minItems: 0,
               type: "array",
-              description: "分页查询的排序规则, 最大不能超过10个排序字段",
+              description: "分页查询的排序规则，最大不能超过 10 个排序字段",
               items: {
                 required: ["fieldName", "type"],
                 type: "object",
@@ -167,13 +167,13 @@ const paramsInBody = {
               code: {
                 type: "string",
                 description:
-                  "请求结果的状态码.如果这个值返回的是200, 那么就代表业务处理成功了",
+                  "请求结果的状态码。如果这个值返回的是 200, 那么就代表业务处理成功了",
                 example: "200",
               },
               message: {
                 type: "string",
                 description:
-                  "请求结果的描述. 如果业务处理失败，将会描述失败的原因.",
+                  "请求结果的描述。如果业务处理失败，将会描述失败的原因。",
                 example: "success",
               },
               data: {
@@ -183,7 +183,7 @@ const paramsInBody = {
                   total: {
                     type: "integer",
                     description:
-                      "总记录数。如果请求参数中'是否查询总记录数'为true则此参数将会返回.",
+                      "总记录数。如果请求参数中'是否查询总记录数'为 true 则此参数将会返回。",
                     format: "int64",
                   },
                   result: {
@@ -197,26 +197,26 @@ const paramsInBody = {
                           properties: {
                             id: {
                               type: "integer",
-                              description: "币种id",
+                              description: "币种 id",
                               format: "int64",
                             },
                             sourceId: {
                               type: "integer",
                               description:
-                                "crypto来源Id，crypto_datasource表的Id",
+                                "crypto 来源 Id，crypto_datasource 表的 Id",
                               format: "int64",
                             },
                             name: {
                               type: "string",
-                              description: "Coin的名称，如：Bitcoin",
+                              description: "Coin 的名称，如：Bitcoin",
                             },
                             code: {
                               type: "string",
-                              description: "Coin的符号，如：BTC",
+                              description: "Coin 的符号，如：BTC",
                             },
                             status: {
                               type: "string",
-                              description: "币种状态(NEW,ACTIVE,INACTIVE)",
+                              description: "币种状态 (NEW,ACTIVE,INACTIVE)",
                             },
                           },
                           description: "币种管理",
@@ -229,7 +229,7 @@ const paramsInBody = {
                             properties: {
                               id: {
                                 type: "integer",
-                                description: "表Id，coin唯一标识",
+                                description: "表 Id，coin 唯一标识",
                                 format: "int64",
                               },
                               coinId: {
@@ -243,7 +243,7 @@ const paramsInBody = {
                           },
                         },
                       },
-                      description: "coin分页查询结果",
+                      description: "coin 分页查询结果",
                     },
                   },
                 },
@@ -251,11 +251,11 @@ const paramsInBody = {
               },
               requestId: {
                 type: "string",
-                description: "请求ID",
+                description: "请求 ID",
                 example: "00000001",
               },
             },
-            description: "HTTP响应的统一结构体",
+            description: "HTTP 响应的统一结构体",
           },
         },
       },
@@ -270,19 +270,18 @@ const generate = (data, methods: string) => {
     operationObject: data,
     apiConfig: apiConfigNormalizer({
       swaggerJSONPath: "",
-      swaggerUiUrl:
-        "http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API",
+      swaggerUiUrl: "",
     }),
   });
 };
 
 describe("api 生成", function () {
-  it("参数在url上", async () => {
+  it("参数在 url 上", async () => {
     const result = await generate(paramsInQuery, "get");
     expect(result).toMatchSnapshot();
   });
 
-  it("参数在body里", async function () {
+  it("参数在 body 里", async function () {
     const result = await generate(paramsInBody, "post");
     expect(result).toMatchSnapshot();
   });
@@ -303,8 +302,7 @@ describe("api 生成", function () {
         operationObject: paramsInQuery as never,
         apiConfig: apiConfigNormalizer({
           swaggerJSONPath: "",
-          swaggerUiUrl:
-            "http://192.168.104.10:31082/swagger/?urls.primaryName=%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API",
+          swaggerUiUrl: "",
           urlTransformer,
         }),
       });

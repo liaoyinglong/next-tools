@@ -1,6 +1,5 @@
 import type {
   DefaultError,
-  FetchQueryOptions,
   InfiniteData,
   InvalidateOptions,
   QueryClient,
@@ -8,66 +7,21 @@ import type {
   RefetchOptions,
   UseInfiniteQueryOptions,
   UseMutationOptions,
-  UseQueryOptions as RQUseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
-import type { AxiosRequestConfig, Method } from "axios";
 import { useDebugValue, useMemo } from "react";
 import { queryClient } from "./defaultQueryClient";
-
-// 外部可以重写这个类型
-export interface RequestBuilderMeta {}
-
-interface Basic {
-  /**
-   * 请求方法
-   * 1. 实例化的时候会接收一个`requestFn`
-   * 2. 如果在调用`request/useQuery`之类的不想用实例化是传入的`requestFn`，可以在`request/useQuery`的第二个参数传入`requestFn`
-   * 一般场景是有些情况需要全局`toast`，有些场景不需要，所以在不同的场景下传入不同实现的`requestFn`
-   */
-  requestFn?: <T = unknown>(config: AxiosRequestConfig) => Promise<T>;
-
-  meta?: RequestBuilderMeta;
-}
-interface QueryClientBasic {
-  queryClient?: QueryClient;
-}
-
-type OmitMetaAndPartial<T> = Partial<Omit<T, "meta">>;
-
-interface UseQueryOptions<T>
-  extends OmitMetaAndPartial<RQUseQueryOptions<T>>,
-    Basic {}
-
-export interface RequestBuilderOptions<Req, Res>
-  extends Basic,
-    QueryClientBasic {
-  /**
-   * 请求方法
-   * @default "get"
-   */
-  method?: Lowercase<Method>;
-  // 请求路径
-  url: string;
-  // url path 上的参数 , /prefunding-order/{id} 中的 id
-  urlPathParams?: string[];
-
-  // 透传给 useQuery 的 options
-  useQueryOptions?: RQUseQueryOptions;
-
-  // 透传给 useMutation 的 options
-  useMutationOptions?: UseMutationOptions<Res, unknown, Req>;
-}
-
-type RequestConfig = Basic & AxiosRequestConfig;
-
-type PageData<T = any> = {
-  total?: number;
-  result: T[];
-  extra?: any;
-};
+import type {
+  Basic,
+  PageData,
+  QueryClientBasic,
+  FetchQueryOptions,
+  RequestBuilderOptions,
+  RequestConfig,
+  UseQueryOptions,
+} from "./options";
 
 export class RequestBuilder<Req = any, Res = any> {
   constructor(public options: RequestBuilderOptions<Req, Res>) {
@@ -222,10 +176,7 @@ export class RequestBuilder<Req = any, Res = any> {
    * 用来预请求接口
    * @see https://tanstack.com/query/v4/docs/guides/prefetching
    */
-  prefetchQuery(
-    params?: Req,
-    options?: FetchQueryOptions<Res> & Basic & QueryClientBasic,
-  ) {
+  prefetchQuery(params?: Req, options?: FetchQueryOptions<Res>) {
     const queryClient = this.ensureQueryClient(options);
     return queryClient.prefetchQuery({
       queryKey: this.getQueryKey(params),
@@ -239,10 +190,7 @@ export class RequestBuilder<Req = any, Res = any> {
    * 用来请求接口
    * @see https://tanstack.com/query/v4/docs/react/reference/QueryClient#queryclientfetchquery
    */
-  fetchQuery(
-    params?: Req,
-    options?: FetchQueryOptions<Res> & Basic & QueryClientBasic,
-  ) {
+  fetchQuery(params?: Req, options?: FetchQueryOptions<Res>) {
     const queryClient = this.ensureQueryClient(options);
     return queryClient.fetchQuery({
       queryKey: this.getQueryKey(params),
@@ -288,7 +236,7 @@ export class RequestBuilder<Req = any, Res = any> {
   /**
    * https://tanstack.com/query/v5/docs/react/reference/QueryClient#queryclientensurequerydata
    */
-  ensureQueryData(params?: Req, option?: Basic & QueryClientBasic) {
+  ensureQueryData(params?: Req, option?: FetchQueryOptions<Res>) {
     const queryClient = this.ensureQueryClient(option);
     return queryClient.ensureQueryData({
       queryKey: this.getQueryKey(params),

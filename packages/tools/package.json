@@ -14,7 +14,11 @@
   "author": "",
   "exports": {
     "./factory/*": "./factory/*.tsx",
-    "./i18n": "./i18n/index.ts",
+    "./i18n": {
+      "import": "./i18n/index.ts",
+      "require": "./i18n/index.ts",
+      "react-server": "./i18n/index.react-server.tsx"
+    },
     "./i18n/*": "./i18n/*",
     "./numbro": "./numbro/index.ts",
     "./rq": "./rq/index.ts",

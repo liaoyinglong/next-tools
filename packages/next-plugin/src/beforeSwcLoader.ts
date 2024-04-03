@@ -12,6 +12,13 @@ export interface BeforeSwcLoaderOptions {
    * case: css={{}} | styled.div`` | styled.div(Component)``
    */
   enableEmotionUseClient?: boolean;
+
+  /**
+   * 是否是 [locale] 模式 route 的项目
+   * 目前 i18n 的 useT 已经支持在 rsc 中使用
+   * 即：在页面中只是用 useT() 时，可以不用添加 "use client"
+   */
+  enableI18nRoute?: boolean;
 }
 
 // 判断是否有 use client 指令
@@ -45,14 +52,19 @@ export default function beforeSwcLoader(
   }
 
   const isInSrcDir = inSrcDirReg.test(this.resourcePath);
-  if (isInSrcDir) {
+  if (isInSrcDir && !shouldAddUseClient) {
     // 使用 emotion 的代码
-    const useEmotion =
+    shouldAddUseClient =
       options.enableEmotionUseClient && hasUseEmotionReg.test(source);
-    // 使用 hooks 的代码
-    const useHooks = hasUseHooksReg.test(source);
-    if (useEmotion || useHooks) {
-      shouldAddUseClient = true;
+    if (!shouldAddUseClient) {
+      // 使用 hooks 的代码
+      // 在 i18n 路由模式下，不需要检测 useT 的调用，这里直接去掉
+      // 假设去掉只会还检测出 useX 开头的钩子，则添加 "use client"
+      const toCheckHooksCode = options.enableI18nRoute
+        ? source.replace(/useT\(\)/g, "")
+        : source;
+
+      shouldAddUseClient = hasUseHooksReg.test(toCheckHooksCode);
     }
   }
 

@@ -60,10 +60,41 @@ describe("beforeSwcLoader", () => {
     const res = await runWithContext(`const App = () => { const t = useT();}`, {
       enableAutoUseClient: true,
     });
+    // 不是 i18n route 需要添加
     expect(res).toMatchInlineSnapshot(`
       "'use client';
       const App = () => { const t = useT();}"
     `);
+  });
+  it("useT() in rsc", async function () {
+    {
+      const res = await runWithContext(
+        `const App = () => { const t = useT();}`,
+        {
+          enableAutoUseClient: true,
+          enableI18nRoute: true,
+        },
+      );
+      // 单独一个 useT 不需要添加
+      expect(res).toMatchInlineSnapshot(
+        `"const App = () => { const t = useT();}"`,
+      );
+    }
+
+    {
+      const res = await runWithContext(
+        `const App = () => { const [] = useState(); const t = useT();}`,
+        {
+          enableAutoUseClient: true,
+          enableI18nRoute: true,
+        },
+      );
+      // 需要添加，因为还有 useState
+      expect(res).toMatchInlineSnapshot(`
+        "'use client';
+        const App = () => { const [] = useState(); const t = useT();}"
+      `);
+    }
   });
 
   it("useState()", async function () {

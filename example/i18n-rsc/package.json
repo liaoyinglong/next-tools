@@ -1,0 +1,13 @@
+{
+  "name": "i18n-rsc-test",
+  "private": true,
+  "scripts": {
+    "build": "next build && node ./test.mjs",
+    "dev": "next dev",
+    "start": "next start"
+  },
+  "devDependencies": {
+    "@dune2/tools": "workspace:*",
+    "next": "^14"
+  }
+}

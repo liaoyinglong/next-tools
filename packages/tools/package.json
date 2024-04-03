@@ -15,9 +15,9 @@
   "exports": {
     "./factory/*": "./factory/*.tsx",
     "./i18n": {
+      "react-server": "./i18n/index.react-server.tsx",
       "import": "./i18n/index.ts",
-      "require": "./i18n/index.ts",
-      "react-server": "./i18n/index.react-server.tsx"
+      "require": "./i18n/index.ts"
     },
     "./i18n/*": "./i18n/*",
     "./numbro": "./numbro/index.ts",
@@ -62,7 +62,8 @@
     "@types/lodash": "^4.17.0",
     "@types/react": "^18.2.6",
     "axios": "^0.27.2",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "zx": "^7.0.8"
   },
   "publishConfig": {
     "access": "public"

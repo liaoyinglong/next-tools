@@ -1,3 +1,4 @@
+"use client";
 import { Trans as TransRaw, type TransProps } from "@lingui/react";
 import { type FC } from "react";
 

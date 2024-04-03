@@ -5,11 +5,12 @@ import {
   fromStorage,
   fromUrl,
 } from "@lingui/detect-locale";
-import { isServer } from "../shared";
 import type { EventEmitter } from "./EventEmitterType";
 import { compileMessage } from "./compile";
 import { LocalesEnum } from "./enums";
 import type { Config } from "./shared";
+
+const isServer = typeof window === "undefined";
 
 const defaultConfig: Config = {
   defaultLocale: LocalesEnum.en,

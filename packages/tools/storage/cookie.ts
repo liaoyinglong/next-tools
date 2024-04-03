@@ -1,5 +1,7 @@
-import type { CookieAttributes, CookiesStatic } from "js-cookie";
 import Cookies from "js-cookie";
+
+type CookieAttributes = Cookies.CookieAttributes;
+type CookiesStatic = Cookies.CookiesStatic;
 
 interface CreateStorageConfig<T> {
   /**
@@ -19,10 +21,10 @@ interface CreateStorageConfig<T> {
 type V = string;
 class StorageHelper {
   /**
-   * 存的key 包含 namespace
+   * 存的 key 包含 namespace
    * @example
    * namespace = "test"
-   * 传入的key = "token"
+   * 传入的 key = "token"
    * 获取到的 key = "test.token"
    */
   key: string;
@@ -30,7 +32,7 @@ class StorageHelper {
     public store: CookiesStatic,
     public namespace: string,
     public baseKey: string,
-    public defaultValue: string
+    public defaultValue: string,
   ) {
     this.key = `${namespace}.${baseKey}`;
   }
@@ -64,7 +66,7 @@ class StorageHelper {
  * 默认情况下 key/value 都会被转为 string
  */
 export function createCookieStorage<T extends Record<any, any>>(
-  config: CreateStorageConfig<T>
+  config: CreateStorageConfig<T>,
 ) {
   const { DataMap, namespace } = config;
 
@@ -76,7 +78,7 @@ export function createCookieStorage<T extends Record<any, any>>(
       namespace,
       String(key),
       // cookie 只能存 string
-      storageMap[key] + ""
+      storageMap[key] + "",
     );
   });
 

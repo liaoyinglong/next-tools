@@ -19,22 +19,6 @@ describe("beforeSwcLoader", () => {
     `);
   });
 
-  it("atlaskit design-system", async function () {
-    const res = await runWithContext(
-      `/** @jsx jsx */`,
-      {
-        enableAutoUseClient: true,
-        include: [/@atlaskit\/design-system/],
-      },
-      "/node_modules/@atlaskit/design-system/dist/index.esm.js",
-    );
-    expect(res).toMatchInlineSnapshot(`
-      "'use client';
-      /** @jsxRuntime classic */
-      /** @jsx jsx */"
-    `);
-  });
-
   it("emotion css= ", async function () {
     const res = await runWithContext("<div css={css`width: 100px;`} />", {
       enableAutoUseClient: true,

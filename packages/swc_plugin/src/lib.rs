@@ -1,9 +1,6 @@
-#![feature(drain_filter)]
-
 pub mod semi;
 pub mod shared;
 
-use crate::semi::modularize_imports::SemiUiModularizeImportsVisitor;
 use crate::semi::semi_css_omit::SemiUiImportCssOmitVisitor;
 use crate::shared::PluginConfig;
 use s_swc_visitor::get_folder;
@@ -51,10 +48,7 @@ pub fn process_transform(
             program.visit_mut_with(&mut SemiUiImportCssOmitVisitor {});
         }
     }
-    if config.enable_semi_modularize_import {
-        let mut visitor = SemiUiModularizeImportsVisitor::new(config.extra_semi_import_map);
-        program.visit_mut_with(&mut visitor);
-    }
+  
 
     // FIXME: only transform expected files now, should make it configurable
     let should_transform = file_name.contains("@dune2/") || !file_name.contains("node_modules");

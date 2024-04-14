@@ -11,7 +11,7 @@ use swc_core::ecma::visit::{noop_visit_mut_type, VisitMut};
 pub struct AutoNamespaceOption {
     /// 源代码
     pub source: String,
-    /// 翻译key的前缀
+    /// 翻译 key 的前缀
     pub namespace: String,
     /// 用于分割 namespace 和 key 的字符串
     pub separator: String,
@@ -26,7 +26,7 @@ pub struct AutoNamespaceOption {
     // 默认的翻译函数 t
     pub t_fn: String,
 
-    // 判断yuanma是否发生了变化，发生了变化需要重新格式化
+    // 判断 yuanma 是否发生了变化，发生了变化需要重新格式化
     pub source_has_changed: bool,
 }
 

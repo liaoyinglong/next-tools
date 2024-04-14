@@ -22,6 +22,7 @@
     "./i18n/*": "./i18n/*",
     "./numbro": "./numbro/index.ts",
     "./rq": "./rq/index.ts",
+    "./rq/*": "./rq/*.ts",
     "./shared": "./shared/index.ts",
     "./shared/*": "./shared/*.ts",
     "./storage": "./storage/index.ts",

@@ -44,9 +44,9 @@
   ],
   "scripts": {
     "build": "tsc --diagnostics",
-    "test": "vitest run && pnpm typecheck",
+    "test": "vitest run --typecheck",
     "test:u": "vitest -u",
-    "typecheck": "vitest --typecheck"
+    "typecheck": "vitest run --typecheck.only"
   },
   "dependencies": {
     "@lingui/core": "^4.7.1",

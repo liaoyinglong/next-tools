@@ -42,7 +42,7 @@ export interface Req {
     /**
      * 币种状态 (NEW, ACTIVE, INACTIVE)
      */
-    status?: \\"NEW\\" | \\"ACTIVE\\" | \\"INACTIVE\\";
+    status?: "NEW" | "ACTIVE" | "INACTIVE";
   };
   /**
    * 分页查询的排序规则，最大不能超过 10 个排序字段
@@ -58,7 +58,7 @@ export interface Req {
     /**
      * 排序规则
      */
-    type: \\"asc\\" | \\"desc\\";
+    type: "asc" | "desc";
   }[];
 }
 
@@ -119,7 +119,7 @@ export interface Res {
 export type ResultItem = Res['result'][0]
 };
 
-export const usersPostApiFieldsMap = {\\"nameOrCode\\":\\"nameOrCode\\",\\"status\\":\\"status\\"}
+export const usersPostApiFieldsMap = {"nameOrCode":"nameOrCode","status":"status"}
 "
 `;
 
@@ -165,7 +165,7 @@ export interface Res {
   /**
    * 用户状态 (ACTIVE, INACTIVE)
    */
-  status?: \\"NEW\\" | \\"ACTIVE\\" | \\"INACTIVE\\";
+  status?: "NEW" | "ACTIVE" | "INACTIVE";
 }
 
 };"
@@ -233,7 +233,7 @@ export interface Res {
   /**
    * 用户状态 (ACTIVE, INACTIVE)
    */
-  status?: \\"NEW\\" | \\"ACTIVE\\" | \\"INACTIVE\\";
+  status?: "NEW" | "ACTIVE" | "INACTIVE";
 }
 
 };"

@@ -23,7 +23,7 @@ describe("autoNamespaceByReg", () => {
       ),
     ).toMatchInlineSnapshot(`
       "{t('Merchants.引号')}
-      (t(\\"Merchants.引号\\"))"
+      (t("Merchants.引号"))"
     `);
   });
 
@@ -61,14 +61,14 @@ describe("autoNamespaceByReg", () => {
     ).toMatchInlineSnapshot(`
       " t\`Merchants.login\`
        t('Merchants.login')
-       t(\\"Merchants.login\\")
-       t(\\"Merchants.user.login\\")
+       t("Merchants.login")
+       t("Merchants.user.login")
       set\`login\`
       set('login')
-      set(\\"login\\")
-      set(\\"user.login\\")
+      set("login")
+      set("user.login")
        t\`Menu.login\`
-       t(\\"Menu.login\\")
+       t("Menu.login")
        t('Menu.login')
       arr.split('login')"
     `);
@@ -86,17 +86,17 @@ describe("autoNamespaceByReg", () => {
     }
     `;
       expect(autoNamespaceByReg(code, "Merchants")).toMatchInlineSnapshot(`
-      "
-          const a = t\`Merchants.login\`
-          const b = {
-              c: t('Merchants.login'),
-              d: t(\\"app.login\\"),
-          }
-          function App() {
-          return <div>{t('Merchants.login')}</div>
-          }
-          "
-    `);
+        "
+            const a = t\`Merchants.login\`
+            const b = {
+                c: t('Merchants.login'),
+                d: t("app.login"),
+            }
+            function App() {
+            return <div>{t('Merchants.login')}</div>
+            }
+            "
+      `);
     }
     {
       const code = `
@@ -114,7 +114,7 @@ describe("autoNamespaceByReg", () => {
             const a = t\`Merchants.user.login\`
             const b = {
                 c: t('Merchants.user.login'),
-                d: t(\\"app.login\\"),
+                d: t("app.login"),
             }
             function App() {
             return <div>{t('Merchants.user.login')}</div>

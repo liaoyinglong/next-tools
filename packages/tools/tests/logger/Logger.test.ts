@@ -15,7 +15,7 @@ const logsSpy = {
 describe("Logger", () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(1998, 11, 19));
+    vi.setSystemTime(new Date(1998, 11, 19, 15, 12, 11));
 
     logsSpy.error.mockReset();
     logsSpy.warn.mockReset();
@@ -100,13 +100,13 @@ describe("Logger", () => {
 
     logger.debug("debug message");
     expect(logsSpy.debug).toBeCalledWith(
-      "[00:00:00] DEBUG test: debug message",
+      "[15:12:11] DEBUG test: debug message",
     );
 
     // make sure %o %O work, it should be in the first argument
     logger.debug("debug message %o", { foo: "bar" });
     expect(logsSpy.debug).toBeCalledWith(
-      "[00:00:00] DEBUG test: debug message %o",
+      "[15:12:11] DEBUG test: debug message %o",
       { foo: "bar" },
     );
   });

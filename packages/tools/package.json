@@ -29,6 +29,7 @@
     "./storage/*": "./storage/*.ts",
     "./logger": "./logger/index.ts",
     "./logger/*": "./logger/*.ts",
+    "./valtio/*": "./valtio/*.ts",
     "./package.json": "./package.json"
   },
   "files": [
@@ -64,6 +65,7 @@
     "@types/react": "^18.2.6",
     "axios": "^0.27.2",
     "react": "^18.2.0",
+    "valtio": "^1.13.2",
     "zx": "^7.0.8"
   },
   "publishConfig": {

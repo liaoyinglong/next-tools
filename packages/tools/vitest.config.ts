@@ -6,6 +6,9 @@ export default defineConfig({
     typecheck: {
       checker: "tsc",
     },
+    onConsoleLog() {
+      return true;
+    },
   },
   esbuild: {
     jsx: "automatic",

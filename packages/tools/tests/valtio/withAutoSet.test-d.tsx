@@ -1,20 +1,6 @@
-import type { PropsWithChildren } from "react";
 import { assertType, describe, it } from "vitest";
 import { proxy } from "../../valtio";
 import { withAutoSet } from "../../valtio/withAutoSet";
-
-interface Props {
-  age?: number;
-  name?: string;
-  work: string;
-  work2: string;
-  className?: string;
-  style?: React.CSSProperties;
-}
-
-function App(props: PropsWithChildren<Props>) {
-  return null;
-}
 
 describe("withAutoSet", () => {
   let store = proxy(

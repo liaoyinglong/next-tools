@@ -1,6 +1,8 @@
 import { useSnapshot, proxy as valtioProxy } from "valtio";
 
 import { devtools } from "valtio/utils";
+import { isComputed } from "./computed";
+import type { EnhancedStore } from "./shared";
 
 const stores: any = {
   // log with plain object
@@ -29,6 +31,25 @@ export function proxy<T extends object>(
   }
   stores[opts.name] = store;
 
+  {
+    // 这样才不会触发 getter
+    const keys = Object.getOwnPropertyNames(store);
+
+    keys.forEach((key) => {
+      const propDescriptor = Object.getOwnPropertyDescriptor(store, key);
+      if (propDescriptor?.get) {
+        // 定义成 getter 不可能是 computed
+        return;
+      }
+      // @ts-expect-error 待修复
+      const value = store[key];
+      // computed 逻辑
+      if (isComputed(value)) {
+        value.setup(store, key);
+      }
+    });
+  }
+
   store.useSnapshot = function useStoreSnapshot(options) {
     return useSnapshot(options?.faker ? emptyStore : store, options) as T;
   };
@@ -44,17 +65,5 @@ interface Options {
    */
   devtools?: boolean;
 }
-type EnhancedStore<T> = T & {
-  useSnapshot(options?: {
-    sync?: boolean;
-    /**
-     * 性能优化，某些 store 变化很频繁
-     * 但是其中的值可能在 部分场景才用到
-     * 通过设置 faker 为 true，可以避免不必要的渲染
-     * faker = true , 时候将返回一个不变的 store，这是假的 store
-     */
-    faker?: boolean;
-  }): T;
-};
 
 const emptyStore = valtioProxy({});

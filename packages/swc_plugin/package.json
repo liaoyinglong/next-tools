@@ -1,6 +1,6 @@
 {
   "name": "@dune2/swc-plugin",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "",
   "keywords": [
     "swc-plugin"

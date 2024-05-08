@@ -1,6 +1,4 @@
-import type { CombineComputed } from "./computed";
-
-export type EnhancedStore<T extends object> = Combine<T> & {
+export type EnhancedStore<T extends object> = T & {
   useSnapshot(options?: {
     sync?: boolean;
     /**
@@ -10,9 +8,5 @@ export type EnhancedStore<T extends object> = Combine<T> & {
      * faker = true , 时候将返回一个不变的 store，这是假的 store
      */
     faker?: boolean;
-  }): Combine<T>;
-};
-
-type Combine<T extends object> = {
-  [k in keyof T]: CombineComputed<T[k]>;
+  }): T;
 };

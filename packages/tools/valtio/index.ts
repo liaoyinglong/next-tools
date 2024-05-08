@@ -1,8 +1,10 @@
 import { useSnapshot, proxy as valtioProxy } from "valtio";
 
 import { devtools } from "valtio/utils";
-import { isComputed } from "./computed";
 import type { EnhancedStore } from "./shared";
+
+export { snapshot, subscribe } from "valtio";
+export { proxyMap, proxySet, subscribeKey, watch } from "valtio/utils";
 
 const stores: any = {
   // log with plain object
@@ -30,25 +32,6 @@ export function proxy<T extends object>(
     });
   }
   stores[opts.name] = store;
-
-  {
-    // 这样才不会触发 getter
-    const keys = Object.getOwnPropertyNames(store);
-
-    keys.forEach((key) => {
-      const propDescriptor = Object.getOwnPropertyDescriptor(store, key);
-      if (propDescriptor?.get) {
-        // 定义成 getter 不可能是 computed
-        return;
-      }
-      // @ts-expect-error 待修复
-      const value = store[key];
-      // computed 逻辑
-      if (isComputed(value)) {
-        value.setup(store, key);
-      }
-    });
-  }
 
   store.useSnapshot = function useStoreSnapshot(options) {
     return useSnapshot(options?.faker ? emptyStore : store, options) as T;

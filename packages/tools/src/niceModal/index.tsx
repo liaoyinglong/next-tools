@@ -13,7 +13,13 @@ export {
   useModal,
 } from "@ebay/nice-modal-react";
 export { createModal } from "./createModal";
-export { niceModalStore };
+export {
+  /**
+   * 一般情况下不需要使用这个，这里导出主要是给 storybook 使用，防止弹出多个 modal
+   */
+  Provider as BaseNiceModalProvider,
+  niceModalStore,
+};
 
 export function NiceModalProvider(props: PropsWithChildren) {
   const { modals } = niceModalStore.useSnapshot();

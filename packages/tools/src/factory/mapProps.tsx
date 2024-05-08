@@ -9,7 +9,7 @@ import type { OptionalKeys } from "../shared/OptionalKeys";
  */
 export function mapProps<C extends keyof JSX.IntrinsicElements>(
   BaseComponent: C,
-  mapper: JSX.IntrinsicElements[C]
+  mapper: JSX.IntrinsicElements[C],
 ): FC<JSX.IntrinsicElements[C]>;
 /**
  * ```js
@@ -18,7 +18,7 @@ export function mapProps<C extends keyof JSX.IntrinsicElements>(
  */
 export function mapProps<
   C extends keyof JSX.IntrinsicElements,
-  P extends JSX.IntrinsicElements[C]
+  P extends JSX.IntrinsicElements[C],
 >(BaseComponent: C, mapper: (p: P) => P): FC<P>;
 /**
  * ```js
@@ -27,7 +27,7 @@ export function mapProps<
  */
 export function mapProps<
   RawP extends object,
-  ExtP extends Partial<RawP> = Partial<RawP>
+  ExtP extends Partial<RawP> = Partial<RawP>,
 >(BaseComponent: ComponentType<RawP>, mapper: ExtP): Comp<RawP, ExtP>;
 /**
  * ```js
@@ -37,14 +37,14 @@ export function mapProps<
 export function mapProps<
   C extends ComponentType<any>,
   RawP extends ComponentProps<C>,
-  ExtP extends Partial<RawP>
+  ExtP extends Partial<RawP>,
 >(BaseComponent: C, mapper: (p: ExtP) => ExtP): Comp<RawP, ExtP>;
 /**
  * 给组件添加默认props 或者 重写props
  */
 export function mapProps<C, P extends Record<any, any>>(
   BaseComponent: any,
-  mapper: P | ((p: P) => P)
+  mapper: P | ((p: P) => P),
 ) {
   const MappedComponent = (props: P, ref: any) => {
     let newProps =
@@ -74,7 +74,7 @@ function getDisplayName(Component: ComponentType<any>): string {
 type CombinedProps<
   A extends object,
   B extends object,
-  Keys extends keyof A = OptionalKeys<A, B>
+  Keys extends keyof A = OptionalKeys<A, B>,
 > = Omit<A, Keys> & {
   [K in Keys]?: A[K];
 };

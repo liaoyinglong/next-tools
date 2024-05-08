@@ -12,7 +12,7 @@ interface I18nProviderPropsCustom {
  * 以及在组件挂载时自动开启语言检测
  */
 export const I18nProvider = (
-  props: PropsWithChildren<I18nProviderPropsCustom>
+  props: PropsWithChildren<I18nProviderPropsCustom>,
 ) => {
   const { enableDetectLocale = true } = props;
   useEffect(() => {

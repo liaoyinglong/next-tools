@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { LocalesEnum, i18n } from "../../i18n";
+import { LocalesEnum, i18n } from "../../src/i18n";
 
 const enMessage = {
   hello: "hello",
@@ -107,7 +107,7 @@ describe("i18n", () => {
     expect(consoleErrorMock).toBeCalledTimes(1);
     expect(consoleErrorMock).toHaveBeenCalledWith(
       "load zh translate failed: ",
-      "network error"
+      "network error",
     );
   });
 
@@ -121,7 +121,7 @@ describe("i18n", () => {
 
     expect(i18n.t("hello {name}", { name: "world" })).toBe("hello world");
     expect(i18n.t("Attachment {name} saved", { name: "world" })).toBe(
-      "Attachment world saved"
+      "Attachment world saved",
     );
   });
 

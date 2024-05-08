@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { beforeEach, describe, expect, it } from "vitest";
-import { LocalesEnum } from "../../i18n";
-import { Numbro, numbro } from "../../numbro";
+import { LocalesEnum } from "../../src/i18n";
+import { Numbro, numbro } from "../../src/numbro";
 
 //#region reset to default format
 const defaultCurrencies = Numbro.defaultCurrencies;

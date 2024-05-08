@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { useMemo, type PropsWithChildren } from "react";
 import { describe, expect, it } from "vitest";
-import { I18nProvider, LocalesEnum, i18n, t, useT } from "../../i18n";
+import { I18nProvider, LocalesEnum, i18n, t, useT } from "../../src/i18n";
 
 const enMessage = {
   hello: "hello",
@@ -37,7 +37,7 @@ describe("useT", () => {
           variable: t("hello {name}", { name: "world" }),
         };
       },
-      { wrapper }
+      { wrapper },
     );
     expect(result.current).toMatchInlineSnapshot(`
       {
@@ -71,7 +71,7 @@ describe("useT", () => {
           variable: t("hello {name}", { name: "world" }),
         };
       },
-      { wrapper }
+      { wrapper },
     );
     expect(result.current).toMatchInlineSnapshot(`
       {
@@ -107,7 +107,7 @@ describe("useT", () => {
           };
         }, [t]);
       },
-      { wrapper }
+      { wrapper },
     );
     expect(result.current).toMatchInlineSnapshot(`
       {
@@ -144,14 +144,14 @@ describe("useT", () => {
         code: `221040`,
         message: "message",
         errorVars: { "0": "abc" },
-      })
+      }),
     ).toBe("变量名已存在: abc");
     expect(
       t.displayError({
         code: `221041`,
         message: "message",
         errorVars: { "0": "abc" },
-      })
+      }),
     ).toBe("未定义的变量: abc");
     expect(
       t.displayError({
@@ -159,7 +159,7 @@ describe("useT", () => {
         message: "message",
         // @ts-expect-error 也是支持数组的
         errorVars: ["abc"],
-      })
+      }),
     ).toBe("未定义的变量: abc");
   });
 });

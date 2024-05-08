@@ -1,6 +1,6 @@
 import { assertType, describe, it } from "vitest";
-import { proxy } from "../../valtio";
-import { withAutoSet } from "../../valtio/withAutoSet";
+import { proxy } from "../../src/valtio";
+import { withAutoSet } from "../../src/valtio/withAutoSet";
 
 describe("withAutoSet", () => {
   let store = proxy(

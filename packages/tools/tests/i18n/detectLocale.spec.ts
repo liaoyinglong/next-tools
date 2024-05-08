@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { LocalesEnum, i18n } from "../../i18n";
+import { LocalesEnum, i18n } from "../../src/i18n";
 
 i18n.register(LocalesEnum.zh, [{}]);
 i18n.register(LocalesEnum.en, [{}]);

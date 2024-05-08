@@ -1,4 +1,4 @@
-import { RequestBuilder } from "../../rq/RequestBuilder";
+import { RequestBuilder } from "../../src/rq/RequestBuilder";
 
 export const authOauthTokenPostApi = new RequestBuilder<
   authOauthTokenPostApi.Req,

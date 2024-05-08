@@ -1,7 +1,7 @@
 import store2 from "store2";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { Logger } from "../../logger/Logger";
-import { Level } from "../../logger/shared";
+import { Logger } from "../../src/logger/Logger";
+import { Level } from "../../src/logger/shared";
 
 const storageKey = "storageKey";
 

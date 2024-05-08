@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { compileMessage } from "../../i18n/compile";
+import { compileMessage } from "../../src/i18n/compile";
 
 describe("i18nResource.compile", () => {
   it("变量", function () {

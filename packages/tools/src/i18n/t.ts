@@ -13,7 +13,7 @@ interface TFunction {
   (
     id: string,
     values?: Record<string, unknown>,
-    options?: MessageOptions
+    options?: MessageOptions,
   ): string;
   (descriptor: MessageDescriptor): string;
   (literals: TemplateStringsArray, ...placeholders: any[]): string;
@@ -40,7 +40,7 @@ interface TFunction {
           message?: string | number;
           // 后端某些错误信息需要替换变量，这个字段用来传入变量
           errorVars?: Record<string, string>;
-        }
+        },
   ) => string;
 }
 

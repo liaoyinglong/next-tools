@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import type { PropsWithChildren } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mapProps } from "../../factory/mapProps";
+import { mapProps } from "../../src/factory/mapProps";
 
 interface Props {
   age?: number;
@@ -82,7 +82,7 @@ describe("mapProps", () => {
           style={{
             color: "red",
           }}
-        />
+        />,
       );
       expect(container.firstChild).toMatchInlineSnapshot(`
         <div

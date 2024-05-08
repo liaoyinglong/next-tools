@@ -123,7 +123,7 @@ export class DuneI18n {
            */
           syncToStorage?: boolean;
           locale: string;
-        }
+        },
   ) => {
     const opts = typeof locale !== "object" ? { locale } : locale;
     this.log("activate ", opts);
@@ -166,7 +166,7 @@ export class DuneI18n {
     const { compiled, raw } = this.compileMessage(messages);
     this.messageLoadResult[locale] = Object.assign(
       this.messageLoadResult[locale] || {},
-      raw
+      raw,
     );
     this.baseI18n.load(locale, compiled);
   }
@@ -174,7 +174,7 @@ export class DuneI18n {
   // 这里不能变成 async 方法，因为在 ssg 时，需要同步加载语言包
   private tryLoadMessage(
     locale: string,
-    loader = this.messageLoader[locale]
+    loader = this.messageLoader[locale],
   ): Promise<void> | void {
     if (!loader) {
       return;
@@ -237,7 +237,7 @@ export type BaseMsg = Record<string, any>;
 export type MsgLoader = BaseMsg[] | (() => Promise<BaseMsg>[] | BaseMsg[]);
 
 const isAsyncMsg = (
-  p: Promise<BaseMsg>[] | BaseMsg[]
+  p: Promise<BaseMsg>[] | BaseMsg[],
 ): p is Promise<BaseMsg>[] => {
   let first = Array.isArray(p) ? p[0] : p;
   return typeof first?.then === "function";

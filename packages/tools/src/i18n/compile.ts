@@ -48,7 +48,7 @@ function processTokens(tokens: Token[], mapText: MapTextFn): CompiledMessage {
     token.cases.forEach((item) => {
       formatProps[item.key.replace(/^=(.)+/, "$1")] = processTokens(
         item.tokens,
-        mapText
+        mapText,
       );
     });
 
@@ -65,7 +65,7 @@ function processTokens(tokens: Token[], mapText: MapTextFn): CompiledMessage {
 
 export function compileMessage(
   message: string,
-  mapText: MapTextFn = (v) => v
+  mapText: MapTextFn = (v) => v,
 ): CompiledMessage {
   try {
     return processTokens(parse(message), mapText);

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { createCookieStorage } from "../../storage/cookie";
+import { createCookieStorage } from "../../src/storage/cookie";
 
 //#region mock document.cookie
 let cookie = "";

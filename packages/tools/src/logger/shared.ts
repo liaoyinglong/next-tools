@@ -6,7 +6,6 @@ export enum Level {
   Silent,
 }
 
-
 export type OnLogParams = {
   // 日志等级
   level: Level;

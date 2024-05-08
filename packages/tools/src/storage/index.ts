@@ -35,7 +35,7 @@ class StorageHelper<V = any> {
     public store: StoreType,
     public namespace: string,
     public baseKey: string,
-    public defaultValue: V
+    public defaultValue: V,
   ) {
     this.key = `${namespace}.${baseKey}`;
   }
@@ -60,7 +60,7 @@ class StorageHelper<V = any> {
  * 创建 localStorage 或 sessionStorage 的存储
  */
 export function createStorage<T extends Record<string, any>>(
-  config: CreateStorageConfig<T>
+  config: CreateStorageConfig<T>,
 ) {
   const { DataMap, namespace, storageType = "local" } = config;
 
@@ -75,7 +75,7 @@ export function createStorage<T extends Record<string, any>>(
       store,
       namespace,
       String(key),
-      storageMap[key]
+      storageMap[key],
     );
   });
   return storage as {

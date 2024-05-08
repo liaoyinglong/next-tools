@@ -225,6 +225,9 @@ importers:
 
   packages/tools:
     dependencies:
+      "@ebay/nice-modal-react":
+        specifier: ^1.2.13
+        version: 1.2.13(react-dom@18.2.0)(react@18.2.0)
       "@lingui/core":
         specifier: ^4.7.1
         version: 4.7.1
@@ -760,6 +763,19 @@ packages:
       scroll-into-view-if-needed: 2.2.31
       utility-types: 3.10.0
     dev: true
+
+  /@ebay/nice-modal-react@1.2.13(react-dom@18.2.0)(react@18.2.0):
+    resolution:
+      {
+        integrity: sha512-jx8xIWe/Up4tpNuM02M+rbnLoxdngTGk3Y8LjJsLGXXcSoKd/+eZStZcAlIO/jwxyz/bhPZnpqPJZWAmhOofuA==,
+      }
+    peerDependencies:
+      react: ">16.8.0"
+      react-dom: ">16.8.0"
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
 
   /@emotion/babel-plugin@11.11.0:
     resolution:

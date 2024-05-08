@@ -31,6 +31,7 @@
     "./logger/*": "./logger/*.ts",
     "./valtio": "./valtio/index.ts",
     "./valtio/*": "./valtio/*",
+    "./niceModal": "./niceModal/index.tsx",
     "./package.json": "./package.json"
   },
   "files": [
@@ -50,6 +51,7 @@
     "typecheck": "vitest run --typecheck.only"
   },
   "dependencies": {
+    "@ebay/nice-modal-react": "^1.2.13",
     "@lingui/core": "^4.7.1",
     "@lingui/detect-locale": "^4.7.1",
     "@lingui/react": "^4.7.1",

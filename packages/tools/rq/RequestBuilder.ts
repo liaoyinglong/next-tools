@@ -15,9 +15,9 @@ import { useDebugValue, useMemo } from "react";
 import { queryClient } from "./defaultQueryClient";
 import type {
   Basic,
+  FetchQueryOptions,
   PageData,
   QueryClientBasic,
-  FetchQueryOptions,
   RequestBuilderOptions,
   RequestConfig,
   UseQueryOptions,
@@ -321,6 +321,7 @@ export class RequestBuilder<Req = any, Res = any> {
    */
   useMutation(options?: UseMutationOptions<Res, unknown, Req> & Basic) {
     return useMutation({
+      mutationKey: this.getQueryKey(),
       mutationFn: this.getMutationFn(options),
       ...this.options.useMutationOptions,
       ...options,

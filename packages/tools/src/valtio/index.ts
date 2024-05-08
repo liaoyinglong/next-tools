@@ -1,4 +1,4 @@
-import { useSnapshot, proxy as valtioProxy } from "valtio";
+import { snapshot, useSnapshot, proxy as valtioProxy } from "valtio";
 
 import { devtools } from "valtio/utils";
 import type { EnhancedStore } from "./shared";
@@ -7,18 +7,16 @@ export { snapshot, subscribe } from "valtio";
 export { proxyMap, proxySet, subscribeKey, watch } from "valtio/utils";
 export { withAutoSet } from "./withAutoSet";
 
-const stores: any = {
-  // log with plain object
-  print() {
-    console.log(stores.snapshot);
-  },
-  get snapshot(): any {
-    const { print, snapshot, ...rest } = stores;
-    return snapshot(valtioProxy(rest));
-  },
-};
-//@ts-expect-error for debug
-typeof window !== "undefined" && (window.__stores = stores);
+const stores: any = {};
+
+if (typeof window !== "undefined") {
+  Object.defineProperty(window, "__stores", {
+    get() {
+      const r = snapshot(valtioProxy(stores));
+      return { ...r, __raw: stores };
+    },
+  });
+}
 
 export function proxy<T extends object>(
   initialObject: T,

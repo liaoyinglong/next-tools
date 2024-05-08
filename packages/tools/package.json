@@ -30,7 +30,7 @@
     "./logger": "./src/logger/index.ts",
     "./logger/*": "./src/logger/*.ts",
     "./valtio": "./src/valtio/index.ts",
-    "./valtio/*": "./src/valtio/*",
+    "./valtio/*": "./src/valtio/*.ts",
     "./niceModal": "./src/niceModal/index.tsx",
     "./package.json": "./package.json"
   },

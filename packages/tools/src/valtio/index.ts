@@ -5,6 +5,7 @@ import type { EnhancedStore } from "./shared";
 
 export { snapshot, subscribe } from "valtio";
 export { proxyMap, proxySet, subscribeKey, watch } from "valtio/utils";
+export { withAutoSet } from "./withAutoSet";
 
 const stores: any = {
   // log with plain object

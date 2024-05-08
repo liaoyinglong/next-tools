@@ -29,7 +29,8 @@
     "./storage/*": "./storage/*.ts",
     "./logger": "./logger/index.ts",
     "./logger/*": "./logger/*.ts",
-    "./valtio/*": "./valtio/*.ts",
+    "./valtio": "./valtio/index.ts",
+    "./valtio/*": "./valtio/*",
     "./package.json": "./package.json"
   },
   "files": [

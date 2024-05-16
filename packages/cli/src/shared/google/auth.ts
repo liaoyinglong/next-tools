@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 import { OAuth2Client } from "google-auth-library";
 import { google } from "googleapis";
-import { homeConfigDir, createLogger } from "../index";
+import { createLogger, homeConfigDir } from "../index";
 import { openAndWaitReturnQuery } from "./shared";
 
 interface AuthOptions {
@@ -25,7 +25,7 @@ class GoogleAuth {
   oauth2Client: OAuth2Client = new google.auth.OAuth2(
     this.options.client_id,
     this.options.client_secret,
-    "http://localhost:12345"
+    "http://localhost:12345",
   );
 
   constructor(private options: AuthOptions) {
@@ -41,7 +41,7 @@ class GoogleAuth {
     try {
       this.tokens = fs.readJsonSync(this.tokensCachePath);
     } catch (e) {
-      log.info("未获取到缓存的token");
+      log.info("未获取到缓存的 token");
       this.tokens = null;
     }
   }
@@ -49,11 +49,11 @@ class GoogleAuth {
   private async saveTokens(tokens: any): Promise<void> {
     this.tokens = tokens;
     await fs.writeJSON(this.tokensCachePath, tokens);
-    log.info("保存token成功");
+    log.info("保存 token 成功");
   }
 
   async getCode(): Promise<string> {
-    log.info("将打开chrome浏览器进行授权");
+    log.info("将打开 chrome 浏览器进行授权");
     const authUrl = this.oauth2Client.generateAuthUrl({
       access_type: "offline",
       scope: this.scope,
@@ -81,13 +81,13 @@ class GoogleAuth {
 // see in https://console.cloud.google.com/apis/credentials?organizationId=286245507762&orgonly=true&project=dune-cli&supportedpurview=organizationId
 const clientSecret = {
   client_id:
-    "467670582023-3sr5gnfsuebgtde1mk3vp78om43no4kv.apps.googleusercontent.com",
-  project_id: "dune-cli-376503",
+    "691639467478-gugsam9ukfg3m3ga70imecktvqgkqljc.apps.googleusercontent.com",
+  project_id: "dune-cli-423514",
   auth_uri: "https://accounts.google.com/o/oauth2/auth",
   token_uri: "https://oauth2.googleapis.com/token",
   auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
-  client_secret: "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",
+  client_secret: "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",
   redirect_uris: ["http://localhost"],
-  javascript_origins: ["http://localhost"],
 };
+
 export const googleAuth = new GoogleAuth(clientSecret);

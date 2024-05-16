@@ -1,5 +1,5 @@
 import connect from "connect";
-import open from "open";
+import open, { apps } from "open";
 import { URL } from "url";
 import { createLogger } from "../index";
 
@@ -7,13 +7,13 @@ const log = createLogger("google:shared");
 
 function openBrowser(url: string) {
   log.info(`如未自动打开浏览器，可访问以下地址：${url}`);
-  open(url, { app: { name: open.apps.chrome } });
+  open(url, { app: { name: apps.chrome } });
 }
 
 export function openAndWaitReturnQuery(
   toOpenUrl: string,
   port: number,
-  queryKey: string
+  queryKey: string,
 ) {
   return new Promise<string>((resolve) => {
     openBrowser(toOpenUrl);
@@ -31,7 +31,7 @@ export function openAndWaitReturnQuery(
                   <script>
                     window.open("", "_self", "");
                     window.close();
-                  </script>`
+                  </script>`,
         );
         server.close();
         server.unref();

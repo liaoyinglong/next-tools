@@ -13,4 +13,8 @@ export enum LocalesEnum {
   en = "en",
   // 立陶宛
   lt = "lt",
+  // 俄罗斯
+  ru = "ru",
+  // 日本
+  ja = "ja",
 }

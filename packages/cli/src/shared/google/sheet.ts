@@ -21,7 +21,7 @@ class GoogleSheet {
     }
   }
   /**
-   * 调用sheets其他方法的时候需要先初始化
+   * 调用 sheets 其他方法的时候需要先初始化
    */
   async init() {
     if (!this.initPromise) {
@@ -40,7 +40,7 @@ class GoogleSheet {
     range: string,
     colIndex: number,
     rowIndex: number,
-    values: string[][]
+    values: string[][],
   ): Promise<GaxiosResponse<sheets_v4.Schema$UpdateValuesResponse>> {
     await this.init();
 
@@ -70,7 +70,7 @@ class GoogleSheet {
     range: string,
     colIndex: number,
     rowIndex: number,
-    values: string
+    values: string,
   ) {
     return this.update(spreadsheetId, range, colIndex, rowIndex, [[values]]);
   }
@@ -83,7 +83,7 @@ class GoogleSheet {
     range: string,
     colIndex: number,
     rowIndex: number,
-    values: string[]
+    values: string[],
   ) {
     return this.update(spreadsheetId, range, colIndex, rowIndex, [
       ...values.map((v) => [v]),

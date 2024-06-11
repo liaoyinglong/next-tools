@@ -1,5 +1,9 @@
 import fs from "fs-extra";
 import { OAuth2Client } from "google-auth-library";
+import type {
+  GetTokenResponse,
+  TokenInfo,
+} from "google-auth-library/build/src/auth/oauth2client";
 import { google } from "googleapis";
 import { createLogger, homeConfigDir } from "../index";
 import { openAndWaitReturnQuery } from "./shared";
@@ -16,7 +20,7 @@ interface AuthOptions {
 const log = createLogger("google:auth");
 
 class GoogleAuth {
-  private tokens: any = null;
+  tokens: (GetTokenResponse & TokenInfo) | null = null;
 
   private tokensCachePath = homeConfigDir("chromeAuthToken.json");
 
@@ -65,9 +69,13 @@ class GoogleAuth {
     if (!this.tokens) {
       const code = await this.getCode();
       const { tokens } = await this.oauth2Client.getToken(code);
+      if (tokens.access_token) {
+        const res = await this.oauth2Client.getTokenInfo(tokens.access_token);
+        Object.assign(tokens, res);
+      }
       await this.saveTokens(tokens);
     }
-    this.oauth2Client.setCredentials(this.tokens);
+    this.oauth2Client.setCredentials(this.tokens!);
   }
   private initCredentialsPromise: Promise<void> | null = null;
   async initCredentials() {
@@ -75,6 +83,16 @@ class GoogleAuth {
       this.initCredentialsPromise = this.initCredentialsImpl();
     }
     return await this.initCredentialsPromise;
+  }
+
+  /**
+   * 清除 token
+   */
+  async removeCredentials() {
+    if (this.tokens) {
+      await fs.remove(this.tokensCachePath);
+    }
+    this.tokens = null;
   }
 }
 

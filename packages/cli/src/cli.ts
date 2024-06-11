@@ -64,6 +64,30 @@ cli
   });
 //#endregion
 
+//#region user 相关
+cli.command("login", "登录").action(async () => {
+  const { googleAuth } = await import("./shared/google/auth");
+  await googleAuth.initCredentials();
+});
+cli.command("logout", "退出").action(async () => {
+  const { googleAuth } = await import("./shared/google/auth");
+  await googleAuth.removeCredentials();
+});
+cli.command("userInfo", "用户信息").action(async () => {
+  const { googleAuth } = await import("./shared/google/auth");
+  if (googleAuth.tokens) {
+    console.log(`\
+email: ${googleAuth.tokens.email}
+aud  : ${googleAuth.tokens.aud}
+exp  : ${new Date(googleAuth.tokens.expiry_date).toLocaleString()}
+`);
+  } else {
+    console.log("未登录");
+    console.log(`运行 dune login 登录`);
+  }
+});
+//#endregion
+
 cli
   .command("init", "初始化配置文件")
   .example("dune init")

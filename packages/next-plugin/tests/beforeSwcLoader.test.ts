@@ -67,6 +67,7 @@ describe("beforeSwcLoader", () => {
     `);
   });
   it("useT() in rsc", async function () {
+    const inLocalePath = "/src/app/[locale]/page.tsx";
     {
       const res = await runWithContext(
         `const App = () => { const t = useT();}`,
@@ -74,10 +75,28 @@ describe("beforeSwcLoader", () => {
           enableAutoUseClient: true,
           enableI18nRoute: true,
         },
+        inLocalePath,
       );
       // 单独一个 useT 不需要添加
       expect(res).toMatchInlineSnapshot(
         `"const App = () => { const t = useT();}"`,
+      );
+    }
+    {
+      const res = await runWithContext(
+        `const App = () => { const t = useT();}`,
+        {
+          enableAutoUseClient: true,
+          enableI18nRoute: true,
+        },
+        "/src/app/page.tsx",
+      );
+      // 不是在 [locale] 目录下，不需要添加 use client
+      expect(res).toMatchInlineSnapshot(
+        `
+        "'use client';
+        const App = () => { const t = useT();}"
+      `,
       );
     }
 
@@ -88,6 +107,7 @@ describe("beforeSwcLoader", () => {
           enableAutoUseClient: true,
           enableI18nRoute: true,
         },
+        inLocalePath,
       );
       // 需要添加，因为还有 useState
       expect(res).toMatchInlineSnapshot(`

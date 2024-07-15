@@ -26,6 +26,8 @@ const hasUseDirectiveReg = /['"]use (client|server)["']/;
 
 // 判断是否在 src 目录下
 const inSrcDirReg = /[\\\/]src[\\\/]|@dune2[\\\/]tools/;
+// 判断是否在 [locale] 目录下
+const inLocaleDirReg = /[\\\/]\[locale\][\\\/]/;
 
 // case: css={{}} | styled.div`` | styled.div(Component)``
 const hasUseEmotionReg = /\scss=\{|\sstyled.*`|styled.*\(.+\)`/;
@@ -40,7 +42,14 @@ export default function beforeSwcLoader(
 ) {
   const callback = this.async();
   const options = this.getOptions();
+
   let shouldAddUseClient = false;
+  const alreadyHasUseDirective = hasUseDirectiveReg.test(source);
+
+  if (alreadyHasUseDirective) {
+    // 已经有 useXXX 指令，不需要再添加
+    return callback(null, source, sourceMap);
+  }
 
   const shouldTransform = options.include?.some((reg) => {
     return reg.test(this.resourcePath);
@@ -60,9 +69,11 @@ export default function beforeSwcLoader(
       // 使用 hooks 的代码
       // 在 i18n 路由模式下，不需要检测 useT 的调用，这里直接去掉
       // 假设去掉只会还检测出 useX 开头的钩子，则添加 "use client"
-      const toCheckHooksCode = options.enableI18nRoute
-        ? source.replace(/useT\(\)/g, "")
-        : source;
+      const isInLocaleDir = inLocaleDirReg.test(this.resourcePath);
+      const toCheckHooksCode =
+        isInLocaleDir && options.enableI18nRoute
+          ? source.replace(/useT\(\)/g, "")
+          : source;
 
       shouldAddUseClient = hasUseHooksReg.test(toCheckHooksCode);
     }

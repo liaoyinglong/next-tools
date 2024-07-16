@@ -3,7 +3,11 @@ import React, { useContext } from "react";
 
 interface Params<T> {
   /**
-   * 传入一个hooks 返回值会给 context 的 value
+   * context 的名字 方便 debug
+   */
+  name: string;
+  /**
+   * 传入一个 hooks 返回值会给 context 的 value
    */
   useValueHooks: () => T;
   defaultValue?: T;
@@ -14,21 +18,20 @@ interface Params<T> {
  * 通过给定的 hooks 返回值创建 context 的 value
  */
 export function createStateContext<T>(params: Params<T>) {
-  const { useValueHooks, defaultValue } = params;
+  const { useValueHooks, defaultValue, name } = params;
   const Context = React.createContext(defaultValue as T);
 
   const Provider: FC<PropsWithChildren> = (props) => {
     const value = useValueHooks();
     return <Context.Provider value={value}>{props.children}</Context.Provider>;
   };
+  Provider.displayName = `${name}Provider`;
 
   function useContextValue() {
     return useContext(Context)!;
   }
 
   function withProvider<P extends object>(Comp: ComponentType<P>) {
-    return WithProvider;
-
     function WithProvider(props: P) {
       return (
         <Provider>
@@ -36,6 +39,8 @@ export function createStateContext<T>(params: Params<T>) {
         </Provider>
       );
     }
+    WithProvider.displayName = `${name}WithProvider`;
+    return WithProvider;
   }
 
   return {

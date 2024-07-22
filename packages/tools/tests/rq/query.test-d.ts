@@ -48,7 +48,24 @@ describe("rq.query", () => {
   });
 
   it("use query return type", () => {
-    const res = authOauthTokenPostApi.useQuery(req);
-    assertType<authOauthTokenPostApi.Res | undefined>(res.data);
+    {
+      // 默认 res
+      const res = authOauthTokenPostApi.useQuery(req);
+      assertType<authOauthTokenPostApi.Res | undefined>(res.data);
+    }
+    {
+      // 特殊 res
+      type Res = {
+        userId: number;
+      };
+      const res = authOauthTokenPostApi.useQuery<Res>(req, {
+        select(data) {
+          return {
+            userId: data.userId,
+          };
+        },
+      });
+      assertType<Res | undefined>(res.data);
+    }
   });
 });

@@ -1,9 +1,8 @@
 import type {
   QueryClient,
   FetchQueryOptions as RQFetchQueryOptions,
-  UseQueryOptions as RQUseQueryOptions,
-  UseBaseQueryOptions,
   UseMutationOptions,
+  useQuery,
 } from "@tanstack/react-query";
 
 import type { AxiosRequestConfig, Method } from "axios";
@@ -27,9 +26,10 @@ export interface QueryClientBasic {
 
 type OmitMetaAndPartial<T> = Partial<Omit<T, "meta">>;
 
+type RawUseQueryOptions<T> = Parameters<typeof useQuery<T>>[0];
 // 透传给 useQuery
 export interface UseQueryOptions<T>
-  extends OmitMetaAndPartial<UseBaseQueryOptions<T>>,
+  extends OmitMetaAndPartial<RawUseQueryOptions<T>>,
     Basic {}
 
 // 透传给 ensureQueryData / fetchQuery / prefetchQuery 等
@@ -52,7 +52,7 @@ export interface RequestBuilderOptions<Req, Res>
   urlPathParams?: string[];
 
   // 透传给 useQuery 的 options
-  useQueryOptions?: RQUseQueryOptions;
+  useQueryOptions?: RawUseQueryOptions<Res>;
 
   // 透传给 useMutation 的 options
   useMutationOptions?: UseMutationOptions<Res, unknown, Req>;

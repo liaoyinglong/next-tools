@@ -7,7 +7,6 @@ import type {
   RefetchOptions,
   UseInfiniteQueryOptions,
   UseMutationOptions,
-  UseQueryResult,
 } from "@tanstack/react-query";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
@@ -161,15 +160,14 @@ export class RequestBuilder<Req = any, Res = any> {
    */
   useQuery<T = Res>(params?: Req, options?: UseQueryOptions<T>) {
     const { useQueryOptions } = this.options;
-    const res = useQuery<T>({
-      // @ts-expect-error 后续处理类型问题
+    const res = useQuery({
       queryFn: this.defaultQueryFn,
       queryKey: this.getQueryKey(params),
       ...useQueryOptions,
-      ...options,
+      ...(options as any),
       meta: this.normalizeMeta(options),
     });
-    return res as UseQueryResult<T>;
+    return res as ReturnType<typeof useQuery<T>>;
   }
 
   /**

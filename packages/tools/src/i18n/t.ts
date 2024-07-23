@@ -19,8 +19,8 @@ interface TFunction {
   (literals: TemplateStringsArray, ...placeholders: any[]): string;
 
   /**
-   * 使用这个方法将被cli不会提取出来翻译
-   * 一般用在key是后端返回的动态情况
+   * 使用这个方法将被 cli 不会提取出来翻译
+   * 一般用在 key 是后端返回的动态情况
    * 但是这种情况下需要开发者手动将翻译填入翻译文件中
    */
   ignoreExtract: TFunction;
@@ -29,7 +29,7 @@ interface TFunction {
    * 翻译后端错误信息
    *
    * 传入错误码，会补齐 `error_` 前缀
-   * 传入对象，会使用对象的 code 字段去翻译, 如果没有对应的文案，则使用 message 字段返回
+   * 传入对象，会使用对象的 code 字段去翻译，如果没有对应的文案，则使用 message 字段返回
    */
   displayError: (
     arg:
@@ -49,7 +49,10 @@ function initT() {
   t.ignoreExtract = t;
   t.displayError = (arg) => {
     let normalizedArg = typeof arg === "object" ? arg : { code: arg };
-
+    // 修复外部可能 传入 undefined 或 null 的情况
+    if (!normalizedArg || !normalizedArg.code) {
+      return "";
+    }
     let key = `error_${normalizedArg.code}`;
     const translated = t(key, normalizedArg.errorVars);
     // 如果没有对应的文案，则使用 message 字段返回

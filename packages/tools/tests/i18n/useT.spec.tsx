@@ -12,8 +12,8 @@ const enMessage = {
 const zhMessage = {
   hello: "你好",
   "hello {name}": "你好 {name}",
-  error_221040: "变量名已存在: {0}",
-  error_221041: "未定义的变量: {0}",
+  error_221040: "变量名已存在：{0}",
+  error_221041: "未定义的变量：{0}",
 };
 
 describe("useT", () => {
@@ -134,10 +134,15 @@ describe("useT", () => {
   it("t.displayError", () => {
     i18n.register(LocalesEnum.zh, [zhMessage]);
     i18n.activate(LocalesEnum.zh);
+    // 不存在文案的情况
     expect(t.displayError(1)).toBe("error_1");
     expect(t.displayError("1")).toBe("error_1");
     expect(t.displayError({ code: 1 })).toBe("error_1");
     expect(t.displayError({ code: 1, message: "message" })).toBe("message");
+
+    // 外部传入 undefined 的情况
+    expect(t.displayError(undefined as never)).toBe("");
+    expect(t.displayError(null as never)).toBe("");
 
     expect(
       t.displayError({
@@ -145,14 +150,14 @@ describe("useT", () => {
         message: "message",
         errorVars: { "0": "abc" },
       }),
-    ).toBe("变量名已存在: abc");
+    ).toBe("变量名已存在：abc");
     expect(
       t.displayError({
         code: `221041`,
         message: "message",
         errorVars: { "0": "abc" },
       }),
-    ).toBe("未定义的变量: abc");
+    ).toBe("未定义的变量：abc");
     expect(
       t.displayError({
         code: `221041`,
@@ -160,6 +165,6 @@ describe("useT", () => {
         // @ts-expect-error 也是支持数组的
         errorVars: ["abc"],
       }),
-    ).toBe("未定义的变量: abc");
+    ).toBe("未定义的变量：abc");
   });
 });

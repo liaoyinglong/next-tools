@@ -43,15 +43,6 @@ cli
     await upload();
   });
 
-cli
-  .command("downloadFromPlatform", "从翻译平台下载文件")
-  .example("dune downloadFromPlatform")
-  .action(async () => {
-    const { downloadFromPlatform } = await import(
-      "./commands/downloadFromPlatform"
-    );
-    await downloadFromPlatform();
-  });
 //#endregion
 
 //#region api 相关

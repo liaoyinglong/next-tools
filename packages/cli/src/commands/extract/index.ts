@@ -19,7 +19,7 @@ export async function extract(opts?: { deleteUnused: boolean }) {
   const { extract } = await import("@dune2/wasm");
 
   let i18nConfigs = await promptI18nConfigEnable(
-    config.i18n?.filter((item) => !item.disableExtract)
+    config.i18n?.filter((item) => !item.disableExtract),
   );
 
   // 这是使得任务串行，方便看日志
@@ -32,7 +32,7 @@ export async function extract(opts?: { deleteUnused: boolean }) {
         "!**/.next/**",
         "!**/out/**",
       ].concat(configItem.include ?? []),
-      { cwd: configItem.cwd }
+      { cwd: configItem.cwd },
     );
     log.info("预计共解析 %s 个文件", pc.green(files.length));
     let errMsgs: string[] = [];
@@ -47,7 +47,7 @@ export async function extract(opts?: { deleteUnused: boolean }) {
           log.info(
             "从 %s 中提取到 %s 条文案",
             pc.dim(file),
-            pc.green(res.data.size)
+            pc.green(res.data.size),
           );
           res.data.forEach((value, key) => {
             let cur = extractedI18nDataMap.get(key)!;
@@ -56,7 +56,7 @@ export async function extract(opts?: { deleteUnused: boolean }) {
               cur = { ...value, files: [] };
             }
             cur.files.push(
-              path.resolve(file) + ":" + value.line + ":" + value.column
+              path.resolve(file) + ":" + value.line + ":" + value.column,
             );
             // 优先使用 提取出来的文案
             cur.messages = value.messages || cur.messages;
@@ -70,7 +70,7 @@ export async function extract(opts?: { deleteUnused: boolean }) {
           errMsgs.push(res.errMsg);
         }
       },
-      { concurrency: 20 }
+      { concurrency: 20 },
     );
 
     await saveExtractedMetaData(configItem, extractedI18nDataMap);
@@ -85,11 +85,7 @@ export async function extract(opts?: { deleteUnused: boolean }) {
       console.log(pc.bold("以下未能成功提取的文案，请手动处理："));
       console.log(errMsgs.join(os.EOL));
     }
-    I18nData.printStatistic("提取结果: ", i18nDataArr);
-
-    await import("./uploadToTranslatePlatform").then((mod) =>
-      mod.uploadToTranslatePlatform(configItem, i18nDataArr)
-    );
+    I18nData.printStatistic("提取结果：", i18nDataArr);
   }
 }
 
@@ -98,7 +94,7 @@ export async function extract(opts?: { deleteUnused: boolean }) {
  */
 async function saveExtractedMetaData(
   config: I18nConfig,
-  extractedI18nDataMap: ExtractedMap
+  extractedI18nDataMap: ExtractedMap,
 ) {
   const { i18nDir } = config;
   // case:
@@ -111,9 +107,9 @@ async function saveExtractedMetaData(
 
   await fs.ensureFile(metaDataJsonPath);
 
-  // extractedI18nDataMap 是个 Map 需要转成换json
+  // extractedI18nDataMap 是个 Map 需要转成换 json
   let data = Array.from(extractedI18nDataMap.entries()).map(
-    ([key, value]) => value
+    ([key, value]) => value,
   );
   // 按照 id 排序
   data = data.sort((a, b) => {
@@ -126,6 +122,6 @@ async function saveExtractedMetaData(
     data,
     {
       spaces: 2,
-    }
+    },
   );
 }

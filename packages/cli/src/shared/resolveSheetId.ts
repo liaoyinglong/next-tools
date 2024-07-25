@@ -14,8 +14,9 @@ export function resolveSheetId(str?: string) {
     return str;
   }
   const url = new URL(str);
-  const matched = match<{ id: string[] }>("/spreadsheets/d/:id*", {
+  const matched = match<{ id: string[] }>("/spreadsheets/d{/:id}*", {
     decode: decodeURIComponent,
   })(url.pathname);
+
   return matched ? matched.params.id?.[0] : str;
 }

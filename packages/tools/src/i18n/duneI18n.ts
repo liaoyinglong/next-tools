@@ -97,10 +97,20 @@ export class DuneI18n {
           }
         }
       };
+
+      // fix: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+      const safeFromStorage = () => {
+        try {
+          return fromStorage(storageKey);
+        } catch (e) {
+          console.error("fromStorage error", e);
+          return;
+        }
+      };
       let arr = [
         detectFromPath && fromPath(0, location),
         fromUrl(queryKey),
-        fromStorage(storageKey),
+        safeFromStorage(),
         fromNavigator(),
       ];
       for (let i = 0; i < arr.length; i++) {

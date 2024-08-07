@@ -5,16 +5,18 @@
  * https://duneproject.atlassian.net/wiki/spaces/DEV/pages/173244419
  */
 export enum LocalesEnum {
-  //  中文
+  //  中文 Chinese
   zh = "zh",
-  // 印尼
+  // 印尼 Indonesian
   id = "id",
-  // 英文
+  // 英文 English
   en = "en",
-  // 立陶宛
+  // 立陶宛 Lithuanian
   lt = "lt",
-  // 俄罗斯
+  // 俄罗斯 Russian
   ru = "ru",
-  // 日本
+  // 日本 Japanese
   ja = "ja",
+  // 土耳其 Turkish
+  tr = "tr",
 }

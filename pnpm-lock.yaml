@@ -207,9 +207,6 @@ importers:
 
   packages/next-plugin:
     dependencies:
-      "@dune2/swc-plugin":
-        specifier: workspace:*
-        version: link:../swc_plugin
       unplugin-auto-import:
         specifier: 0.18.2
         version: 0.18.2

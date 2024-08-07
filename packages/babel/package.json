@@ -1,6 +1,6 @@
 {
   "name": "@dune2/babel",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/liaoyinglong/next-tools.git",
@@ -26,7 +26,6 @@
     "test": "vitest run",
     "test:update": "vitest -u"
   },
-  "dependencies": {},
   "devDependencies": {
     "@babel/core": "7.25.2",
     "@babel/plugin-syntax-typescript": "^7.24.7",

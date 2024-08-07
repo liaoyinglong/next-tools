@@ -109,7 +109,6 @@ function workChildren(
   i: number = 0,
 ) {
   let msg = "";
-  let lastIndex = children.length - 1;
   children.forEach((child, index) => {
     if (t.isJSXText(child)) {
       // 开头 和 结尾 babel 都会包括回车，如果有的话

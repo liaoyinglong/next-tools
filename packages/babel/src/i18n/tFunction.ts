@@ -4,7 +4,6 @@ import type { Expression } from "@babel/types";
 
 export const tFunctionPlugin = (api: typeof babel): PluginObj => {
   const { types: t } = api;
-  type Types = typeof t;
 
   const tFunction = t.identifier("t");
 

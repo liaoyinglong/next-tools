@@ -1,7 +1,7 @@
 import { Options, defineConfig } from "tsup";
 
 const common: Options = {
-  name: "dune",
+  name: "babel",
   target: "node16",
   sourcemap: true,
   tsconfig: "./tsconfig.json",

@@ -76,7 +76,7 @@ const { node = t("hello {name}", {
     name: name
 }) } = props;
 // return statement
-function a() {
+function a1() {
     return t("hello {name}", {
         name: name
     });

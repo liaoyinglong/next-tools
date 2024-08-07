@@ -28,7 +28,7 @@ new VerifyPlaceOrderParamError(t`hello ${name}`);
 const { node = t`hello ${name}` } = props;
 
 // return statement
-function a() {
+function a1() {
   return t`hello ${name}`;
 }
 // as type 

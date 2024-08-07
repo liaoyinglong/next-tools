@@ -20,10 +20,13 @@ const defaultConfig: Config = {
   supportedLocales: [],
   debug: false,
   navigatorMapper: [
+    ["zh-", LocalesEnum.zh],
     ["id-", LocalesEnum.id],
     ["en-", LocalesEnum.en],
-    ["zh-", LocalesEnum.zh],
     ["lt-", LocalesEnum.lt],
+    ["ru-", LocalesEnum.ru],
+    ["ja-", LocalesEnum.ja],
+    ["tr-", LocalesEnum.tr],
   ],
 };
 

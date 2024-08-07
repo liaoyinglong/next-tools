@@ -26,7 +26,6 @@
     "test:u": "vitest -u"
   },
   "dependencies": {
-    "@dune2/swc-plugin": "workspace:*",
     "unplugin-auto-import": "0.18.2"
   },
   "devDependencies": {

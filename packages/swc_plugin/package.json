@@ -13,6 +13,7 @@
   "license": "ISC",
   "author": "",
   "main": "./dist/swc_plugin.wasm",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],

@@ -15,7 +15,10 @@ const loadCode = (path: string) => {
   return r;
 };
 
-export async function matchSwcPluginOutput(dir: string, plugin: PluginItem) {
+export async function matchSwcPluginOutput(
+  dir: string,
+  plugin: PluginItem | PluginItem[],
+) {
   const inputFilePath = join(fixtureDir, dir, "input.js");
   const outputFilePath = join(fixtureDir, dir, "output.js");
 
@@ -36,7 +39,7 @@ export async function matchSwcPluginOutput(dir: string, plugin: PluginItem) {
   });
   const res = await transformFromAstAsync(ast!, code, {
     filename: inputFilePath,
-    plugins: [plugin],
+    plugins: Array.isArray(plugin) ? plugin : [plugin],
     sourceType: "module",
     sourceMaps: false,
     code: true,

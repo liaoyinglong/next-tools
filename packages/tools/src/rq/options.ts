@@ -52,7 +52,7 @@ export interface RequestBuilderOptions<Req, Res>
   urlPathParams?: string[];
 
   // 透传给 useQuery 的 options
-  useQueryOptions?: RawUseQueryOptions<Res>;
+  useQueryOptions?: Partial<RawUseQueryOptions<Res>>;
 
   // 透传给 useMutation 的 options
   useMutationOptions?: UseMutationOptions<Res, unknown, Req>;

@@ -1,6 +1,8 @@
+import type { RequestBuilderOptions } from "./options";
 import { RequestBuilder } from "./RequestBuilder";
 
-interface Options<Req, Res> {
+interface Options<Req, Res>
+  extends Omit<Partial<RequestBuilderOptions<Req, Res>>, "requestFn"> {
   /**
    * 相当于 url
    */
@@ -24,13 +26,15 @@ interface Options<Req, Res> {
  *
  */
 export function createApi<Req, Res>(opts: Options<Req, Res>) {
+  const { requestFn, ...rest } = opts;
   const api = new RequestBuilder<Req, Res>({
     url: opts.queryKey,
     // 给定 get 则 在 requestFn 中可以通过 params 获取到参数，否则是 data 字段。这是 axios 的规则
     method: "get",
     requestFn: (config) => {
-      return opts.requestFn(config.params) as never;
+      return requestFn(config.params) as never;
     },
+    ...rest,
   });
 
   return api;

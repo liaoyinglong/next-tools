@@ -74,3 +74,23 @@ export function compileMessage(
     return message;
   }
 }
+
+/**
+ * 编译消息函数
+ * 使用建议：
+ * 1. 在 rsc 中直接使用，会减少 client 端的打包大小
+ * 2. 在 spa 中直接使用，会增加 client 端的打包大小
+ */
+export function compileMessages(msgs: Record<string, string>) {
+  // 创建一个空对象用于存储编译后的消息
+  const compiled: Record<string, any> = {};
+
+  // 遍历输入的消息对象的键
+  Object.keys(msgs).forEach((k) => {
+    // 将编译后的消息存入 compiled 对象
+    compiled[k] = compileMessage(msgs[k] || k);
+  });
+
+  // 返回编译后的消息对象
+  return compiled;
+}

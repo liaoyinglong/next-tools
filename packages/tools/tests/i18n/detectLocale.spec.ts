@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { LocalesEnum, i18n } from "../../src/i18n";
+import { registerDefaultMessage } from "./shared";
 
-i18n.register(LocalesEnum.zh, [{}]);
-i18n.register(LocalesEnum.en, [{}]);
-i18n.register(LocalesEnum.id, [{}]);
+registerDefaultMessage();
+i18n.register(LocalesEnum.id, {});
 
 const storageKey = "lang";
 

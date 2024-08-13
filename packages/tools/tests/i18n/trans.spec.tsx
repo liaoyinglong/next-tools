@@ -2,17 +2,7 @@ import { act, render } from "@testing-library/react";
 import { type PropsWithChildren } from "react";
 import { describe, expect, it } from "vitest";
 import { I18nProvider, LocalesEnum, Trans, i18n } from "../../src/i18n";
-
-const enMessage = {
-  hello: "hello",
-  "hello {name}": "hello {name}",
-  "hello <0>{name}</0>": "hello <0>{name}</0>",
-};
-const zhMessage = {
-  hello: "你好",
-  "hello {name}": "你好 {name}",
-  "hello <0>{name}</0>": "你好 <0>{name}</0>",
-};
+import { registerDefaultAsyncMessage, registerDefaultMessage } from "./shared";
 
 describe("trans", () => {
   // setup i18n
@@ -42,8 +32,7 @@ describe("trans", () => {
   );
 
   it("work with sync message loader", () => {
-    i18n.register(LocalesEnum.en, [enMessage]);
-    i18n.register(LocalesEnum.zh, [zhMessage]);
+    registerDefaultMessage();
     i18n.activate(LocalesEnum.en);
 
     const { container } = render(ui, {
@@ -89,8 +78,7 @@ describe("trans", () => {
   });
 
   it("work with async message loader", async () => {
-    i18n.register(LocalesEnum.en, () => [Promise.resolve(enMessage)]);
-    i18n.register(LocalesEnum.zh, () => [Promise.resolve(zhMessage)]);
+    registerDefaultAsyncMessage();
     await i18n.activate(LocalesEnum.en);
 
     const { container } = render(ui, {

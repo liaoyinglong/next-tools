@@ -2,6 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { type PropsWithChildren } from "react";
 import { describe, expect, it } from "vitest";
 import { I18nProvider, LocalesEnum, i18n, useLocale } from "../../src/i18n";
+import { registerDefaultAsyncMessage, registerDefaultMessage } from "./shared";
 
 describe("useLocale", () => {
   // setup i18n
@@ -12,8 +13,7 @@ describe("useLocale", () => {
   };
 
   it("work with sync message loader", () => {
-    i18n.register(LocalesEnum.en, [{}]);
-    i18n.register(LocalesEnum.zh, [{}]);
+    registerDefaultMessage();
     i18n.activate(LocalesEnum.en);
 
     const { result } = renderHook(() => useLocale(), {
@@ -47,8 +47,7 @@ describe("useLocale", () => {
   });
 
   it("work with async message loader", async () => {
-    i18n.register(LocalesEnum.en, () => [Promise.resolve({})]);
-    i18n.register(LocalesEnum.zh, () => [Promise.resolve({})]);
+    registerDefaultAsyncMessage();
     await i18n.activate(LocalesEnum.en);
 
     const { result } = renderHook(() => useLocale(), {

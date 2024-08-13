@@ -6,7 +6,7 @@ import {
   fromUrl,
 } from "@lingui/detect-locale";
 import type { EventEmitter } from "./EventEmitterType";
-import { compileMessage } from "./compile";
+
 import { LocalesEnum } from "./enums";
 import type { Config } from "./shared";
 
@@ -163,8 +163,10 @@ export class DuneI18n {
 
   //#region 注册语言包，并不一定会加载
   private messageLoader: Record<string, MsgLoader> = {};
-  // 后续需要暴露给 浏览器插件读取，方便做反查翻译
-  messageLoadResult: Record<string, BaseMsg> = {};
+  get messageLoadResult() {
+    //@ts-expect-error 内部属性
+    return this.baseI18n._messages;
+  }
   register(locale: LocalesEnum, message: MsgLoader) {
     this.messageLoader[locale] = message;
     this.log("register ", locale, message);
@@ -174,14 +176,8 @@ export class DuneI18n {
    * 外部可以直接调用，加载语言包
    * 这是一个同步方法
    */
-  loadMessage(locale: string, message: BaseMsg[] | BaseMsg) {
-    const messages = Array.isArray(message) ? message : [message];
-    const { compiled, raw } = this.compileMessage(messages);
-    this.messageLoadResult[locale] = Object.assign(
-      this.messageLoadResult[locale] || {},
-      raw,
-    );
-    this.baseI18n.load(locale, compiled);
+  loadMessage(locale: string, message: BaseMsg) {
+    this.baseI18n.load(locale, message);
   }
 
   // 这里不能变成 async 方法，因为在 ssg 时，需要同步加载语言包
@@ -192,69 +188,25 @@ export class DuneI18n {
     if (!loader) {
       return;
     }
-    // case: i18n.register(LocalesEnum.zh, [{},{}]);
+    // case: i18n.register(LocalesEnum.zh, {});
     if (typeof loader === "object") {
       this.loadMessage(locale, loader);
       return;
     }
-
-    const p = (() => {
-      try {
-        return loader();
-      } catch (e) {
-        console.error(`load ${locale} translate failed`);
-        console.error(e);
-        return [];
-      }
-    })();
-    if (!isAsyncMsg(p)) {
-      // case: i18n.register(LocalesEnum.zh, () => [{},{}]);
-      return this.tryLoadMessage(locale, p);
-    }
-    // case: i18n.register(LocalesEnum.zh, () => [Promise.resolve({})]);
-    // case: i18n.register(LocalesEnum.zh, () => [import('./i18n.json')]);
-    return Promise.allSettled(p).then((res) => {
-      const loadSuccess = res.reduce((acc, v) => {
-        if (v.status === "rejected") {
-          console.error(`load ${locale} translate failed: `, v.reason);
-          return acc;
-        }
-        return [...acc, v.value];
-      }, [] as BaseMsg[]);
-      return this.tryLoadMessage(locale, loadSuccess);
+    // case: i18n.register(LocalesEnum.zh, () => import("./zh.json"));
+    return loader().then((res) => {
+      this.tryLoadMessage(locale, res);
     });
   }
 
-  /**
-   * 将多个语言包合并成一个
-   */
-  private compileMessage(messages: BaseMsg[]) {
-    const compiled: BaseMsg = {};
-    const raw: BaseMsg = {};
-    messages.forEach((msg) => {
-      Object.keys(msg).forEach((k) => {
-        const v = msg[k];
-        raw[k] = v;
-        if (typeof v === "string") {
-          compiled[k] = compileMessage(v || k);
-        }
-      });
-    });
-    return { compiled, raw };
-  }
   //#endregion
 }
 
 export type BaseMsg = Record<string, any>;
 
-export type MsgLoader = BaseMsg[] | (() => Promise<BaseMsg>[] | BaseMsg[]);
-
-const isAsyncMsg = (
-  p: Promise<BaseMsg>[] | BaseMsg[],
-): p is Promise<BaseMsg>[] => {
-  let first = Array.isArray(p) ? p[0] : p;
-  return typeof first?.then === "function";
-};
+export type MsgLoader =
+  | Record<string, unknown>
+  | (() => Promise<Record<string, unknown>>);
 
 export const i18n = new DuneI18n();
 

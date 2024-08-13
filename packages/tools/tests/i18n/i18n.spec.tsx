@@ -27,13 +27,56 @@ describe("i18n", () => {
     expect(i18n.locale).toBe(LocalesEnum.en);
     expect(i18n.messageLoadResult[LocalesEnum.en]).toMatchInlineSnapshot(`
       {
+        "error_221040": [
+          "Nama variabel sudah ada: ",
+          [
+            "0",
+          ],
+        ],
+        "error_221041": [
+          "Variabel belum didefinisikan: ",
+          [
+            "0",
+          ],
+        ],
         "hello": "hello",
-        "hello {name}": "hello {name}",
+        "hello <0>{name}</0>": [
+          "hello <0>",
+          [
+            "name",
+          ],
+          "</0>",
+        ],
+        "hello {name}": [
+          "hello ",
+          [
+            "name",
+          ],
+        ],
       }
     `);
     expect(i18n.baseI18n.messages).toMatchInlineSnapshot(`
       {
+        "error_221040": [
+          "Nama variabel sudah ada: ",
+          [
+            "0",
+          ],
+        ],
+        "error_221041": [
+          "Variabel belum didefinisikan: ",
+          [
+            "0",
+          ],
+        ],
         "hello": "hello",
+        "hello <0>{name}</0>": [
+          "hello <0>",
+          [
+            "name",
+          ],
+          "</0>",
+        ],
         "hello {name}": [
           "hello ",
           [
@@ -47,11 +90,64 @@ describe("i18n", () => {
     expect(i18n.locale).toBe(LocalesEnum.zh);
     expect(i18n.messageLoadResult[LocalesEnum.zh]).toMatchInlineSnapshot(`
       {
+        "error_221040": [
+          "变量名已存在：",
+          [
+            "0",
+          ],
+        ],
+        "error_221041": [
+          "未定义的变量：",
+          [
+            "0",
+          ],
+        ],
         "hello": "你好",
-        "hello {name}": "你好 {name}",
+        "hello <0>{name}</0>": [
+          "你好 <0>",
+          [
+            "name",
+          ],
+          "</0>",
+        ],
+        "hello {name}": [
+          "你好 ",
+          [
+            "name",
+          ],
+        ],
       }
     `);
-    expect(i18n.baseI18n.messages).toMatchInlineSnapshot();
+    expect(i18n.baseI18n.messages).toMatchInlineSnapshot(`
+      {
+        "error_221040": [
+          "变量名已存在：",
+          [
+            "0",
+          ],
+        ],
+        "error_221041": [
+          "未定义的变量：",
+          [
+            "0",
+          ],
+        ],
+        "hello": "你好",
+        "hello <0>{name}</0>": [
+          "你好 <0>",
+          [
+            "name",
+          ],
+          "</0>",
+        ],
+        "hello {name}": [
+          "你好 ",
+          [
+            "name",
+          ],
+        ],
+      }
+    `);
   });
 
   it("extra loadMessage", async () => {

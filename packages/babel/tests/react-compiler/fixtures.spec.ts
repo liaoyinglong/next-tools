@@ -21,8 +21,13 @@ describe("react compiler fixtures", () => {
       if (fs.existsSync(outputFile)) {
         await expect(res.code).toMatchFileSnapshot(outputFile);
       } else {
-        console.log("no output file, will output to stdout");
-        console.log(res.code);
+        console.log(`can not find output file: ${expectOutput}`);
+        if (res.canCompile) {
+          console.log(`here is current compiled code:`);
+          console.log(res.code);
+        } else {
+          console.warn(`unable to compile`);
+        }
       }
     });
   });

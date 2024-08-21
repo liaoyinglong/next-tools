@@ -56,5 +56,9 @@ export async function run(filename: string) {
   // generate output
   let res = generate(ast, { retainLines: true, filename: filename }, source);
 
-  return res;
+  return {
+    ...res,
+    // 编译后会有 _c(2) 这样的代码
+    canCompile: res.code.includes("_c("),
+  };
 }

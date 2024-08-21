@@ -4,4 +4,10 @@ export default defineConfig({
   esbuild: {
     target: "node16",
   },
+  test: {
+    onConsoleLog(...args) {
+      //console.log(...args);
+      return true;
+    },
+  },
 });

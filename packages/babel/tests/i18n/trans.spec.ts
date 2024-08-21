@@ -1,5 +1,5 @@
 import { describe, it } from "vitest";
-import { transPlugin } from "../src/i18n/trans";
+import { transPlugin } from "../../src/i18n/trans";
 import { matchSwcPluginOutput } from "./run";
 
 describe("transPlugin", () => {

@@ -1,5 +1,5 @@
 import { describe, it } from "vitest";
-import { tFunctionPlugin } from "../src/i18n/tFunction";
+import { tFunctionPlugin } from "../../src/i18n/tFunction";
 import { matchSwcPluginOutput } from "./run";
 
 describe("tFunctionPlugin", () => {

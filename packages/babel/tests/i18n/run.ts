@@ -4,7 +4,7 @@ import { join } from "path";
 import { format } from "prettier";
 import { expect } from "vitest";
 
-const fixtureDir = join(__dirname, "../../swc_plugin/tests/fixture");
+const fixtureDir = join(__dirname, "../../../swc_plugin/tests/fixture");
 
 const loadCode = (path: string) => {
   let r = readFileSync(path, "utf-8");

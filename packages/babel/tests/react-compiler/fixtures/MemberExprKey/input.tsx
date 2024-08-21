@@ -1,3 +1,4 @@
+// @ts-nocheck
 function ActionTypeSelect(props: {
   actionType: ActionType;
   setActionType: (v: ActionType) => void;

@@ -14,7 +14,7 @@ describe("react compiler fixtures", () => {
     const expectOutput = file.replace("/input.tsx", "/output.tsx");
     it(name, async () => {
       const res = await run(path.join(cwd, file));
-      expect(res.code).toMatchFileSnapshot(path.join(cwd, expectOutput));
+      await expect(res.code).toMatchFileSnapshot(path.join(cwd, expectOutput));
     });
   });
 });

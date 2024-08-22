@@ -15,5 +15,16 @@ function ActionTypeSelect(props: {
     2: t`trade.Remove`,
   };
 
-  return <div>actionMap[actionType]</div>;
+  const renderLink = (txid?: string, layerZero = props.layerZero) => {
+    if (!txid) {
+      return "-";
+    }
+  };
+
+  return (
+    <div>
+      <div>actionMap[actionType]</div>
+      <div>{renderLink(props.txid)}</div>
+    </div>
+  );
 }

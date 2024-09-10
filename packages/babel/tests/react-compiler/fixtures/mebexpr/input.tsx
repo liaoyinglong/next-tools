@@ -1,4 +1,5 @@
 // @ts-nocheck
+// https://github.com/facebook/react/issues/29583#issuecomment-2130434571
 function ActionTypeSelect(props: {
   actionType: ActionType;
   setActionType: (v: ActionType) => void;

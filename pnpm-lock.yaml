@@ -132,8 +132,8 @@ importers:
         specifier: 4.1.7
         version: 4.1.7
       babel-plugin-react-compiler:
-        specifier: 0.0.0-experimental-334f00b-20240725
-        version: 0.0.0-experimental-334f00b-20240725
+        specifier: 0.0.0-experimental-7449567-20240905
+        version: 0.0.0-experimental-7449567-20240905
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.2
@@ -4657,10 +4657,10 @@ packages:
       resolve: 1.22.1
     dev: false
 
-  /babel-plugin-react-compiler@0.0.0-experimental-334f00b-20240725:
+  /babel-plugin-react-compiler@0.0.0-experimental-7449567-20240905:
     resolution:
       {
-        integrity: sha512-ktVKfOtJdHqrLib7IriUe00hnrs585He/n8uzs2yJT9pnH2eyrmMG21aRGBJKxt/P5mdizGLxgyFk0HSMrekhA==,
+        integrity: sha512-ltBywPFOEf1rRnkRQ1TiiPJeqJ1Cte86bo4tpSPsfqGTTsiyUo8OLyOR13EG08QIFTQd6HfGGgjpE9Kv/t5Vcg==,
       }
     dependencies:
       "@babel/generator": 7.2.0

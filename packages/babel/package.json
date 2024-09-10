@@ -34,7 +34,7 @@
     "@types/babel__core": "^7.20.1",
     "@types/babel__generator": "^7",
     "@types/debug": "4.1.7",
-    "babel-plugin-react-compiler": "0.0.0-experimental-334f00b-20240725",
+    "babel-plugin-react-compiler": "0.0.0-experimental-7449567-20240905",
     "fast-glob": "^3.3.2",
     "tsup": "8"
   },

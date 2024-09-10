@@ -9,7 +9,33 @@ import * as fs from "fs/promises";
 
 const getReactCompilerVisitor = (() => {
   //const reactCompilerConfig = require("./reactCompilerConfig");
-  const reactCompilerConfig = {};
+  const reactCompilerConfig = {
+    // react compiler 的 logger
+    logger: {
+      logEvent(file, event) {
+        if (process.env.REACT_COMPILER_DEBUG) {
+          if (event.kind === "CompileError") {
+            //console.log(event);
+            // https://github.com/facebook/react/blob/f603426f917314561c4289734f39b972be3814af/compiler/packages/eslint-plugin-react-compiler/src/rules/ReactCompilerRule.ts#L160
+            const detail = event.detail;
+            const locStr =
+              detail.loc != null && typeof detail.loc !== "symbol"
+                ? ` (${file}:${detail.loc.start.line}:${detail.loc.start.column})`
+                : "";
+            const reason = detail.reason;
+            if (
+              reason.includes('Skipped due to "use no forget" directive.') ||
+              reason.includes("React ESLint rules were disabled")
+            ) {
+              return;
+            }
+
+            console.log(`[ReactCompilerBailout] ${detail.reason}${locStr}`);
+          }
+        }
+      },
+    },
+  };
 
   const reactCompiler = require("babel-plugin-react-compiler").default(
     babel,

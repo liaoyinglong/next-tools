@@ -19,4 +19,6 @@ export enum LocalesEnum {
   ja = "ja",
   // 土耳其 Turkish
   tr = "tr",
+  // 韩国 Korean
+  ko = "ko",
 }

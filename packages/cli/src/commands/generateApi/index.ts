@@ -18,7 +18,7 @@ export async function generateApi() {
   const apiConfigs = await promptApiConfigEnable(config.api);
 
   for (const apiConfig of apiConfigs) {
-    log.info(`清除旧的api文件: ${apiConfig.output}`);
+    log.info(`清除旧的 api 文件：${apiConfig.output}`);
     await fs.emptydir(apiConfig.output!);
   }
 
@@ -50,13 +50,13 @@ export async function generateApi() {
                 .join(
                   apiConfig.output!,
                   url,
-                  apiConfig.enableTs ? `${method}.ts` : `${method}.js`
+                  apiConfig.enableTs ? `${method}.ts` : `${method}.js`,
                 )
                 .replace(/:/g, "_");
               await fs.ensureFile(outputPath);
               await fs.writeFile(outputPath, code);
             }
-          }
+          },
         );
       }
     });
@@ -96,18 +96,18 @@ export async function generateApiRequestCode(options: {
       }`
     : "";
 
-  // 生成的请求构造器的名称，需要使用原始url
+  // 生成的请求构造器的名称，需要使用原始 url
   let requestBuilderName = _.camelCase(`${options.url}_${method}_api`);
 
-  // 判断是否有效的js变量
+  // 判断是否有效的 js 变量
   if (!/^[a-zA-Z_$][0-9a-zA-Z_$]*$/.test(requestBuilderName)) {
-    // 不是有效的js变量，使用 _ + 数字
+    // 不是有效的 js 变量，使用 _ + 数字
     requestBuilderName = `_${requestBuilderName}`;
   }
 
-  //#region url上参数 例如 /api/v1/users/{userId}
+  //#region url 上参数 例如 /api/v1/users/{userId}
   const urlPathParams = getUrlPathParams(
-    (operationObject.parameters as never) ?? []
+    (operationObject.parameters as never) ?? [],
   );
   const urlPathParamsCode = urlPathParams.length
     ? `urlPathParams: ${JSON.stringify(urlPathParams)},`
@@ -141,18 +141,18 @@ export const ${requestBuilderName} = new RequestBuilder({
   if (apiConfig.enableTs) {
     builderCode = builderCode.replace(
       "new RequestBuilder(",
-      `new RequestBuilder<${requestBuilderName}.Req, ${requestBuilderName}.Res>(`
+      `new RequestBuilder<${requestBuilderName}.Req, ${requestBuilderName}.Res>(`,
     );
   }
   code.push(builderCode);
 
   if (apiConfig.enableTs) {
-    // post和put请求需要生成表单fieldsMap
-    const isGenrateFieldsMap = ["post", "put"].includes(method);
+    // post 和 put 请求需要生成表单 fieldsMap
+    const isGenerateFieldsMap = ["post", "put"].includes(method);
     // 请求参数类型
     // 响应参数类型
     const [requestParamsTypeCode, responseParamsTypeCode] = await Promise.all([
-      compileRequestParams(operationObject, isGenrateFieldsMap),
+      compileRequestParams(operationObject, isGenerateFieldsMap),
       compileResponseParams(operationObject, apiConfig),
     ]);
 
@@ -163,12 +163,12 @@ export namespace ${requestBuilderName} {
  ${responseParamsTypeCode}
 };`);
 
-    if (isGenrateFieldsMap && !_.isEmpty(requestParamsTypeCode.fieldsMap)) {
-      // 生成表单fieldsMap
+    if (isGenerateFieldsMap && !_.isEmpty(requestParamsTypeCode.fieldsMap)) {
+      // 生成表单 fieldsMap
       code.push(`
 export const ${requestBuilderName}FieldsMap = ${JSON.stringify(
-        requestParamsTypeCode.fieldsMap
-      )}
+        requestParamsTypeCode.fieldsMap,
+      )} as const
 `);
     }
   }
@@ -187,7 +187,7 @@ function getUrlPathParams(parameters: OpenAPIV3.ParameterObject[]) {
  */
 async function compileRequestParams(
   operationObject: OpenAPIV3.OperationObject,
-  generateFieldsMap = false
+  generateFieldsMap = false,
 ) {
   let schema;
   if (operationObject.requestBody) {
@@ -208,13 +208,13 @@ async function compileRequestParams(
         } else {
           parameters.push(item);
         }
-      }
+      },
     );
 
     // 必填参数中忽略 分页相关的参数
     const required = parameters
       .filter(
-        (p) => p.required && !["pageNum", "pageSize", "count"].includes(p.name)
+        (p) => p.required && !["pageNum", "pageSize", "count"].includes(p.name),
       )
       .map((p) => p.name);
     const properties = Object.fromEntries(
@@ -232,7 +232,7 @@ async function compileRequestParams(
               // enum: schema.enum ?? [],
             },
           ];
-        })
+        }),
     );
     schema = {
       required,
@@ -264,7 +264,7 @@ async function compileRequestParams(
       };
 
       if (generateFieldsMap) {
-        // 分页查询接口取params字段
+        // 分页查询接口取 params 字段
         const params = isPageSearchRequest(schema)
           ? _.get(schema, "properties.params.properties", {})
           : schema.properties;
@@ -288,18 +288,18 @@ async function compileRequestParams(
 
 async function compileResponseParams(
   operationObject: OpenAPIV3.OperationObject,
-  apiConfig: ApiConfig
+  apiConfig: ApiConfig,
 ) {
   const temp = operationObject.responses["200"] as OpenAPIV3.ResponseObject;
   let code = "";
   if (temp?.content) {
-    // FIXME: 可能需要处理其他的content类型
+    // FIXME: 可能需要处理其他的 content 类型
     const temp2 = temp.content["application/json"] || temp.content["*/*"];
     const schema = temp2.schema as OpenAPIV3.SchemaObject;
     let data = apiConfig.responseSchemaTransformer!(schema);
     if (data) {
-      // 这里需要深度clone的原因是：
-      // 解析出来的scheme会尽可能的被复用，导致影响到下次解析
+      // 这里需要深度 clone 的原因是：
+      // 解析出来的 scheme 会尽可能的被复用，导致影响到下次解析
       data = _.cloneDeep(data);
       markCircularToRef(data);
       try {
@@ -312,7 +312,7 @@ async function compileResponseParams(
 
         // 通过响应数据判断是否是分页查询接口
         const isPageSearchResponse = (data: any) => {
-          // 有result字段且为数组，就认为是分页查询接口
+          // 有 result 字段且为数组，就认为是分页查询接口
           return (
             _.get(data, "type") === "object" &&
             _.get(data, "properties.result.type") === "array"
@@ -324,13 +324,13 @@ async function compileResponseParams(
           code += `${os.EOL}export type ResultItem = Res['result'][0]`;
         }
       } catch (e) {
-        log.error("转换响应参数类型失败, 请检查 %o", {
+        log.error("转换响应参数类型失败，请检查 %o", {
           summary: operationObject.summary,
           error: e.message,
         });
       }
     } else {
-      log.error("responseSchemaTransformer 返回值为空, 请检查");
+      log.error("responseSchemaTransformer 返回值为空，请检查");
     }
   }
 
@@ -341,7 +341,7 @@ export function markCircularToRef(
   obj,
   parentMark = "#",
   map = new Map([[obj, parentMark]]),
-  set = new Set([obj])
+  set = new Set([obj]),
 ) {
   Object.keys(obj).forEach((key) => {
     const value = obj[key];

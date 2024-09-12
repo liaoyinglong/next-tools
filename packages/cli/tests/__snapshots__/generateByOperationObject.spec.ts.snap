@@ -119,7 +119,7 @@ export interface Res {
 export type ResultItem = Res['result'][0]
 };
 
-export const usersPostApiFieldsMap = {"nameOrCode":"nameOrCode","status":"status"}
+export const usersPostApiFieldsMap = {"nameOrCode":"nameOrCode","status":"status"} as const
 "
 `;
 
@@ -168,7 +168,10 @@ export interface Res {
   status?: "NEW" | "ACTIVE" | "INACTIVE";
 }
 
-};"
+};
+
+export const usersGetApiFieldsMap = {"id":"id"} as const
+"
 `;
 
 exports[`api 生成 > 参数或响应为空 1`] = `
@@ -236,5 +239,8 @@ export interface Res {
   status?: "NEW" | "ACTIVE" | "INACTIVE";
 }
 
-};"
+};
+
+export const usersGetApiFieldsMap = {"id":"id"} as const
+"
 `;

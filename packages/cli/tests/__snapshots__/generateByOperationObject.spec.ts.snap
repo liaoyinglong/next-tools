@@ -168,10 +168,7 @@ export interface Res {
   status?: "NEW" | "ACTIVE" | "INACTIVE";
 }
 
-};
-
-export const usersGetApiFieldsMap = {"id":"id"} as const
-"
+};"
 `;
 
 exports[`api 生成 > 参数或响应为空 1`] = `
@@ -239,8 +236,5 @@ export interface Res {
   status?: "NEW" | "ACTIVE" | "INACTIVE";
 }
 
-};
-
-export const usersGetApiFieldsMap = {"id":"id"} as const
-"
+};"
 `;

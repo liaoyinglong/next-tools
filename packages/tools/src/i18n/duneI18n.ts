@@ -157,7 +157,13 @@ export class DuneI18n {
     this.emit("localeChange", combinedLocale);
     // 默认需要 同步到 localStorage
     if (syncToStorage) {
-      localStorage.setItem(this.config.storageKey, combinedLocale);
+      //https://www.chromium.org/for-testers/bug-reporting-guidelines/uncaught-securityerror-failed-to-read-the-localstorage-property-from-window-access-is-denied-for-this-document/
+      //fix: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+      try {
+        localStorage.setItem(this.config.storageKey, combinedLocale);
+      } catch (error) {
+        console.error("set localStorage error", error);
+      }
     }
   };
 

@@ -36,6 +36,6 @@
     "vitest": "^1.5.0",
     "zx": "^7.0.8"
   },
-  "packageManager": "pnpm@8.10.2",
+  "packageManager": "pnpm@8.14.1",
   "prepare": "husky install"
 }

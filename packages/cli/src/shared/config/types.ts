@@ -1,3 +1,4 @@
+import type SwaggerParser from "@apidevtools/swagger-parser";
 import { OpenAPIV3 } from "openapi-types";
 
 export interface I18nConfig {
@@ -171,6 +172,11 @@ export interface ApiConfig {
    * @tips 不会影响文件名，只会影响生成的代码里的url字段
    */
   urlTransformer?: string | ((url: string) => string);
+
+  /**
+   * 配置 dereference 的参数
+   */
+  dereferenceSwaggerConfig?: SwaggerParser.Options;
 }
 
 export interface Config {

@@ -24,13 +24,20 @@ export async function generateApi() {
 
   for (const apiConfig of apiConfigs) {
     log.info("开始解析 %s", apiConfig.swaggerJSONPath);
-    const parsed = (await SwaggerParser.dereference(apiConfig.swaggerJSONPath, {
-      resolve: {
-        http: {
-          timeout: 30 * 1000,
+    const dereferenceConfig = _.merge(
+      {
+        resolve: {
+          http: {
+            timeout: 30 * 1000,
+          },
         },
       },
-    })) as OpenAPIV3.Document;
+      apiConfig.dereferenceSwaggerConfig,
+    );
+    const parsed = (await SwaggerParser.dereference(
+      apiConfig.swaggerJSONPath,
+      dereferenceConfig,
+    )) as OpenAPIV3.Document;
 
     await pMap(Object.entries(parsed.paths), async ([url, pathItemObject]) => {
       log.info("开始生成 %s", url);

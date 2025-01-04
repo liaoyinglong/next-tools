@@ -32,6 +32,7 @@
     "./valtio": "./src/valtio/index.ts",
     "./valtio/*": "./src/valtio/*.ts",
     "./niceModal": "./src/niceModal/index.tsx",
+    "./zustand": "./src/zustand/index.ts",
     "./package.json": "./package.json"
   },
   "files": [
@@ -52,8 +53,7 @@
     "bignumber.js": "^9.1.2",
     "js-cookie": "^3.0.5",
     "lodash": "^4",
-    "store2": "^2.14.3",
-    "valtio": "^1.13.2"
+    "store2": "^2.14.3"
   },
   "devDependencies": {
     "@tanstack/react-query": "5.51.11",
@@ -61,7 +61,10 @@
     "@types/lodash": "^4.17.0",
     "@types/react": "^18.2.6",
     "axios": "^1.6.8",
+    "immer": "^10",
     "react": "^18.2.0",
+    "valtio": "^1.13.2",
+    "zustand": "^5.0.1",
     "zx": "^7.0.8"
   },
   "publishConfig": {

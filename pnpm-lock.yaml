@@ -267,9 +267,6 @@ importers:
       store2:
         specifier: ^2.14.3
         version: 2.14.3
-      valtio:
-        specifier: ^1.13.2
-        version: 1.13.2(@types/react@18.2.6)(react@18.2.0)
     devDependencies:
       "@tanstack/react-query":
         specifier: 5.51.11
@@ -286,9 +283,18 @@ importers:
       axios:
         specifier: ^1.6.8
         version: 1.6.8
+      immer:
+        specifier: ^10
+        version: 10.1.1
       react:
         specifier: ^18.2.0
         version: 18.2.0
+      valtio:
+        specifier: ^1.13.2
+        version: 1.13.2(@types/react@18.2.6)(react@18.2.0)
+      zustand:
+        specifier: ^5.0.1
+        version: 5.0.1(@types/react@18.2.6)(immer@10.1.1)(react@18.2.0)
       zx:
         specifier: ^7.0.8
         version: 7.0.8
@@ -6331,7 +6337,7 @@ packages:
       valtio: "*"
     dependencies:
       valtio: 1.13.2(@types/react@18.2.6)(react@18.2.0)
-    dev: false
+    dev: true
 
   /detect-indent@5.0.0:
     resolution:
@@ -8314,6 +8320,13 @@ packages:
         integrity: sha512-g7dmpshy+gD7mh88OC9NwSGTKoc3kyLAZQRU1mt53Aw/vnvfXnbC+F/7F7QoYVKbV+KNvJx8wArewKy1vXMtlg==,
       }
     engines: { node: ">= 4" }
+
+  /immer@10.1.1:
+    resolution:
+      {
+        integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==,
+      }
+    dev: true
 
   /import-fresh@3.3.0:
     resolution:
@@ -12368,7 +12381,7 @@ packages:
       {
         integrity: sha512-8xuCeM3l8yqdmbPoYeLbrAXCBWu19XEYc5/F28f5qOaoAIMyfmBUkl5axiK+x9olUvRlcekvnm98AP9RDngOIw==,
       }
-    dev: false
+    dev: true
 
   /proxy-from-env@1.1.0:
     resolution:
@@ -14867,7 +14880,7 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       react: 18.2.0
-    dev: false
+    dev: true
 
   /util-deprecate@1.0.2:
     resolution:
@@ -14962,7 +14975,7 @@ packages:
       proxy-compare: 2.6.0
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
-    dev: false
+    dev: true
 
   /vfile-location@4.1.0:
     resolution:
@@ -15649,6 +15662,32 @@ packages:
       {
         integrity: sha512-wvWkphh5WQsJbVk1tbx1l1Ly4yg+XecD+Mq280uBGt9wa5BKSWf4Mhp6GmrkPixhMxmabYY7RbzlwVP32pbGCg==,
       }
+    dev: true
+
+  /zustand@5.0.1(@types/react@18.2.6)(immer@10.1.1)(react@18.2.0):
+    resolution:
+      {
+        integrity: sha512-pRET7Lao2z+n5R/HduXMio35TncTlSW68WsYBq2Lg1ASspsNGjpwLAsij3RpouyV6+kHMwwwzP0bZPD70/Jx/w==,
+      }
+    engines: { node: ">=12.20.0" }
+    peerDependencies:
+      "@types/react": ">=18.0.0"
+      immer: ">=9.0.6"
+      react: ">=18.0.0"
+      use-sync-external-store: ">=1.2.0"
+    peerDependenciesMeta:
+      "@types/react":
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
+        optional: true
+    dependencies:
+      "@types/react": 18.2.6
+      immer: 10.1.1
+      react: 18.2.0
     dev: true
 
   /zwitch@2.0.4:

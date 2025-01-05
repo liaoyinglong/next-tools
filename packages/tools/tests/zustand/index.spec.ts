@@ -19,12 +19,13 @@ describe("zustand", () => {
     });
 
     const oldState = store.getState();
-    // 更新 a / b ，c 的引用和值不会变
+    // 更新 a / b ，c / d 的引用和值不会变
     store.actions.setA(123);
     expect(store.getState().a).toBe(123);
     expect(store.getState().c).toBe(oldState.c);
     expect(store.getState().c).toEqual({ name: "hello" });
-
+    expect(store.getState().d).toBe(oldState.d);
+    expect(store.getState().d).toEqual({ name: "world" });
     // 更新 c ，c 的引用和值都会变 但是 d 的引用和值不会变
     store.actions.setC("abc");
     expect(store.getState().c).not.toBe(oldState.c);

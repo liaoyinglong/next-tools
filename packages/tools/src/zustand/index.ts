@@ -1,5 +1,6 @@
 import { produce } from "immer";
 import { create } from "zustand";
+import { useShallow } from "zustand/shallow";
 type State<S extends object, A extends Record<string, Action<S, any>>> = {
   state: S;
   actions: A;
@@ -31,9 +32,17 @@ export function createStore<
 
   return {
     /**
-     * 在组件内获取状态
+     * 在组件内获取状态，就是 zustand create 的返回值
      */
     useSnapshot: useStore,
+    /**
+     * 一般用于传入select，并且 selector 返回的值是对象，
+     * 这样就可以浅比较，减少不必要的更新
+     */
+    useShallowSnapshot: <U extends object>(select: (state: S) => U) => {
+      return useStore(useShallow(select));
+    },
+
     /**
      * 普通方法，设置状态
      */

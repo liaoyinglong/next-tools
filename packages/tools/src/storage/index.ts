@@ -1,3 +1,5 @@
+import _ from "lodash";
+import { useSyncExternalStore } from "react";
 import type { StoreType } from "store2";
 import baseStore from "store2";
 
@@ -31,6 +33,13 @@ class StorageHelper<V = any> {
    * 获取到的 key = "test.token"
    */
   key: string;
+  /**
+   * 用来缓存当前值
+   * - 防止值是 object 的时候，每次 get 都都返回新的对象，导致 react 的 重复渲染
+   * - 在 set 时，如果值没有发生变化，则不触发 storage 事件
+   * - 在 get 时，如果值没有发生变化，则直接返回缓存的值
+   */
+  private currentValue: V | undefined = undefined;
   constructor(
     public store: StoreType,
     public namespace: string,
@@ -38,22 +47,62 @@ class StorageHelper<V = any> {
     public defaultValue: V,
   ) {
     this.key = `${namespace}.${baseKey}`;
+    this.currentValue = this.defaultValue;
   }
 
   get(): V | undefined {
-    return this.store.get(this.baseKey) ?? this.defaultValue;
+    const r = this.store.get(this.baseKey) ?? this.defaultValue;
+    if (!_.isEqual(r, this.currentValue)) {
+      this.currentValue = r;
+    }
+    return this.currentValue;
   }
 
   /**
    * 设置为 undefined 时，会删除该 key
    */
-  set(v: V): void {
-    v === undefined ? this.remove() : this.store.set(this.baseKey, v);
+  set(v: V | undefined): void {
+    if (_.isEqual(v, this.currentValue)) {
+      return;
+    }
+    this.currentValue = v;
+    v === undefined
+      ? this.store.remove(this.baseKey)
+      : this.store.set(this.baseKey, v);
+    if (typeof window !== "undefined") {
+      // On localStorage.setItem, the storage event is only triggered on other tabs and windows.
+      // So we manually dispatch a storage event to trigger the subscribe function on the current window as well.
+      window.dispatchEvent(
+        new StorageEvent("storage", {
+          key: this.key,
+          // 这里 value 不重要，在内部会使用 get 重新获取值
+          newValue: null,
+        }),
+      );
+    }
   }
 
   remove(): void {
-    this.store.remove(this.baseKey);
+    this.set(undefined);
   }
+
+  /**
+   * 这是 react hooks 的 useValue 的实现
+   */
+  useValue() {
+    return useSyncExternalStore(
+      this.useSyncExternalStoreSubscribe,
+      this.useSyncExternalStoreGetSnapshot,
+      this.useSyncExternalStoreGetSnapshot,
+    );
+  }
+  private useSyncExternalStoreSubscribe(listener: () => void) {
+    window.addEventListener("storage", listener);
+    return () => {
+      window.removeEventListener("storage", listener);
+    };
+  }
+  private useSyncExternalStoreGetSnapshot = this.get.bind(this);
 }
 
 /**

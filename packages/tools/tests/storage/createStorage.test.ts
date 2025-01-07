@@ -7,14 +7,19 @@ class DataMap {
   setting: { isLogin: boolean } = { isLogin: false };
 }
 const namespace = "test";
-const storage = createStorage({
-  DataMap,
-  namespace,
-});
+function initStorage() {
+  const storage = createStorage({
+    DataMap,
+    namespace,
+  });
+  storage._store.clearAll();
+  return storage;
+}
+let storage = initStorage();
 
 describe("createStorage", () => {
-  beforeEach(() => {
-    storage._store.clearAll();
+  beforeEach((v) => {
+    storage = initStorage();
   });
 
   it("namespace correct", () => {

@@ -22,7 +22,8 @@ export function findRefMemberExprs(
   let res: Item[] = [];
 
   // 获取标识符的绑定信息
-  const binding = path.scope.getBinding(id.name);
+  // 只需要查找当前作用域的绑定信息
+  const binding = path.scope.getOwnBinding(id.name);
   // 遍历所有引用
   binding?.referencePaths.forEach((refPath) => {
     const memberExpr = findMemberExpression(refPath);

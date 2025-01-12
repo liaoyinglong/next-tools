@@ -14,6 +14,11 @@ describe("findRefMemberExprs", () => {
         useEffect(() => {
             console.log(a?.b)
         },[])
+        function f(a){
+          return <div>
+             <span>{a.e}</span>
+          </div>
+        }
         return <div>
              <span>{a.c.name}</span>
           </div>

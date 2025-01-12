@@ -22,25 +22,34 @@ export function findRefProps(
   const binding = path.scope.getBinding(id.name);
   // 遍历所有引用
   binding?.referencePaths.forEach((refPath) => {
-    let item: Item | undefined;
-    let cur: NodePath | null = refPath;
-
-    while (cur) {
-      const parent = cur.parentPath;
-      const node = parent?.node;
-      if (t.isMemberExpression(node) || t.isOptionalMemberExpression(node)) {
-        if (t.isIdentifier(node.property)) {
-          item = node;
-          cur = parent;
-          continue;
-        }
-      }
-      cur = null;
-    }
-    if (item) {
-      res.push(t.cloneDeepWithoutLoc(item));
+    const memberExpr = findMemberExpression(refPath);
+    if (memberExpr) {
+      res.push(t.cloneDeepWithoutLoc(memberExpr));
     }
   });
 
   return res;
+}
+
+// Helper function to find member expression
+function findMemberExpression(path: NodePath): Item | undefined {
+  let current: NodePath | null = path;
+  let lastValidExpr: Item | undefined;
+
+  while (current?.parentPath) {
+    const parent = current.parentPath;
+    const node = parent.node;
+
+    if (
+      (t.isMemberExpression(node) || t.isOptionalMemberExpression(node)) &&
+      t.isIdentifier(node.property)
+    ) {
+      lastValidExpr = node;
+      current = parent;
+    } else {
+      break; // 如果不是成员表达式，立即停止向上查找
+    }
+  }
+
+  return lastValidExpr;
 }

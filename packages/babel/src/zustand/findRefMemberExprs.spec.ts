@@ -2,10 +2,10 @@ import { parse, parseExpression } from "@babel/parser";
 import traverse from "@babel/traverse";
 import t, { type Expression } from "@babel/types";
 import { describe, expect, it } from "vitest";
-import { findRefProps } from "./findRefProps";
+import { findRefMemberExprs } from "./findRefMemberExprs";
 import { isNeedTransform } from "./shared";
 
-describe("findRefProps", () => {
+describe("findRefMemberExprs", () => {
   it("correct", () => {
     const tsx = String.raw;
     const code = tsx`
@@ -30,7 +30,7 @@ describe("findRefProps", () => {
         if (!isNeedTransform(init)) {
           return;
         }
-        props = findRefProps(path);
+        props = findRefMemberExprs(path);
       },
     });
 

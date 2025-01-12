@@ -8,10 +8,13 @@ import t from "@babel/types";
 
 type Item = MemberExpression | OptionalMemberExpression;
 
-export function findRefProps(
+/**
+ * 找到变量声明中所有引用的成员表达式
+ */
+export function findRefMemberExprs(
   path: NodePath<VariableDeclarator>,
 ): Item[] | undefined {
-  const { init, id } = path.node;
+  const { id } = path.node;
 
   if (!t.isIdentifier(id)) {
     return;

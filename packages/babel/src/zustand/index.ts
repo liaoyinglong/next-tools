@@ -6,6 +6,8 @@ export const zustandPlugin = (api: typeof babel): PluginObj => {
 
   return {
     name: "zustand",
-    visitor: {},
+    visitor: {
+      CallExpression(path) {},
+    },
   };
 };

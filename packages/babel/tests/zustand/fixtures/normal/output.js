@@ -18,10 +18,10 @@ function Destructure() {
   const {
     a,
     c: { name },
-  } = store.useShallowSnapshot((s) => {
+  } = store.useShallowSnapshot(({ a, c: { name } }) => {
     return {
-      a: s.a,
-      c: s.c,
+      a,
+      c: { name },
     };
   });
   return (

@@ -4,6 +4,24 @@ import traverse from "@babel/traverse";
 import { describe, expect, it } from "vitest";
 import { handleVarDecl } from "./handleVarDecl";
 
+function transform(code: string) {
+  const ast = parse(code, {
+    plugins: ["typescript", "jsx"],
+  });
+
+  traverse(ast, {
+    VariableDeclarator(path) {
+      handleVarDecl(path);
+    },
+  });
+
+  let res = generate(ast, {
+    retainLines: true,
+  });
+
+  return res.code;
+}
+
 describe("handleVarDecl", () => {
   it("correct", () => {
     const tsx = String.raw;
@@ -26,22 +44,9 @@ function App() {
     </div>
   );
 }`;
-    const ast = parse(code, {
-      plugins: ["typescript", "jsx"],
-    });
+    const expectCode = transform(code);
 
-    traverse(ast, {
-      VariableDeclarator(path) {
-        handleVarDecl(path);
-      },
-    });
-
-    let res = generate(ast, {
-      retainLines: true,
-    });
-
-    console.log(res.code);
-    expect(res.code).toMatchInlineSnapshot(`
+    expect(expectCode).toMatchInlineSnapshot(`
       "
       function App() {function _zp_selector(a) {return { _zp_: a?.b, _zp_2: a?.b, _zp_3: a.c.name };}
         const a = store.useShallowSnapshot(_zp_selector);

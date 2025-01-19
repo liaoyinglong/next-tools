@@ -1,5 +1,6 @@
 import type { NodePath } from "@babel/traverse";
 import type {
+  Expression,
   Identifier,
   MemberExpression,
   OptionalMemberExpression,
@@ -34,18 +35,25 @@ export function handleVarDecl(path: NodePath<VariableDeclarator>) {
   }
 
   const memberAccessors: MemberAccessor[] = [];
+  const accessorMap = new Map<string, Identifier>();
   {
-    // 收集所有对该变量的成员访问表达式
     const binding = path.scope.getOwnBinding(id.name);
     binding?.referencePaths.forEach((refPath) => {
       const { lastValidExpr, nodePath } = findMemberExpression(refPath);
       if (lastValidExpr && nodePath) {
-        const propIdentifier = path.scope.generateUidIdentifier("prop_");
-        memberAccessors.push({
-          node: t.cloneDeepWithoutLoc(lastValidExpr),
-          identifier: propIdentifier,
-        });
-        // 将原来的成员访问 (如 state.user.name) 替换为 state._prop_1
+        // 使用自定义函数生成访问路径的唯一标识
+        const accessKey = getMemberExpressionKey(lastValidExpr);
+
+        let propIdentifier = accessorMap.get(accessKey);
+        if (!propIdentifier) {
+          propIdentifier = path.scope.generateUidIdentifier("prop_");
+          accessorMap.set(accessKey, propIdentifier);
+          memberAccessors.push({
+            node: t.cloneDeepWithoutLoc(lastValidExpr),
+            identifier: propIdentifier,
+          });
+        }
+
         nodePath.replaceWith(
           t.memberExpression(
             t.cloneWithoutLoc(id),
@@ -110,4 +118,25 @@ function findMemberExpression(path: NodePath) {
   }
 
   return { lastValidExpr, nodePath: current };
+}
+
+// 辅助函数：生成成员访问路径的唯一标识
+function getMemberExpressionKey(expr: Expression): string {
+  if (t.isMemberExpression(expr)) {
+    const propKey = t.isIdentifier(expr.property)
+      ? expr.property.name
+      : (expr.property as any).value;
+    return getMemberExpressionKey(expr.object) + "." + propKey;
+  }
+  if (t.isOptionalMemberExpression(expr)) {
+    const propKey = t.isIdentifier(expr.property)
+      ? expr.property.name
+      : (expr.property as any).value;
+    return getMemberExpressionKey(expr.object) + "?." + propKey;
+  }
+  if (t.isIdentifier(expr)) {
+    return expr.name;
+  }
+  // 其他类型的表达式，返回一个固定标识
+  return "_";
 }

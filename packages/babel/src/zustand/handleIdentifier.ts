@@ -1,5 +1,6 @@
 import type { NodePath } from "@babel/traverse";
 import type {
+  Identifier,
   MemberExpression,
   OptionalMemberExpression,
   VariableDeclarator,
@@ -16,7 +17,10 @@ export function handleIdentifier(path: NodePath<VariableDeclarator>) {
   }
 }
 
-type Item = MemberExpression | OptionalMemberExpression;
+type Item = {
+  node: MemberExpression | OptionalMemberExpression;
+  identifier: Identifier;
+};
 
 /**
  * 找到变量声明中所有引用的成员表达式
@@ -38,7 +42,10 @@ function findRefMemberExprs(
   binding?.referencePaths.forEach((refPath) => {
     const memberExpr = findMemberExpression(refPath);
     if (memberExpr) {
-      res.push(t.cloneDeepWithoutLoc(memberExpr));
+      res.push({
+        node: t.cloneDeepWithoutLoc(memberExpr),
+        identifier: path.scope.generateUidIdentifier("$$zp_"),
+      });
     }
   });
 
@@ -46,9 +53,9 @@ function findRefMemberExprs(
 }
 
 // Helper function to find member expression
-function findMemberExpression(path: NodePath): Item | undefined {
+function findMemberExpression(path: NodePath): Item["node"] | undefined {
   let current: NodePath | null = path;
-  let lastValidExpr: Item | undefined;
+  let lastValidExpr: Item["node"] | undefined;
 
   while (current?.parentPath) {
     const parent = current.parentPath;

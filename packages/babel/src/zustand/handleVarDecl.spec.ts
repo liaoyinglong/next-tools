@@ -43,11 +43,11 @@ function App() {
     console.log(res.code);
     expect(res.code).toMatchInlineSnapshot(`
       "
-      function App() {function _$$zp_selector(a) {return { _$$zp_: a?.b, _$$zp_2: a?.b, _$$zp_3: a.c.name };}
-        const a = store.useShallowSnapshot(_$$zp_selector);
+      function App() {function _zp_selector(a) {return { _zp_: a?.b, _zp_2: a?.b, _zp_3: a.c.name };}
+        const a = store.useShallowSnapshot(_zp_selector);
         useEffect(() => {
-          console.log(_$$zp_);
-        }, [_$$zp_2]);
+          console.log(a._zp_);
+        }, [a._zp_2]);
         function f(a) {
           return (
             <div>
@@ -57,7 +57,7 @@ function App() {
         }
         return (
           <div>
-            <span>{_$$zp_3}</span>
+            <span>{a._zp_3}</span>
           </div>);
 
       }"

@@ -38,13 +38,18 @@ export function handleVarDecl(path: NodePath<VariableDeclarator>) {
     binding?.referencePaths.forEach((refPath) => {
       const { lastValidExpr, nodePath } = findMemberExpression(refPath);
       if (lastValidExpr && nodePath) {
-        const identifier = path.scope.generateUidIdentifier("$$zp_");
+        const identifier = path.scope.generateUidIdentifier("zp_");
         exprs.push({
           node: t.cloneDeepWithoutLoc(lastValidExpr),
           identifier,
         });
-        // 替换原来代码中的 a.b 为 $$zp_
-        nodePath.replaceWith(t.cloneDeepWithoutLoc(identifier));
+        // 替换原来代码中的 a.b.c 为 a.$$zp_
+        nodePath.replaceWith(
+          t.memberExpression(
+            t.cloneWithoutLoc(id),
+            t.cloneDeepWithoutLoc(identifier),
+          ),
+        );
       }
     });
     if (!exprs.length) {
@@ -54,7 +59,7 @@ export function handleVarDecl(path: NodePath<VariableDeclarator>) {
   }
 
   // 生成选择器函数
-  const selectorName = path.scope.generateUidIdentifier("$$zp_selector");
+  const selectorName = path.scope.generateUidIdentifier("zp_selector");
   const selector = t.functionDeclaration(
     selectorName,
     [t.identifier(id.name)],

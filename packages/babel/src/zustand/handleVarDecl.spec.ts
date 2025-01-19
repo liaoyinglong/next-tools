@@ -41,6 +41,7 @@ function App() {
   return (
     <div>
       <span>{a.c.name}</span>
+      <span>{a.c.name}</span>
     </div>
   );
 }`;
@@ -48,11 +49,11 @@ function App() {
 
     expect(expectCode).toMatchInlineSnapshot(`
       "
-      function App() {function _zp_selector(a) {return { _zp_: a?.b, _zp_2: a?.b, _zp_3: a.c.name };}
-        const a = store.useShallowSnapshot(_zp_selector);
+      function App() {function _selector_(a) {return { _prop_: a?.b, _prop_2: a?.b, _prop_3: a.c.name, _prop_4: a.c.name };}
+        const a = store.useShallowSnapshot(_selector_);
         useEffect(() => {
-          console.log(a._zp_);
-        }, [a._zp_2]);
+          console.log(a._prop_);
+        }, [a._prop_2]);
         function f(a) {
           return (
             <div>
@@ -62,7 +63,8 @@ function App() {
         }
         return (
           <div>
-            <span>{a._zp_3}</span>
+            <span>{a._prop_3}</span>
+            <span>{a._prop_4}</span>
           </div>);
 
       }"

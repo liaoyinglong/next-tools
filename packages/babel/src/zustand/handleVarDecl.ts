@@ -7,12 +7,16 @@ import type {
 } from "@babel/types";
 import t from "@babel/types";
 /**
- * case: const a = store.useSnapshot()
+ * 处理 store.useSnapshot() 的变量声明
+ * 示例: const state = store.useSnapshot()
+ * 将会转换为:
+ * function selector(state) { return { _prop: state.a.b } }
+ * const state = store.useShallowSnapshot(selector)
  */
 export function handleVarDecl(path: NodePath<VariableDeclarator>) {
   const { id, init } = path.node;
 
-  // pre check
+  // 预检查：确保是 CallExpression 且变量是标识符
   if (!t.isCallExpression(init) || !t.isIdentifier(id)) {
     return;
   }
@@ -20,54 +24,51 @@ export function handleVarDecl(path: NodePath<VariableDeclarator>) {
     return;
   }
 
-  // example: store.useSnapshot
+  // 检查是否为 store.useSnapshot 调用
   const callee = init.callee;
-  if (!t.isIdentifier(callee.property)) {
-    return;
-  }
-  if (callee.property.name !== "useSnapshot") {
+  if (
+    !t.isIdentifier(callee.property) ||
+    callee.property.name !== "useSnapshot"
+  ) {
     return;
   }
 
-  const exprs: Item[] = [];
+  const memberAccessors: MemberAccessor[] = [];
   {
-    // 获取标识符的绑定信息
-    // 只需要查找当前作用域的绑定信息
+    // 收集所有对该变量的成员访问表达式
     const binding = path.scope.getOwnBinding(id.name);
-    // 遍历所有引用
     binding?.referencePaths.forEach((refPath) => {
       const { lastValidExpr, nodePath } = findMemberExpression(refPath);
       if (lastValidExpr && nodePath) {
-        const identifier = path.scope.generateUidIdentifier("zp_");
-        exprs.push({
+        const propIdentifier = path.scope.generateUidIdentifier("prop_");
+        memberAccessors.push({
           node: t.cloneDeepWithoutLoc(lastValidExpr),
-          identifier,
+          identifier: propIdentifier,
         });
-        // 替换原来代码中的 a.b.c 为 a.$$zp_
+        // 将原来的成员访问 (如 state.user.name) 替换为 state._prop_1
         nodePath.replaceWith(
           t.memberExpression(
             t.cloneWithoutLoc(id),
-            t.cloneDeepWithoutLoc(identifier),
+            t.cloneDeepWithoutLoc(propIdentifier),
           ),
         );
       }
     });
-    if (!exprs.length) {
-      // 没有引用
+    if (!memberAccessors.length) {
       return;
     }
   }
 
   // 生成选择器函数
-  const selectorName = path.scope.generateUidIdentifier("zp_selector");
+  const selectorName = path.scope.generateUidIdentifier("selector_");
   const selector = t.functionDeclaration(
     selectorName,
     [t.identifier(id.name)],
     t.blockStatement([
       t.returnStatement(
         t.objectExpression(
-          exprs.map((v) => {
-            return t.objectProperty(v.identifier, v.node);
+          memberAccessors.map((accessor) => {
+            return t.objectProperty(accessor.identifier, accessor.node);
           }),
         ),
       ),
@@ -75,21 +76,23 @@ export function handleVarDecl(path: NodePath<VariableDeclarator>) {
   );
   path.parentPath.insertBefore(selector);
 
-  // 更改为使用 useShallowSnapshot 方法
+  // 修改为使用 useShallowSnapshot 并传入选择器
   callee.property.name = "useShallowSnapshot";
-  // 将 selector
   init.arguments = [selectorName];
 }
 
-type Item = {
+type MemberAccessor = {
   node: MemberExpression | OptionalMemberExpression;
   identifier: Identifier;
 };
 
-// Helper function to find member expression
+/**
+ * 查找成员表达式链
+ * 例如: a.b.c 会找到最后一个成员表达式 a.b.c
+ */
 function findMemberExpression(path: NodePath) {
   let current: NodePath | null = path;
-  let lastValidExpr: Item["node"] | undefined;
+  let lastValidExpr: MemberAccessor["node"] | undefined;
 
   while (current?.parentPath) {
     const parent = current.parentPath;

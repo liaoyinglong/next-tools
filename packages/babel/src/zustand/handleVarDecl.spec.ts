@@ -1,11 +1,10 @@
 import generate from "@babel/generator";
 import { parse } from "@babel/parser";
 import traverse from "@babel/traverse";
-import { describe, it } from "vitest";
-import { handleIdentifier } from "./handleIdentifier";
-import { isNeedTransform } from "./shared";
+import { describe, expect, it } from "vitest";
+import { handleVarDecl } from "./handleVarDecl";
 
-describe("handleIdentifier", () => {
+describe("handleVarDecl", () => {
   it("correct", () => {
     const tsx = String.raw;
     const code = tsx`
@@ -33,11 +32,7 @@ function App() {
 
     traverse(ast, {
       VariableDeclarator(path) {
-        const { init } = path.node;
-        if (!isNeedTransform(init)) {
-          return;
-        }
-        handleIdentifier(path);
+        handleVarDecl(path);
       },
     });
 
@@ -46,6 +41,26 @@ function App() {
     });
 
     console.log(res.code);
-    //expect(res.code).toEqual(code);
+    expect(res.code).toMatchInlineSnapshot(`
+      "
+      function App() {function _$$zp_selector(a) {return { _$$zp_: a?.b, _$$zp_2: a?.b, _$$zp_3: a.c.name };}
+        const a = store.useShallowSnapshot(_$$zp_selector);
+        useEffect(() => {
+          console.log(_$$zp_);
+        }, [_$$zp_2]);
+        function f(a) {
+          return (
+            <div>
+              <span>{a.e}</span>
+            </div>);
+
+        }
+        return (
+          <div>
+            <span>{_$$zp_3}</span>
+          </div>);
+
+      }"
+    `);
   });
 });

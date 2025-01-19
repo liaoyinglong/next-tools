@@ -24,7 +24,7 @@
     "build-fast": "pnpm run build --no-dts",
     "dev": "pnpm run build-fast --watch",
     "test": "vitest run",
-    "test:update": "vitest -u"
+    "test:u": "vitest -u"
   },
   "devDependencies": {
     "@babel/core": "7.25.2",

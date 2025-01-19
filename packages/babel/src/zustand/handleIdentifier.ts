@@ -5,13 +5,23 @@ import type {
   VariableDeclarator,
 } from "@babel/types";
 import t from "@babel/types";
+/**
+ * case: const a = store.useSnapshot()
+ */
+export function handleIdentifier(path: NodePath<VariableDeclarator>) {
+  const exprs = findRefMemberExprs(path);
+  if (!exprs?.length) {
+    // 没有引用
+    return;
+  }
+}
 
 type Item = MemberExpression | OptionalMemberExpression;
 
 /**
  * 找到变量声明中所有引用的成员表达式
  */
-export function findRefMemberExprs(
+function findRefMemberExprs(
   path: NodePath<VariableDeclarator>,
 ): Item[] | undefined {
   const { id } = path.node;

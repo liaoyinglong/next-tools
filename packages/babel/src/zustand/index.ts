@@ -1,6 +1,6 @@
 import type babel from "@babel/core";
 import type { PluginObj } from "@babel/core";
-import { isNeedTransform } from "./shared";
+import { handleVarDecl } from "./handleVarDecl";
 
 export const zustandPlugin = (api: typeof babel): PluginObj => {
   const { types: t } = api;
@@ -9,15 +9,7 @@ export const zustandPlugin = (api: typeof babel): PluginObj => {
     name: "zustand",
     visitor: {
       VariableDeclarator(path) {
-        const { init, id } = path.node;
-        if (!isNeedTransform(init)) {
-          return;
-        }
-
-        if (t.isIdentifier(id)) {
-          id;
-          //  case: const a = store.useSnapshot()
-        }
+        handleVarDecl(path);
       },
     },
   };

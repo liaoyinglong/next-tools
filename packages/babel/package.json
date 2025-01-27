@@ -35,7 +35,6 @@
     "@babel/types": "7.25.2",
     "@types/babel__core": "7.20.1",
     "@types/babel__generator": "7.6.8",
-    "@types/babel__parser": "7.1.5",
     "@types/babel__traverse": "7.20.6",
     "@types/debug": "4.1.7",
     "tsup": "8"

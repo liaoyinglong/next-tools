@@ -14,7 +14,7 @@ import t from "@babel/types";
  * function selector(state) { return { _prop: state.a.b } }
  * const state = store.useShallowSnapshot(selector)
  */
-export function handleVarDecl(path: NodePath<VariableDeclarator>) {
+export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
   const { id, init } = path.node;
 
   // 预检查：确保是 CallExpression 且变量是标识符

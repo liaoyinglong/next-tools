@@ -1,6 +1,6 @@
 import type babel from "@babel/core";
 import type { PluginObj } from "@babel/core";
-import { handleVarDecl } from "./handleVarDecl";
+import { handleIdentifierSnapshot } from "./handleIdentifierSnapshot";
 
 export const zustandPlugin = (api: typeof babel): PluginObj => {
   const { types: t } = api;
@@ -9,7 +9,7 @@ export const zustandPlugin = (api: typeof babel): PluginObj => {
     name: "zustand",
     visitor: {
       VariableDeclarator(path) {
-        handleVarDecl(path);
+        handleIdentifierSnapshot(path);
       },
     },
   };

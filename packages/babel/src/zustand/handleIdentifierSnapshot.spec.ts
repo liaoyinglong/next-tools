@@ -2,7 +2,7 @@ import generate from "@babel/generator";
 import { parse } from "@babel/parser";
 import traverse from "@babel/traverse";
 import { describe, expect, it } from "vitest";
-import { handleVarDecl } from "./handleVarDecl";
+import { handleIdentifierSnapshot } from "./handleIdentifierSnapshot";
 
 function transform(code: string) {
   const ast = parse(code, {
@@ -11,7 +11,7 @@ function transform(code: string) {
 
   traverse(ast, {
     VariableDeclarator(path) {
-      handleVarDecl(path);
+      handleIdentifierSnapshot(path);
     },
   });
 
@@ -22,7 +22,7 @@ function transform(code: string) {
   return res.code;
 }
 
-describe("handleVarDecl", () => {
+describe("handleIdentifierSnapshot", () => {
   it("correct", () => {
     const tsx = String.raw;
     const code = tsx`

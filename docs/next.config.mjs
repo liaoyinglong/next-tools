@@ -1,8 +1,16 @@
-const path = require("path");
-const withNextra = require("nextra")({
-  theme: "nextra-theme-docs",
-  themeConfig: "./theme.config.jsx",
+import withNextra from "nextra";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const withNextraConfig = withNextra({
+  latex: true,
+  search: {
+    codeblocks: false,
+  },
 });
+
 let basePath = "";
 //#region in GitHub action build
 if (process.env.GITHUB_REPOSITORY) {
@@ -10,10 +18,9 @@ if (process.env.GITHUB_REPOSITORY) {
   basePath = `/${process.env.GITHUB_REPOSITORY.split("/")[1]}`;
   console.log(`basePath: ${basePath}`);
 }
-
 //#endregion
 
-module.exports = withNextra({
+const config = {
   basePath,
   transpilePackages: ["@dune2/tools"],
   output: "export",
@@ -29,10 +36,9 @@ module.exports = withNextra({
   images: {
     unoptimized: true,
   },
-  pageExtensions: ["mdx", "md", "page.tsx"],
   webpack: (config) => {
     config.module.rules.forEach((rule) => {
-      if (rule.test?.test(".mdx")) {
+      if (rule.test?.test?.(".mdx")) {
         if (Array.isArray(rule.use)) {
           rule.use.push({
             loader: path.resolve(__dirname, "./scripts/exampleInsetLoader.js"),
@@ -42,4 +48,6 @@ module.exports = withNextra({
     });
     return config;
   },
-});
+};
+
+export default withNextraConfig(config);

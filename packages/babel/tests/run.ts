@@ -106,6 +106,7 @@ async function fixture(dir: string, plugin: PluginItem | PluginItem[]) {
       parser: "typescript",
     }),
   ]);
+  //console.log(actuallyOutput);
   expect(actuallyOutput).toEqual(expectedOutput);
 }
 

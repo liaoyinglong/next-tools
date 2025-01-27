@@ -1,41 +1,48 @@
 function Normal() {
-  const state = store.useShallowSnapshot((s) => {
+  function _selector_(state) {
     return {
-      a: s.a,
-      c: s.c,
+      _prop_: state.a,
+      _prop_2: state.c.name,
     };
-  });
-
+  }
+  const state = store.useShallowSnapshot(_selector_);
   return (
     <div>
-      {state.a}
+      {state._prop_}
       --
-      {state.c.name}
+      {state._prop_2}
     </div>
   );
 }
 function Destructure() {
+  function _selector_2({ a, c: { name } }) {
+    return {
+      a,
+      c: {
+        name,
+      },
+    };
+  }
   const {
     a,
     c: { name },
-  } = store.useShallowSnapshot(({ a, c: { name } }) => {
-    return {
-      a,
-      c: { name },
-    };
-  });
+  } = store.useShallowSnapshot(_selector_2);
   return (
     <div>
       {a} -- {name}
     </div>
   );
 }
-
 function Keep() {
   const state = store.useSnapshot();
   return <div state={state}>keep</div>;
 }
 function Keep2() {
-  const state = store.useSnapshot();
-  return <div state={state}>{state.a}</div>;
+  function _selector_3(state) {
+    return {
+      _prop_3: state.a,
+    };
+  }
+  const state = store.useShallowSnapshot(_selector_3);
+  return <div state={state}>{state._prop_3}</div>;
 }

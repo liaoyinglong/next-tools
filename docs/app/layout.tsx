@@ -1,27 +1,24 @@
 /* eslint-env node */
 import { Footer, Layout, Navbar } from "nextra-theme-docs";
 import "nextra-theme-docs/style.css";
-import { Banner, Head } from "nextra/components";
+import { Head } from "nextra/components";
 import { getPageMap } from "nextra/page-map";
 
 export const metadata = {
-  metadataBase: new URL("https://nextra.site"),
+  //metadataBase: new URL("https://nextra.site"),
   title: {
-    template: "%s - Nextra",
+    template: "%s - Dune Tools Documentation",
   },
-  description: "Nextra: the Next.js site builder",
-  applicationName: "Nextra",
+  description: "Dune Tools Documentation",
+  applicationName: "Dune Tools",
   generator: "Next.js",
   appleWebApp: {
-    title: "Nextra",
+    title: "Dune Tools",
   },
-  other: {
-    "msapplication-TileImage": "/ms-icon-144x144.png",
-    "msapplication-TileColor": "#fff",
-  },
-  twitter: {
-    site: "https://nextra.site",
-  },
+
+  //twitter: {
+  //site: "https://nextra.site",
+  //},
 };
 
 export default async function RootLayout({ children }) {
@@ -29,24 +26,23 @@ export default async function RootLayout({ children }) {
     <Navbar
       logo={
         <div>
-          <b>Nextra</b>{" "}
-          <span style={{ opacity: "60%" }}>The Next Docs Builder</span>
+          <b>Dune Tools</b>{" "}
+          <span style={{ opacity: "60%" }}>Dune Tools Collection</span>
         </div>
       }
       // Next.js discord server
-      chatLink="https://discord.gg/hEM84NMkRv"
+      //chatLink="https://discord.gg/hEM84NMkRv"
     />
   );
   return (
-    <html lang="en" dir="ltr" suppressHydrationWarning>
+    <html lang="zh-CN" dir="ltr" suppressHydrationWarning>
       <Head faviconGlyph="✦" />
       <body>
         <Layout
-          banner={<Banner storageKey="Nextra 2">Nextra 2 Alpha</Banner>}
           navbar={navbar}
           footer={<Footer />}
-          editLink="Edit this page on GitHub"
-          docsRepositoryBase="https://github.com/shuding/nextra/blob/main/examples/docs"
+          //editLink="Edit this page on GitHub"
+          //docsRepositoryBase="https://github.com/shuding/nextra/blob/main/examples/docs"
           sidebar={{ defaultMenuCollapseLevel: 1 }}
           pageMap={await getPageMap()}
         >

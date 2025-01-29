@@ -4,7 +4,7 @@ import React, { PropsWithChildren } from "react";
 function Comp(
   props: PropsWithChildren<{
     style: React.CSSProperties;
-  }>
+  }>,
 ) {
   return <div style={props.style}>{props.children}</div>;
 }

@@ -1,10 +1,11 @@
+"use client";
 import { loadWasm } from "@/shared/wasm-pkg";
 import { Extracted } from "@dune2/wasm";
 
 import styled from "@emotion/styled";
 import Editor from "@monaco-editor/react";
-import { useMDXComponents } from "nextra/mdx";
 import { useEffect, useState } from "react";
+import { useMDXComponents } from "../../mdx-components";
 
 const Item = styled.div`
   display: grid;
@@ -43,7 +44,7 @@ export function I18nPlayground() {
       try {
         const extracted: Extracted = await wasm.extract(
           inputtedCode,
-          "/test.tsx"
+          "/test.tsx",
         );
         const data = {};
         const keys = [...extracted.data.keys()].sort();

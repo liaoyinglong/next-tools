@@ -1,3 +1,4 @@
+"use client";
 import { createStateContext } from "@dune2/tools/factory/createStateContext";
 import { useState } from "react";
 

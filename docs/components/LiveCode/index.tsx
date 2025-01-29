@@ -1,11 +1,12 @@
+"use client";
 import { mapProps } from "@dune2/tools/factory/mapProps";
 import dynamic from "next/dynamic";
 
 const Sandpack = dynamic(
-  () => import("@codesandbox/sandpack-react").then((r) => r.Sandpack),
+  () => import("@codesandbox/sandpack-react").then((r) => r.Sandpack) as never,
   {
     ssr: false,
-  }
+  },
 );
 
 export const LiveCode = mapProps(Sandpack, {
@@ -19,7 +20,7 @@ export const LiveCode = mapProps(Sandpack, {
   customSetup: {
     dependencies: {
       "@dune2/tools": "latest",
-      "@tanstack/react-query": "^4.29.7",
+      "@tanstack/react-query": "^5",
     },
   },
 });

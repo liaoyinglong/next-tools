@@ -1,4 +1,3 @@
-"use client";
 import { ChildA, ChildB } from "./Child";
 import { Provider } from "./shared";
 

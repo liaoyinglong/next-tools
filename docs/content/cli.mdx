@@ -1,5 +1,134 @@
-# cli
+# CLI
 
 import { Callout } from "nextra/components";
 
-<Callout emoji="🚨">work in progress</Callout>
+## 概述
+
+@dune2/cli 是一个功能丰富的命令行工具集，主要用于处理国际化翻译、API 生成等任务。
+
+## 安装
+
+```bash
+npm install @dune2/cli
+# 或者
+yarn add @dune2/cli
+# 或者
+pnpm add @dune2/cli
+```
+
+## 主要功能
+
+### 翻译相关命令
+
+#### extract
+
+提取代码中的文案到 JSON 文件
+
+```bash
+dune extract [--deleteUnused]
+```
+
+选项：
+
+- `--deleteUnused`: 删除未使用的文案
+
+#### download
+
+从 Google Sheet 下载并生成翻译文件
+
+```bash
+dune download
+```
+
+#### upload
+
+上传翻译文件到 Google Sheet
+
+```bash
+dune upload
+```
+
+#### namespaceSwc
+
+使用 SWC 引擎添加命名空间前缀
+
+```bash
+dune namespaceSwc
+```
+
+#### namespaceReg
+
+使用正则表达式添加命名空间前缀
+
+```bash
+dune namespaceReg
+```
+
+### API 相关命令
+
+#### generateApi
+
+从 Swagger 文档生成 API 请求文件
+
+```bash
+dune generateApi
+```
+
+### 用户认证命令
+
+#### login
+
+登录 Google 账号（用于访问 Google Sheet）
+
+```bash
+dune login
+```
+
+#### logout
+
+退出登录
+
+```bash
+dune logout
+```
+
+#### userInfo
+
+查看当前登录用户信息
+
+```bash
+dune userInfo
+```
+
+### 其他命令
+
+#### init
+
+初始化配置文件
+
+```bash
+dune init
+```
+
+#### interactive
+
+进入交互式操作模式（简写：`dune i`）
+
+```bash
+dune interactive
+# 或者
+dune i
+```
+
+<Callout type="info">
+  直接运行 `dune` 命令（不带参数）也会进入交互式操作模式。
+</Callout>
+
+## 配置文件
+
+运行 `dune init` 可以生成配置文件模板。配置文件用于设置翻译文件路径、Google Sheet 配置、API 生成配置等。
+
+<Callout type="warning">
+  使用 Google Sheet 相关功能前，请确保已完成登录（`dune
+  login`）并正确配置了相关参数。
+</Callout>

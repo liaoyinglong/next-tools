@@ -1,0 +1,180 @@
+# Numbro
+
+基于 [bignumber.js](https://mikemcl.github.io/bignumber.js/) 封装的数字处理工具，提供了数字格式化、货币格式化以及基础的数值运算功能。
+
+## 基本用法
+
+### 数字格式化
+
+```ts
+// 基础格式化
+numbro("1.230000").format(); // => "1.23"
+numbro("1234.230000").format(); // => "1,234.23"
+
+// 百分比格式化
+numbro(1).format({ output: "percent" }); // => "100%"
+numbro(0.1).format({ output: "percent" }); // => "10%"
+
+// 大数字格式化
+numbro("1000").format({ average: true }); // => "1K"
+numbro("1000000").format({ average: true }); // => "1M"
+numbro("1000000000").format({ average: true }); // => "1B"
+```
+
+### 货币格式化
+
+```ts
+// 使用默认货币格式（根据当前语言环境）
+numbro(1000).formatCurrency(); // => "Rp1,000.00"
+numbro(-0.1).formatCurrency(); // => "-Rp0.10"
+
+// 使用指定语言的货币格式
+numbro(1000).formatCurrency({ locale: "en" }); // => "$1,000.00"
+numbro(1000).formatCurrency({ locale: "zh" }); // => "¥1,000.00"
+
+// 自定义货币格式
+numbro(1000).formatCurrency({
+  symbol: "€",
+  position: "postfix",
+  spaceSeparated: true,
+}); // => "1,000.00 €"
+```
+
+## 配置选项
+
+### 精度控制
+
+```ts
+// 指定小数位数
+numbro(1.2345).format({ mantissa: 2 }); // => "1.23"
+numbro(1.2345).format({ mantissa: 3 }); // => "1.234"
+
+// 四舍五入模式
+const num = numbro(1.23456789);
+num.format({ roundingMode: numbro.RoundingMode.RoundDown, mantissa: 2 }); // => "1.23"
+num.format({ roundingMode: numbro.RoundingMode.RoundUp, mantissa: 2 }); // => "1.24"
+```
+
+### 千分位分隔
+
+```ts
+// 启用千分位分隔
+numbro(1000).format({ thousandSeparated: true }); // => "1,000"
+
+// 禁用千分位分隔
+numbro(1000).format({ thousandSeparated: false }); // => "1000"
+```
+
+### 正负号处理
+
+```ts
+// 强制显示正负号
+numbro(1).format({ forceSign: true }); // => "+1"
+numbro(-1).format({ forceSign: true }); // => "-1"
+numbro(0).format({ forceSign: true }); // => "0"
+```
+
+### 尾零处理
+
+```ts
+// 删除无效的尾零
+numbro("1.000000").format({ mantissa: 2, deleteInvalidZero: true }); // => "1"
+numbro("1.200001").format({ mantissa: 2, deleteInvalidZero: true }); // => "1.20"
+
+// 删除所有尾零
+numbro("1.000000").format({ mantissa: 2, deleteEndZero: true }); // => "1"
+numbro("1.200001").format({ mantissa: 2, deleteEndZero: true }); // => "1.2"
+```
+
+### 空值处理
+
+```ts
+// 默认将 NaN/null/undefined 处理为 0
+numbro(NaN).format(); // => "0"
+numbro(null).format(); // => "0"
+
+// 自定义 NaN 格式
+numbro(NaN).format({ NaNFormat: "-" }); // => "-"
+numbro(null).formatCurrency({ NaNFormat: "N/A" }); // => "N/A"
+```
+
+## 数值运算
+
+### 基础运算
+
+```ts
+// 加法
+numbro(0.1).add(0.2).format(); // => "0.3"
+
+// 减法
+numbro(0.3).subtract(0.2).format(); // => "0.1"
+
+// 乘法
+numbro(0.1).multiply(0.2).format(); // => "0.02"
+
+// 除法
+numbro(0.1).divide(0.2).format(); // => "0.5"
+
+// 差值
+numbro(100).difference(-50).format(); // => "150"
+```
+
+### 支持的输入类型
+
+```ts
+// 数字
+numbro(1.23);
+
+// 字符串（自动移除千分位分隔符）
+numbro("1,234.56");
+
+// BigNumber 实例
+numbro(new BigNumber("1.23"));
+
+// BigInt
+numbro(100n);
+```
+
+## 全局配置
+
+### 默认格式化配置
+
+```ts
+// 设置默认的格式化配置
+Numbro.setDefaultFormat({
+  thousandSeparated: true,
+  mantissa: 2,
+});
+
+// 之后的格式化会使用默认配置
+numbro(1000).format(); // => "1,000.00"
+```
+
+### 货币格式化配置
+
+```ts
+// 设置默认的货币格式
+Numbro.setDefaultCurrencies({
+  "de-AT": {
+    mantissa: 2,
+    position: "prefix",
+    symbol: "€",
+  },
+  "de-DE": {
+    mantissa: 2,
+    position: "postfix",
+    symbol: "€",
+    decimalSeparator: ",",
+    groupSeparator: " ",
+  },
+});
+
+// 设置当前语言环境
+Numbro.setLocale("de-AT");
+
+// 使用默认货币格式
+numbro(1000).formatCurrency(); // => "€1,000.00"
+
+// 使用指定语言的货币格式
+numbro(1000).formatCurrency({ locale: "de-DE" }); // => "1 000,00€"
+```

@@ -72,4 +72,30 @@ function App() {
       }"
     `);
   });
+
+  it("keep", () => {
+    const tsx = String.raw;
+    const code = tsx`
+function Keep3() {
+  const state = store.useSnapshot((s) => {
+    return {
+      count: s.count,
+    };
+  });
+  return <div>{state.count}</div>;
+}`;
+    const expectCode = transform(code);
+
+    expect(expectCode).toMatchInlineSnapshot(`
+      "
+      function Keep3() {
+        const state = store.useSnapshot((s) => {
+          return {
+            count: s.count
+          };
+        });
+        return <div>{state.count}</div>;
+      }"
+    `);
+  });
 });

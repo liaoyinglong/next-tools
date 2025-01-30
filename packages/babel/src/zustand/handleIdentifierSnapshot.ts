@@ -24,6 +24,10 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
   if (!t.isMemberExpression(init.callee)) {
     return;
   }
+  // 如果已经有 selector 参数，则不需要转换
+  if (init.arguments.length > 0) {
+    return;
+  }
 
   // 检查是否为 store.useSnapshot 调用
   const callee = init.callee;

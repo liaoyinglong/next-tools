@@ -1,33 +1,109 @@
 # mapProps
 
-提供了一个名为 mapProps 的函数，该函数用于映射和修改 React 组件的 props。
+`mapProps` 是一个用于修改和增强 React 组件 props 的高阶函数。它可以帮助你轻松地为组件添加默认 props、修改现有 props，或者基于已有 props 动态生成新的 props。
 
-## 函数签名
+## 使用场景
 
-mapProps 函数有多个重载，可以接受不同类型的参数：
+- 为组件添加默认样式或属性
+- 基于已有 props 动态计算新的 props
+- 统一修改多个组件的 props
+- 组件 props 适配和转换
 
-1. 当第一个参数为 JSX 元素的键名时，第二个参数可以是一个对象或者一个函数，返回一个函数组件：
+## 基础用法
+
+### 为原生 HTML 元素添加默认属性
 
 ```tsx
+// 创建一个带有默认样式的 div 容器
+const Container = mapProps("div", {
+  className: "container",
+  style: { display: "flex", padding: "20px" },
+});
+
+// 使用时可以覆盖默认属性
+<Container className="custom-container" style={{ display: "grid" }} />;
+```
+
+### 为自定义组件添加默认属性
+
+```tsx
+interface CardProps {
+  title: string;
+  theme?: "light" | "dark";
+}
+
+const Card = ({ title, theme = "light" }: CardProps) => {
+  return <div className={`card ${theme}`}>{title}</div>;
+};
+
+// 创建一个暗色主题的卡片组件
+const DarkCard = mapProps(Card, {
+  theme: "dark",
+});
+
+// 使用时只需要提供 title
+<DarkCard title="Hello World" />;
+```
+
+## 进阶用法
+
+### 动态计算 Props
+
+```tsx
+const EnhancedButton = mapProps("button", (props) => ({
+  ...props,
+  className: `btn ${props.disabled ? "btn-disabled" : ""} ${props.className || ""}`,
+  "aria-disabled": props.disabled,
+}));
+```
+
+### Props 适配和转换
+
+```tsx
+interface LegacyInputProps {
+  text: string;
+  onTextChange: (text: string) => void;
+}
+
+const LegacyInput = ({ text, onTextChange }: LegacyInputProps) => {
+  return <input value={text} onChange={(e) => onTextChange(e.target.value)} />;
+};
+
+// 将旧的 API 适配到新的 value/onChange 模式
+const ModernInput = mapProps(LegacyInput, (props) => ({
+  text: props.value,
+  onTextChange: props.onChange,
+}));
+```
+
+## 类型定义
+
+### 原生 HTML 元素
+
+```tsx
+// 对象方式
 function mapProps<C extends keyof JSX.IntrinsicElements>(
   BaseComponent: C,
   mapper: JSX.IntrinsicElements[C],
 ): FC<JSX.IntrinsicElements[C]>;
 
+// 函数方式
 function mapProps<
   C extends keyof JSX.IntrinsicElements,
   P extends JSX.IntrinsicElements[C],
 >(BaseComponent: C, mapper: (p: P) => P): FC<P>;
 ```
 
-2. 当第一个参数为一个 React 组件时，第二个参数可以是一个对象或者一个函数，返回一个函数组件：
+### 自定义组件
 
 ```tsx
+// 对象方式
 function mapProps<
   RawP extends object,
   ExtP extends Partial<RawP> = Partial<RawP>,
 >(BaseComponent: ComponentType<RawP>, mapper: ExtP): Comp<RawP, ExtP>;
 
+// 函数方式
 function mapProps<
   C extends ComponentType<any>,
   RawP extends ComponentProps<C>,
@@ -39,6 +115,8 @@ function mapProps<
 
 ## 注意事项
 
-- mapProps 函数不会修改原始组件，而是创建一个新的组件。
-- 如果映射函数或对象中的 props 与原始组件的 props 有冲突，那么映射函数或对象中的 props 会覆盖原始组件的 props。
-- 映射函数会接收到原始组件的 props 作为参数，可以根据这些 props 动态生成新的 props。
+- mapProps 不会修改原始组件，而是返回一个新的组件
+- 当使用对象方式时，传入的 props 会覆盖 mapper 中的同名属性
+- 当使用函数方式时，可以访问到组件接收到的所有 props，并且可以动态计算新的 props
+- mapper 函数应该是纯函数，不应该产生副作用
+- 对于需要 ref 的组件，mapProps 会自动处理 ref 的转发

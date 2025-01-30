@@ -115,6 +115,8 @@ const count = store.useShallowSnapshot((s) => s.count); // 没有优化效果
 
 ## 性能优化
 
+### 手动优化
+
 1. 使用选择器减少重渲染：
 
 ```typescript
@@ -142,6 +144,86 @@ store.actions.updateUser({
 store.actions.setName("Jane");
 store.actions.setAge(25);
 ```
+
+### 自动优化示例
+
+通过 Babel 插件，我们提供了自动优化功能，可以在编译时自动优化状态访问模式。以下是两个主要的优化场景：
+
+#### 1. 解构语法优化
+
+编译前的代码：
+
+```typescript
+function UserProfile() {
+  // 直接解构会订阅整个状态
+  const { user, settings } = store.useSnapshot();
+  return (
+    <div>
+      <h1>{user.name}</h1>
+      <p>{settings.theme}</p>
+    </div>
+  );
+}
+```
+
+编译后的代码：
+
+```typescript
+function UserProfile() {
+  // 自动生成选择器函数，只订阅需要的字段
+  const selector = (state) => ({
+    user: state.user,
+    settings: state.settings
+  });
+  // 使用 useShallowSnapshot 优化性能
+  const { user, settings } = store.useShallowSnapshot(selector);
+  return (
+    <div>
+      <h1>{user.name}</h1>
+      <p>{settings.theme}</p>
+    </div>
+  );
+}
+```
+
+#### 2. 属性访问优化
+
+编译前的代码：
+
+```typescript
+function Counter() {
+  // 订阅了整个状态
+  const state = store.useSnapshot();
+  return (
+    <div>
+      <p>Count: {state.count}</p>
+      <p>Total: {state.total}</p>
+    </div>
+  );
+}
+```
+
+编译后的代码：
+
+```typescript
+function Counter() {
+  // 自动生成选择器函数，只订阅使用到的字段
+  const selector = (state) => ({
+    count: state.count,
+    total: state.total
+  });
+  // 转换为使用选择器的形式
+  const state = store.useSnapshot(selector);
+  return (
+    <div>
+      <p>Count: {state.count}</p>
+      <p>Total: {state.total}</p>
+    </div>
+  );
+}
+```
+
+这些优化会在编译时自动应用，无需手动编写选择器函数。通过自动生成选择器和使用 `useShallowSnapshot`，可以有效减少不必要的重渲染，提高应用性能。
 
 ## 类型支持
 

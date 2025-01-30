@@ -32,7 +32,7 @@ export function createStore<
 
   return {
     /**
-     * 在组件内获取状态，就是 zustand create 的返回值
+     * 在组件内获取状态
      */
     useSnapshot: useStore,
     /**
@@ -55,10 +55,6 @@ export function createStore<
      * 获取状态
      */
     getState: useStore.getState,
-    /**
-     * 设置状态
-     */
-    setState: useStore.setState,
   };
 }
 

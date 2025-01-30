@@ -1,0 +1,165 @@
+# Zustand 工具
+
+一个基于 zustand 的状态管理工具，它简化了 zustand 的使用方式，并提供了更好的类型支持和性能优化。
+
+## 基本用法
+
+### 创建 Store
+
+使用 `createStore` 函数来创建一个 store，它接收一个配置对象，包含 `state` 和 `actions` 两个字段：
+
+```typescript
+import { createStore } from "@next-tools/tools/zustand";
+
+const store = createStore({
+  state: {
+    count: 0,
+    user: { name: "John" },
+  },
+  actions: {
+    increment: (state, amount: number) => {
+      state.count += amount;
+    },
+    setUserName: (state, name: string) => {
+      state.user.name = name;
+    },
+  },
+});
+```
+
+### 配置说明
+
+- `state`: 定义初始状态，必须是一个对象
+- `actions`: 定义修改状态的方法，每个方法接收两个参数：
+  - `state`: 当前状态，可以直接修改（基于 immer）
+  - `payload`: 方法的参数
+
+## 状态管理
+
+### 获取状态
+
+```typescript
+// 获取完整状态
+const state = store.getState();
+
+// 在 React 组件中使用
+const count = store.useSnapshot((state) => state.count);
+```
+
+### 修改状态
+
+```typescript
+// 使用 actions
+store.actions.increment(1);
+store.actions.setUserName("Jane");
+```
+
+## React 集成
+
+### useSnapshot vs useShallowSnapshot
+
+#### useSnapshot
+
+`useSnapshot` 用于在组件中订阅状态变化：
+
+```typescript
+function Counter() {
+  // 订阅完整状态
+  const state = store.useSnapshot();
+
+  // 使用选择器只订阅部分状态
+  const count = store.useSnapshot(s => s.count);
+
+  return <div>{count}</div>;
+}
+```
+
+#### useShallowSnapshot
+
+`useShallowSnapshot` 用于性能优化，它会对选择器返回的值进行浅层比较来减少不必要的重渲染：
+
+```typescript
+function UserInfo() {
+  // 只有当返回的对象经过浅比较后发生变化时才会重渲染
+  // 例如：user.name 改变会导致返回新的对象，触发重渲染
+  const user = store.useShallowSnapshot(s => s.user);
+
+  return <div>{user.name}</div>;
+}
+```
+
+### 最佳实践
+
+1. 使用选择器获取状态：
+
+```typescript
+// ✅ 好的做法：只订阅需要的状态
+const count = store.useSnapshot((s) => s.count);
+
+// ❌ 避免订阅整个状态：可能导致不必要的重渲染
+const state = store.useSnapshot();
+```
+
+2. 合理使用 useShallowSnapshot：
+
+```typescript
+// ✅ 返回对象时使用 useShallowSnapshot
+const userInfo = store.useShallowSnapshot((s) => ({
+  name: s.user.name,
+  age: s.user.age,
+}));
+
+// ❌ 返回原始类型时不要使用 useShallowSnapshot
+const count = store.useShallowSnapshot((s) => s.count); // 没有优化效果
+```
+
+## 性能优化
+
+1. 使用选择器减少重渲染：
+
+```typescript
+// 只有 count 变化时重渲染
+const count = store.useSnapshot((s) => s.count);
+```
+
+2. 对象类型使用 useShallowSnapshot：
+
+```typescript
+// 只有 user 对象引用变化时重渲染
+const user = store.useShallowSnapshot((s) => s.user);
+```
+
+3. 避免频繁的状态更新：
+
+```typescript
+// ✅ 批量更新
+store.actions.updateUser({
+  name: "Jane",
+  age: 25,
+});
+
+// ❌ 避免多次更新
+store.actions.setName("Jane");
+store.actions.setAge(25);
+```
+
+## 类型支持
+
+store 的类型会自动推导：
+
+```typescript
+const store = createStore({
+  state: { count: 0 },
+  actions: {
+    increment: (state, amount: number) => {
+      state.count += amount;
+    },
+  },
+});
+
+// ✅ 类型安全
+store.actions.increment(1);
+
+// ❌ 类型错误
+store.actions.increment("1"); // Type 'string' is not assignable to type 'number'
+```

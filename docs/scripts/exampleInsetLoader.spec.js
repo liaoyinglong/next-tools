@@ -6,11 +6,11 @@ describe("exampleInsetLoader", () => {
     expect(
       replaceWithExample(
         // language=HTML
-        `<emaple-inset>
+        `<example-inset>
   ./examples/CreateStateContext
-</emaple-inset>`,
-        (match, p1) => `import CreateStateContext from "${p1}";`
-      )
+</example-inset>`,
+        (match, p1) => `import CreateStateContext from "${p1}";`,
+      ),
     ).toMatchInlineSnapshot(`
       "import CreateStateContext from \\"
         ./examples/CreateStateContext

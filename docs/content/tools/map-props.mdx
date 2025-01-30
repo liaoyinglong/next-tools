@@ -11,12 +11,12 @@ mapProps 函数有多个重载，可以接受不同类型的参数：
 ```tsx
 function mapProps<C extends keyof JSX.IntrinsicElements>(
   BaseComponent: C,
-  mapper: JSX.IntrinsicElements[C]
+  mapper: JSX.IntrinsicElements[C],
 ): FC<JSX.IntrinsicElements[C]>;
 
 function mapProps<
   C extends keyof JSX.IntrinsicElements,
-  P extends JSX.IntrinsicElements[C]
+  P extends JSX.IntrinsicElements[C],
 >(BaseComponent: C, mapper: (p: P) => P): FC<P>;
 ```
 
@@ -25,17 +25,17 @@ function mapProps<
 ```tsx
 function mapProps<
   RawP extends object,
-  ExtP extends Partial<RawP> = Partial<RawP>
+  ExtP extends Partial<RawP> = Partial<RawP>,
 >(BaseComponent: ComponentType<RawP>, mapper: ExtP): Comp<RawP, ExtP>;
 
 function mapProps<
   C extends ComponentType<any>,
   RawP extends ComponentProps<C>,
-  ExtP extends Partial<RawP>
+  ExtP extends Partial<RawP>,
 >(BaseComponent: C, mapper: (p: ExtP) => ExtP): Comp<RawP, ExtP>;
 ```
 
-<emaple-inset>./examples/mapProps</emaple-inset>
+<example-inset>./examples/mapProps</example-inset>
 
 ## 注意事项
 

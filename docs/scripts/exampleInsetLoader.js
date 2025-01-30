@@ -31,13 +31,13 @@ const exampleInsetLoader = async function (content) {
           fileNames.map(async (file) => {
             const s = await fs.readFile(
               path.resolve(examplePath, file),
-              "utf-8"
+              "utf-8",
             );
             files[`/${file}`] = s;
-          })
+          }),
         );
         filesMap[match] = files;
-      })
+      }),
     );
     const newContent = replaceWithExample(content, (match, p1) => {
       const files = filesMap[match];
@@ -58,7 +58,7 @@ import { LiveCode } from "@/components/LiveCode";
   }
 };
 
-const reg = /<emaple-inset>([\s\S]*?)<\/emaple-inset>/g;
+const reg = /<example-inset>([\s\S]*?)<\/example-inset>/g;
 
 /**
  *

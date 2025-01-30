@@ -3,7 +3,7 @@ import { mapProps } from "@dune2/tools/factory/mapProps";
 import dynamic from "next/dynamic";
 
 const Sandpack = dynamic(
-  () => import("@codesandbox/sandpack-react").then((r) => r.Sandpack) as never,
+  () => import("@codesandbox/sandpack-react").then((r) => r.Sandpack),
   {
     ssr: false,
   },

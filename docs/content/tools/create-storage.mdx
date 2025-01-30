@@ -2,80 +2,132 @@
 
 一个用于创建和管理本地存储（localStorage 或 sessionStorage）的工具。它提供了类型安全的存储访问、跨标签页数据同步、以及 React Hooks 支持等特性。
 
-## 类型定义
-
-- CreateStorageConfig: 创建存储的配置对象，包含以下属性：
-  - DataMap: 用于生成存储映射的构造函数，其中的属性值将作为对应存储项的默认值。
-  - namespace: 命名空间，会在存储的 key 前面加上命名空间，用于隔离不同模块的存储。
-  - storageType: 存储类型，可以是 "local"（对应 localStorage）或 "session"（对应 sessionStorage），默认为 "local"。
-
-## API
-
-### StorageHelper
-
-每个存储项都是一个 StorageHelper 实例，提供以下方法：
-
-- get(): 获取存储值，如果值不存在则返回默认值
-- set(value): 设置存储值，传入 undefined 时会删除该存储项
-- remove(): 删除存储项
-- useValue(): React Hook，用于在组件中订阅存储值的变化
-
-### 属性
-
-- key: 完整的存储键名（包含命名空间）
-- defaultValue: 存储项的默认值
-
-## 特性
-
-### 缓存机制
-
-内部实现了值缓存机制，可以避免以下问题：
-
-- 当存储值是对象时，防止每次 get 都返回新的对象引用导致 React 重复渲染
-- 在 set 时，如果新值与当前值相同，则不触发存储事件
-- 在 get 时，如果存储值未变化，则直接返回缓存的值
-
-### 跨标签页同步
-
-当在一个标签页中修改存储值时，其他标签页会自动同步更新：
-
-- 利用 StorageEvent 实现跨标签页通信
-- 在当前标签页中手动触发事件，确保所有订阅者都能收到更新
-
-## Example
+## 基本用法
 
 ```ts
 class DataMap {
   token = "";
-  age: number | undefined = undefined;
+  userInfo = { name: "", age: 0 };
+  theme = "light";
 }
 
 const storage = createStorage({
   DataMap,
   namespace: "myApp",
+  // 可选，默认为 "local"
+  storageType: "local",
 });
 
-// 基础用法
-const token = storage.token.get();
-storage.token.set("new_token");
-storage.token.remove();
+// 基础操作
+const token = storage.token.get();  // 获取值，若不存在返回默认值
+storage.token.set("new_token");    // 设置新值
+storage.token.remove();            // 删除值（等同于 set(undefined)）
+
+// 对象类型的存储
+const userInfo = storage.userInfo.get();  // 获取对象
+storage.userInfo.set({ name: "张三", age: 25 });  // 设置对象
 
 // 在 React 组件中使用
-function MyComponent() {
-  const token = storage.token.useValue();
-  return <div>Current token: {token}</div>;
+function ThemeSwitch() {
+  const theme = storage.theme.useValue();  // 自动订阅值的变化
+  return (
+    <button onClick={() => storage.theme.set(theme === "light" ? "dark" : "light")}>
+      当前主题：{theme}
+    </button>
+  );
 }
 ```
 
+## 配置选项
+
+### CreateStorageConfig
+
+创建存储实例时的配置对象：
+
+- `DataMap`: 用于生成存储映射的类，其属性值将作为对应存储项的默认值
+- `namespace`: 命名空间，用于隔离不同模块的存储，会作为存储键名的前缀
+- `storageType`: 存储类型
+  - `"local"`: 使用 localStorage（默认值）
+  - `"session"`: 使用 sessionStorage
+
+## 存储项 API
+
+每个存储项都是一个 StorageHelper 实例，提供以下方法和属性：
+
+### 方法
+
+- `get()`: 获取存储值，若值不存在则返回默认值
+- `set(value)`: 设置存储值，传入 undefined 时会删除该存储项
+- `remove()`: 删除存储项（等同于 set(undefined)）
+- `useValue()`: React Hook，用于在组件中订阅存储值的变化
+
+### 属性
+
+- `key`: 完整的存储键名（包含命名空间）
+- `defaultValue`: 存储项的默认值
+
+## 高级特性
+
+### 缓存机制
+
+为了优化性能和避免不必要的更新，内部实现了值缓存机制：
+
+```ts
+// 对象类型示例
+class DataMap {
+  config = { theme: "light", fontSize: 14 };
+}
+
+const storage = createStorage({ DataMap, namespace: "app" });
+
+// 1. 防止重复渲染
+function ConfigPanel() {
+  const config = storage.config.useValue();
+  // config 的引用在值未变化时保持不变，不会导致不必要的重复渲染
+  return <div>主题：{config.theme}</div>;
+}
+
+// 2. 智能更新
+const currentConfig = storage.config.get();
+storage.config.set({ ...currentConfig });  // 值未实际变化，不会触发更新事件
 ```
-// 获取存储项
-const token = storage.token.get();
-// 设置存储项
-storage.token.set("new_token");
-// 删除存储项
-storage.token.remove();
-// 获取存储项的默认值
-storage.token.defaultValue;
-// 获取储存项的key
-storage.token.key;
+
+### 跨标签页同步
+
+当在一个标签页中修改存储值时，其他标签页会自动同步更新：
+
+```ts
+// 标签页 A
+function PageA() {
+  const theme = storage.theme.useValue();
+  return (
+    <div>
+      <div>当前主题：{theme}</div>
+      <button onClick={() => storage.theme.set("dark")}>切换到深色</button>
+    </div>
+  );
+}
+
+// 标签页 B - 会自动同步更新
+function PageB() {
+  const theme = storage.theme.useValue();
+  // 当标签页 A 中点击按钮时，这里会自动更新
+  return <div>主题已更新为：{theme}</div>;
+}
+```
+
+### 类型安全
+
+通过 TypeScript 的类型推导，可以获得完整的类型提示和检查：
+
+```ts
+class DataMap {
+  count: number = 0;
+  user: { name: string; age: number } | null = null;
+}
+
+const storage = createStorage({ DataMap, namespace: "app" });
+
+storage.count.set("123"); // TS 错误：类型不匹配
+storage.user.set({ name: "张三" }); // TS 错误：缺少必需属性 'age'
 ```

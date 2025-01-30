@@ -33,6 +33,7 @@ describe("mapProps", () => {
       expect(spy).toBeCalledWith({
         className: "newClassName",
         age: 10,
+        ref: null,
         style: { display: "flex" },
         name: "test",
       });
@@ -48,6 +49,7 @@ describe("mapProps", () => {
 
       expect(spy).toBeCalledTimes(1);
       expect(spy).toBeCalledWith({
+        ref: null,
         className: "newClassName",
         age: 10,
         style: { display: "flex" },

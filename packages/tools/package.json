@@ -59,11 +59,10 @@
     "@tanstack/react-query": "5.51.11",
     "@types/js-cookie": "3.0.3",
     "@types/lodash": "^4.17.0",
-    "@types/react": "^18.2.6",
     "axios": "^1.6.8",
     "immer": "^10",
-    "react": "^18.2.0",
-    "valtio": "^1.13.2",
+    "react": "^19",
+    "valtio": "^2",
     "zustand": "^5.0.1",
     "zx": "^7.0.8"
   },

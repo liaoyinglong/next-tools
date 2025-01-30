@@ -20,10 +20,12 @@
     "*.{js,jsx,ts,tsx,md,html,css,json,yaml}": "prettier --write"
   },
   "devDependencies": {
-    "@testing-library/react": "^15.0.2",
+    "@testing-library/react": "^16",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "18.7.18",
-    "happy-dom": "^14.7.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19.0.3",
+    "happy-dom": "^16",
     "husky": "^9.0.11",
     "lerna": "^8.0.2",
     "lint-staged": "^13.0.3",

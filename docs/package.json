@@ -26,8 +26,6 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@dune2/wasm": "workspace:*",
-    "@types/react": "^19",
-    "@types/react-dom": "^19.0.3"
+    "@dune2/wasm": "workspace:*"
   }
 }

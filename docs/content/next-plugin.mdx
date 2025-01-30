@@ -2,4 +2,77 @@
 
 import { Callout } from "nextra/components";
 
-<Callout emoji="🚨">work in progress</Callout>
+# Next.js 插件预设
+
+`@dune2/next-plugin` 是一个功能丰富的 Next.js 插件预设，提供了多个实用的开发功能。
+
+## 主要特性
+
+- **自动导入（Auto Import）**：基于 `unplugin-auto-import` 实现，可自动导入常用的依赖和组件
+- **依赖编译**：支持配置编译指定的 node_modules 依赖
+- **i18n 支持**：支持 .i18n.json 文件预编译
+- **t/Trans 编译宏**：提供国际化相关的编译宏支持
+
+## 安装
+
+```bash
+pnpm add @dune2/next-plugin
+```
+
+## 配置选项
+
+### DunePresetsOptions
+
+```typescript
+interface DunePresetsOptions {
+  // 自动导入配置
+  autoImport?: AutoImportOptions;
+
+  // swc loader 前置处理配置
+  beforeSwcLoader?: BeforeSwcLoaderOptions;
+}
+```
+
+### autoImport
+
+自动导入配置，基于 `unplugin-auto-import` 实现，支持自动导入常用的依赖和组件。
+
+```typescript
+// 默认的自动导入配置
+const defaultAutoImports = [
+  "react",
+  "react-router-dom",
+  // ... 其他默认导入
+];
+```
+
+### beforeSwcLoader
+
+在运行 swc loader 之前的处理配置：
+
+- 自动检测并添加 `use client` 指令
+  - 例如：检测到 emotion 的 css-in-js 代码时
+- 为 `/@atlaskit/` 下的文件添加 jsxRuntime classic 配置，以兼容 Next.js 13
+
+## 使用示例
+
+```typescript
+// next.config.js
+const { withDunePresets } = require("@dune2/next-plugin");
+
+module.exports = withDunePresets({
+  autoImport: {
+    // 自定义自动导入配置
+    imports: ["vue", "vue-router"],
+  },
+  beforeSwcLoader: {
+    // swc loader 前置处理配置
+  },
+});
+```
+
+## 注意事项
+
+- 插件会自动设置 `experimental.externalDir` 为 `true`
+- 会自动配置 `transpilePackages` 以支持特定模块的编译
+- 自动导入配置会与默认配置合并

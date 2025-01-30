@@ -46,3 +46,11 @@ function Keep2() {
   const state = store.useShallowSnapshot(_selector_3);
   return <div state={state}>{state._prop_3}</div>;
 }
+function Keep3() {
+  const state = store.useSnapshot((s) => {
+    return {
+      count: s.count,
+    };
+  });
+  return <div>{state.count}</div>;
+}

@@ -31,3 +31,11 @@ function Keep2() {
   const state = store.useSnapshot();
   return <div state={state}>{state.a}</div>;
 }
+function Keep3() {
+  const state = store.useSnapshot((s) => {
+    return {
+      count: s.count,
+    };
+  });
+  return <div>{state.count}</div>;
+}

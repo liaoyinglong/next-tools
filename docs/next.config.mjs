@@ -23,7 +23,7 @@ if (process.env.GITHUB_REPOSITORY) {
 const config = {
   basePath,
   transpilePackages: ["@dune2/tools"],
-  //output: "export",
+  output: "export",
   typescript: {
     ignoreBuildErrors: true,
   },

@@ -1,14 +1,46 @@
 # createStorage
 
-一个用于创建和管理本地存储（localStorage 或 sessionStorage）的工具。
+一个用于创建和管理本地存储（localStorage 或 sessionStorage）的工具。它提供了类型安全的存储访问、跨标签页数据同步、以及 React Hooks 支持等特性。
 
-类型定义
+## 类型定义
 
 - CreateStorageConfig: 创建存储的配置对象，包含以下属性：
-
-  - DataMap: 用于生成存储映射的构造函数。
-  - namespace: 命名空间，会在存储的 key 前面加上命名空间。
+  - DataMap: 用于生成存储映射的构造函数，其中的属性值将作为对应存储项的默认值。
+  - namespace: 命名空间，会在存储的 key 前面加上命名空间，用于隔离不同模块的存储。
   - storageType: 存储类型，可以是 "local"（对应 localStorage）或 "session"（对应 sessionStorage），默认为 "local"。
+
+## API
+
+### StorageHelper
+
+每个存储项都是一个 StorageHelper 实例，提供以下方法：
+
+- get(): 获取存储值，如果值不存在则返回默认值
+- set(value): 设置存储值，传入 undefined 时会删除该存储项
+- remove(): 删除存储项
+- useValue(): React Hook，用于在组件中订阅存储值的变化
+
+### 属性
+
+- key: 完整的存储键名（包含命名空间）
+- defaultValue: 存储项的默认值
+
+## 特性
+
+### 缓存机制
+
+内部实现了值缓存机制，可以避免以下问题：
+
+- 当存储值是对象时，防止每次 get 都返回新的对象引用导致 React 重复渲染
+- 在 set 时，如果新值与当前值相同，则不触发存储事件
+- 在 get 时，如果存储值未变化，则直接返回缓存的值
+
+### 跨标签页同步
+
+当在一个标签页中修改存储值时，其他标签页会自动同步更新：
+
+- 利用 StorageEvent 实现跨标签页通信
+- 在当前标签页中手动触发事件，确保所有订阅者都能收到更新
 
 ## Example
 
@@ -17,11 +49,25 @@ class DataMap {
   token = "";
   age: number | undefined = undefined;
 }
+
 const storage = createStorage({
   DataMap,
   namespace: "myApp",
 });
 
+// 基础用法
+const token = storage.token.get();
+storage.token.set("new_token");
+storage.token.remove();
+
+// 在 React 组件中使用
+function MyComponent() {
+  const token = storage.token.useValue();
+  return <div>Current token: {token}</div>;
+}
+```
+
+```
 // 获取存储项
 const token = storage.token.get();
 // 设置存储项

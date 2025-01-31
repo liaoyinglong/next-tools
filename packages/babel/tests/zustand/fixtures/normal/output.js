@@ -38,13 +38,8 @@ function Keep() {
   return <div state={state}>keep</div>;
 }
 function Keep2() {
-  function _selector_3(state) {
-    return {
-      _prop_3: state.a,
-    };
-  }
-  const state = store.useShallowSnapshot(_selector_3);
-  return <div state={state}>{state._prop_3}</div>;
+  const state = store.useSnapshot();
+  return <div state={state}>{state.a}</div>;
 }
 function Keep3() {
   const state = store.useShallowSnapshot((s) => {

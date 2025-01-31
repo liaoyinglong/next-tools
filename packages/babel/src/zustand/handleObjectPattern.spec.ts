@@ -2,7 +2,6 @@ import generate from "@babel/generator";
 import { parse } from "@babel/parser";
 import traverse from "@babel/traverse";
 import { describe, expect, it } from "vitest";
-import { transform } from "./handleIdentifierSnapshot.spec";
 import { handleObjectPattern } from "./handleObjectPattern";
 
 function transform(code: string) {

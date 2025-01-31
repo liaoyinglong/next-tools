@@ -47,18 +47,31 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
   const accessorMap = new Map<string, Identifier>();
   {
     const binding = path.scope.getOwnBinding(id.name);
-    binding?.referencePaths.forEach((refPath) => {
-      const { lastValidExpr, nodePath } = findMemberExpression(refPath);
-      if (lastValidExpr && nodePath) {
-        // 使用自定义函数生成访问路径的唯一标识
-        const accessKey = getMemberExpressionKey(lastValidExpr);
 
+    const arr: ReturnType<typeof findMemberExpression>[] = [];
+
+    binding?.referencePaths.forEach((refPath) => {
+      const { memberExprStart, nodePath, accessKey } =
+        findMemberExpression(refPath);
+      if (memberExprStart && nodePath && accessKey) {
+        arr.push({ memberExprStart, nodePath, accessKey });
+      }
+    });
+
+    if (!arr.length || arr.length !== binding?.referencePaths.length) {
+      return;
+    }
+
+    binding?.referencePaths.forEach((refPath) => {
+      const { memberExprStart, nodePath, accessKey } =
+        findMemberExpression(refPath);
+      if (memberExprStart && nodePath && accessKey) {
         let propIdentifier = accessorMap.get(accessKey);
         if (!propIdentifier) {
           propIdentifier = path.scope.generateUidIdentifier("prop_");
           accessorMap.set(accessKey, propIdentifier);
           memberAccessors.push({
-            node: t.cloneDeepWithoutLoc(lastValidExpr),
+            node: t.cloneDeepWithoutLoc(memberExprStart),
             identifier: propIdentifier,
           });
         }
@@ -109,24 +122,27 @@ type MemberAccessor = {
  */
 function findMemberExpression(path: NodePath) {
   let current: NodePath | null = path;
-  let lastValidExpr: MemberAccessor["node"] | undefined;
+  let memberExprStart: MemberAccessor["node"] | undefined;
+  let accessKey = "";
 
   while (current?.parentPath) {
     const parent = current.parentPath;
     const node = parent.node;
+    accessKey += node.name;
 
     if (
       (t.isMemberExpression(node) || t.isOptionalMemberExpression(node)) &&
       t.isIdentifier(node.property)
     ) {
-      lastValidExpr = node;
+      memberExprStart = node;
       current = parent;
+      accessKey += "." + node.property.name;
     } else {
       break; // 如果不是成员表达式，立即停止向上查找
     }
   }
 
-  return { lastValidExpr, nodePath: current };
+  return { memberExprStart, nodePath: current, accessKey };
 }
 
 // 辅助函数：生成成员访问路径的唯一标识

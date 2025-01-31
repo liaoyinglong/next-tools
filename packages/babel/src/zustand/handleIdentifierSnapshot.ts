@@ -1,6 +1,5 @@
 import type { NodePath } from "@babel/traverse";
 import type {
-  Expression,
   Identifier,
   MemberExpression,
   OptionalMemberExpression,
@@ -36,6 +35,7 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
   }
 
   // 如果已经有 selector 参数，则需要检查返回值类型
+  // 如果返回值是对象类型，则转换为 useShallowSnapshot
   if (init.arguments.length > 0) {
     if (handleSelectorArgument(init)) {
       callee.property.name = "useShallowSnapshot";
@@ -43,13 +43,19 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
     return;
   }
 
+  // 初始化成员访问器数组和访问器映射
+  // memberAccessors 用于存储所有的成员访问表达式
+  // accessorMap 用于缓存已处理过的访问路径，避免重复创建
   const memberAccessors: MemberAccessor[] = [];
   const accessorMap = new Map<string, Identifier>();
   {
+    // 获取变量的绑定信息，用于查找所有引用
     const binding = path.scope.getOwnBinding(id.name);
 
+    // 存储所有有效的成员表达式访问
     const arr: ReturnType<typeof findMemberExpression>[] = [];
 
+    // 第一次遍历：收集所有有效的成员表达式
     binding?.referencePaths.forEach((refPath) => {
       const { memberExprStart, nodePath, accessKey } =
         findMemberExpression(refPath);
@@ -58,38 +64,44 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
       }
     });
 
+    // 如果存在无效的成员表达式访问，则不进行转换
     if (!arr.length || arr.length !== binding?.referencePaths.length) {
       return;
     }
 
-    binding?.referencePaths.forEach((refPath) => {
-      const { memberExprStart, nodePath, accessKey } =
-        findMemberExpression(refPath);
-      if (memberExprStart && nodePath && accessKey) {
-        let propIdentifier = accessorMap.get(accessKey);
-        if (!propIdentifier) {
-          propIdentifier = path.scope.generateUidIdentifier("prop_");
-          accessorMap.set(accessKey, propIdentifier);
-          memberAccessors.push({
-            node: t.cloneDeepWithoutLoc(memberExprStart),
-            identifier: propIdentifier,
-          });
-        }
-
-        nodePath.replaceWith(
-          t.memberExpression(
-            t.cloneWithoutLoc(id),
-            t.cloneDeepWithoutLoc(propIdentifier),
-          ),
-        );
+    // 第二次遍历：处理每个成员表达式
+    // 1. 为每个唯一的访问路径生成标识符
+    // 2. 收集成员访问器信息
+    // 3. 替换原始表达式为新的访问方式
+    arr.forEach((item) => {
+      const { memberExprStart, nodePath, accessKey } = item;
+      let propIdentifier = accessorMap.get(accessKey);
+      if (!propIdentifier) {
+        // 生成唯一的属性标识符
+        propIdentifier = path.scope.generateUidIdentifier("prop_");
+        accessorMap.set(accessKey, propIdentifier);
+        memberAccessors.push({
+          node: t.cloneDeepWithoutLoc(memberExprStart!),
+          identifier: propIdentifier,
+        });
       }
+
+      // 替换原始的成员表达式为新的访问方式
+      nodePath!.replaceWith(
+        t.memberExpression(
+          t.cloneWithoutLoc(id),
+          t.cloneDeepWithoutLoc(propIdentifier),
+        ),
+      );
     });
+
     if (!memberAccessors.length) {
       return;
     }
   }
 
   // 生成选择器函数
+  // 创建一个新的函数，返回包含所有访问路径的对象
   const selectorName = path.scope.generateUidIdentifier("selector_");
   const selector = t.functionDeclaration(
     selectorName,
@@ -106,7 +118,7 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
   );
   path.parentPath.insertBefore(selector);
 
-  // 修改为使用 useShallowSnapshot 并传入选择器
+  // 修改原始调用为 useShallowSnapshot
   callee.property.name = "useShallowSnapshot";
   init.arguments = [selectorName];
 }
@@ -119,6 +131,13 @@ type MemberAccessor = {
 /**
  * 查找成员表达式链
  * 例如: a.b.c 会找到最后一个成员表达式 a.b.c
+ *
+ * @param path - 当前节点路径
+ * @returns {
+ *   memberExprStart - 成员表达式的起始节点
+ *   nodePath - 当前节点路径
+ *   accessKey - 完整的访问路径字符串
+ * }
  */
 function findMemberExpression(path: NodePath) {
   let current: NodePath | null = path;
@@ -128,7 +147,6 @@ function findMemberExpression(path: NodePath) {
   while (current?.parentPath) {
     const parent = current.parentPath;
     const node = parent.node;
-    accessKey += node.name;
 
     if (
       (t.isMemberExpression(node) || t.isOptionalMemberExpression(node)) &&
@@ -143,25 +161,4 @@ function findMemberExpression(path: NodePath) {
   }
 
   return { memberExprStart, nodePath: current, accessKey };
-}
-
-// 辅助函数：生成成员访问路径的唯一标识
-function getMemberExpressionKey(expr: Expression): string {
-  if (t.isMemberExpression(expr)) {
-    const propKey = t.isIdentifier(expr.property)
-      ? expr.property.name
-      : (expr.property as any).value;
-    return getMemberExpressionKey(expr.object) + "." + propKey;
-  }
-  if (t.isOptionalMemberExpression(expr)) {
-    const propKey = t.isIdentifier(expr.property)
-      ? expr.property.name
-      : (expr.property as any).value;
-    return getMemberExpressionKey(expr.object) + "?." + propKey;
-  }
-  if (t.isIdentifier(expr)) {
-    return expr.name;
-  }
-  // 其他类型的表达式，返回一个固定标识
-  return "_";
 }

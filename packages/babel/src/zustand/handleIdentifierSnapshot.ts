@@ -7,6 +7,7 @@ import type {
   VariableDeclarator,
 } from "@babel/types";
 import t from "@babel/types";
+import { handleSelectorArgument } from "./shared";
 /**
  * 处理 store.useSnapshot() 的变量声明
  * 示例: const state = store.useSnapshot()
@@ -24,10 +25,6 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
   if (!t.isMemberExpression(init.callee)) {
     return;
   }
-  // 如果已经有 selector 参数，则不需要转换
-  if (init.arguments.length > 0) {
-    return;
-  }
 
   // 检查是否为 store.useSnapshot 调用
   const callee = init.callee;
@@ -35,6 +32,14 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
     !t.isIdentifier(callee.property) ||
     callee.property.name !== "useSnapshot"
   ) {
+    return;
+  }
+
+  // 如果已经有 selector 参数，则需要检查返回值类型
+  if (init.arguments.length > 0) {
+    if (handleSelectorArgument(init)) {
+      callee.property.name = "useShallowSnapshot";
+    }
     return;
   }
 

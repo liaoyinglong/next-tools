@@ -73,10 +73,10 @@ function App() {
     `);
   });
 
-  it("keep", () => {
+  it("should_keep_selector_when_snapshot_has_selector", () => {
     const tsx = String.raw;
     const code = tsx`
-function Keep3() {
+function App() {
   const state = store.useSnapshot((s) => {
     return {
       count: s.count,
@@ -88,8 +88,8 @@ function Keep3() {
 
     expect(expectCode).toMatchInlineSnapshot(`
       "
-      function Keep3() {
-        const state = store.useSnapshot((s) => {
+      function App() {
+        const state = store.useShallowSnapshot((s) => {
           return {
             count: s.count
           };

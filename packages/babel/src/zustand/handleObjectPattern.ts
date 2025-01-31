@@ -1,6 +1,7 @@
 import type { NodePath } from "@babel/traverse";
 import type { VariableDeclarator } from "@babel/types";
 import t from "@babel/types";
+import { handleSelectorArgument } from "./shared";
 
 /**
  * 处理 store.useSnapshot() 的变量声明
@@ -30,6 +31,9 @@ export function handleObjectPattern(path: NodePath<VariableDeclarator>) {
   }
   // 如果已经有 selector 参数，则不需要转换
   if (init.arguments.length > 0) {
+    if (handleSelectorArgument(init)) {
+      callee.property.name = "useShallowSnapshot";
+    }
     return;
   }
 

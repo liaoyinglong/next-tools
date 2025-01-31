@@ -47,7 +47,7 @@ function Keep2() {
   return <div state={state}>{state._prop_3}</div>;
 }
 function Keep3() {
-  const state = store.useSnapshot((s) => {
+  const state = store.useShallowSnapshot((s) => {
     return {
       count: s.count,
     };

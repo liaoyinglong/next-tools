@@ -55,10 +55,10 @@ function Destructure() {
     `);
   });
 
-  it("keep", () => {
+  it("should_keep_selector_when_snapshot_has_selector", () => {
     const tsx = String.raw;
     const code = tsx`
-function Keep3() {
+function App() {
   const {count} = store.useSnapshot((s) => {
     return {
       count: s.count,
@@ -70,8 +70,8 @@ function Keep3() {
 
     expect(expectCode).toMatchInlineSnapshot(`
       "
-      function Keep3() {
-        const { count } = store.useSnapshot((s) => {
+      function App() {
+        const { count } = store.useShallowSnapshot((s) => {
           return {
             count: s.count
           };

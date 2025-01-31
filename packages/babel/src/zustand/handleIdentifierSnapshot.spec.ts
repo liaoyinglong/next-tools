@@ -4,7 +4,7 @@ import traverse from "@babel/traverse";
 import { describe, expect, it } from "vitest";
 import { handleIdentifierSnapshot } from "./handleIdentifierSnapshot";
 
-function transform(code: string) {
+export function transform(code: string) {
   const ast = parse(code, {
     plugins: ["typescript", "jsx"],
   });
@@ -94,6 +94,35 @@ function App() {
             count: s.count
           };
         });
+        return <div>{state.count}</div>;
+      }"
+    `);
+  });
+  it("raw keep", () => {
+    const tsx = String.raw;
+    const code = tsx`
+function App() {
+  const state = store.useSnapshot((s) => {
+    return s.user
+  });
+   const state2 = store.useSnapshot((s) => {
+    return s.count
+  });
+  
+  return <div>{state.count}</div>;
+}`;
+    const expectCode = transform(code);
+
+    expect(expectCode).toMatchInlineSnapshot(`
+      "
+      function App() {
+        const state = store.useSnapshot((s) => {
+          return s.user;
+        });
+        const state2 = store.useSnapshot((s) => {
+          return s.count;
+        });
+
         return <div>{state.count}</div>;
       }"
     `);

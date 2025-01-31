@@ -2,6 +2,7 @@ import generate from "@babel/generator";
 import { parse } from "@babel/parser";
 import traverse from "@babel/traverse";
 import { describe, expect, it } from "vitest";
+import { transform } from "./handleIdentifierSnapshot.spec";
 import { handleObjectPattern } from "./handleObjectPattern";
 
 function transform(code: string) {
@@ -77,6 +78,35 @@ function App() {
           };
         });
         return <div>{count}</div>;
+      }"
+    `);
+  });
+  it("raw keep", () => {
+    const tsx = String.raw;
+    const code = tsx`
+function App() {
+  const state = store.useSnapshot((s) => {
+    return s.user
+  });
+   const state2 = store.useSnapshot((s) => {
+    return s.count
+  });
+  
+  return <div>{state.count}</div>;
+}`;
+    const expectCode = transform(code);
+
+    expect(expectCode).toMatchInlineSnapshot(`
+      "
+      function App() {
+        const state = store.useSnapshot((s) => {
+          return s.user;
+        });
+        const state2 = store.useSnapshot((s) => {
+          return s.count;
+        });
+
+        return <div>{state.count}</div>;
       }"
     `);
   });

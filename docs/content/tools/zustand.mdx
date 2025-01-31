@@ -223,7 +223,41 @@ function Counter() {
 }
 ```
 
-这些优化会在编译时自动应用，无需手动编写选择器函数。通过自动生成选择器和使用 `useShallowSnapshot`，可以有效减少不必要的重渲染，提高应用性能。
+#### 3. 对象字面量优化
+
+编译器会在选择器返回对象字面量时才会转换为 `useShallowSnapshot`，其他情况（如返回原始值、变量引用等）会保持使用 `useSnapshot`：
+
+```typescript
+function App() {
+  // 返回对象字面量时会转换为 useShallowSnapshot
+  const userInfo = store.useSnapshot((s) => ({
+    name: s.user.name,
+    age: s.user.age
+  }));
+
+  // 返回变量引用时保持使用 useSnapshot
+  const user = store.useSnapshot((s) => s.user);
+
+  // 返回原始值时保持使用 useSnapshot
+  const count = store.useSnapshot((s) => s.count);
+
+  return <div>{user.name}</div>;
+}
+```
+
+#### 4. 特殊场景处理
+
+在某些特殊场景下，比如需要将整个状态作为 props 传递时，编译器会保持原始的 `useSnapshot` 调用：
+
+```typescript
+function StateWrapper() {
+  // 需要传递整个状态时保持原样
+  const state = store.useSnapshot();
+  return <div state={state}>{state.a}</div>;
+}
+```
+
+这种情况下不会进行自动优化，因为我们需要访问完整的状态对象。建议仔细评估是否真的需要传递整个状态，通常更好的做法是只传递需要的字段。
 
 ## 类型支持
 

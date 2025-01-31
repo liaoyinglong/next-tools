@@ -127,4 +127,21 @@ function App() {
       }"
     `);
   });
+  it("raw keep2 ", () => {
+    const tsx = String.raw;
+    const code = tsx`
+    function Keep2() {
+      const state = store.useSnapshot();
+      return <div state={state}>{state.a}</div>;
+    }`;
+    const expectCode = transform(code);
+
+    expect(expectCode).toMatchInlineSnapshot(`
+      "
+      function Keep2() {
+        const state = store.useSnapshot();
+        return <div state={state}>{state.a}</div>;
+      }"
+    `);
+  });
 });

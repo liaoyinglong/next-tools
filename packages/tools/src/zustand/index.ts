@@ -13,8 +13,15 @@ export function createStore<
   const useStore = create<S>((set) => {
     return config.state;
   });
+  type NormalAction<
+    InputAction extends (...args: any) => void,
+    P = Parameters<InputAction>[1],
+  > = P extends undefined
+    ? // case: 没有payload的 action
+      () => void
+    : (payload: P) => void;
   type NormalActions = {
-    [key in keyof A]: (payload: Parameters<A[key]>[1]) => void;
+    [key in keyof A]: NormalAction<A[key]>;
   };
   const normalActions: NormalActions = {} as NormalActions;
   Object.keys(config.actions).forEach((key) => {

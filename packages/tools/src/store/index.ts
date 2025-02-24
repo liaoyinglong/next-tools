@@ -7,8 +7,14 @@ const stores: any = {};
 if (typeof window !== "undefined") {
   Object.defineProperty(window, "__stores2", {
     get() {
-      const r = snapshot(proxy(stores));
-      return { ...r, __raw: stores };
+      let s: any = {};
+      Object.keys(stores).forEach((key) => {
+        const store = stores[key];
+        const state = store.getState();
+        s[key] = state;
+      });
+
+      return { ...s, __raw: stores };
     },
   });
 }
@@ -81,6 +87,8 @@ export function createStore<
       return slice;
     },
   };
+
+  stores[config.name] = api;
 
   return api;
 }

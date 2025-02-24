@@ -32,7 +32,7 @@
     "./valtio": "./src/valtio/index.ts",
     "./valtio/*": "./src/valtio/*.ts",
     "./niceModal": "./src/niceModal/index.tsx",
-    "./zustand": "./src/zustand/index.ts",
+    "./store": "./src/store/index.ts",
     "./package.json": "./package.json"
   },
   "files": [
@@ -60,10 +60,8 @@
     "@types/js-cookie": "3.0.3",
     "@types/lodash": "^4.17.0",
     "axios": "^1.6.8",
-    "immer": "^10",
     "react": "^19",
     "valtio": "^2",
-    "zustand": "^5.0.1",
     "zx": "^7.0.8"
   },
   "publishConfig": {

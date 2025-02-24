@@ -1,19 +1,20 @@
 import { assertType, describe, it } from "vitest";
-import { createStore } from "../../src/zustand";
+import { createStore } from "../../src/store";
 
 const store = createStore({
   state: { a: 1, b: 2, c: { name: "hello" }, d: { name: "world" } },
-  actions: {
-    setA: (s, b: number) => {
-      s.a = 123;
+  actionsCreator: (state) => ({
+    setA: (b: number) => {
+      state.a = 123;
     },
-    setB: (s, b: number) => {
-      s.b = 123;
+    setB: (b: number) => {
+      state.b = 123;
     },
-    setC: (s, name: string) => {
-      s.c.name = name;
+    setC: (name: string) => {
+      state.c.name = name;
     },
-  },
+  }),
+  name: "test",
 });
 
 describe("zustand type", () => {
@@ -23,15 +24,17 @@ describe("zustand type", () => {
     assertType<typeof store.actions.setC>((name: string) => {});
   });
   it("useSnapshot should work", () => {
-    //@ts-expect-error a 是 number 类型 , 没有 c 属性
-    store.useSnapshot((s) => s.a.c);
-
-    const c = store.useSnapshot((s) => s.c);
-    assertType<typeof c>({ name: "" });
+    const {
+      //@ts-expect-error a 是 number 类型 , 没有 c 属性
+      a: { c },
+    } = store.useSnapshot();
+    {
+      const { c } = store.useSnapshot();
+      assertType<typeof c>({ name: "" });
+    }
   });
 
   it("useShallowSnapshot should work", () => {
-    //@ts-expect-error a 是 number 类型，不符合 U extends object 的类型
     const a = store.useShallowSnapshot((s) => s.a);
 
     const d = store.useShallowSnapshot((s) => s.d);

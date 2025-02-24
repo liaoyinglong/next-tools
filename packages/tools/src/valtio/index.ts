@@ -18,6 +18,9 @@ if (typeof window !== "undefined") {
   });
 }
 
+/**
+ * @deprecated use createStore instead
+ */
 export function proxy<T extends object>(
   initialObject: T,
   opts: Options,

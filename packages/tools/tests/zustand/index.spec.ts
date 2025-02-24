@@ -1,21 +1,22 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { createStore } from "../../src/zustand";
+import { createStore } from "../../src/store";
 
 function init() {
   return createStore({
     state: { a: 1, b: 2, c: { name: "hello" }, d: { name: "world" } },
-    actions: {
-      setA: (s, b: number) => {
-        s.a = 123;
+    actionsCreator: (state) => ({
+      setA: (b: number) => {
+        state.a = 123;
       },
-      setB: (s, b: number) => {
-        s.b = 123;
+      setB: (b: number) => {
+        state.b = 123;
       },
-      setCName: (s, name: string) => {
-        s.c.name = name;
+      setCName: (name: string) => {
+        state.c.name = name;
       },
-    },
+    }),
+    name: "test",
   });
 }
 let store: ReturnType<typeof init>;
@@ -26,24 +27,17 @@ beforeEach(() => {
 
 describe("zustand", () => {
   it("normal actions should work", () => {
-    const oldState = store.getState();
-    // 更新 a / b ，c / d 的引用和值不会变
     store.actions.setA(123);
-    expect(store.getState().a).toBe(123);
-    expect(store.getState().c).toBe(oldState.c);
-    expect(store.getState().c).toEqual({ name: "hello" });
-    expect(store.getState().d).toBe(oldState.d);
-    expect(store.getState().d).toEqual({ name: "world" });
-    // 更新 c ，c 的引用和值都会变 但是 d 的引用和值不会变
+    expect(store.state.a).toBe(123);
+    expect(store.state.c).toEqual({ name: "hello" });
+    expect(store.state.d).toEqual({ name: "world" });
     store.actions.setCName("abc");
-    expect(store.getState().c).not.toBe(oldState.c);
-    expect(store.getState().c).toEqual({ name: "abc" });
-    expect(store.getState().d).toBe(oldState.d);
-    expect(store.getState().d).toEqual({ name: "world" });
+    expect(store.state.c).toEqual({ name: "abc" });
+    expect(store.state.d).toEqual({ name: "world" });
   });
 
   describe("react integration", () => {
-    it("normal useSnapshot", () => {
+    it("normal useSnapshot", async () => {
       const { result } = renderHook(() => store.useSnapshot());
       expect(result.current).toEqual({
         a: 1,
@@ -51,7 +45,7 @@ describe("zustand", () => {
         c: { name: "hello" },
         d: { name: "world" },
       });
-      act(() => {
+      await act(() => {
         store.actions.setA(123);
       });
       expect(result.current).toEqual({
@@ -61,7 +55,7 @@ describe("zustand", () => {
         d: { name: "world" },
       });
     });
-    it("useShallowSnapshot", () => {
+    it("useShallowSnapshot", async () => {
       let count = 0;
       const { result } = renderHook(() => {
         count++;
@@ -69,13 +63,13 @@ describe("zustand", () => {
       });
       expect(result.current).toEqual({ name: "hello" });
       expect(count).toBe(1);
-      act(() => {
+      await act(() => {
         // 更新 c 以外的值，不应该触发 rerender
         store.actions.setA(123);
       });
       expect(count).toBe(1);
       // 更新 c ，应该触发 rerender
-      act(() => {
+      await act(() => {
         store.actions.setCName("abc");
       });
       expect(count).toBe(2);

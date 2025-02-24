@@ -69,38 +69,43 @@ class StorageHelper<V = any> {
     v === undefined
       ? this.store.remove(this.baseKey)
       : this.store.set(this.baseKey, v);
-    if (typeof window !== "undefined") {
-      // On localStorage.setItem, the storage event is only triggered on other tabs and windows.
-      // So we manually dispatch a storage event to trigger the subscribe function on the current window as well.
-      window.dispatchEvent(
-        new StorageEvent("storage", {
-          key: this.key,
-          // 这里 value 不重要，在内部会使用 get 重新获取值
-          newValue: null,
-        }),
-      );
-    }
+    this.notifyListeners();
   }
 
   remove(): void {
     this.set(undefined);
   }
 
+  private listeners = new Set<() => void>();
+  private notifyListeners = () => {
+    this.listeners.forEach((listener) => listener());
+  };
+  /**
+   * 订阅 storage 事件
+   * @param listener
+   * @returns
+   */
+  subscribe = (listener: () => void) => {
+    // for current window
+    this.listeners.add(listener);
+    // for other windows
+    window.addEventListener("storage", listener);
+
+    return () => {
+      this.listeners.delete(listener);
+      window.removeEventListener("storage", listener);
+    };
+  };
+
   /**
    * 这是 react hooks 的 useValue 的实现
    */
   useValue() {
     return useSyncExternalStore(
-      this.useSyncExternalStoreSubscribe,
+      this.subscribe,
       this.useSyncExternalStoreGetSnapshot,
       this.useSyncExternalStoreGetSnapshot,
     );
-  }
-  private useSyncExternalStoreSubscribe(listener: () => void) {
-    window.addEventListener("storage", listener);
-    return () => {
-      window.removeEventListener("storage", listener);
-    };
   }
   private useSyncExternalStoreGetSnapshot = this.get.bind(this);
 }

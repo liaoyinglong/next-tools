@@ -98,6 +98,9 @@ importers:
 
   example/i18n-rsc:
     devDependencies:
+      "@dune2/cli":
+        specifier: workspace:*
+        version: link:../../packages/cli
       "@dune2/tools":
         specifier: workspace:*
         version: link:../../packages/tools
@@ -174,9 +177,9 @@ importers:
       googleapis:
         specifier: 108.0.0
         version: 108.0.0
-      joycon:
-        specifier: ^3.1.1
-        version: 3.1.1
+      jiti:
+        specifier: ^2.4.2
+        version: 2.4.2
       json-schema-to-typescript:
         specifier: 15.0.0
         version: 15.0.0
@@ -9656,12 +9659,21 @@ packages:
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
+  /jiti@2.4.2:
+    resolution:
+      {
+        integrity: sha512-rg9zJN+G4n2nfJl5MW3BMygZX56zKPNVEYYqq7adpmMh4Jn2QNEwhvQlFy6jPVdcod7txZtKHWnyZiA3a0zP7A==,
+      }
+    hasBin: true
+    dev: false
+
   /joycon@3.1.1:
     resolution:
       {
         integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==,
       }
     engines: { node: ">=10" }
+    dev: true
 
   /js-cookie@3.0.5:
     resolution:

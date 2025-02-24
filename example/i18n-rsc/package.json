@@ -4,9 +4,11 @@
   "scripts": {
     "build": "next build && node ./test.mjs",
     "dev": "next dev",
+    "dune": "dune",
     "start": "next start"
   },
   "devDependencies": {
+    "@dune2/cli": "workspace:*",
     "@dune2/tools": "workspace:*",
     "next": "^14"
   }

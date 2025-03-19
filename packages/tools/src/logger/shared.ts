@@ -20,3 +20,6 @@ export type OnLogParams = {
   // 日志内容
   msg: any[];
 };
+
+// 让 vite 能识别成 es-module
+export default {};

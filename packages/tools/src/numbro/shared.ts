@@ -114,3 +114,6 @@ export enum RoundingMode {
   RoundCeil = BigNumber.ROUND_CEIL,
   RoundHalfUp = BigNumber.ROUND_HALF_UP,
 }
+
+// 让 vite 能识别成 es-module
+export default {};

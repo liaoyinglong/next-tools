@@ -33,7 +33,8 @@
     "./valtio/*": "./src/valtio/*.ts",
     "./niceModal": "./src/niceModal/index.tsx",
     "./store": "./src/store/index.ts",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    ".": "./src/index.ts"
   },
   "files": [
     "src"

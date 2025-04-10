@@ -1,7 +1,6 @@
-import { act, renderHook } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { act, render, renderHook } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createStorage } from "../../src/storage";
-
 class DataMap {
   name = "";
   age = 0;
@@ -92,7 +91,7 @@ describe("createStorage", () => {
       expect(result.current).toEqual({ isLogin: true });
     });
 
-    it("没有多余的 rerender", () => {
+    it("local storage 中没有初始值，没有多余的 rerender", () => {
       let count = 0;
       const { result } = renderHook(() => {
         count++;
@@ -113,6 +112,87 @@ describe("createStorage", () => {
       });
       expect(count).toBe(2);
       expect(result.current).toEqual({ isLogin: true });
+    });
+
+    it("local storage 中有初始值，没有多余的 rerender", () => {
+      // 设置初始值
+      storage.age.set(10);
+      storage.name.set("foo");
+      storage.setting.set({ isLogin: true });
+      let count = 0;
+      const { result } = renderHook(() => {
+        count++;
+        return storage.setting.useValue();
+      });
+      expect(count).toBe(1);
+      expect(result.current).toEqual({ isLogin: true });
+
+      // 更新 age 不应该触发 rerender
+      act(() => {
+        storage.age.set(1);
+      });
+      expect(count).toBe(1);
+
+      // 更新 setting 应该触发 rerender
+      act(() => {
+        storage.setting.set({ isLogin: false });
+      });
+      expect(count).toBe(2);
+      expect(result.current).toEqual({ isLogin: false });
+    });
+
+    it("SSR 场景，local storage 中有初始值", () => {
+      // 设置初始值
+      storage.age.set(1);
+      storage.name.set("foo");
+      storage.setting.set({ isLogin: true });
+
+      let count = 0;
+      let value;
+
+      function App() {
+        value = storage.setting.useValue();
+        count++;
+        return (
+          <>
+            <span>{count}</span>
+            <span>{value?.isLogin + ""}</span>
+          </>
+        );
+      }
+
+      const container = document.createElement("div");
+      // 这里模拟 SSR 的初始化html
+      container.innerHTML = `<span>1</span><span>false</span>`;
+
+      const onRecoverableError = vi.fn();
+
+      render(<App />, {
+        hydrate: true,
+        container,
+        onRecoverableError,
+      });
+      // 这里说明 hydrate 没有报错
+      expect(onRecoverableError).not.toHaveBeenCalled();
+
+      // 这里会触发两次渲染，已兼容 SSR 场景
+      // 第一次渲染用 默认值
+      // 第二次渲染用 local storage 中的值
+      expect(value).toEqual({ isLogin: true });
+      expect(count).toBe(2);
+
+      // 更新 age 不应该触发 rerender
+      act(() => {
+        storage.age.set(1);
+      });
+      expect(count).toBe(2);
+
+      // 更新 setting 应该触发 rerender
+      act(() => {
+        storage.setting.set({ isLogin: false });
+      });
+      expect(count).toBe(3);
+      expect(value).toEqual({ isLogin: false });
     });
   });
 });

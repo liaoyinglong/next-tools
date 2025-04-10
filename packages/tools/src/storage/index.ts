@@ -103,11 +103,14 @@ class StorageHelper<V = any> {
   useValue() {
     return useSyncExternalStore(
       this.subscribe,
-      this.useSyncExternalStoreGetSnapshot,
-      this.useSyncExternalStoreGetSnapshot,
+      this.getSnapshot,
+      this.getServerSnapshot,
     );
   }
-  private useSyncExternalStoreGetSnapshot = this.get.bind(this);
+  private getSnapshot = this.get.bind(this);
+  private getServerSnapshot = () => {
+    return this.defaultValue;
+  };
 }
 
 /**

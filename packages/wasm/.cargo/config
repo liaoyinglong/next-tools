@@ -1,2 +1,0 @@
-[build]
-target-dir = "target"         # 存放编译输出结果的目录

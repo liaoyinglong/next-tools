@@ -39,7 +39,6 @@
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
-    "@dune2/wasm": "workspace:*",
     "cac": "^6.7.14",
     "cli-table3": "^0.6.3",
     "connect": "^3.7.0",

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { beforeEach, describe, expect, it } from "vitest";
-import { LocalesEnum } from "../../src/i18n";
+import { LocalesEnum } from "../../src/i18n/enums";
 import { Numbro, numbro } from "../../src/numbro";
 
 //#region reset to default format

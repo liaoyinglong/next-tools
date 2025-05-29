@@ -25,7 +25,7 @@ export function NiceModalProvider(props: PropsWithChildren) {
   const { modals } = niceModalStore.useSnapshot();
 
   return (
-    <Provider dispatch={niceModalStore.dispatch} modals={modals}>
+    <Provider dispatch={niceModalStore.actions.dispatch} modals={modals}>
       {props.children}
     </Provider>
   );

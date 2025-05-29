@@ -12,7 +12,7 @@ export const createModal = <P extends object, Res = unknown>(
   NiceModal.register(modalId, customModal);
   return Object.assign(customModal, {
     async show(props?: P): Promise<Res> {
-      await niceModalStore.initModal(modalId);
+      await niceModalStore.actions.initModal(modalId);
       return NiceModal.show(modalId, props);
     },
     hide() {
@@ -25,7 +25,7 @@ export const createModal = <P extends object, Res = unknown>(
      * 获取当前弹框是否打开
      */
     getVisible() {
-      return !!niceModalStore.modals[modalId]?.visible;
+      return !!niceModalStore.getState().modals[modalId]?.visible;
     },
   });
 };

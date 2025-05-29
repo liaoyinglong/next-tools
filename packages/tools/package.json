@@ -14,12 +14,6 @@
   "author": "",
   "exports": {
     "./factory/*": "./src/factory/*.tsx",
-    "./i18n": {
-      "react-server": "./src/i18n/index.react-server.tsx",
-      "import": "./src/i18n/index.ts",
-      "require": "./src/i18n/index.ts"
-    },
-    "./i18n/*": "./src/i18n/*",
     "./numbro": "./src/numbro/index.ts",
     "./rq": "./src/rq/index.ts",
     "./rq/*": "./src/rq/*.ts",
@@ -30,7 +24,6 @@
     "./logger": "./src/logger/index.ts",
     "./logger/*": "./src/logger/*.ts",
     "./valtio": "./src/valtio/index.ts",
-    "./valtio/*": "./src/valtio/*.ts",
     "./niceModal": "./src/niceModal/index.tsx",
     "./store": "./src/store/index.ts",
     "./package.json": "./package.json",

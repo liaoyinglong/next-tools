@@ -3,9 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "build": "pnpm build:wasm && pnpm build:next",
-    "build:next": "next build",
-    "build:wasm": "node scripts/buildWasm.mjs",
+    "build": "next build",
     "dev": "next dev",
     "dev2": "next dev --turbopack",
     "lint": "next lint",

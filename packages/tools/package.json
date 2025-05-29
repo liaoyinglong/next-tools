@@ -47,10 +47,6 @@
   },
   "dependencies": {
     "@ebay/nice-modal-react": "^1.2.13",
-    "@lingui/core": "^4.7.1",
-    "@lingui/detect-locale": "^4.7.1",
-    "@lingui/react": "^4.7.1",
-    "@messageformat/parser": "^5.1.0",
     "bignumber.js": "^9.1.2",
     "js-cookie": "^3.0.5",
     "lodash": "^4",
@@ -62,8 +58,7 @@
     "@types/lodash": "^4.17.0",
     "axios": "^1.6.8",
     "react": "^19",
-    "valtio": "^2",
-    "zx": "^7.0.8"
+    "valtio": "^2"
   },
   "publishConfig": {
     "access": "public"

@@ -16,6 +16,6 @@
     "incremental": false,
     "paths": {}
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "tests/shared/.test-d.1.ts"],
   "exclude": ["node_modules"]
 }

@@ -25,7 +25,5 @@
     "react": "^19",
     "react-dom": "^19.0.0"
   },
-  "devDependencies": {
-    "@dune2/wasm": "workspace:*"
-  }
+  "devDependencies": {}
 }

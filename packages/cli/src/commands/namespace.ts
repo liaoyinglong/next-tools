@@ -5,7 +5,6 @@ import _ from "lodash";
 import pMap from "p-map";
 import pc from "picocolors";
 import { createLogger } from "../shared";
-import { autoNamespaceByReg } from "../shared/autoNamespaceByReg";
 import { getConfig } from "../shared/config";
 import { formatFile } from "../shared/formatFile";
 
@@ -74,15 +73,6 @@ export async function namespace(params: Params) {
     }),
   });
 
-  const autoNamespace = await (() => {
-    if (mode === "swc") {
-      log.info("使用 swc 来处理");
-      return import("@dune2/wasm").then((m) => m.autoNamespace);
-    }
-    log.info("使用 reg 来处理");
-    return autoNamespaceByReg;
-  })();
-
   for (const namespace of namespaces) {
     const namespaceConfig = i18nConfig.namespace?.[namespace];
 
@@ -102,7 +92,7 @@ export async function namespace(params: Params) {
         "!**/out/**",
         //
       ].concat(combined),
-      { cwd: i18nConfig.cwd }
+      { cwd: i18nConfig.cwd },
     );
 
     log.info("预计共处理 %s 个文件", pc.green(files.length));
@@ -115,7 +105,7 @@ export async function namespace(params: Params) {
       const newContent = await autoNamespace(
         content,
         namespace,
-        i18nConfig!.namespaceSeparator!
+        i18nConfig!.namespaceSeparator!,
       );
 
       if (newContent) {
@@ -126,7 +116,7 @@ export async function namespace(params: Params) {
     });
     log.info(
       "已为 %s 个文件 自动添加 namespace",
-      pc.green(transformedFileSet.size)
+      pc.green(transformedFileSet.size),
     );
   }
 }

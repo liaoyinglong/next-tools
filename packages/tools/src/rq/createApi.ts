@@ -29,7 +29,7 @@ export function createApi<Req, Res>(opts: Options<Req, Res>) {
   const { requestFn, ...rest } = opts;
   const api = new RequestBuilder<Req, Res>({
     url: opts.queryKey,
-    // 给定 get 则 在 requestFn 中可以通过 params 获取到参数，否则是 data 字段。这是 axios 的规则
+    // 给定 get 则 在 requestFn 中可以通过 params 获取到参数，否则是 data 字段。这是为了对齐 axios 的规则
     method: "get",
     requestFn: (config) => {
       return requestFn(config.params) as never;

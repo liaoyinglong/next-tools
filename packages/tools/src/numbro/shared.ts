@@ -76,11 +76,6 @@ export interface Format extends BigNumber.Format {
 export interface CurrencyFormat extends Format {
   /**
    * 货币符号
-   * @deprecated 请使用 symbol
-   */
-  currencySymbol?: string;
-  /**
-   * 货币符号
    */
   symbol?: string;
 

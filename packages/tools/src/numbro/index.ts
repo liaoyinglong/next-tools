@@ -194,7 +194,6 @@ export class Numbro {
     };
     let {
       position = "prefix",
-      currencySymbol,
       symbol,
       spaceSeparated,
 
@@ -203,10 +202,6 @@ export class Numbro {
     // 是否强制显示正负号
     const sign = this.getPrefixSign(rest.forceSign);
 
-    // TODO: 兼容之前的逻辑 后面会移除
-    if (typeof currencySymbol !== "undefined") {
-      symbol = currencySymbol;
-    }
     let space = spaceSeparated ? " " : "";
     // 在 currency format 中，需要使用绝对值来格式化
     // 方便后续添加 正负号

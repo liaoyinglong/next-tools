@@ -124,7 +124,6 @@ export async function generateApiRequestCode(options: {
   let code: string[] = [
     "// 这个文件由 @dune2/cli 自动生成，不要手动修改，否则会被覆盖",
     apiConfig.RequestBuilderImportPath!,
-    apiConfig.requestFnImportPath!,
     apiConfig.queryClientImportPath!,
 
     "/**",
@@ -139,7 +138,6 @@ export async function generateApiRequestCode(options: {
 export const ${requestBuilderName} = new RequestBuilder({
   url: '${url}',
   method: '${method}',
-  ${apiConfig.requestFnImportPath ? "requestFn," : ""}
   ${urlPathParamsCode}
   ${apiConfig.queryClientImportPath ? "queryClient," : ""}
 });`

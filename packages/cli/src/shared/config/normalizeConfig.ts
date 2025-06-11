@@ -49,11 +49,6 @@ export function normalizeConfig(config: Config): Config {
 }
 export function apiConfigNormalizer(item: ApiConfig) {
   item.output ??= "./src/apis";
-  // 没有配置 urlTransformer 时，给 requestFnImportPath 赋默认值
-  // 优先使用 urlTransformer
-  if (!item.urlTransformer) {
-    item.requestFnImportPath ??= `import requestFn from '@/utils/request';`;
-  }
   item.RequestBuilderImportPath ??= `import { RequestBuilder } from '@dune2/tools/rq';`;
   item.enableTs ??= true;
   item.enabled ??= true;

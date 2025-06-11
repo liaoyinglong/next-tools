@@ -112,18 +112,7 @@ export interface ApiConfig {
    * @default "./src/apis"
    */
   output?: string;
-  /**
-   * 配置`requestFn` 方法引入的路径，生成的代码里会用到，生成代码如下
-   * 导入的变量必须是命名为`requestFn`
-   * ```ts
-   * // 需要命名为 requestFn
-   * import requestFn from '@/utils/request'
-   * import { foo as requestFn } from '@/utils/request'
-   * ```
-   * @default `import requestFn from '@/utils/request'`
-   * @deprecated 优先使用 `urlTransformer`
-   */
-  requestFnImportPath?: string;
+
   /**
    * 配置`queryClient` 路径，导入的变量必须是命名为`queryClient`
    * @example `import queryClient from '@/utils/request'`

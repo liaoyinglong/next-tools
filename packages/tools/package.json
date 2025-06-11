@@ -15,7 +15,11 @@
   "exports": {
     "./factory/*": "./src/factory/*.tsx",
     "./numbro": "./src/numbro/index.ts",
-    "./rq": "./src/rq/index.ts",
+    "./rq": {
+      "react-server": "./src/rq/index.react-server.ts",
+      "import": "./src/rq/index.ts",
+      "require": "./src/rq/index.ts"
+    },
     "./rq/*": "./src/rq/*.ts",
     "./shared": "./src/shared/index.ts",
     "./shared/*": "./src/shared/*.ts",
@@ -23,7 +27,6 @@
     "./storage/*": "./src/storage/*.ts",
     "./logger": "./src/logger/index.ts",
     "./logger/*": "./src/logger/*.ts",
-    "./valtio": "./src/valtio/index.ts",
     "./niceModal": "./src/niceModal/index.tsx",
     "./store": "./src/store/index.ts",
     "./package.json": "./package.json",

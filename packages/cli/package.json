@@ -40,17 +40,12 @@
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
     "cac": "^6.7.14",
-    "cli-table3": "^0.6.3",
-    "connect": "^3.7.0",
     "debug": "^4.3.4",
     "enquirer": "^2.3.6",
     "fs-extra": "^11.2.0",
-    "globby": "^14.0.1",
-    "googleapis": "108.0.0",
     "jiti": "^2.4.2",
     "json-schema-to-typescript": "15.0.0",
     "lodash": "^4.17.21",
-    "open": "^10.1.0",
     "p-map": "^7.0.2",
     "path-to-regexp": "7.1.0",
     "picocolors": "^1.0.0"
@@ -59,7 +54,6 @@
     "@types/debug": "^4.1.7",
     "@types/lodash": "^4.14.186",
     "gaxios": "*",
-    "google-auth-library": "*",
     "openapi-types": "^12.0.2",
     "prettier": "^3",
     "tsup": "8"

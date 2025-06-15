@@ -347,18 +347,20 @@ export function markCircularToRef(
   map = new Map([[obj, parentMark]]),
   set = new Set([obj]),
 ) {
-  Object.keys(obj).forEach((key) => {
-    const value = obj[key];
-    if (typeof value === "object" && !Array.isArray(value)) {
-      if (set.has(value)) {
-        obj[key] = { $ref: map.get(value) };
-        return;
+  if (obj && typeof obj === "object") {
+    Object.keys(obj).forEach((key) => {
+      const value = obj[key];
+      if (typeof value === "object" && !Array.isArray(value)) {
+        if (set.has(value)) {
+          obj[key] = { $ref: map.get(value) };
+          return;
+        }
+        const tempMark = parentMark + "/" + key;
+        set.add(value);
+        map.set(value, tempMark);
+        markCircularToRef(value, tempMark, map, set);
       }
-      const tempMark = parentMark + "/" + key;
-      set.add(value);
-      map.set(value, tempMark);
-      markCircularToRef(value, tempMark, map, set);
-    }
-  });
+    });
+  }
   return map;
 }

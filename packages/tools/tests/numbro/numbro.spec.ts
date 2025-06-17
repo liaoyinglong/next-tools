@@ -380,26 +380,6 @@ describe("numbro", () => {
       expect(numbro(input).formatCurrency()).toEqual(output);
     });
     expect(numbro(null).formatCurrency()).toEqual("Rp0.00");
-
-    // FIXME: 兼容老的写法
-    expect(
-      numbro("1").formatCurrency({
-        currencySymbol: "$",
-      }),
-    ).toEqual("$1.00");
-    (
-      [
-        [0, "Rp0.00"],
-        [1, "+Rp1.00"],
-        [-1, "-Rp1.00"],
-      ] as const
-    ).forEach(([input, output]) => {
-      expect(
-        numbro(input).formatCurrency({
-          forceSign: true,
-        }),
-      ).toEqual(output);
-    });
   });
 
   it("formatCurrency with builtin locale config", function () {

@@ -273,10 +273,13 @@ export class Numbro {
     }
 
     if (shouldDeleteEndZero) {
-      // 移除尾数 0
-      // outputFormat = outputFormat.replace(/\.?0+$/, "");
-      const reg = new RegExp(`\\.?0+${suffix}$`);
-      outputFormat = outputFormat.replace(reg, suffix);
+      const isDecimal = outputFormat.includes(".");
+      if (isDecimal) {
+        // 移除尾数 0
+        // outputFormat = outputFormat.replace(/\.?0+$/, "");
+        const reg = new RegExp(`\\.?0+${suffix}$`);
+        outputFormat = outputFormat.replace(reg, suffix);
+      }
     }
     return outputFormat;
   }

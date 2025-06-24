@@ -76,6 +76,12 @@ describe("numbro", () => {
   });
 
   it("deleteInvalidZero 支持 删除尾数 0", function () {
+    expect(
+      numbro("50000000000000000").format({
+        deleteEndZero: true,
+      }),
+    ).toEqual("50,000,000,000,000,000");
+
     [
       ["1.000000", 2, "1"],
       ["1.000000", 3, "1"],

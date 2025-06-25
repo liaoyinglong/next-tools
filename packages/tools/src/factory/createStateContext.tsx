@@ -2,7 +2,7 @@
 import type { ComponentType, FC, PropsWithChildren } from "react";
 import React, { useContext } from "react";
 
-interface Params<T> {
+interface Params<P, T> {
   /**
    * context 的名字 方便 debug
    */
@@ -10,7 +10,7 @@ interface Params<T> {
   /**
    * 传入一个 hooks 返回值会给 context 的 value
    */
-  useValueHooks: () => T;
+  useValueHooks: (props: P) => T;
   defaultValue?: T;
 }
 
@@ -18,12 +18,12 @@ interface Params<T> {
  * 快速创建一个 context 和 Provider
  * 通过给定的 hooks 返回值创建 context 的 value
  */
-export function createStateContext<T>(params: Params<T>) {
+export function createStateContext<P, T>(params: Params<P, T>) {
   const { useValueHooks, defaultValue, name } = params;
   const Context = React.createContext(defaultValue as T);
 
-  const Provider: FC<PropsWithChildren> = (props) => {
-    const value = useValueHooks();
+  const Provider: FC<PropsWithChildren<P>> = (props) => {
+    const value = useValueHooks(props);
     return <Context.Provider value={value}>{props.children}</Context.Provider>;
   };
   Provider.displayName = `${name}Provider`;
@@ -32,10 +32,13 @@ export function createStateContext<T>(params: Params<T>) {
     return useContext(Context)!;
   }
 
-  function withProvider<P extends object>(Comp: ComponentType<P>) {
-    function WithProvider(props: P) {
+  function withProvider<C extends object>(
+    Comp: ComponentType<C>,
+    providerProps: P = {} as P,
+  ) {
+    function WithProvider(props: C) {
       return (
-        <Provider>
+        <Provider {...providerProps}>
           <Comp {...props}></Comp>
         </Provider>
       );

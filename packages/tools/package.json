@@ -27,7 +27,6 @@
     "./storage/*": "./src/storage/*.ts",
     "./logger": "./src/logger/index.ts",
     "./logger/*": "./src/logger/*.ts",
-    "./niceModal": "./src/niceModal/index.tsx",
     "./store": "./src/store/index.ts",
     "./package.json": "./package.json",
     ".": "./src/index.ts"
@@ -42,7 +41,6 @@
     "typecheck": "vitest run --typecheck.only"
   },
   "dependencies": {
-    "@ebay/nice-modal-react": "^1.2.13",
     "bignumber.js": "^9.1.2",
     "js-cookie": "^3.0.5",
     "lodash": "^4",

@@ -183,9 +183,6 @@ importers:
 
   packages/tools:
     dependencies:
-      "@ebay/nice-modal-react":
-        specifier: ^1.2.13
-        version: 1.2.13(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.3.0
@@ -536,15 +533,6 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
       react-dom: ^16.8.0 || ^17 || ^18 || ^19
-
-  "@ebay/nice-modal-react@1.2.13":
-    resolution:
-      {
-        integrity: sha512-jx8xIWe/Up4tpNuM02M+rbnLoxdngTGk3Y8LjJsLGXXcSoKd/+eZStZcAlIO/jwxyz/bhPZnpqPJZWAmhOofuA==,
-      }
-    peerDependencies:
-      react: ">16.8.0"
-      react-dom: ">16.8.0"
 
   "@emnapi/runtime@1.4.3":
     resolution:
@@ -10000,11 +9988,6 @@ snapshots:
       react-devtools-inline: 4.4.0
       react-dom: 19.1.0(react@19.1.0)
       react-is: 17.0.2
-
-  "@ebay/nice-modal-react@1.2.13(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
-    dependencies:
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
 
   "@emnapi/runtime@1.4.3":
     dependencies:

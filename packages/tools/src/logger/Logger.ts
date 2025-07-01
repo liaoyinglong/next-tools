@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { noop } from "es-toolkit";
 import store2 from "store2";
 import { Level, type OnLogParams } from "./shared";
 
@@ -16,7 +16,7 @@ export class Logger {
      * 只有大于等于当前等级的日志才会输出
      */
     public level = Level.Debug,
-    public onLog: OnLog = _.noop,
+    public onLog: OnLog = noop,
   ) {
     this.level = this.getStorageLevel() ?? level;
   }

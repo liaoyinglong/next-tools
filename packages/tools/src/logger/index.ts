@@ -1,4 +1,5 @@
-import _ from "lodash";
+import { camelCase } from "es-toolkit";
+import { forEach } from "es-toolkit/compat";
 import { Logger, type OnLog } from "./Logger";
 import { Level } from "./shared";
 
@@ -30,7 +31,7 @@ export function createLogger<Name extends string>(config: Config<Name>) {
     }
     // 输入：foo.login
     // 输出：fooLogin
-    const key = (name.includes(".") ? _.camelCase(name) : name) as Key;
+    const key = (name.includes(".") ? camelCase(name) : name) as Key;
 
     if (loggerMap[key]) {
       throw new Error(`logger name "${name}" is duplicated`);
@@ -47,17 +48,17 @@ export function createLogger<Name extends string>(config: Config<Name>) {
 
   const method = {
     enable() {
-      _.forEach(loggerMap, (v) => {
+      forEach(loggerMap, (v) => {
         v.enable();
       });
     },
     disable() {
-      _.forEach(loggerMap, (v) => {
+      forEach(loggerMap, (v) => {
         v.disable();
       });
     },
     setLevel(level: Level) {
-      _.forEach(loggerMap, (v) => {
+      forEach(loggerMap, (v) => {
         v.setLevel(level);
       });
     },

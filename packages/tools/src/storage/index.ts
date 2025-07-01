@@ -1,4 +1,5 @@
-import _ from "lodash";
+import { isEqual } from "es-toolkit";
+
 import { useSyncExternalStore } from "react";
 import type { StoreType } from "store2";
 import baseStore from "store2";
@@ -52,7 +53,7 @@ class StorageHelper<V = any> {
 
   get(): V | undefined {
     const r = this.store.get(this.baseKey) ?? this.defaultValue;
-    if (!_.isEqual(r, this.currentValue)) {
+    if (!isEqual(r, this.currentValue)) {
       this.currentValue = r;
     }
     return this.currentValue;
@@ -62,7 +63,7 @@ class StorageHelper<V = any> {
    * 设置为 undefined 时，会删除该 key
    */
   set(v: V | undefined): void {
-    if (_.isEqual(v, this.currentValue)) {
+    if (isEqual(v, this.currentValue)) {
       return;
     }
     this.currentValue = v;

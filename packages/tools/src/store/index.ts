@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { isEqual } from "es-toolkit";
 import { useDebugValue, useRef, useSyncExternalStore } from "react";
 import { proxy, snapshot, subscribe, useSnapshot } from "valtio";
 
@@ -69,7 +69,7 @@ export function createStore<
       const prev = useRef<T>(undefined);
       const combinedSelector = (state: S) => {
         const next = selector(state);
-        if (!_.isEqual(prev.current, next)) {
+        if (!isEqual(prev.current, next)) {
           prev.current = next;
         }
         return prev.current;

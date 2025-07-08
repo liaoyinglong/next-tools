@@ -1,6 +1,5 @@
 import type { QueryClient } from "@tanstack/react-query";
 
-import { queryClient } from "./defaultQueryClient";
 import type { Basic, RequestBuilderOptions, RequestConfig } from "./options";
 
 export class RequestBuilder<Req = any, Res = any> {
@@ -19,7 +18,7 @@ export class RequestBuilder<Req = any, Res = any> {
   //#endregion
 
   // 这是默认的 Query Client 实例
-  static queryClient: QueryClient | null = queryClient;
+  static queryClient: QueryClient | null = null;
   static setQueryClient(queryClient: QueryClient | null) {
     RequestBuilder.queryClient = queryClient;
   }

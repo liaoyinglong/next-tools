@@ -25,8 +25,6 @@
     "./shared/*": "./src/shared/*.ts",
     "./storage": "./src/storage/index.ts",
     "./storage/*": "./src/storage/*.ts",
-    "./logger": "./src/logger/index.ts",
-    "./logger/*": "./src/logger/*.ts",
     "./store": "./src/store/index.ts",
     "./package.json": "./package.json",
     ".": "./src/index.ts"

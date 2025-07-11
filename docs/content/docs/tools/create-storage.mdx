@@ -5,40 +5,95 @@ description: 用于创建和管理本地存储（localStorage 或 sessionStorage
 
 # createStorage
 
-一个用于创建和管理本地存储（localStorage 或 sessionStorage）的工具。它提供了类型安全的存储访问、跨标签页数据同步、以及 React Hooks 支持等特性。
+`createStorage` 是一个用于创建和管理本地存储（localStorage 或 sessionStorage）的工具。它提供了类型安全的存储访问、跨标签页数据同步、以及 React Hooks 支持等特性。
+
+## 特性
+
+- 🔒 **类型安全**: 完整的 TypeScript 类型支持
+- 🔄 **跨标签页同步**: 自动同步不同标签页之间的数据变化
+- ⚡ **性能优化**: 内置缓存机制，避免不必要的重新渲染
+- 🎣 **React Hooks 支持**: 提供 `useValue` Hook 订阅数据变化
+- 📦 **命名空间隔离**: 通过命名空间避免不同模块间的存储冲突
+- 🛡️ **数据一致性**: 通过深度比较确保数据变化时才触发更新
 
 ## 基本用法
 
-```ts
+### 导入
+
+```tsx
+import { createStorage } from "@dune2/tools";
+```
+
+### 创建存储实例
+
+```tsx
+// 定义数据结构
 class DataMap {
   token = "";
   userInfo = { name: "", age: 0 };
   theme = "light";
+  preferences = {
+    language: "zh-CN",
+    fontSize: 14,
+    notifications: true,
+  };
 }
 
+// 创建存储实例
 const storage = createStorage({
   DataMap,
   namespace: "myApp",
-  // 可选，默认为 "local"
-  storageType: "local",
+  storageType: "local", // 可选，默认为 "local"
 });
+```
 
-// 基础操作
-const token = storage.token.get();  // 获取值，若不存在返回默认值
-storage.token.set("new_token");    // 设置新值
-storage.token.remove();            // 删除值（等同于 set(undefined)）
+### 基础操作
+
+```tsx
+// 获取值
+const token = storage.token.get(); // 获取 token，若不存在返回 ""
+
+// 设置值
+storage.token.set("new_token"); // 设置新的 token
+
+// 删除值
+storage.token.remove(); // 删除 token
+storage.token.set(undefined); // 等同于 remove()
 
 // 对象类型的存储
-const userInfo = storage.userInfo.get();  // 获取对象
-storage.userInfo.set({ name: "张三", age: 25 });  // 设置对象
+const userInfo = storage.userInfo.get();
+storage.userInfo.set({ name: "张三", age: 25 });
 
-// 在 React 组件中使用
+// 获取存储键名
+console.log(storage.token.key); // "myApp.token"
+```
+
+### 在 React 组件中使用
+
+```tsx
 function ThemeSwitch() {
-  const theme = storage.theme.useValue();  // 自动订阅值的变化
+  const theme = storage.theme.useValue(); // 自动订阅值的变化
+
+  const toggleTheme = () => {
+    storage.theme.set(theme === "light" ? "dark" : "light");
+  };
+
+  return <button onClick={toggleTheme}>当前主题：{theme}</button>;
+}
+
+function UserProfile() {
+  const userInfo = storage.userInfo.useValue();
+  const token = storage.token.useValue();
+
+  if (!token) {
+    return <div>请先登录</div>;
+  }
+
   return (
-    <button onClick={() => storage.theme.set(theme === "light" ? "dark" : "light")}>
-      当前主题：{theme}
-    </button>
+    <div>
+      <h1>欢迎，{userInfo.name}</h1>
+      <p>年龄：{userInfo.age}</p>
+    </div>
   );
 }
 ```
@@ -47,7 +102,15 @@ function ThemeSwitch() {
 
 ### CreateStorageConfig
 
-创建存储实例时的配置对象：
+```tsx
+interface CreateStorageConfig<T> {
+  DataMap: new () => T;
+  namespace: string;
+  storageType?: "local" | "session";
+}
+```
+
+#### 参数说明
 
 - `DataMap`: 用于生成存储映射的类，其属性值将作为对应存储项的默认值
 - `namespace`: 命名空间，用于隔离不同模块的存储，会作为存储键名的前缀
@@ -55,21 +118,79 @@ function ThemeSwitch() {
   - `"local"`: 使用 localStorage（默认值）
   - `"session"`: 使用 sessionStorage
 
-## 存储项 API
+## StorageHelper API
 
-每个存储项都是一个 StorageHelper 实例，提供以下方法和属性：
+每个存储项都是一个 `StorageHelper` 实例，提供以下方法和属性：
 
 ### 方法
 
-- `get()`: 获取存储值，若值不存在则返回默认值
-- `set(value)`: 设置存储值，传入 undefined 时会删除该存储项
-- `remove()`: 删除存储项（等同于 set(undefined)）
-- `useValue()`: React Hook，用于在组件中订阅存储值的变化
+#### `get(): T | undefined`
+
+获取存储值，若值不存在则返回默认值。
+
+```tsx
+const theme = storage.theme.get(); // 返回 "light" 或存储的值
+```
+
+#### `set(value: T | undefined): void`
+
+设置存储值，传入 `undefined` 时会删除该存储项。
+
+```tsx
+storage.theme.set("dark"); // 设置主题为深色
+storage.theme.set(undefined); // 删除主题设置
+```
+
+#### `remove(): void`
+
+删除存储项（等同于 `set(undefined)`）。
+
+```tsx
+storage.token.remove(); // 删除 token
+```
+
+#### `useValue(): T`
+
+React Hook，用于在组件中订阅存储值的变化。
+
+```tsx
+function MyComponent() {
+  const theme = storage.theme.useValue();
+  // 当其他地方修改 theme 时，组件会自动重新渲染
+  return <div className={theme}>内容</div>;
+}
+```
+
+#### `subscribe(listener: () => void): () => void`
+
+订阅存储值的变化。
+
+```tsx
+const unsubscribe = storage.theme.subscribe(() => {
+  console.log("主题已更改为:", storage.theme.get());
+});
+
+// 取消订阅
+unsubscribe();
+```
 
 ### 属性
 
-- `key`: 完整的存储键名（包含命名空间）
-- `defaultValue`: 存储项的默认值
+#### `key: string`
+
+完整的存储键名（包含命名空间）。
+
+```tsx
+console.log(storage.token.key); // "myApp.token"
+```
+
+#### `defaultValue: T`
+
+存储项的默认值。
+
+```tsx
+console.log(storage.theme.defaultValue); // "light"
+```
 
 ## 高级特性
 
@@ -77,8 +198,7 @@ function ThemeSwitch() {
 
 为了优化性能和避免不必要的更新，内部实现了值缓存机制：
 
-```ts
-// 对象类型示例
+```tsx
 class DataMap {
   config = { theme: "light", fontSize: 14 };
 }
@@ -94,14 +214,14 @@ function ConfigPanel() {
 
 // 2. 智能更新
 const currentConfig = storage.config.get();
-storage.config.set({ ...currentConfig });  // 值未实际变化，不会触发更新事件
+storage.config.set({ ...currentConfig }); // 值未实际变化，不会触发更新事件
 ```
 
 ### 跨标签页同步
 
 当在一个标签页中修改存储值时，其他标签页会自动同步更新：
 
-```ts
+```tsx
 // 标签页 A
 function PageA() {
   const theme = storage.theme.useValue();
@@ -125,14 +245,412 @@ function PageB() {
 
 通过 TypeScript 的类型推导，可以获得完整的类型提示和检查：
 
-```ts
+```tsx
 class DataMap {
   count: number = 0;
   user: { name: string; age: number } | null = null;
+  settings: {
+    theme: "light" | "dark";
+    language: string;
+  } = {
+    theme: "light",
+    language: "zh-CN",
+  };
 }
 
 const storage = createStorage({ DataMap, namespace: "app" });
 
-storage.count.set("123"); // TS 错误：类型不匹配
-storage.user.set({ name: "张三" }); // TS 错误：缺少必需属性 'age'
+// ✅ 正确的使用
+storage.count.set(42);
+storage.user.set({ name: "张三", age: 25 });
+storage.settings.set({ theme: "dark", language: "en-US" });
+
+// ❌ 类型错误
+storage.count.set("123"); // 错误：类型不匹配
+storage.user.set({ name: "张三" }); // 错误：缺少必需属性 'age'
+storage.settings.set({ theme: "blue" }); // 错误：theme 值不在联合类型中
 ```
+
+## 实际应用示例
+
+### 1. 用户认证状态管理
+
+```tsx
+class AuthDataMap {
+  token = "";
+  user = null as { id: string; name: string; email: string } | null;
+  isLoggedIn = false;
+  lastLoginTime = 0;
+}
+
+const authStorage = createStorage({
+  DataMap: AuthDataMap,
+  namespace: "auth",
+  storageType: "local",
+});
+
+// 认证服务
+class AuthService {
+  static login(token: string, user: AuthDataMap["user"]) {
+    authStorage.token.set(token);
+    authStorage.user.set(user);
+    authStorage.isLoggedIn.set(true);
+    authStorage.lastLoginTime.set(Date.now());
+  }
+
+  static logout() {
+    authStorage.token.remove();
+    authStorage.user.remove();
+    authStorage.isLoggedIn.set(false);
+    authStorage.lastLoginTime.remove();
+  }
+
+  static isAuthenticated(): boolean {
+    return authStorage.isLoggedIn.get();
+  }
+}
+
+// 使用在组件中
+function LoginStatus() {
+  const isLoggedIn = authStorage.isLoggedIn.useValue();
+  const user = authStorage.user.useValue();
+
+  if (isLoggedIn && user) {
+    return (
+      <div>
+        <span>欢迎，{user.name}</span>
+        <button onClick={() => AuthService.logout()}>退出</button>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={() => {
+        /* 打开登录弹窗 */
+      }}
+    >
+      登录
+    </button>
+  );
+}
+```
+
+### 2. 应用设置管理
+
+```tsx
+class SettingsDataMap {
+  theme = "light" as "light" | "dark";
+  language = "zh-CN";
+  fontSize = 14;
+  notifications = {
+    email: true,
+    push: true,
+    sms: false,
+  };
+  sidebar = {
+    collapsed: false,
+    width: 240,
+  };
+}
+
+const settingsStorage = createStorage({
+  DataMap: SettingsDataMap,
+  namespace: "settings",
+});
+
+// 设置管理器
+class SettingsManager {
+  static updateTheme(theme: "light" | "dark") {
+    settingsStorage.theme.set(theme);
+    document.documentElement.setAttribute("data-theme", theme);
+  }
+
+  static updateNotifications(
+    type: keyof SettingsDataMap["notifications"],
+    enabled: boolean,
+  ) {
+    const current = settingsStorage.notifications.get();
+    settingsStorage.notifications.set({
+      ...current,
+      [type]: enabled,
+    });
+  }
+
+  static resetToDefault() {
+    const defaultSettings = new SettingsDataMap();
+    Object.keys(defaultSettings).forEach((key) => {
+      settingsStorage[key].set(defaultSettings[key]);
+    });
+  }
+}
+
+// 设置面板组件
+function SettingsPanel() {
+  const theme = settingsStorage.theme.useValue();
+  const language = settingsStorage.language.useValue();
+  const fontSize = settingsStorage.fontSize.useValue();
+  const notifications = settingsStorage.notifications.useValue();
+
+  return (
+    <div>
+      <h2>应用设置</h2>
+
+      <div>
+        <label>主题：</label>
+        <select
+          value={theme}
+          onChange={(e) =>
+            SettingsManager.updateTheme(e.target.value as "light" | "dark")
+          }
+        >
+          <option value="light">浅色</option>
+          <option value="dark">深色</option>
+        </select>
+      </div>
+
+      <div>
+        <label>语言：</label>
+        <select
+          value={language}
+          onChange={(e) => settingsStorage.language.set(e.target.value)}
+        >
+          <option value="zh-CN">中文</option>
+          <option value="en-US">English</option>
+        </select>
+      </div>
+
+      <div>
+        <label>字体大小：</label>
+        <input
+          type="number"
+          value={fontSize}
+          onChange={(e) => settingsStorage.fontSize.set(Number(e.target.value))}
+        />
+      </div>
+
+      <div>
+        <h3>通知设置</h3>
+        <label>
+          <input
+            type="checkbox"
+            checked={notifications.email}
+            onChange={(e) =>
+              SettingsManager.updateNotifications("email", e.target.checked)
+            }
+          />
+          邮件通知
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={notifications.push}
+            onChange={(e) =>
+              SettingsManager.updateNotifications("push", e.target.checked)
+            }
+          />
+          推送通知
+        </label>
+      </div>
+
+      <button onClick={() => SettingsManager.resetToDefault()}>
+        重置为默认设置
+      </button>
+    </div>
+  );
+}
+```
+
+### 3. 购物车管理
+
+```tsx
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
+
+class CartDataMap {
+  items: CartItem[] = [];
+  total = 0;
+  itemCount = 0;
+  lastUpdated = 0;
+}
+
+const cartStorage = createStorage({
+  DataMap: CartDataMap,
+  namespace: "cart",
+});
+
+class CartManager {
+  static addItem(item: Omit<CartItem, "quantity">, quantity = 1) {
+    const items = cartStorage.items.get();
+    const existingItem = items.find((i) => i.id === item.id);
+
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      items.push({ ...item, quantity });
+    }
+
+    this.updateCart(items);
+  }
+
+  static removeItem(itemId: string) {
+    const items = cartStorage.items.get().filter((item) => item.id !== itemId);
+    this.updateCart(items);
+  }
+
+  static updateQuantity(itemId: string, quantity: number) {
+    const items = cartStorage.items.get();
+    const item = items.find((i) => i.id === itemId);
+
+    if (item) {
+      if (quantity <= 0) {
+        this.removeItem(itemId);
+      } else {
+        item.quantity = quantity;
+        this.updateCart(items);
+      }
+    }
+  }
+
+  static clear() {
+    cartStorage.items.set([]);
+    cartStorage.total.set(0);
+    cartStorage.itemCount.set(0);
+    cartStorage.lastUpdated.set(Date.now());
+  }
+
+  private static updateCart(items: CartItem[]) {
+    const total = items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0,
+    );
+    const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
+    cartStorage.items.set(items);
+    cartStorage.total.set(total);
+    cartStorage.itemCount.set(itemCount);
+    cartStorage.lastUpdated.set(Date.now());
+  }
+}
+
+// 购物车组件
+function CartButton() {
+  const itemCount = cartStorage.itemCount.useValue();
+
+  return <button>购物车 ({itemCount})</button>;
+}
+
+function CartSummary() {
+  const items = cartStorage.items.useValue();
+  const total = cartStorage.total.useValue();
+
+  return (
+    <div>
+      <h3>购物车</h3>
+      {items.map((item) => (
+        <div key={item.id}>
+          <span>{item.name}</span>
+          <span>
+            ¥{item.price} × {item.quantity}
+          </span>
+          <button
+            onClick={() =>
+              CartManager.updateQuantity(item.id, item.quantity - 1)
+            }
+          >
+            -
+          </button>
+          <button
+            onClick={() =>
+              CartManager.updateQuantity(item.id, item.quantity + 1)
+            }
+          >
+            +
+          </button>
+          <button onClick={() => CartManager.removeItem(item.id)}>删除</button>
+        </div>
+      ))}
+      <div>总计：¥{total}</div>
+      <button onClick={() => CartManager.clear()}>清空购物车</button>
+    </div>
+  );
+}
+```
+
+## 最佳实践
+
+### 1. 合理设计数据结构
+
+```tsx
+// ✅ 好的做法 - 扁平化结构
+class AppDataMap {
+  theme = "light";
+  userId = "";
+  userName = "";
+  userEmail = "";
+  notificationEnabled = true;
+  sidebarCollapsed = false;
+}
+
+// ❌ 避免的做法 - 过度嵌套
+class AppDataMap {
+  user = {
+    profile: {
+      basic: {
+        name: "",
+        email: "",
+      },
+      settings: {
+        notifications: {
+          email: true,
+          push: true,
+        },
+      },
+    },
+  };
+}
+```
+
+### 2. 使用命名空间隔离
+
+```tsx
+// 用户相关存储
+const userStorage = createStorage({
+  DataMap: UserDataMap,
+  namespace: "user",
+});
+
+// 应用设置存储
+const settingsStorage = createStorage({
+  DataMap: SettingsDataMap,
+  namespace: "settings",
+});
+
+// 缓存数据存储（使用 sessionStorage）
+const cacheStorage = createStorage({
+  DataMap: CacheDataMap,
+  namespace: "cache",
+  storageType: "session",
+});
+```
+
+## 注意事项
+
+1. **存储限制**: localStorage 通常有 5-10MB 的存储限制，请合理使用存储空间。
+
+2. **数据序列化**: 复杂对象会被序列化为 JSON，确保数据可以被正确序列化和反序列化。
+
+3. **浏览器支持**: 确保目标浏览器支持 localStorage 和 sessionStorage。
+
+4. **数据迁移**: 当数据结构发生变化时，需要考虑向后兼容性。
+
+5. **隐私模式**: 在浏览器隐私模式下，存储功能可能受限。
+
+6. **性能考虑**: 避免频繁的大量数据存储操作，合理使用缓存机制。
+
+`createStorage` 提供了一个强大而灵活的本地存储解决方案，特别适合需要跨组件共享状态且希望数据持久化的应用场景。

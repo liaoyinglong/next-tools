@@ -1,51 +1,640 @@
 ---
-title: Request Builder
-description: 基于 react-query 封装的 API 代码生成运行时工具
+title: RequestBuilder
+description: 基于 TanStack Query 封装的类型安全 API 请求构建器
 ---
 
-# Request Builder
+# RequestBuilder
 
-基于 `react-query`常用的 `hook` 封装的 `api code gen runtime`，提供如下能力：
+`RequestBuilder` 是一个基于 TanStack Query (React Query) 封装的类型安全 API 请求构建器。它提供了完整的 HTTP 请求解决方案，包括查询、变更、缓存管理等功能，特别适合与 API 代码生成工具配合使用。
 
-### example
+## 特性
 
-```ts
-// 一般情况下，这些代码是通过 api code gen 工具生成的
-export const coinsPostApi = new RequestBuilder<
-  coinsPostApi.Req,
-  coinsPostApi.Res
->({
-  url: "/coins",
-  method: "post",
+- 🔒 **类型安全**: 完整的 TypeScript 类型支持
+- 🚀 **React Query 集成**: 基于 TanStack Query 提供缓存和状态管理
+- 📦 **灵活配置**: 支持多种请求配置和自定义选项
+- 🔄 **自动重试**: 内置错误处理和重试机制
+- 🎯 **路径参数**: 自动处理 URL 路径参数替换
+- 📊 **分页支持**: 内置无限滚动分页功能
+- 🛠️ **可扩展**: 支持自定义请求函数和查询客户端
+
+## 基本用法
+
+### 导入
+
+```tsx
+import { RequestBuilder } from '@dune2/tools';
+```
+
+### 创建 RequestBuilder 实例
+
+```tsx
+// 基础用法
+const userApi = new RequestBuilder<UserRequest, UserResponse>({
+  url: '/api/users',
+  method: 'get',
+});
+
+// 带路径参数
+const userDetailApi = new RequestBuilder<UserDetailRequest, UserDetailResponse>({
+  url: '/api/users/{userId}',
+  method: 'get',
+  urlPathParams: ['userId'],
+});
+
+// 完整配置
+const createUserApi = new RequestBuilder<CreateUserRequest, CreateUserResponse>({
+  url: '/api/users',
+  method: 'post',
+  queryClient: customQueryClient,
+  requestFn: customRequestFn,
+  meta: { requiresAuth: true },
 });
 ```
 
-**普通 promise 调用，不走 react-query 的缓存**
+### 发送请求
 
-```ts
-const res = await coinsPostApi.request();
-// do something
-console.log(res);
+```tsx
+// 直接发送请求（不使用缓存）
+const response = await userApi.request({ page: 1, limit: 10 });
+
+// 使用自定义配置发送请求
+const response = await userApi.requestWithConfig({
+  params: { page: 1, limit: 10 },
+  headers: { 'Authorization': 'Bearer token' },
+});
 ```
 
-**hooks 调用，走 react-query 的缓存**
+## React Hooks 集成
 
-```ts
-const { data } = coinsPostApi.useQuery();
-// or
-const {} = coinsPostApi.useMutation();
-// or 分页能力
-const {} = coinsPostApi.useInfiniteQuery();
+### useQuery - 数据查询
+
+```tsx
+function UserList() {
+  const { data, isLoading, error } = userApi.useQuery(
+    { page: 1, limit: 10 },
+    {
+      enabled: true,
+      staleTime: 5000,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  return (
+    <ul>
+      {data?.users.map(user => (
+        <li key={user.id}>{user.name}</li>
+      ))}
+    </ul>
+  );
+}
 ```
 
-**支持 react-query 的能力**
+### useMutation - 数据变更
 
-```ts
-coinsPostApi.prefetchQuery();
-coinsPostApi.fetchQuery();
-coinsPostApi.invalidateQuery();
-coinsPostApi.refetchQueries();
-coinsPostApi.getQueryData();
-coinsPostApi.setQueryData();
-coinsPostApi.ensureQueryData();
+```tsx
+function CreateUserForm() {
+  const mutation = createUserApi.useMutation({
+    onSuccess: (data) => {
+      console.log('User created:', data);
+      // 刷新用户列表
+      userApi.invalidateQuery();
+    },
+    onError: (error) => {
+      console.error('Failed to create user:', error);
+    },
+  });
+
+  const handleSubmit = (formData: CreateUserRequest) => {
+    mutation.mutate(formData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* 表单内容 */}
+      <button type="submit" disabled={mutation.isPending}>
+        {mutation.isPending ? 'Creating...' : 'Create User'}
+      </button>
+    </form>
+  );
+}
 ```
+
+### useInfiniteQuery - 无限滚动分页
+
+```tsx
+function InfiniteUserList() {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = userApi.useInfiniteQuery(
+    { pageSize: 20 },
+    {
+      getNextPageParam: (lastPage, pages) => {
+        return lastPage.hasMore ? pages.length + 1 : undefined;
+      },
+    }
+  );
+
+  if (isLoading) return <div>Loading...</div>;
+
+  return (
+    <div>
+      {data?.map(user => (
+        <div key={user.id}>{user.name}</div>
+      ))}
+      
+      {hasNextPage && (
+        <button 
+          onClick={() => fetchNextPage()}
+          disabled={isFetchingNextPage}
+        >
+          {isFetchingNextPage ? 'Loading more...' : 'Load More'}
+        </button>
+      )}
+    </div>
+  );
+}
+```
+
+## 缓存管理
+
+### 预取数据
+
+```tsx
+// 预取数据（在用户需要之前）
+await userApi.prefetchQuery({ page: 1, limit: 10 });
+
+// 在组件中使用预取的数据
+function UserProfile({ userId }: { userId: string }) {
+  useEffect(() => {
+    // 预取用户详情
+    userDetailApi.prefetchQuery({ userId });
+  }, [userId]);
+
+  // ... 组件内容
+}
+```
+
+### 手动获取数据
+
+```tsx
+// 手动获取数据（绕过缓存）
+const freshData = await userApi.fetchQuery({ page: 1, limit: 10 });
+
+// 确保数据存在（如果缓存中没有则获取）
+const data = await userApi.ensureQueryData({ page: 1, limit: 10 });
+```
+
+### 缓存操作
+
+```tsx
+// 获取缓存数据
+const cachedData = userApi.getQueryData({ page: 1, limit: 10 });
+
+// 设置缓存数据
+userApi.setQueryData({ page: 1, limit: 10 }, newData);
+
+// 使缓存失效
+userApi.invalidateQuery({ page: 1, limit: 10 });
+
+// 重新获取数据
+userApi.refetchQueries({ page: 1, limit: 10 });
+```
+
+## 高级配置
+
+### 自定义请求函数
+
+```tsx
+// 设置全局请求函数
+RequestBuilder.setRequestFn(async (config) => {
+  const response = await fetch(config.url, {
+    method: config.method,
+    headers: config.headers,
+    body: config.data ? JSON.stringify(config.data) : undefined,
+  });
+  
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+  
+  return response.json();
+});
+
+// 为特定实例设置请求函数
+const customApi = new RequestBuilder({
+  url: '/api/custom',
+  method: 'post',
+  requestFn: customRequestFunction,
+});
+```
+
+### 自定义查询客户端
+
+```tsx
+import { QueryClient } from '@tanstack/react-query';
+
+const customQueryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5分钟
+      retry: 3,
+    },
+  },
+});
+
+// 设置全局查询客户端
+RequestBuilder.setQueryClient(customQueryClient);
+
+// 为特定实例设置查询客户端
+const api = new RequestBuilder({
+  url: '/api/data',
+  method: 'get',
+  queryClient: customQueryClient,
+});
+```
+
+### 路径参数处理
+
+```tsx
+// 定义带路径参数的 API
+const userDetailApi = new RequestBuilder<
+  { userId: string; includeProfile: boolean },
+  UserDetailResponse
+>({
+  url: '/api/users/{userId}',
+  method: 'get',
+  urlPathParams: ['userId'],
+});
+
+// 使用时会自动替换路径参数
+const response = await userDetailApi.request({
+  userId: '123',
+  includeProfile: true,
+});
+// 实际请求: GET /api/users/123?includeProfile=true
+```
+
+### 元数据和中间件
+
+```tsx
+const authApi = new RequestBuilder({
+  url: '/api/protected',
+  method: 'get',
+  meta: {
+    requiresAuth: true,
+    permissions: ['read:users'],
+  },
+});
+
+// 在请求函数中可以访问元数据
+const requestFn = async (config) => {
+  if (config.meta?.requiresAuth) {
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${getAuthToken()}`,
+    };
+  }
+  
+  return fetch(config.url, config);
+};
+```
+
+## 实际应用示例
+
+### 1. 用户管理 API
+
+```tsx
+// 类型定义
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
+interface UserListRequest {
+  page: number;
+  limit: number;
+  search?: string;
+}
+
+interface UserListResponse {
+  users: User[];
+  total: number;
+  hasMore: boolean;
+}
+
+// API 定义
+const userListApi = new RequestBuilder<UserListRequest, UserListResponse>({
+  url: '/api/users',
+  method: 'get',
+});
+
+const createUserApi = new RequestBuilder<Omit<User, 'id'>, User>({
+  url: '/api/users',
+  method: 'post',
+});
+
+const updateUserApi = new RequestBuilder<User, User>({
+  url: '/api/users/{id}',
+  method: 'put',
+  urlPathParams: ['id'],
+});
+
+const deleteUserApi = new RequestBuilder<{ id: string }, void>({
+  url: '/api/users/{id}',
+  method: 'delete',
+  urlPathParams: ['id'],
+});
+
+// 使用示例
+function UserManagement() {
+  const [search, setSearch] = useState('');
+  
+  const { data: users, isLoading } = userListApi.useQuery({
+    page: 1,
+    limit: 20,
+    search,
+  });
+
+  const createMutation = createUserApi.useMutation({
+    onSuccess: () => {
+      userListApi.invalidateQuery();
+    },
+  });
+
+  const updateMutation = updateUserApi.useMutation({
+    onSuccess: () => {
+      userListApi.invalidateQuery();
+    },
+  });
+
+  const deleteMutation = deleteUserApi.useMutation({
+    onSuccess: () => {
+      userListApi.invalidateQuery();
+    },
+  });
+
+  return (
+    <div>
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="搜索用户..."
+      />
+      
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : (
+        <div>
+          {users?.users.map(user => (
+            <div key={user.id}>
+              <span>{user.name}</span>
+              <button onClick={() => updateMutation.mutate(user)}>
+                编辑
+              </button>
+              <button onClick={() => deleteMutation.mutate({ id: user.id })}>
+                删除
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### 2. 文件上传
+
+```tsx
+interface UploadRequest {
+  file: File;
+  folder?: string;
+}
+
+interface UploadResponse {
+  url: string;
+  filename: string;
+  size: number;
+}
+
+const uploadApi = new RequestBuilder<UploadRequest, UploadResponse>({
+  url: '/api/upload',
+  method: 'post',
+  requestFn: async (config) => {
+    const formData = new FormData();
+    formData.append('file', config.data.file);
+    if (config.data.folder) {
+      formData.append('folder', config.data.folder);
+    }
+
+    const response = await fetch(config.url, {
+      method: 'POST',
+      body: formData,
+    });
+
+    return response.json();
+  },
+});
+
+function FileUpload() {
+  const uploadMutation = uploadApi.useMutation({
+    onSuccess: (data) => {
+      console.log('File uploaded:', data.url);
+    },
+    onError: (error) => {
+      console.error('Upload failed:', error);
+    },
+  });
+
+  const handleFileSelect = (file: File) => {
+    uploadMutation.mutate({ file, folder: 'documents' });
+  };
+
+  return (
+    <div>
+      <input
+        type="file"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) handleFileSelect(file);
+        }}
+      />
+      
+      {uploadMutation.isPending && <div>Uploading...</div>}
+      {uploadMutation.isSuccess && <div>Upload successful!</div>}
+      {uploadMutation.isError && <div>Upload failed!</div>}
+    </div>
+  );
+}
+```
+
+## API 参考
+
+### RequestBuilder 构造函数
+
+```tsx
+interface RequestBuilderOptions<Req, Res> {
+  url: string;
+  method?: 'get' | 'post' | 'put' | 'delete' | 'patch' | 'head' | 'options';
+  urlPathParams?: string[];
+  queryClient?: QueryClient;
+  requestFn?: (config: RequestConfig) => Promise<Res>;
+  meta?: Record<string, any>;
+  useQueryOptions?: Partial<UseQueryOptions<Res>>;
+  useMutationOptions?: Partial<UseMutationOptions<Res, unknown, Req>>;
+}
+```
+
+### 主要方法
+
+#### 请求方法
+
+- `request<P extends Req, T = Res>(params?: P, config?: RequestConfig): Promise<T>`
+- `requestWithConfig<T = Res>(config: RequestConfig): Promise<T>`
+
+#### 查询方法
+
+- `useQuery<T = Res>(params?: Req, options?: UseQueryOptions<T>)`
+- `useInfiniteQuery(params?: Req, options?: UseInfiniteQueryOptions<Res>)`
+- `useMutation(options?: UseMutationOptions<Res, unknown, Req>)`
+
+#### 缓存管理
+
+- `prefetchQuery(params?: Req, options?: FetchQueryOptions<Res>)`
+- `fetchQuery(params?: Req, options?: FetchQueryOptions<Res>)`
+- `ensureQueryData(params?: Req, options?: FetchQueryOptions<Res>)`
+- `getQueryData(params?: Req, option?: QueryClientBasic)`
+- `setQueryData(params?: Req, data?: Res, option?: QueryClientBasic)`
+- `invalidateQuery(params?: Req, options?: InvalidateOptions & QueryClientBasic)`
+- `refetchQueries(params?: Req, options?: RefetchOptions & QueryClientBasic)`
+
+#### 工具方法
+
+- `getQueryKey(params?: Req): readonly [string, string, Req?]`
+- `ensureQueryClient(options?: { queryClient?: QueryClient }): QueryClient`
+
+### 静态方法
+
+- `RequestBuilder.setRequestFn(requestFn: RequestFn | null)`
+- `RequestBuilder.setQueryClient(queryClient: QueryClient | null)`
+
+## 最佳实践
+
+### 1. 类型安全
+
+```tsx
+// 定义清晰的接口
+interface CreateUserRequest {
+  name: string;
+  email: string;
+  role: 'admin' | 'user';
+}
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'user';
+  createdAt: string;
+}
+
+// 使用类型安全的 RequestBuilder
+const createUserApi = new RequestBuilder<CreateUserRequest, User>({
+  url: '/api/users',
+  method: 'post',
+});
+```
+
+### 2. 错误处理
+
+```tsx
+function UserList() {
+  const { data, isLoading, error } = userApi.useQuery(
+    { page: 1, limit: 10 },
+    {
+      retry: 3,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      onError: (error) => {
+        console.error('Failed to fetch users:', error);
+        // 可以在这里显示错误通知
+      },
+    }
+  );
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  // ... 其他逻辑
+}
+```
+
+### 3. 性能优化
+
+```tsx
+// 使用适当的缓存策略
+const userApi = new RequestBuilder({
+  url: '/api/users',
+  method: 'get',
+  useQueryOptions: {
+    staleTime: 1000 * 60 * 5, // 5分钟内不重新获取
+    cacheTime: 1000 * 60 * 30, // 30分钟后从缓存中移除
+  },
+});
+
+// 预取相关数据
+function UserProfile({ userId }: { userId: string }) {
+  useEffect(() => {
+    // 预取用户的订单数据
+    userOrdersApi.prefetchQuery({ userId });
+  }, [userId]);
+}
+```
+
+### 4. 统一配置
+
+```tsx
+// 创建统一的 API 基类
+class BaseApi<Req, Res> extends RequestBuilder<Req, Res> {
+  constructor(options: Omit<RequestBuilderOptions<Req, Res>, 'requestFn'>) {
+    super({
+      ...options,
+      requestFn: async (config) => {
+        // 统一的请求处理逻辑
+        const response = await axios(config);
+        return response.data;
+      },
+    });
+  }
+}
+
+// 使用基类创建 API
+const userApi = new BaseApi<UserRequest, UserResponse>({
+  url: '/api/users',
+  method: 'get',
+});
+```
+
+## 注意事项
+
+1. **类型安全**: 确保为 RequestBuilder 提供正确的类型参数，这样可以获得完整的类型检查和智能提示。
+
+2. **缓存策略**: 根据数据的特性选择合适的缓存策略，避免不必要的网络请求。
+
+3. **错误处理**: 实现完善的错误处理机制，提供良好的用户体验。
+
+4. **性能考虑**: 合理使用预取和缓存，避免过度请求。
+
+5. **测试**: 为 API 请求编写单元测试，确保功能正常。
+
+`RequestBuilder` 是一个功能强大的 API 请求工具，特别适合与类型安全的 API 代码生成工具配合使用，可以大大提高开发效率和代码质量。

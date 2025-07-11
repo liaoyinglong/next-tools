@@ -7,14 +7,29 @@ description: 用于修改和增强 React 组件 props 的高阶函数
 
 `mapProps` 是一个用于修改和增强 React 组件 props 的高阶函数。它可以帮助你轻松地为组件添加默认 props、修改现有 props，或者基于已有 props 动态生成新的 props。
 
+## 特性
+
+- 🎯 **灵活的 Props 操作**: 支持对象和函数两种方式操作 props
+- 🔧 **自动 ref 转发**: 自动处理 ref 的转发
+- 📦 **类型安全**: 完整的 TypeScript 类型推断
+- 🏷️ **调试友好**: 自动设置 displayName 便于调试
+- 🚀 **零依赖**: 不依赖额外的第三方库
+
 ## 使用场景
 
 - 为组件添加默认样式或属性
 - 基于已有 props 动态计算新的 props
 - 统一修改多个组件的 props
 - 组件 props 适配和转换
+- 创建主题化组件
 
-## 基础用法
+## 基本用法
+
+### 导入
+
+```tsx
+import { mapProps } from '@dune2/tools';
+```
 
 ### 为原生 HTML 元素添加默认属性
 
@@ -26,7 +41,7 @@ const Container = mapProps("div", {
 });
 
 // 使用时可以覆盖默认属性
-<Container className="custom-container" style={{ display: "grid" }} />;
+<Container className="custom-container" style={{ display: "grid" }} />
 ```
 
 ### 为自定义组件添加默认属性
@@ -47,10 +62,10 @@ const DarkCard = mapProps(Card, {
 });
 
 // 使用时只需要提供 title
-<DarkCard title="Hello World" />;
+<DarkCard title="Hello World" />
 ```
 
-## 进阶用法
+## 高级用法
 
 ### 动态计算 Props
 
@@ -60,6 +75,11 @@ const EnhancedButton = mapProps("button", (props) => ({
   className: `btn ${props.disabled ? "btn-disabled" : ""} ${props.className || ""}`,
   "aria-disabled": props.disabled,
 }));
+
+// 使用
+<EnhancedButton disabled onClick={() => console.log('clicked')}>
+  Click me
+</EnhancedButton>
 ```
 
 ### Props 适配和转换
@@ -75,40 +95,123 @@ const LegacyInput = ({ text, onTextChange }: LegacyInputProps) => {
 };
 
 // 将旧的 API 适配到新的 value/onChange 模式
-const ModernInput = mapProps(LegacyInput, (props) => ({
+const ModernInput = mapProps(LegacyInput, (props: { value: string; onChange: (value: string) => void }) => ({
   text: props.value,
   onTextChange: props.onChange,
 }));
+
+// 现在可以使用现代的 API
+<ModernInput value="hello" onChange={(value) => console.log(value)} />
 ```
 
-## 类型定义
-
-### 原生 HTML 元素
+### 创建主题化组件
 
 ```tsx
-// 对象方式
+interface ButtonProps {
+  children: React.ReactNode;
+  variant?: 'primary' | 'secondary' | 'danger';
+  size?: 'small' | 'medium' | 'large';
+}
+
+const BaseButton = ({ children, variant = 'primary', size = 'medium' }: ButtonProps) => {
+  return (
+    <button className={`btn btn-${variant} btn-${size}`}>
+      {children}
+    </button>
+  );
+};
+
+// 创建主题化的按钮组件
+const PrimaryButton = mapProps(BaseButton, { variant: 'primary' });
+const DangerButton = mapProps(BaseButton, { variant: 'danger' });
+const SmallButton = mapProps(BaseButton, { size: 'small' });
+
+// 组合使用
+const SmallDangerButton = mapProps(DangerButton, { size: 'small' });
+```
+
+### 条件渲染增强
+
+```tsx
+const ConditionalWrapper = mapProps('div', (props) => {
+  const { show, children, ...rest } = props;
+  
+  if (!show) {
+    return { style: { display: 'none' }, ...rest, children };
+  }
+  
+  return { ...rest, children };
+});
+
+// 使用
+<ConditionalWrapper show={isVisible} className="wrapper">
+  <p>This content is conditionally visible</p>
+</ConditionalWrapper>
+```
+
+### 事件处理增强
+
+```tsx
+const TrackedButton = mapProps('button', (props) => {
+  const { onClick, trackingId, ...rest } = props;
+  
+  return {
+    ...rest,
+    onClick: (e) => {
+      // 添加埋点逻辑
+      if (trackingId) {
+        analytics.track('button_click', { id: trackingId });
+      }
+      onClick?.(e);
+    }
+  };
+});
+
+// 使用
+<TrackedButton 
+  trackingId="hero-cta" 
+  onClick={() => console.log('clicked')}
+>
+  Call to Action
+</TrackedButton>
+```
+
+## API 参考
+
+### 函数重载
+
+`mapProps` 函数提供了多种重载，以支持不同的使用场景：
+
+#### 1. 原生 HTML 元素 + 对象方式
+
+```tsx
 function mapProps<C extends keyof JSX.IntrinsicElements>(
   BaseComponent: C,
   mapper: JSX.IntrinsicElements[C],
 ): FC<JSX.IntrinsicElements[C]>;
+```
 
-// 函数方式
+#### 2. 原生 HTML 元素 + 函数方式
+
+```tsx
 function mapProps<
   C extends keyof JSX.IntrinsicElements,
   P extends JSX.IntrinsicElements[C],
 >(BaseComponent: C, mapper: (p: P) => P): FC<P>;
 ```
 
-### 自定义组件
+#### 3. 自定义组件 + 对象方式
 
 ```tsx
-// 对象方式
 function mapProps<
   RawP extends object,
   ExtP extends Partial<RawP> = Partial<RawP>,
 >(BaseComponent: ComponentType<RawP>, mapper: ExtP): Comp<RawP, ExtP>;
+```
 
-// 函数方式
+#### 4. 自定义组件 + 函数方式
+
+```tsx
 function mapProps<
   C extends ComponentType<any>,
   RawP extends ComponentProps<C>,
@@ -116,12 +219,201 @@ function mapProps<
 >(BaseComponent: C, mapper: (p: ExtP) => ExtP): Comp<RawP, ExtP>;
 ```
 
-<example-inset>./examples/mapProps</example-inset>
+### 参数
+
+- `BaseComponent`: 要包装的基础组件（可以是 HTML 元素名称或 React 组件）
+- `mapper`: Props 映射器（可以是对象或函数）
+  - 对象方式：提供的属性会作为默认 props
+  - 函数方式：接收组件的 props 并返回修改后的 props
+
+### 返回值
+
+返回一个新的 React 组件，该组件具有经过 mapper 处理的 props。
+
+## 实际应用示例
+
+### 1. 创建设计系统组件
+
+```tsx
+// 基础组件
+const BaseInput = (props: React.InputHTMLAttributes<HTMLInputElement>) => {
+  return <input {...props} />;
+};
+
+// 创建不同尺寸的输入框
+const SmallInput = mapProps(BaseInput, {
+  className: 'input input-sm',
+  style: { padding: '4px 8px' }
+});
+
+const LargeInput = mapProps(BaseInput, {
+  className: 'input input-lg',
+  style: { padding: '12px 16px' }
+});
+
+// 创建特定类型的输入框
+const SearchInput = mapProps(BaseInput, (props) => ({
+  ...props,
+  type: 'search',
+  placeholder: props.placeholder || '搜索...',
+  className: `${props.className || ''} search-input`.trim()
+}));
+```
+
+### 2. 表单组件封装
+
+```tsx
+interface FormFieldProps {
+  label: string;
+  error?: string;
+  required?: boolean;
+  children: React.ReactNode;
+}
+
+const FormField = ({ label, error, required, children }: FormFieldProps) => {
+  return (
+    <div className="form-field">
+      <label>
+        {label}
+        {required && <span className="required">*</span>}
+      </label>
+      {children}
+      {error && <span className="error">{error}</span>}
+    </div>
+  );
+};
+
+// 创建特定的表单字段
+const RequiredFormField = mapProps(FormField, { required: true });
+const OptionalFormField = mapProps(FormField, { required: false });
+```
+
+### 3. 响应式组件
+
+```tsx
+const ResponsiveImage = mapProps('img', (props) => {
+  const { src, alt, breakpoints, ...rest } = props;
+  
+  // 根据屏幕尺寸选择合适的图片
+  const currentSrc = getCurrentSrcForBreakpoint(src, breakpoints);
+  
+  return {
+    ...rest,
+    src: currentSrc,
+    alt,
+    loading: 'lazy',
+    onError: (e) => {
+      // 图片加载失败时的处理
+      e.currentTarget.src = '/fallback-image.jpg';
+      props.onError?.(e);
+    }
+  };
+});
+```
+
+## 性能优化
+
+### 1. 避免在渲染中创建新组件
+
+```tsx
+// ❌ 错误做法 - 每次渲染都会创建新组件
+function MyComponent() {
+  const StyledButton = mapProps('button', { className: 'styled-btn' });
+  return <StyledButton>Click me</StyledButton>;
+}
+
+// ✅ 正确做法 - 在组件外部创建
+const StyledButton = mapProps('button', { className: 'styled-btn' });
+
+function MyComponent() {
+  return <StyledButton>Click me</StyledButton>;
+}
+```
+
+### 2. 使用 useMemo 缓存动态 mapper
+
+```tsx
+function MyComponent({ theme }: { theme: string }) {
+  const ThemedButton = useMemo(
+    () => mapProps('button', { className: `btn btn-${theme}` }),
+    [theme]
+  );
+  
+  return <ThemedButton>Themed Button</ThemedButton>;
+}
+```
+
+## 最佳实践
+
+### 1. 保持 mapper 函数的纯净性
+
+```tsx
+// ✅ 好的做法
+const TrackedButton = mapProps('button', (props) => {
+  return {
+    ...props,
+    onClick: (e) => {
+      analytics.track('click', { id: props.id });
+      props.onClick?.(e);
+    }
+  };
+});
+
+// ❌ 避免的做法
+const TrackedButton = mapProps('button', (props) => {
+  // 不要在 mapper 中执行副作用
+  console.log('Creating tracked button'); // 这会在每次渲染时执行
+  return props;
+});
+```
+
+### 2. 合理使用 TypeScript
+
+```tsx
+// 定义清晰的类型
+interface ButtonProps {
+  variant: 'primary' | 'secondary';
+  size: 'small' | 'large';
+  children: React.ReactNode;
+}
+
+const Button = ({ variant, size, children }: ButtonProps) => {
+  return (
+    <button className={`btn btn-${variant} btn-${size}`}>
+      {children}
+    </button>
+  );
+};
+
+// 使用类型安全的 mapProps
+const PrimaryButton = mapProps(Button, { variant: 'primary' as const });
+```
+
+### 3. 组件命名规范
+
+```tsx
+// 使用描述性的名称
+const PrimaryButton = mapProps(Button, { variant: 'primary' });
+const DangerButton = mapProps(Button, { variant: 'danger' });
+const SmallButton = mapProps(Button, { size: 'small' });
+
+// 避免模糊的名称
+const Button1 = mapProps(Button, { variant: 'primary' });
+const Button2 = mapProps(Button, { variant: 'danger' });
+```
 
 ## 注意事项
 
-- mapProps 不会修改原始组件，而是返回一个新的组件
-- 当使用对象方式时，传入的 props 会覆盖 mapper 中的同名属性
-- 当使用函数方式时，可以访问到组件接收到的所有 props，并且可以动态计算新的 props
-- mapper 函数应该是纯函数，不应该产生副作用
-- 对于需要 ref 的组件，mapProps 会自动处理 ref 的转发
+1. **不会修改原始组件**: `mapProps` 不会修改原始组件，而是返回一个新的组件。
+
+2. **Props 合并顺序**: 当使用对象方式时，传入的 props 会覆盖 mapper 中的同名属性。
+
+3. **函数方式的灵活性**: 当使用函数方式时，可以访问到组件接收到的所有 props，并且可以动态计算新的 props。
+
+4. **Ref 转发**: 自动处理 ref 的转发，无需手动配置。
+
+5. **调试支持**: 在开发环境中，会自动设置 displayName 便于调试。
+
+6. **性能考虑**: 避免在渲染函数中创建新的 mapProps 组件，应该在组件外部或使用 useMemo 缓存。
+
+`mapProps` 是一个强大而灵活的工具，可以帮助你创建更加可复用和可维护的 React 组件。通过合理使用，可以大大提高开发效率和代码质量。

@@ -1,0 +1,126 @@
+---
+title: Store 工具
+description: 基于 valtio 的状态管理工具，通过分离 actions 和 state 提供更规范的使用方式和更好的类型支持
+---
+
+# Store 工具
+
+一个基于 valtio 的状态管理工具，通过分离 actions 和 state 提供更规范的使用方式和更好的类型支持。
+
+## 基本用法
+
+### 创建 Store
+
+使用 `createStore` 函数来创建一个 store，它接收一个配置对象，包含 `name`、`state` 和 `actionsCreator` 三个字段：
+
+```typescript
+import { createStore } from "@next-tools/tools/store";
+
+const store = createStore({
+  name: "counter",
+  state: {
+    count: 0,
+    user: { name: "John" },
+  },
+  actionsCreator: (state) => ({
+    increment: (amount: number) => {
+      state.count += amount;
+    },
+    setUserName: (name: string) => {
+      state.user.name = name;
+    },
+  }),
+});
+```
+
+### 配置说明
+
+- `name`: store 的名称，用于调试
+- `state`: 定义初始状态，必须是一个对象
+- `actionsCreator`: 定义修改状态的方法，接收 state 参数并返回 actions 对象
+
+## 状态管理
+
+### 获取状态
+
+```typescript
+// 获取完整状态
+const state = store.getState();
+
+// 在 React 组件中使用
+const count = store.useSnapshot((state) => state.count);
+```
+
+### 修改状态
+
+```typescript
+// 使用 actions
+store.actions.increment(1);
+store.actions.setUserName("Jane");
+
+// 直接修改状态（推荐使用 actions）
+store.state.count += 1;
+```
+
+### 监听状态变化
+
+```typescript
+// 监听状态变化
+const unsubscribe = store.subscribe((state) => {
+  console.log("状态改变:", state);
+});
+
+// 停止监听
+unsubscribe();
+```
+
+## React 集成
+
+### useSnapshot
+
+`useSnapshot` 用于在组件中订阅状态变化，基于 valtio 的 useSnapshot：
+
+```typescript
+function Counter() {
+  // 订阅完整状态
+  const state = store.useSnapshot();
+
+  return <div>{state.count}</div>;
+}
+```
+
+## 调试支持
+
+### 浏览器调试
+
+Store 工具会在浏览器的 `window` 对象上注册 `__stores2` 属性，方便调试：
+
+```javascript
+// 在浏览器控制台中访问所有 store 的状态
+console.log(window.__stores2);
+
+// 访问原始的 store 对象
+console.log(window.__stores2.__raw);
+```
+
+## 类型支持
+
+store 的类型会自动推导：
+
+```typescript
+const store = createStore({
+  name: "counter",
+  state: { count: 0 },
+  actionsCreator: (state) => ({
+    increment: (amount: number) => {
+      state.count += amount;
+    },
+  }),
+});
+
+// ✅ 类型安全
+store.actions.increment(1);
+
+// ❌ 类型错误
+store.actions.increment("1"); // Type 'string' is not assignable to type 'number'
+```

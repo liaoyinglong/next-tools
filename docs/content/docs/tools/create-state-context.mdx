@@ -1,35 +1,345 @@
 ---
 title: createStateContext
-description: 用于快速创建 React Context 和相关组件的工具函数
+description: 快速创建 React Context 和 Provider 组件的工具函数
 ---
 
 # createStateContext
 
-`createStateContext` 是一个用于快速创建 React Context 和相关组件的工具函数。它能够简化在 React 应用中共享状态的实现过程，使状态管理变得更加便捷。
+`createStateContext` 是一个用于快速创建 React Context 和相关组件的工具函数。它通过给定的自定义 Hook 来创建 Context 的值，简化了在 React 应用中共享状态的实现过程。
 
-## API
+## 特性
 
-### 参数
+- 🚀 **简化 Context 创建**: 通过自定义 Hook 快速创建 Context
+- 🎯 **类型安全**: 完整的 TypeScript 支持
+- 🔧 **高阶组件支持**: 提供 `withProvider` 高阶组件
+- 🏷️ **调试友好**: 自动设置 displayName 便于调试
 
-该函数接收一个配置对象，包含以下属性：
+## 基本用法
 
-```typescript
-interface Params<T> {
-  name: string; // Context 的名称，用于调试
-  useValueHooks: () => T; // 返回 Context 共享值的 Hook 函数
-  defaultValue?: T; // Context 的默认值
+### 导入
+
+```tsx
+import { createStateContext } from '@dune2/tools';
+```
+
+### 创建 Context
+
+```tsx
+import { useState } from 'react';
+import { createStateContext } from '@dune2/tools';
+
+// 定义状态和操作
+function useCounter(props: { initialValue: number }) {
+  const [count, setCount] = useState(props.initialValue);
+  
+  return {
+    count,
+    increment: () => setCount(c => c + 1),
+    decrement: () => setCount(c => c - 1),
+    reset: () => setCount(props.initialValue)
+  };
+}
+
+// 创建 Context
+const CounterContext = createStateContext({
+  name: 'Counter',
+  useValueHooks: useCounter,
+  defaultValue: {
+    count: 0,
+    increment: () => {},
+    decrement: () => {},
+    reset: () => {}
+  }
+});
+```
+
+### 使用 Provider
+
+```tsx
+function App() {
+  return (
+    <CounterContext.Provider initialValue={10}>
+      <CounterDisplay />
+      <CounterControls />
+    </CounterContext.Provider>
+  );
+}
+
+function CounterDisplay() {
+  const { count } = CounterContext.useContextValue();
+  return <div>Count: {count}</div>;
+}
+
+function CounterControls() {
+  const { increment, decrement, reset } = CounterContext.useContextValue();
+  return (
+    <div>
+      <button onClick={increment}>+</button>
+      <button onClick={decrement}>-</button>
+      <button onClick={reset}>Reset</button>
+    </div>
+  );
 }
 ```
 
-### 返回值
+## API 参考
 
-函数返回一个对象，包含以下属性：
+### createStateContext
 
-- `useContextValue`: Hook 函数，用于在组件中获取 Context 的值
-- `Provider`: React 组件，用于在组件树中提供 Context
-- `withProvider`: 高阶组件函数，用于将 Provider 包裹到指定组件上
-- `Context`: 创建的 React Context 对象
+创建一个新的 Context 和相关组件。
 
-## 使用示例
+```tsx
+function createStateContext<P, T>(params: Params<P, T>): {
+  useContextValue: () => T;
+  Provider: FC<PropsWithChildren<P>>;
+  withProvider: <C extends object>(Comp: ComponentType<C>, providerProps?: P) => ComponentType<C>;
+  Context: React.Context<T>;
+}
+```
 
-<example-inset>./examples/createStateContext</example-inset>
+#### 参数
+
+- `params: Params<P, T>` - 配置对象
+
+##### Params&lt;P, T&gt;
+
+- `name: string` - Context 的名称，用于调试
+- `useValueHooks: (props: P) => T` - 创建 Context 值的 Hook 函数
+- `defaultValue?: T` - 默认值（可选）
+
+#### 返回值
+
+- `useContextValue: () => T` - 获取 Context 值的 Hook
+- `Provider: FC<PropsWithChildren<P>>` - Provider 组件
+- `withProvider: <C extends object>(Comp: ComponentType<C>, providerProps?: P) => ComponentType<C>` - 高阶组件
+- `Context: React.Context<T>` - 原始 Context 对象
+
+## 高级用法
+
+### 使用 withProvider 高阶组件
+
+```tsx
+// 为组件包装 Provider
+const CounterPageWithProvider = CounterContext.withProvider(CounterPage, {
+  initialValue: 5
+});
+
+function CounterPage() {
+  const { count, increment } = CounterContext.useContextValue();
+  return (
+    <div>
+      <h1>Count: {count}</h1>
+      <button onClick={increment}>Increment</button>
+    </div>
+  );
+}
+```
+
+### 复杂状态管理
+
+```tsx
+import { useReducer } from 'react';
+
+// 定义状态类型
+interface TodoState {
+  todos: Array<{ id: number; text: string; completed: boolean }>;
+}
+
+// 定义操作类型
+type TodoAction =
+  | { type: 'ADD_TODO'; text: string }
+  | { type: 'TOGGLE_TODO'; id: number }
+  | { type: 'REMOVE_TODO'; id: number };
+
+// Reducer 函数
+function todoReducer(state: TodoState, action: TodoAction): TodoState {
+  switch (action.type) {
+    case 'ADD_TODO':
+      return {
+        ...state,
+        todos: [
+          ...state.todos,
+          { id: Date.now(), text: action.text, completed: false }
+        ]
+      };
+    case 'TOGGLE_TODO':
+      return {
+        ...state,
+        todos: state.todos.map(todo =>
+          todo.id === action.id ? { ...todo, completed: !todo.completed } : todo
+        )
+      };
+    case 'REMOVE_TODO':
+      return {
+        ...state,
+        todos: state.todos.filter(todo => todo.id !== action.id)
+      };
+    default:
+      return state;
+  }
+}
+
+// 创建自定义 Hook
+function useTodos(props: { initialTodos?: TodoState['todos'] }) {
+  const [state, dispatch] = useReducer(todoReducer, {
+    todos: props.initialTodos || []
+  });
+
+  return {
+    todos: state.todos,
+    addTodo: (text: string) => dispatch({ type: 'ADD_TODO', text }),
+    toggleTodo: (id: number) => dispatch({ type: 'TOGGLE_TODO', id }),
+    removeTodo: (id: number) => dispatch({ type: 'REMOVE_TODO', id })
+  };
+}
+
+// 创建 Context
+const TodoContext = createStateContext({
+  name: 'Todo',
+  useValueHooks: useTodos
+});
+
+// 使用
+function TodoApp() {
+  return (
+    <TodoContext.Provider initialTodos={[]}>
+      <TodoList />
+      <AddTodoForm />
+    </TodoContext.Provider>
+  );
+}
+
+function TodoList() {
+  const { todos, toggleTodo, removeTodo } = TodoContext.useContextValue();
+  
+  return (
+    <ul>
+      {todos.map(todo => (
+        <li key={todo.id}>
+          <input
+            type="checkbox"
+            checked={todo.completed}
+            onChange={() => toggleTodo(todo.id)}
+          />
+          {todo.text}
+          <button onClick={() => removeTodo(todo.id)}>Delete</button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function AddTodoForm() {
+  const { addTodo } = TodoContext.useContextValue();
+  const [text, setText] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (text.trim()) {
+      addTodo(text);
+      setText('');
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Add a todo..."
+      />
+      <button type="submit">Add</button>
+    </form>
+  );
+}
+```
+
+## 最佳实践
+
+### 1. 合理命名
+
+```tsx
+// 好的命名
+const UserContext = createStateContext({
+  name: 'User', // 清晰的名称，便于调试
+  useValueHooks: useUser
+});
+
+// 避免的命名
+const Context1 = createStateContext({
+  name: 'ctx', // 名称不清晰
+  useValueHooks: useHook
+});
+```
+
+### 2. 分离关注点
+
+```tsx
+// 将状态逻辑分离到单独的 Hook 中
+function useAuthState() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  
+  const login = async (credentials) => {
+    setLoading(true);
+    try {
+      const user = await api.login(credentials);
+      setUser(user);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const logout = () => {
+    setUser(null);
+  };
+  
+  return { user, loading, login, logout };
+}
+
+// 然后在 Context 中使用
+const AuthContext = createStateContext({
+  name: 'Auth',
+  useValueHooks: useAuthState
+});
+```
+
+### 3. 提供默认值
+
+```tsx
+const AuthContext = createStateContext({
+  name: 'Auth',
+  useValueHooks: useAuthState,
+  defaultValue: {
+    user: null,
+    loading: false,
+    login: async () => {},
+    logout: () => {}
+  }
+});
+```
+
+## 注意事项
+
+1. **Context 值的稳定性**: 确保传递给 Context 的值在不必要的时候不会发生变化，避免不必要的重新渲染。
+
+2. **Provider 位置**: 将 Provider 放在组件树中合适的位置，避免过度嵌套。
+
+3. **性能考虑**: 对于大型应用，考虑将状态分割成多个小的 Context，而不是使用一个巨大的 Context。
+
+4. **调试**: 利用 React DevTools 查看 Context 的值和变化。
+
+5. **测试**: 在测试中可以直接使用 Context 对象进行 mock 或者单独测试状态逻辑。
+
+## 与其他状态管理方案的比较
+
+| 特性 | createStateContext | Redux | Zustand | Valtio |
+|------|-------------------|--------|---------|--------|
+| 学习曲线 | 低 | 高 | 低 | 中 |
+| 包大小 | 小 | 大 | 小 | 小 |
+| TypeScript 支持 | 完整 | 完整 | 完整 | 完整 |
+| 调试工具 | React DevTools | Redux DevTools | Redux DevTools | Valtio DevTools |
+| 适用场景 | 组件级状态共享 | 全局状态管理 | 轻量级全局状态 | 响应式状态管理 |
+
+`createStateContext` 最适合用于组件级别的状态共享，当你需要在组件树的某个分支中共享状态时，它是一个很好的选择。

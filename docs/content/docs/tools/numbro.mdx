@@ -1,185 +1,488 @@
 ---
 title: Numbro
-description: 基于 bignumber.js 封装的数字处理工具，提供数字格式化、货币格式化以及数值运算功能
+description: 基于 BigNumber.js 封装的精确数字处理工具，提供格式化、货币格式化和精确运算功能
 ---
 
 # Numbro
 
-基于 [bignumber.js](https://mikemcl.github.io/bignumber.js/) 封装的数字处理工具，提供了数字格式化、货币格式化以及基础的数值运算功能。
+`Numbro` 是基于 [BigNumber.js](https://mikemcl.github.io/bignumber.js/) 封装的精确数字处理工具，专为解决 JavaScript 浮点数运算精度问题而设计。提供了强大的数字格式化、多语言货币格式化以及精确的数值运算功能。
+
+## 特性
+
+- 🔢 **精确运算**: 基于 BigNumber.js，避免浮点数精度问题
+- 🌍 **多语言支持**: 内置中文、英文、印尼等多种语言的货币格式
+- 📊 **智能格式化**: 支持百分比、千分位分隔、平均值简化（K/M/B/T）
+- 🎯 **精度控制**: 灵活的小数位数控制和四舍五入模式
+- 💰 **货币格式化**: 完整的货币格式化支持，包括符号位置、间距等
+- 🛡️ **类型安全**: 完整的 TypeScript 类型支持
+- ⚙️ **全局配置**: 支持全局默认格式配置
+
+## 安装和导入
+
+```tsx
+import { numbro, Numbro } from "@dune2/tools";
+```
 
 ## 基本用法
 
-### 数字格式化
+### 创建 Numbro 实例
 
-```ts
-// 基础格式化
-numbro("1.230000").format(); // => "1.23"
-numbro("1234.230000").format(); // => "1,234.23"
+```tsx
+// 使用 numbro 函数（推荐）
+const num1 = numbro(123.456);
+const num2 = numbro("1,234.56"); // 自动处理千分位分隔符
+const num3 = numbro(null); // 自动转为 0
 
-// 百分比格式化
-numbro(1).format({ output: "percent" }); // => "100%"
-numbro(0.1).format({ output: "percent" }); // => "10%"
-
-// 大数字格式化
-numbro("1000").format({ average: true }); // => "1K"
-numbro("1000000").format({ average: true }); // => "1M"
-numbro("1000000000").format({ average: true }); // => "1B"
-```
-
-### 货币格式化
-
-```ts
-// 使用默认货币格式（根据当前语言环境）
-numbro(1000).formatCurrency(); // => "Rp1,000.00"
-numbro(-0.1).formatCurrency(); // => "-Rp0.10"
-
-// 使用指定语言的货币格式
-numbro(1000).formatCurrency({ locale: "en" }); // => "$1,000.00"
-numbro(1000).formatCurrency({ locale: "zh" }); // => "¥1,000.00"
-
-// 自定义货币格式
-numbro(1000).formatCurrency({
-  symbol: "€",
-  position: "postfix",
-  spaceSeparated: true,
-}); // => "1,000.00 €"
-```
-
-## 配置选项
-
-### 精度控制
-
-```ts
-// 指定小数位数
-numbro(1.2345).format({ mantissa: 2 }); // => "1.23"
-numbro(1.2345).format({ mantissa: 3 }); // => "1.234"
-
-// 四舍五入模式
-const num = numbro(1.23456789);
-num.format({ roundingMode: numbro.RoundingMode.RoundDown, mantissa: 2 }); // => "1.23"
-num.format({ roundingMode: numbro.RoundingMode.RoundUp, mantissa: 2 }); // => "1.24"
-```
-
-### 千分位分隔
-
-```ts
-// 启用千分位分隔
-numbro(1000).format({ thousandSeparated: true }); // => "1,000"
-
-// 禁用千分位分隔
-numbro(1000).format({ thousandSeparated: false }); // => "1000"
-```
-
-### 正负号处理
-
-```ts
-// 强制显示正负号
-numbro(1).format({ forceSign: true }); // => "+1"
-numbro(-1).format({ forceSign: true }); // => "-1"
-numbro(0).format({ forceSign: true }); // => "0"
-```
-
-### 尾零处理
-
-```ts
-// 删除无效的尾零
-numbro("1.000000").format({ mantissa: 2, deleteInvalidZero: true }); // => "1"
-numbro("1.200001").format({ mantissa: 2, deleteInvalidZero: true }); // => "1.20"
-
-// 删除所有尾零
-numbro("1.000000").format({ mantissa: 2, deleteEndZero: true }); // => "1"
-numbro("1.200001").format({ mantissa: 2, deleteEndZero: true }); // => "1.2"
-```
-
-### 空值处理
-
-```ts
-// 默认将 NaN/null/undefined 处理为 0
-numbro(NaN).format(); // => "0"
-numbro(null).format(); // => "0"
-
-// 自定义 NaN 格式
-numbro(NaN).format({ NaNFormat: "-" }); // => "-"
-numbro(null).formatCurrency({ NaNFormat: "N/A" }); // => "N/A"
-```
-
-## 数值运算
-
-### 基础运算
-
-```ts
-// 加法
-numbro(0.1).add(0.2).format(); // => "0.3"
-
-// 减法
-numbro(0.3).subtract(0.2).format(); // => "0.1"
-
-// 乘法
-numbro(0.1).multiply(0.2).format(); // => "0.02"
-
-// 除法
-numbro(0.1).divide(0.2).format(); // => "0.5"
-
-// 差值
-numbro(100).difference(-50).format(); // => "150"
+// 使用 new Numbro()
+const num4 = new Numbro(123.456);
 ```
 
 ### 支持的输入类型
 
-```ts
+```tsx
 // 数字
-numbro(1.23);
+numbro(123.456);
 
-// 字符串（自动移除千分位分隔符）
+// 字符串（自动移除逗号）
 numbro("1,234.56");
 
 // BigNumber 实例
-numbro(new BigNumber("1.23"));
+numbro(new BigNumber("123.456"));
 
-// BigInt
-numbro(100n);
+// Numbro 实例
+numbro(numbro(123));
+
+// null/undefined/boolean/bigint
+numbro(null); // 转为 0
+numbro(undefined); // 转为 0
+numbro(true); // 转为 1
+numbro(100n); // BigInt 转为数字
+```
+
+## 数字格式化
+
+### 基础格式化
+
+```tsx
+// 基本格式化
+numbro(1234.5678).format(); // "1234.5678"
+numbro(1234.5678).format({ mantissa: 2 }); // "1234.57"
+
+// 千分位分隔
+numbro(1234567).format({ thousandSeparated: true }); // "1,234,567"
+
+// 百分比格式
+numbro(0.1234).format({ output: "percent" }); // "12.34%"
+numbro(0.1234).format({
+  output: "percent",
+  mantissa: 1,
+}); // "12.3%"
+```
+
+### 平均值格式化（K/M/B/T）
+
+```tsx
+// 自动简化大数字
+numbro(1500).format({ average: true }); // "1K"
+numbro(1234567).format({ average: true }); // "1M"
+numbro(1500000000).format({ average: true }); // "1B"
+numbro(2500000000000).format({ average: true }); // "2T"
+
+// 结合小数位数
+numbro(1234567).format({
+  average: true,
+  mantissa: 2,
+}); // "1.23M"
+```
+
+### 四舍五入模式
+
+```tsx
+const num = numbro(1.23456);
+
+// 默认向下取整
+num.format({ mantissa: 2 }); // "1.23"
+
+// 向上取整
+num.format({
+  mantissa: 2,
+  roundingMode: Numbro.RoundingMode.RoundUp,
+}); // "1.24"
+
+// 四舍五入
+num.format({
+  mantissa: 2,
+  roundingMode: Numbro.RoundingMode.RoundHalfUp,
+}); // "1.23"
+
+// 向下取整（向负无穷）
+numbro(-1.23456).format({
+  mantissa: 2,
+  roundingMode: Numbro.RoundingMode.RoundFloor,
+}); // "-1.24"
+```
+
+### 正负号控制
+
+```tsx
+// 强制显示正负号
+numbro(123).format({ forceSign: true }); // "+123"
+numbro(-123).format({ forceSign: true }); // "-123"
+numbro(0).format({ forceSign: true }); // "0" (零不显示符号)
+
+// 绝对值显示
+numbro(-123).format({ absoluteValue: true }); // "123"
+```
+
+### 尾零处理
+
+```tsx
+// deleteInvalidZero: 智能删除无效尾零
+numbro("1.00100").format({
+  mantissa: 3,
+  deleteInvalidZero: true,
+}); // "1.001" (原始精度 > 指定精度时删除尾零)
+
+numbro("1.20000").format({
+  mantissa: 3,
+  deleteInvalidZero: true,
+}); // "1.2" (原始精度 <= 指定精度时删除尾零)
+
+// deleteEndZero: 强制删除所有尾零
+numbro("1.20000").format({
+  mantissa: 3,
+  deleteEndZero: true,
+}); // "1.2" (直接删除格式化后的尾零)
+```
+
+### NaN 值处理
+
+```tsx
+// 默认将 NaN 当作 0 处理
+numbro(NaN).format(); // "0"
+numbro(null).format(); // "0"
+numbro(undefined).format(); // "0"
+
+// 自定义 NaN 格式
+numbro(NaN).format({ NaNFormat: "-" }); // "-"
+numbro(NaN).format({ NaNFormat: "N/A" }); // "N/A"
+
+// 禁用 NaN 格式化
+numbro(NaN).format({ NaNFormat: false }); // "0"
+```
+
+### 后缀和前缀
+
+```tsx
+// 使用 postfix 添加后缀
+numbro(100).format({ postfix: "px" }); // "100px"
+numbro(50).format({ postfix: "%" }); // "50%"
+
+// BigNumber.Format 的其他选项
+numbro(1234).format({
+  prefix: "$",
+  suffix: " USD",
+  groupSize: 3,
+  groupSeparator: ",",
+  decimalSeparator: ".",
+}); // "$1,234 USD"
+```
+
+## 货币格式化
+
+### 基础货币格式化
+
+```tsx
+// 使用默认语言环境（印尼）
+numbro(1234.56).formatCurrency(); // "Rp1,234.56"
+
+// 指定语言环境
+numbro(1234.56).formatCurrency({ locale: "en" }); // "$1,234.56"
+numbro(1234.56).formatCurrency({ locale: "zh" }); // "¥1,234.56"
+```
+
+### 自定义货币格式
+
+```tsx
+// 自定义货币符号
+numbro(1234.56).formatCurrency({
+  symbol: "€",
+  mantissa: 2,
+}); // "€1,234.56"
+
+// 货币符号位置
+numbro(1234.56).formatCurrency({
+  symbol: "USD",
+  position: "postfix",
+}); // "1,234.56USD"
+
+// 添加空格分隔
+numbro(1234.56).formatCurrency({
+  symbol: "€",
+  position: "postfix",
+  spaceSeparated: true,
+}); // "1,234.56 €"
+```
+
+### 货币格式的正负号处理
+
+```tsx
+// 负数货币格式
+numbro(-1234.56).formatCurrency({ locale: "en" }); // "-$1,234.56"
+
+// 强制显示正号
+numbro(1234.56).formatCurrency({
+  locale: "en",
+  forceSign: true,
+}); // "+$1,234.56"
+
+// 使用绝对值（在货币格式中自动处理符号）
+numbro(-1234.56).formatCurrency({
+  symbol: "$",
+  position: "prefix",
+}); // "-$1,234.56"
+```
+
+## 数值运算
+
+### 基础算术运算
+
+```tsx
+// 加法 - 解决 0.1 + 0.2 !== 0.3 的问题
+numbro(0.1).add(0.2).format(); // "0.3"
+numbro(0.1).add(0.2).value(); // 0.3
+
+// 减法
+numbro(0.3).subtract(0.1).format(); // "0.2"
+
+// 乘法
+numbro(0.1).multiply(3).format(); // "0.3"
+
+// 除法
+numbro(1).divide(3).format({ mantissa: 6 }); // "0.333333"
+
+// 差值（绝对值）
+numbro(100).difference(150).format(); // "50"
+numbro(150).difference(100).format(); // "50"
+```
+
+### 支持多种输入类型的运算
+
+```tsx
+const num = numbro(100);
+
+// 与数字运算
+num.add(50).format(); // "150"
+
+// 与字符串运算
+num.add("1,000").format(); // "1,100"
+
+// 与其他 Numbro 实例运算
+num.add(numbro(25)).format(); // "125"
+
+// 与 BigNumber 运算
+num.add(new BigNumber(75)).format(); // "175"
+```
+
+### 链式调用
+
+```tsx
+// 复杂运算的链式调用
+const result = numbro(100)
+  .add(50) // 150
+  .multiply(1.2) // 180
+  .subtract(30) // 150
+  .divide(3) // 50
+  .format({ mantissa: 2 }); // "50.00"
+```
+
+## 值获取和转换
+
+### 获取数值
+
+```tsx
+const num = numbro(123.456);
+
+// 获取数字值
+num.value(); // 123.456
+num.valueOf(); // 123.456
+num.num; // 123.456 (getter 简写)
+
+// 获取字符串
+num.toString(); // "123.456"
+num.str; // "123.456" (getter 简写)
+
+// NaN 值处理
+numbro(NaN).value(); // 0 (自动转为 0)
+numbro(NaN).valueOf(); // 0
+```
+
+### 实例克隆
+
+```tsx
+const original = numbro(123.456);
+const cloned = original.clone();
+
+// 修改克隆不影响原实例
+cloned.add(100);
+console.log(original.format()); // "123.456"
+console.log(cloned.format()); // "223.456"
 ```
 
 ## 全局配置
 
 ### 默认格式化配置
 
-```ts
-// 设置默认的格式化配置
+```tsx
+// 设置全局默认格式
 Numbro.setDefaultFormat({
   thousandSeparated: true,
   mantissa: 2,
+  roundingMode: Numbro.RoundingMode.RoundHalfUp,
 });
 
-// 之后的格式化会使用默认配置
-numbro(1000).format(); // => "1,000.00"
+// 之后的格式化会应用默认配置
+numbro(1234.5678).format(); // "1,234.57"
+
+// 仍可在调用时覆盖默认配置
+numbro(1234.5678).format({ mantissa: 0 }); // "1,235"
 ```
 
-### 货币格式化配置
+### 语言环境配置
 
-```ts
-// 设置默认的货币格式
+```tsx
+// 查看当前语言环境
+console.log(Numbro.locale); // "id" (默认印尼)
+
+// 设置语言环境
+Numbro.setLocale("en"); // 英文
+Numbro.setLocale("zh"); // 中文
+
+// 语言环境必须在 defaultCurrencies 中存在
+try {
+  Numbro.setLocale("fr"); // 会抛出错误
+} catch (error) {
+  console.log(error.message); // "在 defaultCurrencies 中，找不到 fr，请先检查"
+}
+```
+
+### 货币配置
+
+```tsx
+// 查看默认货币配置
+console.log(Numbro.defaultCurrencies);
+// {
+//   "en": { symbol: "$", position: "prefix", mantissa: 2 },
+//   "id": { symbol: "Rp", position: "prefix", mantissa: 2 },
+//   "zh": { symbol: "¥", position: "prefix", mantissa: 2 }
+// }
+
+// 扩展货币配置
 Numbro.setDefaultCurrencies({
-  "de-AT": {
-    mantissa: 2,
-    position: "prefix",
+  ...Numbro.defaultCurrencies,
+  eur: {
     symbol: "€",
-  },
-  "de-DE": {
-    mantissa: 2,
     position: "postfix",
-    symbol: "€",
-    decimalSeparator: ",",
-    groupSeparator: " ",
+    mantissa: 2,
+    spaceSeparated: true,
+  },
+  jpy: {
+    symbol: "¥",
+    position: "prefix",
+    mantissa: 0, // 日元通常不显示小数
   },
 });
 
-// 设置当前语言环境
-Numbro.setLocale("de-AT");
+// 使用新的货币配置
+numbro(1234.56).formatCurrency({ locale: "eur" }); // "1,234.56 €"
+numbro(1234.56).formatCurrency({ locale: "jpy" }); // "¥1,235"
+```
 
-// 使用默认货币格式
-numbro(1000).formatCurrency(); // => "€1,000.00"
+## 枚举和常量
 
-// 使用指定语言的货币格式
-numbro(1000).formatCurrency({ locale: "de-DE" }); // => "1 000,00€"
+### RoundingMode 枚举
+
+```tsx
+// 可用的四舍五入模式
+Numbro.RoundingMode.RoundDown; // 向下取整（默认）
+Numbro.RoundingMode.RoundUp; // 向上取整
+Numbro.RoundingMode.RoundFloor; // 向负无穷取整
+Numbro.RoundingMode.RoundCeil; // 向正无穷取整
+Numbro.RoundingMode.RoundHalfUp; // 四舍五入
+
+// 也可以通过 numbro 访问
+numbro.RoundingMode.RoundDown;
+```
+
+## 类型定义
+
+### Format 接口
+
+```tsx
+interface Format extends BigNumber.Format {
+  output?: "percent"; // 输出百分比格式
+  postfix?: string; // 后缀（同 suffix）
+  average?: boolean; // 启用 K/M/B/T 简化
+  mantissa?: number | string | null; // 小数位数
+  thousandSeparated?: boolean; // 千分位分隔
+  forceSign?: boolean; // 强制显示正负号
+  roundingMode?: RoundingMode; // 四舍五入模式
+  deleteInvalidZero?: boolean; // 删除无效尾零
+  deleteEndZero?: boolean; // 删除所有尾零
+  NaNFormat?: string | false; // NaN 值格式
+  absoluteValue?: boolean; // 显示绝对值
+}
+```
+
+### CurrencyFormat 接口
+
+```tsx
+interface CurrencyFormat extends Format {
+  symbol?: string; // 货币符号
+  position?: "prefix" | "postfix"; // 符号位置
+  locale?: LocalesEnum | string; // 语言环境
+  spaceSeparated?: boolean; // 符号与数字间是否有空格
+}
+```
+
+## 最佳实践
+
+### 1. 精确计算
+
+```tsx
+// ✅ 使用 Numbro 避免精度问题
+const result = numbro(0.1).add(0.2).value(); // 0.3
+const jsResult = 0.1 + 0.2; // 0.30000000000000004
+
+// ✅ 链式调用避免中间精度丢失
+const complex = numbro(100)
+  .multiply(0.1)
+  .add(0.2)
+  .divide(3)
+  .format({ mantissa: 4 });
+```
+
+### 2. 性能优化
+
+```tsx
+// ✅ 重用配置对象
+const currencyConfig = { locale: "zh", mantissa: 2 };
+const prices = [99.99, 149.5, 29.99];
+const formatted = prices.map((price) =>
+  numbro(price).formatCurrency(currencyConfig),
+);
+
+// ✅ 全局配置减少重复
+Numbro.setDefaultFormat({ thousandSeparated: true, mantissa: 2 });
+```
+
+### 3. 错误处理
+
+```tsx
+// ✅ 使用 NaNFormat 处理空值
+const formatWithFallback = (value: any) =>
+  numbro(value).format({
+    NaNFormat: "--",
+    mantissa: 2,
+  });
 ```

@@ -1,15 +1,10 @@
-import withNextra from "nextra";
+import { createMDX } from "fumadocs-mdx/next";
 import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const withNextraConfig = withNextra({
-  latex: true,
-  search: {
-    codeblocks: false,
-  },
-});
+const withMDX = createMDX();
 
 let basePath = "";
 //#region in GitHub action build
@@ -57,4 +52,4 @@ const config = {
   },
 };
 
-export default withNextraConfig(config);
+export default withMDX(config);

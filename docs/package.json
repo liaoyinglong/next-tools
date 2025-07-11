@@ -17,11 +17,11 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@monaco-editor/react": "^4.5.2",
+    "fumadocs-core": "^15.6.3",
+    "fumadocs-mdx": "^11.6.10",
+    "fumadocs-ui": "^15.6.3",
     "next": "^15",
-    "nextra": "^4.1.0",
-    "nextra-theme-docs": "^4.1.0",
     "react": "^19",
     "react-dom": "^19.0.0"
-  },
-  "devDependencies": {}
+  }
 }

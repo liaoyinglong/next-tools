@@ -1,13 +1,16 @@
-/* eslint-env node */
-import { Layout, Navbar } from "nextra-theme-docs";
-import "nextra-theme-docs/style.css";
-import { Head } from "nextra/components";
-import { getPageMap } from "nextra/page-map";
+import { RootProvider } from "fumadocs-ui/provider";
+import { Inter } from "next/font/google";
+import type { ReactNode } from "react";
+import "./global.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+});
 
 export const metadata = {
-  //metadataBase: new URL("https://nextra.site"),
   title: {
     template: "%s - Dune Tools Documentation",
+    default: "Dune Tools Documentation",
   },
   description: "Dune Tools Documentation",
   applicationName: "Dune Tools",
@@ -15,44 +18,13 @@ export const metadata = {
   appleWebApp: {
     title: "Dune Tools",
   },
-
-  //twitter: {
-  //site: "https://nextra.site",
-  //},
 };
 
-export default async function RootLayout({ children }) {
-  const navbar = (
-    <Navbar
-      logo={
-        <div>
-          <b>Dune Tools</b>{" "}
-          <span style={{ opacity: "60%" }}>Dune Tools Collection</span>
-        </div>
-      }
-      // Next.js discord server
-      //chatLink="https://discord.gg/hEM84NMkRv"
-    />
-  );
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="zh-CN" dir="ltr" suppressHydrationWarning>
-      <Head faviconGlyph="✦" />
+    <html lang="zh-CN" className={inter.className} suppressHydrationWarning>
       <body>
-        <Layout
-          navbar={navbar}
-          //footer={<Footer />}
-          footer={<div></div>}
-          //editLink="Edit this page on GitHub"
-          //docsRepositoryBase="https://github.com/shuding/nextra/blob/main/examples/docs"
-          feedback={{
-            content: null,
-          }}
-          editLink={null}
-          sidebar={{ defaultMenuCollapseLevel: 1 }}
-          pageMap={await getPageMap()}
-        >
-          {children}
-        </Layout>
+        <RootProvider>{children}</RootProvider>
       </body>
     </html>
   );

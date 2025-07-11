@@ -137,3 +137,5 @@ dist
 .nx
 tsconfig.vitest-temp.json
 docs/next-env.d.ts
+.claude
+.source

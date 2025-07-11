@@ -1,6 +1,0 @@
-{
-  "create-state-context": "createStateContext",
-  "map-props": "mapProps",
-  "request-builder": "RequestBuilder",
-  "create-storage": "createStorage"
-}

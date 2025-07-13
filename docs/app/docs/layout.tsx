@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <DocsLayout
-      tree={source.pageTree}
+      tree={source.pageTree.children}
       nav={{
         title: (
           <div>
@@ -16,6 +16,9 @@ export default function Layout({ children }: { children: ReactNode }) {
       }}
       sidebar={{
         defaultOpenLevel: 1,
+      }}
+      searchToggle={{
+        enabled: false,
       }}
     >
       {children}

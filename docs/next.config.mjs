@@ -31,25 +31,6 @@ const config = {
   images: {
     unoptimized: true,
   },
-  webpack: (config) => {
-    config.module.rules.forEach((rule) => {
-      if (rule.test?.test?.(".mdx")) {
-        if (Array.isArray(rule.oneOf)) {
-          rule.oneOf.forEach((item) => {
-            if (Array.isArray(item.use)) {
-              item.use.push({
-                loader: path.resolve(
-                  __dirname,
-                  "./scripts/exampleInsetLoader.js",
-                ),
-              });
-            }
-          });
-        }
-      }
-    });
-    return config;
-  },
 };
 
 export default withMDX(config);

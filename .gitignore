@@ -139,3 +139,5 @@ tsconfig.vitest-temp.json
 docs/next-env.d.ts
 .claude
 .source
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md

@@ -29,7 +29,7 @@
     "husky": "^9.0.11",
     "lerna": "^8.0.2",
     "lint-staged": "16.1.0",
-    "nx": "^17.2.8",
+    "nx": "21.2.3",
     "prettier": "^3.2.2",
     "prettier-plugin-organize-imports": "4.1.0",
     "prettier-plugin-packagejson": "^2.4.9",

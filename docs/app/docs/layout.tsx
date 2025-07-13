@@ -5,7 +5,8 @@ import type { ReactNode } from "react";
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <DocsLayout
-      tree={source.pageTree.children}
+      //@ts-expect-error TODO: fix this
+      tree={source.pageTree}
       nav={{
         title: (
           <div>

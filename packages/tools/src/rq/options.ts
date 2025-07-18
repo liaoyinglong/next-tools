@@ -29,6 +29,8 @@ export interface RequestFnParams {
   data?: any;
   /** 请求头 */
   headers?: Record<string, string>;
+  /** 请求取消 */
+  signal?: AbortSignal;
 }
 
 export interface Basic {

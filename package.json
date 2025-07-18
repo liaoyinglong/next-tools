@@ -11,7 +11,7 @@
     "build": "lerna run build --scope @dune2/*",
     "example:next-js": "lerna run build --scope=next-js",
     "graph": "nx graph",
-    "prepare": "husky install",
+    "prepare": "husky",
     "release": "pnpm test && lerna version --no-private && pnpm publish -r",
     "reset:cache": "nx reset",
     "test": "lerna run test --scope @dune2/*"

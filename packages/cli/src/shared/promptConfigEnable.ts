@@ -1,5 +1,5 @@
 import enquirer from "enquirer";
-import { ApiConfig, I18nConfig } from "./config";
+import { ApiConfig } from "./config";
 const { prompt } = enquirer;
 
 interface Opt<T> {
@@ -46,21 +46,6 @@ export async function promptConfigEnable<T>(opt: Opt<T>) {
   });
 
   return configArr.filter((c) => c.enabled);
-}
-
-export function promptI18nConfigEnable(configArr: I18nConfig[] | undefined) {
-  return promptConfigEnable({
-    configArr: configArr ?? [],
-    getChoiceItem: (item) => {
-      return {
-        name: item.i18nDir!,
-        hint: `sheetRange: ${item.sheetRange}`,
-      };
-    },
-    checkIsEnabled: (enabledArr, item) => {
-      return enabledArr.includes(item.i18nDir!);
-    },
-  });
 }
 
 export function promptApiConfigEnable(configArr: ApiConfig[] | undefined) {

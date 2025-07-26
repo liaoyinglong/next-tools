@@ -1,101 +1,6 @@
 import type SwaggerParser from "@apidevtools/swagger-parser";
 import { OpenAPIV3 } from "openapi-types";
 
-export interface I18nConfig {
-  // 语言文件存放目录，默认为项目根目录的 "./src/i18n"
-  i18nDir?: string;
-  // 语言文件名，默认为 "{locale}.i18n.json"，其中 {locale} 会被替换为 locales 中的语言
-  i18nFileName?: string;
-  // 默认语言，默认为 "zh"，影响到提出出来的文案的默认值
-  defaultLocale?: string;
-  /**
-   * 可以是 id 或者 url，如果是 url 则会自动解析出 id
-   * id:  1C9-Dol3oO20W9_FhiVlxNsDhOaaejJIgAZYRkonGmfk
-   * url: https://docs.google.com/spreadsheets/d/1C9-Dol3oO20W9_FhiVlxNsDhOaaejJIgAZYRkonGmfk/edit#gid=1740568548
-   */
-  sheetId?: string;
-  // google sheets 工作表名称
-  sheetRange?: string;
-  /**
-   * 对应 语言、i18nKey 所在的列标识符 如(A,B,C...)
-   * 传入时将忽略默认的配置
-   * @default  {key: "B", zh: "C", en: "D", in: "E",}
-   */
-  position?: {
-    key: string;
-    [key: string]: string;
-  };
-
-  /**
-   * 从 Google Sheets 哪一行开始解析
-   * 默认从第2行开始，模板文件第一行是表头
-   * @default 2
-   */
-  parseStartIndex?: number;
-
-  /**
-   * 默认是 命令运行的目录，一般是项目根目录
-   * @internal
-   */
-  cwd?: string;
-  /**
-   * 支持的语言列表，从 position 中解析出来
-   * @internal
-   */
-  locales?: string[];
-
-  /**
-   * 翻译key的排序
-   * @internal
-   */
-  jsonSorter?: <T extends Record<string, any>>(obj: T) => T;
-  /**
-   * 是否启用
-   * @internal
-   */
-  enabled?: boolean;
-
-  /**
-   * 包括的文件
-   * glob 语法
-   */
-  include?: string[];
-  /**
-   * 是否禁用提取功能，某些项是不需要提取的，只需要同不Google sheet
-   * @default false
-   */
-  disableExtract?: boolean;
-
-  /**
-   * 翻译文案支持 namespace
-   * key 为 namespace
-   * value 为 对应的文件夹路径
-   * 使用场景：根据不同的业务模块，将翻译的key添加不同的前缀，并修改对应代码
-   */
-  namespace?: Record<string, string | string[]>;
-  /**
-   * namespace 分隔符
-   * @default "."
-   */
-  namespaceSeparator?: string;
-
-  translatePlatform?: {
-    /**
-     * 是否启用翻译平台
-     */
-    enable?: boolean;
-    /**
-     * 在翻译平台注册的
-     * 项目名称
-     */
-    project?: string;
-    /**
-     * 翻译平台的 url
-     */
-    url?: string;
-  };
-}
-
 export interface ApiConfig {
   /**
    * swagger JSON 的路径  可以是 本地 可以是远程
@@ -169,7 +74,6 @@ export interface ApiConfig {
 }
 
 export interface Config {
-  i18n?: I18nConfig[];
   api?: ApiConfig[];
   /**
    * 默认是 命令运行的目录，一般是项目根目录

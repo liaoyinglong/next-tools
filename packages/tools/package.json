@@ -47,7 +47,6 @@
   "devDependencies": {
     "@tanstack/react-query": "5.51.11",
     "@types/js-cookie": "3.0.3",
-    "axios": "^1.6.8",
     "react": "^19",
     "valtio": "^2"
   },

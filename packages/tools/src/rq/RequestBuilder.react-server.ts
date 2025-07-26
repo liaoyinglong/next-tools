@@ -46,7 +46,7 @@ export class RequestBuilder<Req = any, Res = any> {
    * useQuery、useMutation 内部会调用这个
    * 另外也可以直接调用这个函数来发送请求
    * @param params 请求参数 默认会根据请求方法来放到 url 上或者 body 里
-   * @param config axios 的配置，一般不需要传，内部用
+   * @param config 请求的配置，一般不需要传，内部用
    */
   request<P extends Req, T = Res>(params?: P, config?: RequestConfig) {
     const method = this.options.method!;

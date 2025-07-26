@@ -205,9 +205,6 @@ importers:
       "@types/js-cookie":
         specifier: 3.0.3
         version: 3.0.3
-      axios:
-        specifier: ^1.6.8
-        version: 1.9.0
       react:
         specifier: ^19
         version: 19.1.0

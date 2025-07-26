@@ -39,16 +39,16 @@
     "typecheck": "vitest run --typecheck.only"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5",
     "bignumber.js": "^9.1.2",
     "es-toolkit": "^1",
     "js-cookie": "^3.0.5",
-    "store2": "^2.14.3"
+    "store2": "^2.14.3",
+    "valtio": "^2"
   },
   "devDependencies": {
-    "@tanstack/react-query": "5.51.11",
     "@types/js-cookie": "3.0.3",
-    "react": "^19",
-    "valtio": "^2"
+    "react": "^19"
   },
   "publishConfig": {
     "access": "public"

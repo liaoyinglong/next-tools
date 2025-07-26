@@ -1,7 +1,7 @@
 import SwaggerParser from "@apidevtools/swagger-parser";
+import { camelCase, cloneDeep, merge } from "es-toolkit";
 import fs from "fs-extra";
 import { compile } from "json-schema-to-typescript";
-import _ from "lodash";
 import { OpenAPIV3 } from "openapi-types";
 import * as os from "os";
 import pMap from "p-map";
@@ -24,7 +24,7 @@ export async function generateApi() {
 
   for (const apiConfig of apiConfigs) {
     log.info("开始解析 %s", apiConfig.swaggerJSONPath);
-    const dereferenceConfig = _.merge(
+    const dereferenceConfig = merge(
       {
         resolve: {
           http: {
@@ -32,7 +32,7 @@ export async function generateApi() {
           },
         },
       },
-      apiConfig.dereferenceSwaggerConfig,
+      apiConfig.dereferenceSwaggerConfig || {},
     );
     const parsed = (await SwaggerParser.dereference(
       apiConfig.swaggerJSONPath,
@@ -104,7 +104,7 @@ export async function generateApiRequestCode(options: {
     : "";
 
   // 生成的请求构造器的名称，需要使用原始 url
-  let requestBuilderName = _.camelCase(`${options.url}_${method}_api`);
+  let requestBuilderName = camelCase(`${options.url}_${method}_api`);
 
   // 判断是否有效的 js 变量
   if (!/^[a-zA-Z_$][0-9a-zA-Z_$]*$/.test(requestBuilderName)) {
@@ -168,7 +168,10 @@ export namespace ${requestBuilderName} {
  ${responseParamsTypeCode}
 };`);
 
-    if (isGenerateFieldsMap && !_.isEmpty(requestParamsTypeCode.fieldsMap)) {
+    if (
+      isGenerateFieldsMap &&
+      Object.keys(requestParamsTypeCode.fieldsMap).length > 0
+    ) {
       // 生成表单 fieldsMap
       code.push(`
 export const ${requestBuilderName}FieldsMap = ${JSON.stringify(
@@ -207,9 +210,16 @@ async function compileRequestParams(
         if (!["query", "path"].includes(item.in)) {
           return;
         }
-        if (_.get(item.schema, "type") === "object") {
+        if (
+          item.schema &&
+          "type" in item.schema &&
+          item.schema.type === "object"
+        ) {
           // swagger get 请求上 有些参数是 object 类型 应该拍平
-          _.assign(extraProperties, _.get(item.schema, "properties", {}));
+          Object.assign(
+            extraProperties,
+            (item.schema as OpenAPIV3.SchemaObject).properties || {},
+          );
         } else {
           parameters.push(item);
         }
@@ -262,18 +272,18 @@ async function compileRequestParams(
         // 入参有这些字段就认为是分页查询接口
         const keys = ["pageNum", "pageSize", "count"];
         return (
-          _.get(data, "type") === "object" &&
-          _.get(data, "required", []).filter((item) => keys.includes(item))
-            .length === keys.length
+          data.type === "object" &&
+          (data.required || []).filter((item) => keys.includes(item)).length ===
+            keys.length
         );
       };
 
       if (generateFieldsMap) {
         // 分页查询接口取 params 字段
         const params = isPageSearchRequest(schema)
-          ? _.get(schema, "properties.params.properties", {})
+          ? schema.properties?.params?.properties || {}
           : schema.properties;
-        _.forEach(params, (_, field) => {
+        Object.keys(params || {}).forEach((field) => {
           fieldsMap[field] = field;
         });
       }
@@ -305,7 +315,7 @@ async function compileResponseParams(
     if (data) {
       // 这里需要深度 clone 的原因是：
       // 解析出来的 scheme 会尽可能的被复用，导致影响到下次解析
-      data = _.cloneDeep(data);
+      data = cloneDeep(data);
       markCircularToRef(data);
       try {
         code = await compile(data, "Res", {
@@ -319,8 +329,7 @@ async function compileResponseParams(
         const isPageSearchResponse = (data: any) => {
           // 有 result 字段且为数组，就认为是分页查询接口
           return (
-            _.get(data, "type") === "object" &&
-            _.get(data, "properties.result.type") === "array"
+            data.type === "object" && data.properties?.result?.type === "array"
           );
         };
 

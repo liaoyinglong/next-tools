@@ -1,7 +1,5 @@
 import BigNumber from "bignumber.js";
-import { LocalesEnum } from "../i18n/enums";
-import { defaultCurrencies } from "./currencies";
-import type { CurrencyFormat, Format } from "./shared";
+import type { Format } from "./shared";
 import { RoundingMode } from "./shared";
 
 export * from "./shared";
@@ -158,68 +156,6 @@ export class Numbro {
     }
     // 如果没有指定 forceSign，那么需要判断是否小于 0
     return this.bigNumber.isPositive() ? "" : "-";
-  }
-  //#endregion
-
-  //#region  currency format
-  /**
-   * currency format default
-   */
-  static locale: string = LocalesEnum.id;
-  static setLocale(locale: string) {
-    // check locale is valid
-    if (!(locale in Numbro.defaultCurrencies)) {
-      throw new Error(`在 defaultCurrencies 中，找不到 ${locale}，请先检查`);
-    }
-    Numbro.locale = locale;
-  }
-
-  /**
-   * 默认的货币格式化配置
-   * key: locale
-   * value: currency format
-   */
-  static defaultCurrencies = defaultCurrencies;
-  static setDefaultCurrencies(currencies: typeof defaultCurrencies) {
-    Numbro.defaultCurrencies = currencies;
-  }
-  formatCurrency(format: CurrencyFormat = {}) {
-    // 根据语言解析出来的默认格式
-    const defaultCurrencyFormat =
-      Numbro.defaultCurrencies[format.locale ?? Numbro.locale];
-
-    format = {
-      ...defaultCurrencyFormat,
-      ...format,
-    };
-    let {
-      position = "prefix",
-      symbol,
-      spaceSeparated,
-
-      ...rest
-    } = format;
-    // 是否强制显示正负号
-    const sign = this.getPrefixSign(rest.forceSign);
-
-    let space = spaceSeparated ? " " : "";
-    // 在 currency format 中，需要使用绝对值来格式化
-    // 方便后续添加 正负号
-    rest.absoluteValue = true;
-    rest.forceSign = false;
-    let formattedString = this.format(rest);
-
-    //#region NaN 的 fallback
-    const { NaNFormat } = this.combineFormatOptions(rest);
-    if (formattedString === NaNFormat) {
-      return formattedString;
-    }
-    //#endregion
-
-    if (position === "prefix") {
-      return `${sign}${symbol}${space}${formattedString}`;
-    }
-    return `${sign}${formattedString}${space}${symbol}`;
   }
   //#endregion
 

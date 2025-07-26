@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import { LocalesEnum } from "../i18n/enums";
 
 export interface Format extends BigNumber.Format {
   output?: "percent";
@@ -71,30 +70,6 @@ export interface Format extends BigNumber.Format {
    * 是否显示绝对值
    */
   absoluteValue?: boolean;
-}
-
-export interface CurrencyFormat extends Format {
-  /**
-   * 货币符号
-   */
-  symbol?: string;
-
-  /**
-   * 货币符号位置
-   */
-  position?: "prefix" | "postfix";
-
-  /**
-   * 按哪种语言格式化，会根据传入的语言去 currencies 里获取对应的配置项
-   * 一般用在以下情况：
-   * - 当前设置的语言是 en，但是需要格式化成 id 的货币
-   */
-  locale?: LocalesEnum | (string & {});
-
-  /**
-   * symbol 和 数字 之间是否需要空格
-   */
-  spaceSeparated?: boolean;
 }
 
 /**

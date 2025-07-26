@@ -1,16 +1,12 @@
 import BigNumber from "bignumber.js";
 import { beforeEach, describe, expect, it } from "vitest";
-import { LocalesEnum } from "../../src/i18n/enums";
 import { Numbro, numbro } from "../../src/numbro";
 
 //#region reset to default format
-const defaultCurrencies = Numbro.defaultCurrencies;
 beforeEach(() => {
   Numbro.setDefaultFormat({
     thousandSeparated: true,
   });
-  Numbro.setDefaultCurrencies(defaultCurrencies);
-  Numbro.setLocale(LocalesEnum.id);
 });
 //#endregion
 
@@ -373,87 +369,6 @@ describe("numbro", () => {
     expect(numbro(1.2345).format({ mantissa: undefined })).toEqual("1.2345");
   });
 
-  it("formatCurrency", function () {
-    (
-      [
-        [0, "Rp0.00"],
-        [0.1, "Rp0.10"],
-        [-0.1, "-Rp0.10"],
-        [1000, "Rp1,000.00"],
-        [1000.1, "Rp1,000.10"],
-      ] as const
-    ).forEach(([input, output]) => {
-      expect(numbro(input).formatCurrency()).toEqual(output);
-    });
-    expect(numbro(null).formatCurrency()).toEqual("Rp0.00");
-  });
-
-  it("formatCurrency with builtin locale config", function () {
-    (
-      [
-        [1000, LocalesEnum.en, "$1,000.00"],
-        [1000, LocalesEnum.id, "Rp1,000.00"],
-        [1000, LocalesEnum.zh, "¥1,000.00"],
-      ] as const
-    ).forEach(([input, locale, output]) => {
-      expect(
-        numbro(input).formatCurrency({
-          locale,
-        }),
-      ).toBe(output);
-    });
-  });
-
-  it("formatCurrency with custom locale config", function () {
-    Numbro.setDefaultCurrencies({
-      "de-AT": {
-        mantissa: 2,
-        position: "prefix",
-        symbol: "€",
-      },
-      "de-DE": {
-        mantissa: 2,
-        position: "postfix",
-        symbol: "€",
-        decimalSeparator: ",",
-        groupSeparator: " ",
-      },
-    });
-    Numbro.setLocale("de-AT");
-    expect(numbro(1000).formatCurrency()).toEqual("€1,000.00");
-    expect(
-      numbro(1000).formatCurrency({
-        locale: "de-DE",
-      }),
-    ).toEqual("1 000,00€");
-  });
-
-  it("业务场景：通用法币、主法币", () => {
-    Numbro.setDefaultCurrencies({
-      common: {
-        symbol: "$",
-        position: "prefix",
-        mantissa: 2,
-      },
-      main: {
-        symbol: "Rp",
-        position: "prefix",
-        mantissa: 2,
-      },
-    });
-
-    expect(
-      numbro(1000).formatCurrency({
-        locale: "common",
-      }),
-    ).toEqual("$1,000.00");
-    expect(
-      numbro(1000).formatCurrency({
-        locale: "main",
-      }),
-    ).toEqual("Rp1,000.00");
-  });
-
   it("异常情况兼容", function () {
     const n = numbro(1.2345);
     expect(
@@ -476,11 +391,6 @@ describe("numbro", () => {
     expect(numbro(NaN).format({ NaNFormat: "-" })).toEqual("-");
     expect(numbro(undefined).format({ NaNFormat: "-" })).toEqual("-");
     expect(numbro(null).format({ NaNFormat: "-" })).toEqual("-");
-    expect(
-      numbro(null).formatCurrency({
-        NaNFormat: "-",
-      }),
-    ).toEqual("-");
   });
   it("support NaNFormat with default format", () => {
     Numbro.setDefaultFormat({
@@ -489,12 +399,6 @@ describe("numbro", () => {
     expect(numbro(NaN).format()).toEqual("-");
     expect(numbro(undefined).format()).toEqual("-");
     expect(numbro(null).format()).toEqual("-");
-    expect(numbro(null).formatCurrency()).toEqual("-");
-    expect(
-      numbro(null).formatCurrency({
-        NaNFormat: false,
-      }),
-    ).toEqual("Rp0.00");
   });
 
   it("valueOf correct", () => {

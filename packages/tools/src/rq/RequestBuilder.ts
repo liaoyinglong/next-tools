@@ -149,7 +149,7 @@ export class RequestBuilder<Req = any, Res = any> {
     return this.request(queryKey[2], {
       signal: ctx.signal,
       meta: ctx.meta,
-      requestFn: ctx.meta?.requestFn as never,
+      requestFn: ctx.meta?.["requestFn"] as never,
     });
   }
 

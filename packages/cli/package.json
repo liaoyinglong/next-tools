@@ -31,7 +31,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "shx rm -rf ./dist && tsup --splitting",
+    "build": "tsup --splitting --clean",
     "dev": "pnpm run build --watch",
     "lint": "tsc --diagnostics --noEmit",
     "test": "vitest run",

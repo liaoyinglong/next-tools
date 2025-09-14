@@ -1,4 +1,4 @@
-import fs from "fs-extra";
+import fs from "node:fs/promises";
 import path from "path";
 import { createLogger } from "../shared";
 import { configName, getConfig } from "../shared/config";
@@ -17,7 +17,12 @@ export const initConfig = async () => {
   const config = await getConfig();
   const configPath = path.join(config.cwd!, configName);
   log.info(`config file path: ${configPath}`);
-  if (await fs.pathExists(configPath)) {
+  if (
+    await fs
+      .access(configPath)
+      .then(() => true)
+      .catch(() => false)
+  ) {
     log.info(`config file already exists, skip`);
     return;
   }

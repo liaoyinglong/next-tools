@@ -1,7 +1,7 @@
 import SwaggerParser from "@apidevtools/swagger-parser";
 import { camelCase, cloneDeep, merge } from "es-toolkit";
-import fs from "fs-extra";
 import { compile } from "json-schema-to-typescript";
+import fs from "node:fs/promises";
 import { OpenAPIV3 } from "openapi-types";
 import * as os from "os";
 import pMap from "p-map";
@@ -19,7 +19,8 @@ export async function generateApi() {
 
   for (const apiConfig of apiConfigs) {
     log.info(`清除旧的 api 文件：${apiConfig.output}`);
-    await fs.emptydir(apiConfig.output!);
+    await fs.rm(apiConfig.output!, { recursive: true, force: true });
+    await fs.mkdir(apiConfig.output!, { recursive: true });
   }
 
   for (const apiConfig of apiConfigs) {
@@ -60,7 +61,7 @@ export async function generateApi() {
                   apiConfig.enableTs ? `${method}.ts` : `${method}.js`,
                 )
                 .replace(/:/g, "_");
-              await fs.ensureFile(outputPath);
+              await fs.mkdir(path.dirname(outputPath), { recursive: true });
               await fs.writeFile(outputPath, code);
             }
           },

@@ -20,6 +20,7 @@ export async function getConfig(): Promise<Config> {
     })
     .catch((err) => {
       console.warn(`can not find config file: ${configName} in ${cwd}`);
+      console.warn(`please run "dune init" to create config file`);
       return {};
     });
 

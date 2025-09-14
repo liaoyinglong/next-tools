@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "path";
 import { createLogger } from "../shared";
-import { configName, getConfig } from "../shared/config";
+import { configName } from "../shared/config";
 
 const log = createLogger("initConfig");
 
@@ -14,8 +14,7 @@ export default defineConfig({
 });`;
 
 export const initConfig = async () => {
-  const config = await getConfig();
-  const configPath = path.join(config.cwd!, configName);
+  const configPath = path.join(process.cwd(), configName);
   log.info(`config file path: ${configPath}`);
   if (
     await fs

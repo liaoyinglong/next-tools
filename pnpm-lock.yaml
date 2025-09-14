@@ -86,6 +86,15 @@ importers:
         specifier: ^19.0.0
         version: 19.1.0(react@19.1.0)
 
+  example/cli-api-gen:
+    dependencies:
+      "@dune2/cli":
+        specifier: workspace:*
+        version: link:../../packages/cli
+      "@dune2/tools":
+        specifier: workspace:*
+        version: link:../../packages/tools
+
   packages/babel:
     dependencies:
       "@babel/types":

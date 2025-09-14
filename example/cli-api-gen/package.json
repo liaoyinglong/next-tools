@@ -1,0 +1,12 @@
+{
+  "name": "cli-api-gen",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dune": "dune"
+  },
+  "dependencies": {
+    "@dune2/cli": "workspace:*",
+    "@dune2/tools": "workspace:*"
+  }
+}

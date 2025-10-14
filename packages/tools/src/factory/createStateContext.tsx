@@ -1,6 +1,6 @@
 "use client";
 import type { ComponentType, FC, PropsWithChildren } from "react";
-import React, { useContext } from "react";
+import React, { use, useContext } from "react";
 
 interface Params<P, T> {
   /**
@@ -52,5 +52,9 @@ export function createStateContext<P, T>(params: Params<P, T>) {
     Provider,
     withProvider,
     Context,
+
+    use: () => {
+      return use(Context);
+    },
   };
 }

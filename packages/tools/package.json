@@ -47,9 +47,7 @@
     "valtio": "^2"
   },
   "devDependencies": {
-    "@logtape/logtape": "^1.1.0",
     "@types/js-cookie": "3.0.3",
-    "dexie": "^4.2.0",
     "react": "^19"
   },
   "publishConfig": {

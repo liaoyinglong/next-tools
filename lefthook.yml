@@ -1,0 +1,13 @@
+pre-commit:
+  parallel: true
+  commands:
+    #typecheck:
+    #  glob: '**/*.{ts,tsx}'
+    #  run: pnpm exec tsc -p tsconfig.json --noEmit
+    #oxlint:
+    #  glob: '**/*.{ts,tsx}'
+    #  run: pnpm exec oxlint {staged_files}
+    prettier:
+      glob: "*"
+      run: pnpm exec prettier --ignore-unknown --write {staged_files}
+      stage_fixed: true

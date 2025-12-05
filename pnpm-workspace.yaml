@@ -2,3 +2,7 @@ packages:
   - "packages/*"
   - "example/*"
   - "docs"
+onlyBuiltDependencies:
+  - lefthook
+ignoredBuiltDependencies:
+  - esbuild

@@ -99,9 +99,11 @@ export async function generateApiRequestCode(options: {
   })();
 
   const seeUrl = apiConfig.swaggerUiUrl
-    ? `${apiConfig.swaggerUiUrl}#/${operationObject.tags?.join("/") ?? ""}/${
-        operationObject.operationId
-      }`
+    ? `${apiConfig.swaggerUiUrl}#/${encodeURIComponent(
+        `${operationObject.tags?.join("/") ?? ""}/${
+          operationObject.operationId
+        }`,
+      )}`
     : "";
 
   // 生成的请求构造器的名称，需要使用原始 url

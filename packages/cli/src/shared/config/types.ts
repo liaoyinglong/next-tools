@@ -29,9 +29,15 @@ export interface ApiConfig {
   /**
    * 配置`RequestBuilder` 路径，导入的变量必须是命名为`RequestBuilder`
    * @example `import RequestBuilder from '@/utils/RequestBuilder'`
-   * @default `import { RequestBuilder } from '@dune2/tools'`
+   * @default `import { RequestBuilder } from '@dune2/tools/rq'`
    */
   RequestBuilderImportPath?: string;
+
+  /**
+   * 配置`FieldsMap` 路径，导入的变量必须是命名为`FieldsMap`
+   * @example `import { type FieldsMap, fieldsMap } from '@dune2/tools/factory/fieldsMap'`
+   */
+  FieldsMapImportPath?: string;
 
   /**
    * 是否启用ts，`true`会生成`.ts`文件，`false`会生成`.js`文件

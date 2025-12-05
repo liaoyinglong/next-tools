@@ -24,9 +24,9 @@ export const languages: Plugin["languages"] = [
 export const parsers: Plugin["parsers"] = {
   json: {
     ...jsonParser,
-    preprocess(text, options) {
+    async preprocess(text, options) {
       if (jsonParser.preprocess) {
-        text = jsonParser.preprocess(text, options);
+        text = await jsonParser.preprocess(text, options);
       }
       const isI18nJson = options.filepath.endsWith(i18nJsonExt);
       if (isI18nJson) {

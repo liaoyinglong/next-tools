@@ -11,6 +11,7 @@ import type {
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
 import { useDebugValue, useMemo } from "react";
+import { fieldsMap, type FieldsMap } from "../factory/fieldsMap";
 import { queryClient } from "./defaultQueryClient";
 import type {
   Basic,
@@ -326,4 +327,7 @@ export class RequestBuilder<Req = any, Res = any> {
     });
   }
   //#endregion
+
+  reqFields = fieldsMap as FieldsMap<Req>;
+  resFields = fieldsMap as FieldsMap<Res>;
 }

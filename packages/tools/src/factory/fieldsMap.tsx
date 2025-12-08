@@ -23,6 +23,9 @@ export const fieldsMap = new Proxy(
   },
 ) as any;
 
-export type FieldsMap<T extends Record<string, any>> = {
-  [K in keyof T]: K;
-};
+export type FieldsMap<T> =
+  T extends Record<string, any>
+    ? {
+        [K in keyof T]: K;
+      }
+    : never;

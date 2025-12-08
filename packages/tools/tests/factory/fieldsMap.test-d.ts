@@ -1,0 +1,32 @@
+import { assertType, describe, it } from "vitest";
+import type { FieldsMap } from "../../src/factory/fieldsMap";
+
+describe("FieldsMap", () => {
+  it("should map keys to string literal of themselves", () => {
+    type Person = { name: string; age: number; work?: string };
+    type Result = FieldsMap<Person>;
+
+    assertType<Result["name"]>("name");
+    assertType<Result["age"]>("age");
+    assertType<Result["work"]>("work");
+
+    // @ts-expect-error invalid key should not be allowed
+    assertType<Result["unknown"]>("unknown");
+  });
+
+  it("should support optional-only types", () => {
+    type OptionalOnly = { work?: string };
+    type Result = FieldsMap<OptionalOnly>;
+
+    assertType<Result["work"]>("work");
+    // @ts-expect-error invalid key
+    assertType<Result["name"]>("name");
+  });
+
+  it("should be never for non-record types", () => {
+    type NotRecord = string;
+    type Result = FieldsMap<NotRecord>;
+    // @ts-expect-error Result is never type, so cannot be indexed
+    assertType<Result["name"]>("name");
+  });
+});

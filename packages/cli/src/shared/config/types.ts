@@ -34,12 +34,6 @@ export interface ApiConfig {
   RequestBuilderImportPath?: string;
 
   /**
-   * 配置`FieldsMap` 路径，导入的变量必须是命名为`FieldsMap`
-   * @example `import { type FieldsMap, fieldsMap } from '@dune2/tools/factory/fieldsMap'`
-   */
-  FieldsMapImportPath?: string;
-
-  /**
    * 是否启用ts，`true`会生成`.ts`文件，`false`会生成`.js`文件
    * @default true
    */

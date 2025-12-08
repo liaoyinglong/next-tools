@@ -281,18 +281,6 @@ export namespace apiV1UsersGetApi {
 }
 ```
 
-#### 表单字段映射
-
-对于 POST 和 PUT 请求，CLI 会生成字段映射对象：
-
-```typescript
-export const apiV1UsersPostApiFieldsMap = {
-  name: "name",
-  email: "email",
-  age: "age",
-} as const;
-```
-
 ## 使用示例
 
 ## 故障排除
@@ -300,12 +288,10 @@ export const apiV1UsersPostApiFieldsMap = {
 ### 常见问题
 
 1. **类型生成失败**
-
    - 检查 Swagger 文档是否符合 OpenAPI 3.0 规范
    - 确认响应数据结构是否正确
 
 2. **导入路径错误**
-
    - 检查 `RequestBuilderImportPath` 配置
    - 确认 `@dune2/tools` 包已正确安装
 

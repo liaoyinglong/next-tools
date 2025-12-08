@@ -13,7 +13,6 @@ export function normalizeConfig(config: Config): Config {
 export function apiConfigNormalizer(item: ApiConfig) {
   item.output ??= "./src/apis";
   item.RequestBuilderImportPath ??= `import { RequestBuilder } from '@dune2/tools/rq';`;
-  item.FieldsMapImportPath ??= `import { type FieldsMap, fieldsMap } from '@dune2/tools/factory/fieldsMap';`;
   item.enableTs ??= true;
   item.enabled ??= true;
   item.format ??= true;

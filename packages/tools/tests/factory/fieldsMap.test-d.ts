@@ -12,6 +12,28 @@ describe("FieldsMap", () => {
 
     // @ts-expect-error invalid key should not be allowed
     assertType<Result["unknown"]>("unknown");
+    it("should flatten nested object keys", () => {
+      type Data = {
+        id: number;
+        profile: {
+          name: string;
+          address: {
+            city: string;
+            zipcode: number;
+          };
+        };
+      };
+      type Result = FieldsMap<Data>;
+
+      assertType<Result["id"]>("id");
+      assertType<Result["name"]>("name");
+      assertType<Result["city"]>("city");
+      assertType<Result["zipcode"]>("zipcode");
+      assertType<Result["profile"]>("profile");
+
+      //@ts-expect-error invalid key should not be allowed
+      assertType<Result["profile1"]>("profile1");
+    });
   });
 
   it("should support optional-only types", () => {

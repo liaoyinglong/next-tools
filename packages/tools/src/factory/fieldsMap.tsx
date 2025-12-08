@@ -29,9 +29,14 @@ export const fieldsMap: any =
         },
       );
 
-export type FieldsMap<T> =
+type DeepKeys<T> =
   T extends Record<string, any>
-    ? {
-        [K in keyof T]: K;
-      }
+    ? { [K in keyof T]: K | DeepKeys<T[K]> }[keyof T]
     : never;
+
+/**
+ * FieldsMap 会将对象的所有键（包括嵌套对象中的键）拍平为单层结构，
+ * 并将每个键映射为自身的字符串字面量类型。
+ */
+export type FieldsMap<T> =
+  T extends Record<string, any> ? { [K in DeepKeys<T>]: K } : never;

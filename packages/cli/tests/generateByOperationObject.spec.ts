@@ -43,6 +43,9 @@ const paramsInQuery = {
               data: {
                 type: "object",
                 properties: {
+                  payload: {
+                    description: "agreement document payload",
+                  },
                   id: {
                     type: "integer",
                     description: "用户 id",
@@ -180,6 +183,7 @@ const paramsInBody = {
                 required: ["result"],
                 type: "object",
                 properties: {
+                  payload: {},
                   total: {
                     type: "integer",
                     description:

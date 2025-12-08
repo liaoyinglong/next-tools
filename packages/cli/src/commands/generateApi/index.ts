@@ -251,6 +251,7 @@ async function compileRequestParams(
         bannerComment: "",
         ignoreMinAndMaxItems: !!1,
         additionalProperties: false,
+        unknownAny: false,
         // format: false,
       });
     } catch (e) {
@@ -287,6 +288,7 @@ async function compileResponseParams(
           bannerComment: "",
           ignoreMinAndMaxItems: !!1,
           additionalProperties: false,
+          unknownAny: false,
           // format: false,
         });
 

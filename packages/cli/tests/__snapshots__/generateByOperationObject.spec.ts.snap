@@ -65,6 +65,7 @@ export interface Req {
  * 分页查询结果统计结构体
  */
 export interface Res {
+  payload?: any;
   /**
    * 总记录数。如果请求参数中'是否查询总记录数'为 true 则此参数将会返回。
    */
@@ -144,6 +145,12 @@ export namespace usersGetApi {
  */
 export interface Res {
   /**
+   * agreement document payload
+   */
+  payload?: {
+    [k: string]: any;
+  };
+  /**
    * 用户 id
    */
   id?: number;
@@ -209,6 +216,12 @@ export namespace usersGetApi {
  * 查询用户响应结果
  */
 export interface Res {
+  /**
+   * agreement document payload
+   */
+  payload?: {
+    [k: string]: any;
+  };
   /**
    * 用户 id
    */

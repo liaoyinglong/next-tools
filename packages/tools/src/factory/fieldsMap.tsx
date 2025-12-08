@@ -5,13 +5,13 @@
  * 使用场景：
  *  - 在字段映射、动态生成键值等需要自动获取属性名的场景中，避免手动硬编码。
  */
-export const fieldsMap =
+export const fieldsMap: any =
   typeof Proxy === undefined
     ? (() => {
         console.error("Proxy is undefined, using empty object as fieldsMap");
         return {};
       })()
-    : (new Proxy(
+    : new Proxy(
         // 目标对象，这里使用一个空对象作为代理的基础
         {},
         {
@@ -27,7 +27,7 @@ export const fieldsMap =
             return String(p);
           },
         },
-      ) as any);
+      );
 
 export type FieldsMap<T> =
   T extends Record<string, any>

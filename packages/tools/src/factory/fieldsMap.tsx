@@ -38,5 +38,22 @@ type DeepKeys<T> =
  * FieldsMap 会将对象的所有键（包括嵌套对象中的键）拍平为单层结构，
  * 并将每个键映射为自身的字符串字面量类型。
  */
-export type FieldsMap<T> =
-  T extends Record<string, any> ? { [K in DeepKeys<T>]: K } : never;
+export type FieldsMap<T> = {
+  [K in keyof UnionToIntersection<Pieces<T>>]-?: K;
+};
+// 联合 -> 交叉
+type UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (
+  x: infer I,
+) => void
+  ? I
+  : never;
+
+// 递归收集各层属性（保留原属性引用），数组下钻元素，忽略 undefined/null
+type Pieces<T> = T extends readonly (infer U)[]
+  ? Pieces<U>
+  : T extends object
+    ? {
+        // 保留原属性引用 + 下钻
+        [K in keyof T]-?: Pick<T, K> & Pieces<T[K]>;
+      }[keyof T]
+    : {};

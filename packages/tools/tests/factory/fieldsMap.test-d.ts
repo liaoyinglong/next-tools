@@ -51,4 +51,23 @@ describe("FieldsMap", () => {
     // @ts-expect-error Result is never type, so cannot be indexed
     assertType<Result["name"]>("name");
   });
+  it("should handle recursive array shapes without infinite recursion", () => {
+    type Item = {
+      name: string;
+      age: number;
+      /**
+       * 12312
+       */
+      metadata?: {
+        [k: string]: any;
+      };
+      children?: Item[];
+    };
+    type Result = FieldsMap<Item[]>;
+
+    assertType<Result["name"]>("name");
+    assertType<Result["age"]>("age");
+    assertType<Result["metadata"]>("metadata");
+    assertType<Result["children"]>("children");
+  });
 });

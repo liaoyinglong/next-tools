@@ -1,4 +1,4 @@
-import { Options, defineConfig } from "tsup";
+import { Options, defineConfig } from "tsdown";
 
 const common: Options = {
   name: "dune",

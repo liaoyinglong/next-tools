@@ -3,9 +3,9 @@ import type { PluginObj } from "@babel/core";
 import { handleIdentifierSnapshot } from "./handleIdentifierSnapshot";
 import { handleObjectPattern } from "./handleObjectPattern";
 
-export const zustandPlugin = (api: typeof babel): PluginObj => {
+export const createStorePlugin = (api: typeof babel): PluginObj => {
   return {
-    name: "zustand",
+    name: "create-store",
     visitor: {
       VariableDeclarator(path) {
         handleIdentifierSnapshot(path);

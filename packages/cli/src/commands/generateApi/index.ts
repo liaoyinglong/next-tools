@@ -8,7 +8,6 @@ import pMap from "p-map";
 import path from "path";
 import { createLogger } from "../../shared";
 import { ApiConfig, getConfig } from "../../shared/config";
-import { formatFile } from "../../shared/formatFile";
 import { promptApiConfigEnable } from "../../shared/promptConfigEnable";
 
 const log = createLogger("generateApi");
@@ -69,8 +68,16 @@ export async function generateApi() {
       }
     });
 
-    if (apiConfig.format) {
-      await formatFile(apiConfig.output!);
+    if (apiConfig.codeFormatterCmd) {
+      const { exec } = await import("child_process");
+      await new Promise<void>((resolve, reject) => {
+        exec(`${apiConfig.codeFormatterCmd} ${apiConfig.output!}`, (error) => {
+          if (error) {
+            console.warn(`Code formatting failed: ${error.message}`);
+          }
+          resolve();
+        });
+      });
     }
   }
 

@@ -51,11 +51,11 @@ export interface ApiConfig {
   enabled?: boolean;
 
   /**
-   * 生成代码完毕后是否自动格式化，默认格式化
-   * 需要安装 prettier
-   * @default true
+   * 生成代码完毕后执行的代码格式化命令
+   * 用户可自定义格式化工具及参数
+   * @default "prettier --write"
    */
-  format?: boolean;
+  codeFormatterCmd?: string;
   /**
    * url 转换器，可以是字符串，也可以是函数
    *

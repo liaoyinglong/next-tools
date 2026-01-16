@@ -253,6 +253,8 @@ async function compileRequestParams(
 
   let code = "";
   if (schema) {
+    markCircularToRef(schema);
+
     try {
       code = await compile(schema, "Req", {
         bannerComment: "",

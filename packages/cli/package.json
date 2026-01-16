@@ -9,23 +9,23 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js"
+      "import": "./dist/index.mjs"
     },
     "./cli": {
-      "import": "./dist/cli.js"
+      "import": "./dist/cli.mjs"
     },
     "./normalizeConfig": {
-      "import": "./dist/normalizeConfig.js"
+      "import": "./dist/normalizeConfig.mjs"
     },
     "./prettier": {
-      "import": "./dist/prettier.js",
+      "import": "./dist/prettier.mjs",
       "require": "./dist/prettier.cjs"
     },
     "./package.json": "./package.json"
   },
   "types": "dist/index.d.ts",
   "bin": {
-    "dune": "./dist/cli.js"
+    "dune": "./dist/cli.mjs"
   },
   "files": [
     "dist"

@@ -267,6 +267,7 @@ async function compileRequestParams(
       log.error("生成请求参数类型失败，请检查 %o", {
         summary: operationObject.summary,
         message: e.message,
+        operationId: operationObject.operationId,
       });
     }
   }
@@ -317,6 +318,7 @@ async function compileResponseParams(
         log.error("转换响应参数类型失败，请检查 %o", {
           summary: operationObject.summary,
           error: e.message,
+          operationId: operationObject.operationId,
         });
       }
     } else {

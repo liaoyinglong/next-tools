@@ -96,12 +96,14 @@ export async function generateApi() {
     });
     if (apiConfig.codeFormatterCmd) {
       const { exec } = await import("child_process");
-      await new Promise<void>((resolve, reject) => {
+      await new Promise<void>((resolve) => {
         exec(
-          `${apiConfig.codeFormatterCmd} ${apiConfig.output!}/**`,
+          `${apiConfig.codeFormatterCmd} "${apiConfig.output!}"`,
           (error) => {
             if (error) {
-              console.warn(`Code formatting failed: ${error.message}`);
+              log.error(`Code formatting failed: ${error.message}`);
+            } else {
+              log.info(`Code formatting success`);
             }
             resolve();
           },

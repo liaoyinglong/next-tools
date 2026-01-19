@@ -322,75 +322,59 @@ async function compileResponseParams(
   operationObject: OpenAPIV3.OperationObject,
   apiConfig: ApiConfig,
 ) {
-  const temp = operationObject.responses["200"] as OpenAPIV3.ResponseObject;
-  let code = "";
-  if (temp?.content) {
-    // FIXME: 可能需要处理其他的 content 类型
-    const temp2 = temp.content["application/json"] || temp.content["*/*"];
-    //let schema = temp2.schema;
-    //@ts-expect-error TODO: 待修复类型
-    let schema = apiConfig.responseSchemaTransformer!(temp2.schema);
-    if (schema) {
-      const store = asyncLocalStorage.getStore();
+  const store = asyncLocalStorage.getStore();
 
-      const schema2 = (() => {
-        if ("$ref" in schema && store?.parser && isV3(store.parsed)) {
-          let r = store?.parser.$refs.get(schema.$ref);
-          // @ts-expect-error TODO: 待修复类型
-          r = apiConfig.responseSchemaTransformer!(r);
-          if (isPlainObject(r)) {
-            if ("$ref" in r) {
-              r = store?.parser.$refs.get(r.$ref as string);
-            }
+  function resolveSchema(
+    arg:
+      | OpenAPIV3.ReferenceObject
+      | OpenAPIV3.ResponseObject
+      | OpenAPIV3.MediaTypeObject
+      | undefined,
+  ) {
+    if (!arg) return;
 
-            if (isPlainObject(r)) {
-              return {
-                ...r,
-                components: store?.parsed.components,
-              };
-            }
-          }
-          log.error(`unknown other types`);
-          return;
-        }
-        return schema;
-      })();
-
-      if (!schema2) {
-        log.error(`can not found schema to generate response code`);
-      }
-
-      try {
-        code = await compile(schema2, "Res", {
-          bannerComment: "",
-          ignoreMinAndMaxItems: !!1,
-          additionalProperties: false,
-          unknownAny: false,
-          // format: false,
-        });
-
-        // 通过响应数据判断是否是分页查询接口
-        const isPageSearchResponse = (data: any) => {
-          // 有 result 字段且为数组，就认为是分页查询接口
-          return (
-            data.type === "object" && data.properties?.result?.type === "array"
-          );
-        };
-
-        // 新增后端分页查询返回的数据类型
-        if (isPageSearchResponse(schema)) {
-          code += `${os.EOL}export type ResultItem = Res['result'][0]`;
-        }
-      } catch (e) {
-        log.error("转换响应参数类型失败，请检查 %o", {
-          summary: operationObject.summary,
-          error: e.message,
-          operationId: operationObject.operationId,
-        });
-      }
-    } else {
-      log.error("responseSchemaTransformer 返回值为空，请检查");
+    if ("content" in arg) {
+      const temp = arg.content?.["application/json"] || arg.content?.["*/*"];
+      return resolveSchema(temp?.schema);
     }
+
+    let schema = apiConfig.responseSchemaTransformer!(arg as never) as
+      | OpenAPIV3.ReferenceObject
+      | OpenAPIV3.SchemaObject;
+    if ("$ref" in schema) {
+      return resolveSchema(store?.parser.$refs.get(schema.$ref) as never);
+    }
+    return schema;
+  }
+  const schemaObject = resolveSchema(operationObject.responses["200"]);
+  const finalSchema = schemaObject
+    ? Object.assign(
+        {
+          components: store?.parsed.components,
+        },
+        schemaObject,
+      )
+    : void 0;
+
+  let code = "";
+  if (finalSchema) {
+    try {
+      code = await compile(finalSchema, "Res", {
+        bannerComment: "",
+        ignoreMinAndMaxItems: !!1,
+        additionalProperties: false,
+        unknownAny: false,
+        // format: false,
+      });
+    } catch (e) {
+      log.error("转换响应参数类型失败，请检查 %o", {
+        summary: operationObject.summary,
+        error: e.message,
+        operationId: operationObject.operationId,
+      });
+    }
+  } else {
+    log.error("responseSchemaTransformer 返回值为空，请检查");
   }
 
   return code ? code : "export type Res = any;";

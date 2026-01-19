@@ -3,7 +3,7 @@ import { camelCase, isPlainObject, merge } from "es-toolkit";
 import { compile } from "json-schema-to-typescript";
 import { AsyncLocalStorage } from "node:async_hooks";
 import fs from "node:fs/promises";
-import { OpenAPIV3, type OpenAPI } from "openapi-types";
+import { OpenAPIV3 } from "openapi-types";
 import * as os from "os";
 import pMap from "p-map";
 import path from "path";
@@ -18,24 +18,66 @@ export const asyncLocalStorage = new AsyncLocalStorage<{
   parser: SwaggerParser;
 }>();
 
-function isV3(doc: OpenAPI.Document | undefined): doc is OpenAPIV3.Document {
-  if (doc) {
-    return "components" in doc;
-  }
-  return false;
-}
-
 export async function generateApi() {
   const config = await getConfig();
-  const apiConfigs = await promptApiConfigEnable(config.api);
+  const selectedConfigs = await promptApiConfigEnable(config.api);
+  const apiConfigs = selectedConfigs.filter((apiConfig) => {
+    if (!apiConfig.output) {
+      log.error("配置 %s 缺少 output，已跳过", apiConfig.swaggerJSONPath);
+      return false;
+    }
+    return true;
+  });
+  const skippedConfigCount = selectedConfigs.length - apiConfigs.length;
 
-  for (const apiConfig of apiConfigs) {
-    log.info(`清除旧的 api 文件：${apiConfig.output}`);
-    await fs.rm(apiConfig.output!, { recursive: true, force: true });
-    await fs.mkdir(apiConfig.output!, { recursive: true });
+  if (skippedConfigCount > 0) {
+    log.info("由于缺少 output，跳过 %d 个配置", skippedConfigCount);
   }
 
+  if (!apiConfigs.length) {
+    log.info("没有需要生成的 API 配置，生成流程结束");
+    return;
+  }
+
+  log.info("本次将生成 %d 个 API 配置", apiConfigs.length);
+
+  let totalSuccessCount = 0;
+  let totalFailedCount = 0;
+  const startedAt = Date.now();
+
+  const preparedConfigs: ApiConfig[] = [];
+
   for (const apiConfig of apiConfigs) {
+    log.info("开始初始化输出目录 %s", apiConfig.output);
+    const prepareStartedAt = Date.now();
+    try {
+      await fs.rm(apiConfig.output!, { recursive: true, force: true });
+      await fs.mkdir(apiConfig.output!, { recursive: true });
+      preparedConfigs.push(apiConfig);
+      log.info(
+        "输出目录 %s 初始化完成，耗时 %dms",
+        apiConfig.output,
+        Date.now() - prepareStartedAt,
+      );
+    } catch (error) {
+      totalFailedCount++;
+      const message = error instanceof Error ? error.message : String(error);
+      log.error("初始化输出目录 %s 失败：%s", apiConfig.output, message);
+    }
+  }
+
+  if (!preparedConfigs.length) {
+    log.error("所有配置都初始化失败，生成流程结束");
+    log.info(
+      "generateApi Done，成功 %d 个，失败 %d 个，总耗时 %dms",
+      totalSuccessCount,
+      totalFailedCount,
+      Date.now() - startedAt,
+    );
+    return;
+  }
+
+  for (const apiConfig of preparedConfigs) {
     log.info("开始解析 %s", apiConfig.swaggerJSONPath);
     const dereferenceConfig = merge(
       {
@@ -48,52 +90,106 @@ export async function generateApi() {
       apiConfig.dereferenceSwaggerConfig || {},
     );
     const parser = new SwaggerParser();
+    const bundleStartedAt = Date.now();
 
-    const parsed = await parser.bundle(
-      apiConfig.swaggerJSONPath,
-      dereferenceConfig,
-    );
+    let parsed: unknown;
+    try {
+      parsed = await parser.bundle(
+        apiConfig.swaggerJSONPath,
+        dereferenceConfig,
+      );
+      log.info(
+        "解析 %s 成功，耗时 %dms",
+        apiConfig.swaggerJSONPath,
+        Date.now() - bundleStartedAt,
+      );
+    } catch (error) {
+      totalFailedCount++;
+      const message = error instanceof Error ? error.message : String(error);
+      log.error("解析 %s 失败：%s", apiConfig.swaggerJSONPath, message);
+      continue;
+    }
 
     const state = {
       // only support v3
       parsed: parsed as OpenAPIV3.Document,
       parser,
     };
+
+    let generatedCount = 0;
+    let skippedCount = 0;
+    const pathEntries = Object.entries(
+      (parsed as OpenAPIV3.Document).paths ?? {},
+    );
+    if (!pathEntries.length) {
+      log.error("%s 中没有可用的 paths，已跳过", apiConfig.swaggerJSONPath);
+      totalFailedCount++;
+      continue;
+    }
+
     await asyncLocalStorage.run(state, async () => {
-      await pMap(
-        Object.entries(parsed.paths!),
-        async ([url, pathItemObject]) => {
-          log.info("开始生成 %s", url);
-          if (pathItemObject) {
-            await pMap(
-              ["get", "put", "post", "delete", "patch"],
-              async (method) => {
-                const operationObject = pathItemObject[method];
-                if (operationObject) {
-                  const code = await generateApiRequestCode({
-                    url: url,
-                    method: method,
-                    operationObject: operationObject,
-                    apiConfig,
-                  });
-                  const outputPath = path
-                    .join(
-                      apiConfig.output!,
-                      url,
-                      apiConfig.enableTs ? `${method}.ts` : `${method}.js`,
-                    )
-                    .replace(/:/g, "_");
-                  await fs.mkdir(path.dirname(outputPath), {
-                    recursive: true,
-                  });
-                  await fs.writeFile(outputPath, code);
-                }
-              },
-            );
-          }
-        },
-      );
+      await pMap(pathEntries, async ([url, pathItemObject]) => {
+        if (!pathItemObject) {
+          log.error("路径 %s 未定义 pathItemObject，已跳过", url);
+          skippedCount++;
+          return;
+        }
+
+        log.info("开始生成 %s", url);
+        let generatedForUrl = 0;
+        await pMap(
+          ["get", "put", "post", "delete", "patch"],
+          async (method) => {
+            const operationObject = pathItemObject[method];
+            if (!operationObject) {
+              return;
+            }
+
+            try {
+              const code = await generateApiRequestCode({
+                url: url,
+                method: method,
+                operationObject: operationObject,
+                apiConfig,
+              });
+              const outputPath = path
+                .join(
+                  apiConfig.output!,
+                  url,
+                  apiConfig.enableTs ? `${method}.ts` : `${method}.js`,
+                )
+                .replace(/:/g, "_");
+              await fs.mkdir(path.dirname(outputPath), {
+                recursive: true,
+              });
+              await fs.writeFile(outputPath, code);
+              generatedCount++;
+              generatedForUrl++;
+            } catch (error) {
+              skippedCount++;
+              const message =
+                error instanceof Error ? error.message : String(error);
+              log.error(
+                "%s %s 生成失败：%s",
+                method.toUpperCase(),
+                url,
+                message,
+              );
+            }
+          },
+        );
+        if (generatedForUrl === 0) {
+          log.info("路径 %s 未生成任何方法", url);
+        }
+      });
     });
+
+    if (!generatedCount) {
+      log.error("%s 未生成任何请求，已标记失败", apiConfig.swaggerJSONPath);
+      totalFailedCount++;
+      continue;
+    }
+
     if (apiConfig.codeFormatterCmd) {
       const { exec } = await import("child_process");
       await new Promise<void>((resolve) => {
@@ -101,6 +197,7 @@ export async function generateApi() {
           `${apiConfig.codeFormatterCmd} "${apiConfig.output!}"`,
           (error) => {
             if (error) {
+              skippedCount++;
               log.error(`Code formatting failed: ${error.message}`);
             } else {
               log.info(`Code formatting success`);
@@ -110,9 +207,22 @@ export async function generateApi() {
         );
       });
     }
+
+    log.info(
+      "%s 生成完成，共生成 %d 个请求，跳过 %d 个",
+      apiConfig.swaggerJSONPath,
+      generatedCount,
+      skippedCount,
+    );
+    totalSuccessCount++;
   }
 
-  log.info("generateApi Done");
+  log.info(
+    "generateApi Done，成功 %d 个，失败 %d 个，总耗时 %dms",
+    totalSuccessCount,
+    totalFailedCount,
+    Date.now() - startedAt,
+  );
 }
 
 /**

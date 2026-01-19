@@ -1,7 +1,7 @@
 import { describe } from "vitest";
-import { zustandPlugin } from "../../src/zustand";
+import { createStorePlugin } from "../../src/createStore";
 import { fixtures } from "../run";
 
 describe("zustand", async () => {
-  await fixtures(__dirname, zustandPlugin);
+  await fixtures(__dirname, createStorePlugin);
 });

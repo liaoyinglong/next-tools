@@ -14,7 +14,7 @@ import { promptApiConfigEnable } from "../../shared/promptConfigEnable";
 const log = createLogger("generateApi");
 
 export const asyncLocalStorage = new AsyncLocalStorage<{
-  parsed: OpenAPI.Document;
+  parsed: OpenAPIV3.Document;
   parser: SwaggerParser;
 }>();
 
@@ -54,7 +54,12 @@ export async function generateApi() {
       dereferenceConfig,
     );
 
-    asyncLocalStorage.run({ parsed, parser }, async () => {
+    const state = {
+      // only support v3
+      parsed: parsed as OpenAPIV3.Document,
+      parser,
+    };
+    await asyncLocalStorage.run(state, async () => {
       await pMap(
         Object.entries(parsed.paths!),
         async ([url, pathItemObject]) => {
@@ -78,7 +83,9 @@ export async function generateApi() {
                       apiConfig.enableTs ? `${method}.ts` : `${method}.js`,
                     )
                     .replace(/:/g, "_");
-                  await fs.mkdir(path.dirname(outputPath), { recursive: true });
+                  await fs.mkdir(path.dirname(outputPath), {
+                    recursive: true,
+                  });
                   await fs.writeFile(outputPath, code);
                 }
               },
@@ -214,77 +221,83 @@ function getUrlPathParams(parameters: OpenAPIV3.ParameterObject[]) {
 async function compileRequestParams(
   operationObject: OpenAPIV3.OperationObject,
 ) {
-  let schema;
-  if (operationObject.requestBody) {
-    //TODO: 这里也需要处理其他类型
-    schema = (operationObject.requestBody as OpenAPIV3.RequestBodyObject)
-      .content["application/json"].schema;
-  } else if (operationObject.parameters) {
-    const extraProperties = {};
-    const parameters: OpenAPIV3.ParameterObject[] = [];
-    (operationObject.parameters as OpenAPIV3.ParameterObject[]).forEach(
-      (item) => {
-        if (!["query", "path"].includes(item.in)) {
-          return;
-        }
-        if (
-          item.schema &&
-          "type" in item.schema &&
-          item.schema.type === "object"
-        ) {
-          // swagger get 请求上 有些参数是 object 类型 应该拍平
-          Object.assign(
-            extraProperties,
-            (item.schema as OpenAPIV3.SchemaObject).properties || {},
-          );
-        } else {
-          parameters.push(item);
-        }
-      },
-    );
+  const store = asyncLocalStorage.getStore();
+  const schemaOrRefObject = (() => {
+    if (operationObject.requestBody) {
+      if ("$ref" in operationObject.requestBody) {
+        return operationObject.requestBody;
+      }
+      return operationObject.requestBody.content["application/json"].schema;
+    }
+    if (operationObject.parameters) {
+      const extraProperties = {};
+      const parameters: OpenAPIV3.ParameterObject[] = [];
+      (operationObject.parameters as OpenAPIV3.ParameterObject[]).forEach(
+        (item) => {
+          if (!["query", "path"].includes(item.in)) {
+            return;
+          }
+          if (
+            item.schema &&
+            "type" in item.schema &&
+            item.schema.type === "object"
+          ) {
+            // swagger get 请求上 有些参数是 object 类型 应该拍平
+            Object.assign(
+              extraProperties,
+              (item.schema as OpenAPIV3.SchemaObject).properties || {},
+            );
+          } else {
+            parameters.push(item);
+          }
+        },
+      );
+      // 必填参数中忽略 分页相关的参数
+      const required = parameters
+        .filter(
+          (p) =>
+            p.required && !["pageNum", "pageSize", "count"].includes(p.name),
+        )
+        .map((p) => p.name);
+      const properties = Object.fromEntries(
+        parameters
+          // 后端 swagger 可能出现没有 schema 的情况，这里过滤掉
+          .filter((p) => !!p.schema)
+          .map((p) => {
+            const schema = p.schema;
+            return [
+              p.name,
+              {
+                ...schema,
+                description: p.description,
+                // enum: schema.enum ?? [],
+              },
+            ];
+          }),
+      );
+      return {
+        required,
+        type: "object",
+        properties: { ...properties, ...extraProperties },
+      };
+    }
+  })();
 
-    // 必填参数中忽略 分页相关的参数
-    const required = parameters
-      .filter(
-        (p) => p.required && !["pageNum", "pageSize", "count"].includes(p.name),
+  const finalSchema = isPlainObject(schemaOrRefObject)
+    ? Object.assign(
+        {
+          components: store?.parsed.components,
+        },
+        "$ref" in schemaOrRefObject
+          ? store?.parser.$refs.get(schemaOrRefObject.$ref)
+          : schemaOrRefObject,
       )
-      .map((p) => p.name);
-    const properties = Object.fromEntries(
-      parameters
-        // 后端 swagger 可能出现没有 schema 的情况，这里过滤掉
-        .filter((p) => !!p.schema)
-        .map((p) => {
-          //TODO: 这里也要处理 ref 类型
-          const schema = p.schema as OpenAPIV3.SchemaObject;
-          return [
-            p.name,
-            {
-              ...schema,
-              description: p.description,
-              // enum: schema.enum ?? [],
-            },
-          ];
-        }),
-    );
-    schema = {
-      required,
-      type: "object",
-      properties: { ...properties, ...extraProperties },
-    };
-  }
+    : void 0;
 
   let code = "";
-  if (schema) {
-    const store = asyncLocalStorage.getStore();
-    if (store?.parser && schema.$ref) {
-      schema = store?.parser.$refs.get(schema.$ref);
-    }
-    if (isV3(store?.parsed)) {
-      schema.components = store?.parsed.components;
-    }
-
+  if (finalSchema) {
     try {
-      code = await compile(schema, "Req", {
+      code = await compile(finalSchema as never, "Req", {
         bannerComment: "",
         ignoreMinAndMaxItems: !!1,
         additionalProperties: false,

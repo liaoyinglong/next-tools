@@ -90,12 +90,15 @@ export async function generateApi() {
     if (apiConfig.codeFormatterCmd) {
       const { exec } = await import("child_process");
       await new Promise<void>((resolve, reject) => {
-        exec(`${apiConfig.codeFormatterCmd} ${apiConfig.output!}`, (error) => {
-          if (error) {
-            console.warn(`Code formatting failed: ${error.message}`);
-          }
-          resolve();
-        });
+        exec(
+          `${apiConfig.codeFormatterCmd} ${apiConfig.output!}/**`,
+          (error) => {
+            if (error) {
+              console.warn(`Code formatting failed: ${error.message}`);
+            }
+            resolve();
+          },
+        );
       });
     }
   }
@@ -319,12 +322,20 @@ async function compileResponseParams(
 
       const schema2 = (() => {
         if ("$ref" in schema && store?.parser && isV3(store.parsed)) {
-          const r = store?.parser.$refs.get(schema.$ref);
+          let r = store?.parser.$refs.get(schema.$ref);
+          // @ts-expect-error TODO: 待修复类型
+          r = apiConfig.responseSchemaTransformer!(r);
           if (isPlainObject(r)) {
-            return {
-              ...r,
-              components: store?.parsed.components,
-            };
+            if ("$ref" in r) {
+              r = store?.parser.$refs.get(r.$ref as string);
+            }
+
+            if (isPlainObject(r)) {
+              return {
+                ...r,
+                components: store?.parsed.components,
+              };
+            }
           }
           log.error(`unknown other types`);
           return;

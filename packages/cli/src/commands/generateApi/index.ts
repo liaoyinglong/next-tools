@@ -1,8 +1,9 @@
 import SwaggerParser from "@apidevtools/swagger-parser";
-import { camelCase, cloneDeep, merge } from "es-toolkit";
+import { camelCase, isPlainObject, merge } from "es-toolkit";
 import { compile } from "json-schema-to-typescript";
+import { AsyncLocalStorage } from "node:async_hooks";
 import fs from "node:fs/promises";
-import { OpenAPIV3 } from "openapi-types";
+import { OpenAPIV3, type OpenAPI } from "openapi-types";
 import * as os from "os";
 import pMap from "p-map";
 import path from "path";
@@ -11,6 +12,18 @@ import { ApiConfig, getConfig } from "../../shared/config";
 import { promptApiConfigEnable } from "../../shared/promptConfigEnable";
 
 const log = createLogger("generateApi");
+
+export const asyncLocalStorage = new AsyncLocalStorage<{
+  parsed: OpenAPI.Document;
+  parser: SwaggerParser;
+}>();
+
+function isV3(doc: OpenAPI.Document | undefined): doc is OpenAPIV3.Document {
+  if (doc) {
+    return "components" in doc;
+  }
+  return false;
+}
 
 export async function generateApi() {
   const config = await getConfig();
@@ -34,40 +47,46 @@ export async function generateApi() {
       },
       apiConfig.dereferenceSwaggerConfig || {},
     );
-    const parsed = (await SwaggerParser.dereference(
+    const parser = new SwaggerParser();
+
+    const parsed = await parser.bundle(
       apiConfig.swaggerJSONPath,
       dereferenceConfig,
-    )) as OpenAPIV3.Document;
+    );
 
-    await pMap(Object.entries(parsed.paths), async ([url, pathItemObject]) => {
-      log.info("开始生成 %s", url);
-      if (pathItemObject) {
-        await pMap(
-          ["get", "put", "post", "delete", "patch"],
-          async (method) => {
-            const operationObject = pathItemObject[method];
-            if (operationObject) {
-              const code = await generateApiRequestCode({
-                url: url,
-                method: method,
-                operationObject: operationObject,
-                apiConfig,
-              });
-              const outputPath = path
-                .join(
-                  apiConfig.output!,
-                  url,
-                  apiConfig.enableTs ? `${method}.ts` : `${method}.js`,
-                )
-                .replace(/:/g, "_");
-              await fs.mkdir(path.dirname(outputPath), { recursive: true });
-              await fs.writeFile(outputPath, code);
-            }
-          },
-        );
-      }
+    asyncLocalStorage.run({ parsed, parser }, async () => {
+      await pMap(
+        Object.entries(parsed.paths!),
+        async ([url, pathItemObject]) => {
+          log.info("开始生成 %s", url);
+          if (pathItemObject) {
+            await pMap(
+              ["get", "put", "post", "delete", "patch"],
+              async (method) => {
+                const operationObject = pathItemObject[method];
+                if (operationObject) {
+                  const code = await generateApiRequestCode({
+                    url: url,
+                    method: method,
+                    operationObject: operationObject,
+                    apiConfig,
+                  });
+                  const outputPath = path
+                    .join(
+                      apiConfig.output!,
+                      url,
+                      apiConfig.enableTs ? `${method}.ts` : `${method}.js`,
+                    )
+                    .replace(/:/g, "_");
+                  await fs.mkdir(path.dirname(outputPath), { recursive: true });
+                  await fs.writeFile(outputPath, code);
+                }
+              },
+            );
+          }
+        },
+      );
     });
-
     if (apiConfig.codeFormatterCmd) {
       const { exec } = await import("child_process");
       await new Promise<void>((resolve, reject) => {
@@ -253,7 +272,13 @@ async function compileRequestParams(
 
   let code = "";
   if (schema) {
-    markCircularToRef(schema);
+    const store = asyncLocalStorage.getStore();
+    if (store?.parser && schema.$ref) {
+      schema = store?.parser.$refs.get(schema.$ref);
+    }
+    if (isV3(store?.parsed)) {
+      schema.components = store?.parsed.components;
+    }
 
     try {
       code = await compile(schema, "Req", {
@@ -286,15 +311,33 @@ async function compileResponseParams(
   if (temp?.content) {
     // FIXME: 可能需要处理其他的 content 类型
     const temp2 = temp.content["application/json"] || temp.content["*/*"];
-    const schema = temp2.schema as OpenAPIV3.SchemaObject;
-    let data = apiConfig.responseSchemaTransformer!(schema);
-    if (data) {
-      // 这里需要深度 clone 的原因是：
-      // 解析出来的 scheme 会尽可能的被复用，导致影响到下次解析
-      data = cloneDeep(data);
-      markCircularToRef(data);
+    //let schema = temp2.schema;
+    //@ts-expect-error TODO: 待修复类型
+    let schema = apiConfig.responseSchemaTransformer!(temp2.schema);
+    if (schema) {
+      const store = asyncLocalStorage.getStore();
+
+      const schema2 = (() => {
+        if ("$ref" in schema && store?.parser && isV3(store.parsed)) {
+          const r = store?.parser.$refs.get(schema.$ref);
+          if (isPlainObject(r)) {
+            return {
+              ...r,
+              components: store?.parsed.components,
+            };
+          }
+          log.error(`unknown other types`);
+          return;
+        }
+        return schema;
+      })();
+
+      if (!schema2) {
+        log.error(`can not found schema to generate response code`);
+      }
+
       try {
-        code = await compile(data, "Res", {
+        code = await compile(schema2, "Res", {
           bannerComment: "",
           ignoreMinAndMaxItems: !!1,
           additionalProperties: false,
@@ -311,7 +354,7 @@ async function compileResponseParams(
         };
 
         // 新增后端分页查询返回的数据类型
-        if (isPageSearchResponse(data)) {
+        if (isPageSearchResponse(schema)) {
           code += `${os.EOL}export type ResultItem = Res['result'][0]`;
         }
       } catch (e) {
@@ -327,28 +370,4 @@ async function compileResponseParams(
   }
 
   return code ? code : "export type Res = any;";
-}
-
-export function markCircularToRef(
-  obj,
-  parentMark = "#",
-  map = new Map([[obj, parentMark]]),
-  set = new Set([obj]),
-) {
-  if (obj && typeof obj === "object") {
-    Object.keys(obj).forEach((key) => {
-      const value = obj[key];
-      if (typeof value === "object" && !Array.isArray(value)) {
-        if (set.has(value)) {
-          obj[key] = { $ref: map.get(value) };
-          return;
-        }
-        const tempMark = parentMark + "/" + key;
-        set.add(value);
-        map.set(value, tempMark);
-        markCircularToRef(value, tempMark, map, set);
-      }
-    });
-  }
-  return map;
 }

@@ -256,6 +256,41 @@ export class Numbro {
   }
 
   /**
+   * 判断当前数是否大于 other
+   */
+  gt(other: OperationParams): boolean {
+    return this.bigNumber.isGreaterThan(this.castToBigNumber(other));
+  }
+
+  /**
+   * 判断当前数是否大于等于 other
+   */
+  gte(other: OperationParams): boolean {
+    return this.bigNumber.isGreaterThanOrEqualTo(this.castToBigNumber(other));
+  }
+
+  /**
+   * 判断当前数是否小于 other
+   */
+  lt(other: OperationParams): boolean {
+    return this.bigNumber.isLessThan(this.castToBigNumber(other));
+  }
+
+  /**
+   * 判断当前数是否小于等于 other
+   */
+  lte(other: OperationParams): boolean {
+    return this.bigNumber.isLessThanOrEqualTo(this.castToBigNumber(other));
+  }
+
+  /**
+   * 判断当前数是否等于 other
+   */
+  eq(other: OperationParams): boolean {
+    return this.bigNumber.isEqualTo(this.castToBigNumber(other));
+  }
+
+  /**
    * 两个数相除
    * @see https://mikemcl.github.io/bignumber.js/#dividedBy
    */

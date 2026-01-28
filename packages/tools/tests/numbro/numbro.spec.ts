@@ -356,6 +356,33 @@ describe("numbro", () => {
     });
   });
 
+  it("比较方法正确", () => {
+    const a = numbro(10);
+    const b = numbro(5);
+    const c = numbro(10);
+
+    expect(a.gt(b)).toBe(true);
+    expect(b.gt(a)).toBe(false);
+
+    expect(a.gte(b)).toBe(true);
+    expect(a.gte(c)).toBe(true);
+    expect(b.gte(a)).toBe(false);
+
+    expect(b.lt(a)).toBe(true);
+    expect(a.lt(b)).toBe(false);
+
+    expect(b.lte(a)).toBe(true);
+    expect(a.lte(c)).toBe(true);
+    expect(a.lte(b)).toBe(false);
+
+    expect(a.eq(c)).toBe(true);
+    expect(a.eq(b)).toBe(false);
+
+    expect(numbro(1).gt(new BigNumber(0.5))).toBe(true);
+    expect(numbro(1).lt(new Numbro(2))).toBe(true);
+    expect(numbro("1,000").eq(1000)).toBe(true);
+  });
+
   it("mantissa 配置项", () => {
     expect(numbro(1.2345).format({ mantissa: 2 })).toEqual("1.23");
     expect(numbro(1.2345).format({ mantissa: 3 })).toEqual("1.234");

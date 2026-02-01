@@ -17,10 +17,10 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@monaco-editor/react": "^4.5.2",
-    "fumadocs-core": "^15.6.3",
-    "fumadocs-mdx": "^11.6.10",
-    "fumadocs-ui": "^15.6.3",
-    "next": "^15",
+    "fumadocs-core": "^16.4.11",
+    "fumadocs-mdx": "^14.2.6",
+    "fumadocs-ui": "^16.4.11",
+    "next": "^16.1.6",
     "react": "^19",
     "react-dom": "^19.0.0"
   }

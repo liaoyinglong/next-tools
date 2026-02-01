@@ -1,0 +1,50 @@
+---
+title: createCookieStorage
+description: "基于 js-cookie 的 cookie 存储封装（字符串），适合少量、需要跨请求读取的状态"
+---
+
+# createCookieStorage
+
+`createCookieStorage` 用于创建一个 **cookie 存储映射**：你通过定义 `DataMap` 类来声明 key 与默认值（会转成 string），然后得到一组 `get/set/remove` 方法来读写 cookie。
+
+## 什么时候用
+
+- **需要在服务端/中间件/多子域读取的少量状态**（取决于你的部署与 cookie 配置）
+- **AB 实验桶 / 轻量会话标识 / 主题偏好** 等字符串值
+
+## 基本用法
+
+```ts
+import { createCookieStorage } from "@dune2/tools/storage/cookie";
+
+class CookieMap {
+  token = "";
+  theme = "light";
+}
+
+const cookie = createCookieStorage({
+  DataMap: CookieMap,
+  namespace: "app",
+});
+
+cookie.token.get(); // string（不存在时返回默认值）
+cookie.token.set("abc");
+cookie.token.remove();
+
+// 实际 cookie key 形如：app.token / app.theme
+console.log(cookie.token.key);
+```
+
+## set 的 options
+
+`set(value, options?)` 的 `options` 透传给 `js-cookie`（例如 `expires` / `path` / `sameSite` / `secure` 等）。
+
+```ts
+cookie.token.set("abc", { expires: 7, sameSite: "lax" });
+```
+
+## 注意事项
+
+- **只能存字符串**：内部实现基于 cookie，所有值会以 string 读写。
+- **大小限制**：cookie 体积有限（并且会随请求发送），不要存大对象或敏感信息。
+- **安全性**：涉及鉴权 token 时请谨慎选择存储方式与 cookie 属性（`secure`/`sameSite`/`httpOnly` 等）。

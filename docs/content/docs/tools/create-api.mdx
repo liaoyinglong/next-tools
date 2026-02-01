@@ -1,0 +1,49 @@
+---
+title: createApi
+description: "为自定义 requestFn 快速创建可用的 RequestBuilder，继续享受 TanStack Query 的缓存与异步状态管理"
+---
+
+# createApi
+
+`createApi` 用于在你**不想走通用 HTTP requestFn**（甚至不是 HTTP）的场景下，快速创建一个可用的 `RequestBuilder` 实例：你只需要提供 `queryKey` 与 `requestFn(params)`，就能直接使用 `useQuery/useMutation`、缓存操作等能力。
+
+## 什么时候用
+
+- ethers.js / 合约方法调用
+- 第三方 SDK（不是 axios/fetch 模式）
+- WebWorker / 本地计算任务（希望有 rq 的缓存、重试、状态）
+
+## 基本用法
+
+```ts
+import { createApi } from "@dune2/tools/rq/createApi";
+
+type Req = { userId: string };
+type Res = { id: string; name: string };
+
+const getUserApi = createApi<Req, Res>({
+  queryKey: "sdk.getUser",
+  requestFn: async (params) => {
+    // 这里写你自己的调用逻辑（可以不是 HTTP）
+    return mySdk.getUser(params.userId);
+  },
+});
+```
+
+在 React 里使用：
+
+```tsx
+function UserName({ userId }: { userId: string }) {
+  const { data, isLoading } = getUserApi.useQuery({ userId });
+  if (isLoading) return null;
+  return <div>{data?.name}</div>;
+}
+```
+
+## 和 RequestBuilder 的关系
+
+`createApi` 底层仍然基于 `RequestBuilder`：
+
+- `queryKey` 会映射成内部的 `url`（用于生成 queryKey）
+- 内部用 `method: "get"`，让参数从 `params` 走（便于 rq 的 queryKey 稳定）
+- 其它 `RequestBuilderOptions`（例如 `queryClient`、默认 `useQueryOptions` 等）也可以一并传入

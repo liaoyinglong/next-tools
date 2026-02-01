@@ -19,14 +19,14 @@ description: 快速创建 React Context 和 Provider 组件的工具函数
 ### 导入
 
 ```tsx
-import { createStateContext } from '@dune2/tools';
+import { createStateContext } from "@dune2/tools/factory/createStateContext";
 ```
 
 ### 创建 Context
 
 ```tsx
 import { useState } from 'react';
-import { createStateContext } from '@dune2/tools';
+import { createStateContext } from "@dune2/tools/factory/createStateContext";
 
 // 定义状态和操作
 function useCounter(props: { initialValue: number }) {

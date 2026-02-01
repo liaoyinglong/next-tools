@@ -1,0 +1,74 @@
+---
+title: Tools 总览
+description: "@dune2/tools 提供的运行时工具与类型工具概览（factory / storage / rq / store / numbro / shared）"
+---
+
+# Tools 总览
+
+`@dune2/tools` 是一个按“子路径导出（subpath exports）”组织的工具集合。**请使用子路径导入**，例如：
+
+```ts
+import { RequestBuilder } from "@dune2/tools/rq";
+import { createStorage } from "@dune2/tools/storage";
+import { createStore } from "@dune2/tools/store";
+import { numbro } from "@dune2/tools/numbro";
+import { createStateContext } from "@dune2/tools/factory/createStateContext";
+import { mapProps } from "@dune2/tools/factory/mapProps";
+import { fieldsMap } from "@dune2/tools/factory/fieldsMap";
+```
+
+> 说明：当前版本 `@dune2/tools` 的根入口（`@dune2/tools`）不提供稳定的聚合导出，推荐始终使用子路径导入以避免打包/类型问题。
+
+## 能力清单
+
+### Factory（React 组件/Props 工具）
+
+- **createStateContext**：快速创建 `Context + Provider + useContextValue`，适合“某个组件子树内部共享状态”的场景  
+  - 典型场景：页面级 Provider、复杂表单/多步骤流程状态、弹窗/抽屉状态管理  
+  - 详见：[createStateContext](./create-state-context)
+- **mapProps**：对组件 props 做默认值注入/适配/增强（自动 `forwardRef`）  
+  - 典型场景：设计系统封装（默认 className/variant）、对第三方组件做 API 适配、统一埋点/无障碍属性注入  
+  - 详见：[mapProps](./map-props)
+- **fieldsMap**：通过 `Proxy` 返回“字段名字符串”的工具，并提供 `FieldsMap<T>` 类型辅助  
+  - 典型场景：表格列 `dataIndex`、表单字段名、构建查询字段列表，避免手写字符串导致的易错/重构困难  
+  - 详见：[fieldsMap](./fields-map)
+
+### Storage（浏览器持久化存储）
+
+- **createStorage**：基于 `localStorage/sessionStorage` 的类型安全封装，带 `useValue()` 订阅与跨标签页同步  
+  - 典型场景：主题/语言、登录态 token、用户偏好设置、轻量缓存  
+  - 详见：[createStorage](./create-storage)
+- **createCookieStorage**：基于 `cookie` 的字符串存储封装（注意大小限制）  
+  - 典型场景：需要在服务端/中间件可读取的少量状态（如 AB 实验桶、轻量会话标识）  
+  - 详见：[createCookieStorage](./cookie-storage)
+
+### RQ（TanStack Query / 请求层封装）
+
+- **RequestBuilder**：面向“一个 endpoint”的类型安全请求构建器，内置 `useQuery/useMutation/useInfiniteQuery` 与缓存操作封装  
+  - 典型场景：与 `@dune2/cli generateApi` 生成的 API 代码搭配使用；或者手写少量 API 时统一请求模式  
+  - 详见：[RequestBuilder](./request-builder)
+- **createApi**：为“非 HTTP/非通用 requestFn”的异步函数快速创建一个可用的 `RequestBuilder`（仍能享受 rq 的缓存/状态）  
+  - 典型场景：ethers.js/合约方法调用、SDK 调用、WebWorker 调用等  
+  - 详见：[createApi](./create-api)
+- **defaultQueryClient / options**：提供默认 `QueryClient` 与请求/Hook 选项类型  
+  - 典型场景：快速落地，或在项目里做统一封装时作为类型/默认实现基础
+
+### Store（valtio 状态管理封装）
+
+- **createStore**：将 `state` 与 `actions` 分离，提供 `useSnapshot/useShallowSnapshot` 与调试辅助  
+  - 典型场景：全局/跨页面状态（用户信息、权限、购物车等），同时希望保持可变式写法  
+  - 详见：[Store](./store)
+
+### Numbro（精确数值处理）
+
+- **numbro / Numbro**：基于 BigNumber 的运算与格式化（货币、千分位、精度控制等）  
+  - 典型场景：金额/汇率/数量展示与计算，避免 JS 浮点精度问题  
+  - 详见：[Numbro](./numbro)
+
+### Shared（共享工具）
+
+- **useIsomorphicLayoutEffect**：在 SSR 环境自动回退到 `useEffect` 的 `useLayoutEffect` 替代  
+  - 典型场景：同一份组件代码同时跑在 SSR/CSR，避免 `useLayoutEffect` SSR 警告
+- **类型工具**：`OptionalKeys` / `Overwrite` / `Print` 等位于 `@dune2/tools/shared/*`  
+  - 典型场景：复杂类型组合、类型调试（显示最终类型）、更安全的类型覆盖
+  - 详见：[Shared](./shared)

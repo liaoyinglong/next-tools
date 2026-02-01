@@ -1,0 +1,45 @@
+---
+title: fieldsMap
+description: "通过 Proxy 返回字段名字符串，并提供 FieldsMap<T> 类型工具，减少手写字符串字段名"
+---
+
+# fieldsMap
+
+`fieldsMap` 是一个基于 `Proxy` 的小工具：**访问任意属性时返回该属性名的字符串**。同时提供 `FieldsMap<T>` 类型，帮助你在 TS 中得到“字段名联合类型”的更强约束。
+
+## 什么时候用
+
+- **表格列**：`dataIndex` / `key` 等字段名避免手写字符串
+- **表单字段**：`name` / `path` 等字段名随重构自动跟随
+- **查询字段列表**：生成字段白名单/黑名单
+
+## 基本用法
+
+```ts
+import { fieldsMap, type FieldsMap } from "@dune2/tools/factory/fieldsMap";
+
+type User = {
+  id: string;
+  profile: {
+    name: string;
+    age: number;
+  };
+};
+
+// 运行时：任何属性访问都会返回 string
+fieldsMap.id; // "id"
+fieldsMap.profile; // "profile"
+
+// 类型层：把对象（包含嵌套）拍平成“键 => 自身字面量”的结构
+type UserFields = FieldsMap<User>;
+
+// 你可以把它当成：Record<"id" | "profile" | "name" | "age", ...> 的一种更好用形式
+const f = fieldsMap as UserFields;
+f.id; // "id"
+f.name; // "name"
+```
+
+## 注意事项
+
+- **依赖 `Proxy`**：`fieldsMap` 在不支持 `Proxy` 的环境下不可用（现代浏览器/Node 均支持）。
+- **仅用于字段名**：它不会做路径拼接（比如 `profile.name` 不会自动变成 `"profile.name"`），你仍需要按你的业务约定组织字段路径。

@@ -130,7 +130,6 @@ dist
 .pnp.*
 
 .idea
-.vscode
 .DS_Store
 .swc
 .turbo

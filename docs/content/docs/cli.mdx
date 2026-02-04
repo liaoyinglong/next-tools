@@ -138,7 +138,8 @@ export default defineConfig({
       enableTs: true,
 
       // 生成代码完毕后执行的格式化命令（可自定义）
-      // 默认值：oxfmt
+      // 默认值：oxfmt（推荐）
+      // 如果你更想沿用 prettier：prettier --write
       codeFormatterCmd: 'oxfmt',
     },
   ],
@@ -194,6 +195,70 @@ export default defineConfig({
 - **类型**: `string`
 - **默认值**: `"oxfmt"`
 - **描述**: 生成代码完毕后执行的格式化命令（可自定义工具及参数）
+
+##### 格式化工具指南（同时支持 Prettier 与 Oxfmt）
+
+`codeFormatterCmd` 本质上就是一段会被执行的命令。你可以选择 **Oxfmt（推荐）** 或继续使用 **Prettier（兼容）**。
+
+###### 方案 A：Oxfmt（推荐）
+
+1. 安装：
+
+```bash
+pnpm add -D oxfmt
+```
+
+2. 配置（示例：`.oxfmtrc.jsonc`）：
+
+```jsonc
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+}
+```
+
+3. 配置 `dune.config.ts`：
+
+```ts
+export default defineConfig({
+  api: [
+    {
+      codeFormatterCmd: 'oxfmt',
+    },
+  ],
+});
+```
+
+###### 方案 B：Prettier（兼容）
+
+1. 安装：
+
+```bash
+pnpm add -D prettier
+```
+
+2. 配置（示例：`.prettierrc`）：
+
+```json
+{
+  "singleQuote": true,
+  "jsxSingleQuote": true
+}
+```
+
+3. 配置 `dune.config.ts`：
+
+```ts
+export default defineConfig({
+  api: [
+    {
+      codeFormatterCmd: 'prettier --write',
+    },
+  ],
+});
+```
 
 #### `swaggerUiUrl`
 
@@ -327,8 +392,8 @@ pnpm dune generateApi
    - 确认 `@dune2/tools` 包已正确安装
 
 3. **代码格式化失败**
-   - 确认项目已安装 oxfmt
-   - 检查 oxfmt 配置是否正确（例如 `.oxfmtrc.jsonc`）
+   - 确认项目已安装 `codeFormatterCmd` 指定的工具（oxfmt 或 prettier）
+   - 检查对应配置是否正确（例如 `.oxfmtrc.jsonc` / `.prettierrc`）
 
 ### 调试模式
 

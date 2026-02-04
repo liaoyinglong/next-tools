@@ -1,7 +1,7 @@
 packages:
-  - "packages/*"
-  - "example/*"
-  - "docs"
+  - 'packages/*'
+  - 'example/*'
+  - 'docs'
 onlyBuiltDependencies:
   - lefthook
 ignoredBuiltDependencies:

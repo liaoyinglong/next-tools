@@ -1,12 +1,12 @@
-import type { NodePath } from "@babel/traverse";
+import type { NodePath } from '@babel/traverse';
 import type {
   Identifier,
   MemberExpression,
   OptionalMemberExpression,
   VariableDeclarator,
-} from "@babel/types";
-import t from "@babel/types";
-import { handleSelectorArgument } from "./shared";
+} from '@babel/types';
+import t from '@babel/types';
+import { handleSelectorArgument } from './shared';
 /**
  * 处理 store.useSnapshot() 的变量声明
  * 示例: const state = store.useSnapshot()
@@ -29,7 +29,7 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
   const callee = init.callee;
   if (
     !t.isIdentifier(callee.property) ||
-    callee.property.name !== "useSnapshot"
+    callee.property.name !== 'useSnapshot'
   ) {
     return;
   }
@@ -38,7 +38,7 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
   // 如果返回值是对象类型，则转换为 useShallowSnapshot
   if (init.arguments.length > 0) {
     if (handleSelectorArgument(init)) {
-      callee.property.name = "useShallowSnapshot";
+      callee.property.name = 'useShallowSnapshot';
     }
     return;
   }
@@ -78,7 +78,7 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
       let propIdentifier = accessorMap.get(accessKey);
       if (!propIdentifier) {
         // 生成唯一的属性标识符
-        propIdentifier = path.scope.generateUidIdentifier("prop_");
+        propIdentifier = path.scope.generateUidIdentifier('prop_');
         accessorMap.set(accessKey, propIdentifier);
         memberAccessors.push({
           node: t.cloneDeepWithoutLoc(memberExprStart!),
@@ -102,7 +102,7 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
 
   // 生成选择器函数
   // 创建一个新的函数，返回包含所有访问路径的对象
-  const selectorName = path.scope.generateUidIdentifier("selector_");
+  const selectorName = path.scope.generateUidIdentifier('selector_');
   const selector = t.functionDeclaration(
     selectorName,
     [t.identifier(id.name)],
@@ -119,7 +119,7 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
   path.parentPath.insertBefore(selector);
 
   // 修改原始调用为 useShallowSnapshot
-  callee.property.name = "useShallowSnapshot";
+  callee.property.name = 'useShallowSnapshot';
   init.arguments = [selectorName];
 }
 
@@ -141,8 +141,8 @@ type MemberAccessor = {
  */
 function findMemberExpression(path: NodePath) {
   let current: NodePath | null = path;
-  let memberExprStart: MemberAccessor["node"] | undefined;
-  let accessKey = "";
+  let memberExprStart: MemberAccessor['node'] | undefined;
+  let accessKey = '';
 
   while (current?.parentPath) {
     const parent = current.parentPath;
@@ -154,7 +154,7 @@ function findMemberExpression(path: NodePath) {
     ) {
       memberExprStart = node;
       current = parent;
-      accessKey += "." + node.property.name;
+      accessKey += '.' + node.property.name;
     } else {
       break; // 如果不是成员表达式，立即停止向上查找
     }

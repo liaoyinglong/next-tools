@@ -1,11 +1,11 @@
-import { isEqual } from "es-toolkit";
-import { useDebugValue, useRef, useSyncExternalStore } from "react";
-import { proxy, snapshot, subscribe, useSnapshot } from "valtio";
+import { isEqual } from 'es-toolkit';
+import { useDebugValue, useRef, useSyncExternalStore } from 'react';
+import { proxy, snapshot, subscribe, useSnapshot } from 'valtio';
 
 const stores: any = {};
 
-if (typeof window !== "undefined") {
-  Object.defineProperty(window, "__stores2", {
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, '__stores2', {
     get() {
       let s: any = {};
       Object.keys(stores).forEach((key) => {

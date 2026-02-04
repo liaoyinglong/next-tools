@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
-import { replaceWithExample } from "./exampleInsetLoader";
+import { describe, expect, it } from 'vitest';
+import { replaceWithExample } from './exampleInsetLoader';
 
-describe("exampleInsetLoader", () => {
-  it("replaceWithExample should work", () => {
+describe('exampleInsetLoader', () => {
+  it('replaceWithExample should work', () => {
     expect(
       replaceWithExample(
         // language=HTML

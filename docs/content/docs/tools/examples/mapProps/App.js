@@ -1,5 +1,5 @@
-import { MappedComp1, MappedComp2 } from "./Component";
-import { MappedDiv1, MappedDiv2 } from "./IntrinsicElements";
+import { MappedComp1, MappedComp2 } from './Component';
+import { MappedDiv1, MappedDiv2 } from './IntrinsicElements';
 
 export default function App() {
   return (

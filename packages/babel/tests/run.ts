@@ -1,31 +1,31 @@
-import { PluginItem, parseAsync, transformFromAstAsync } from "@babel/core";
-import { readFileSync } from "fs";
-import { readdir } from "fs/promises";
-import { join } from "path";
-import { format } from "prettier";
-import { expect, it } from "vitest";
+import { PluginItem, parseAsync, transformFromAstAsync } from '@babel/core';
+import { readFileSync } from 'fs';
+import { readdir } from 'fs/promises';
+import { join } from 'path';
+import { format } from 'prettier';
+import { expect, it } from 'vitest';
 
 const loadCode = (path: string) => {
-  let r = readFileSync(path, "utf-8");
+  let r = readFileSync(path, 'utf-8');
   // 移除注释
-  r = r.replace(/\/\/.*/g, "");
+  r = r.replace(/\/\/.*/g, '');
   // 移除空行
-  r = r.replace(/\n\s*\n/g, "\n");
+  r = r.replace(/\n\s*\n/g, '\n');
   return r;
 };
 
 async function fixture(dir: string, plugin: PluginItem | PluginItem[]) {
-  const inputFilePath = join(dir, "input.js");
-  const outputFilePath = join(dir, "output.js");
+  const inputFilePath = join(dir, 'input.js');
+  const outputFilePath = join(dir, 'output.js');
 
   const code = loadCode(inputFilePath);
 
   const ast = await parseAsync(code, {
     filename: inputFilePath,
-    sourceType: "module",
+    sourceType: 'module',
     plugins: [
       [
-        require.resolve("@babel/plugin-syntax-typescript"),
+        require.resolve('@babel/plugin-syntax-typescript'),
         {
           isTSX: true,
           allExtensions: true,
@@ -36,7 +36,7 @@ async function fixture(dir: string, plugin: PluginItem | PluginItem[]) {
   const res = await transformFromAstAsync(ast!, code, {
     filename: inputFilePath,
     plugins: Array.isArray(plugin) ? plugin : [plugin],
-    sourceType: "module",
+    sourceType: 'module',
     sourceMaps: false,
     code: true,
     ast: false,
@@ -51,10 +51,10 @@ async function fixture(dir: string, plugin: PluginItem | PluginItem[]) {
 
   const [actuallyOutput, expectedOutput] = await Promise.all([
     format(res!.code!, {
-      parser: "typescript",
+      parser: 'typescript',
     }),
     format(loadCode(outputFilePath), {
-      parser: "typescript",
+      parser: 'typescript',
     }),
   ]);
   //console.log(actuallyOutput);
@@ -65,7 +65,7 @@ export async function fixtures(
   baseDir: string,
   plugin: PluginItem | PluginItem[],
 ) {
-  const fixtureDir = join(baseDir, "fixtures");
+  const fixtureDir = join(baseDir, 'fixtures');
   const items = await readdir(fixtureDir, {
     withFileTypes: true,
   });

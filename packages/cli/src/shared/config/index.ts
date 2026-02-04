@@ -1,14 +1,14 @@
-import { createJiti } from "jiti";
-import { normalizeConfig } from "./normalizeConfig";
-import { Config } from "./types";
+import { createJiti } from 'jiti';
+import { normalizeConfig } from './normalizeConfig';
+import { Config } from './types';
 
-export * from "./types";
+export * from './types';
 
 export function defineConfig<T extends Config = Config>(c: T) {
   return c;
 }
 
-export const configName = "dune.config.ts";
+export const configName = 'dune.config.ts';
 
 export async function getConfig(): Promise<Config> {
   const cwd = process.cwd();

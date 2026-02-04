@@ -1,6 +1,6 @@
 ---
 title: createCookieStorage
-description: "基于 js-cookie 的 cookie 存储封装（字符串），适合少量、需要跨请求读取的状态"
+description: '基于 js-cookie 的 cookie 存储封装（字符串），适合少量、需要跨请求读取的状态'
 ---
 
 # createCookieStorage
@@ -15,20 +15,20 @@ description: "基于 js-cookie 的 cookie 存储封装（字符串），适合�
 ## 基本用法
 
 ```ts
-import { createCookieStorage } from "@dune2/tools/storage/cookie";
+import { createCookieStorage } from '@dune2/tools/storage/cookie';
 
 class CookieMap {
-  token = "";
-  theme = "light";
+  token = '';
+  theme = 'light';
 }
 
 const cookie = createCookieStorage({
   DataMap: CookieMap,
-  namespace: "app",
+  namespace: 'app',
 });
 
 cookie.token.get(); // string（不存在时返回默认值）
-cookie.token.set("abc");
+cookie.token.set('abc');
 cookie.token.remove();
 
 // 实际 cookie key 形如：app.token / app.theme
@@ -40,7 +40,7 @@ console.log(cookie.token.key);
 `set(value, options?)` 的 `options` 透传给 `js-cookie`（例如 `expires` / `path` / `sameSite` / `secure` 等）。
 
 ```ts
-cookie.token.set("abc", { expires: 7, sameSite: "lax" });
+cookie.token.set('abc', { expires: 7, sameSite: 'lax' });
 ```
 
 ## 注意事项

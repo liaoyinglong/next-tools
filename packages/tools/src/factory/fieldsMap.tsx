@@ -8,7 +8,7 @@
 export const fieldsMap: any =
   typeof Proxy === undefined
     ? (() => {
-        console.error("Proxy is undefined, using empty object as fieldsMap");
+        console.error('Proxy is undefined, using empty object as fieldsMap');
         return {};
       })()
     : new Proxy(

@@ -14,13 +14,13 @@ description: 基于 valtio 的状态管理工具，通过分离 actions 和 stat
 使用 `createStore` 函数来创建一个 store，它接收一个配置对象，包含 `name`、`state` 和 `actionsCreator` 三个字段：
 
 ```typescript
-import { createStore } from "@dune2/tools/store";
+import { createStore } from '@dune2/tools/store';
 
 const store = createStore({
-  name: "counter",
+  name: 'counter',
   state: {
     count: 0,
-    user: { name: "John" },
+    user: { name: 'John' },
   },
   actionsCreator: (state) => ({
     increment: (amount: number) => {
@@ -56,7 +56,7 @@ const count = store.useSnapshot((state) => state.count);
 ```typescript
 // 使用 actions
 store.actions.increment(1);
-store.actions.setUserName("Jane");
+store.actions.setUserName('Jane');
 
 // 直接修改状态（推荐使用 actions）
 store.state.count += 1;
@@ -67,7 +67,7 @@ store.state.count += 1;
 ```typescript
 // 监听状态变化
 const unsubscribe = store.subscribe((state) => {
-  console.log("状态改变:", state);
+  console.log('状态改变:', state);
 });
 
 // 停止监听
@@ -109,7 +109,7 @@ store 的类型会自动推导：
 
 ```typescript
 const store = createStore({
-  name: "counter",
+  name: 'counter',
   state: { count: 0 },
   actionsCreator: (state) => ({
     increment: (amount: number) => {
@@ -122,5 +122,5 @@ const store = createStore({
 store.actions.increment(1);
 
 // ❌ 类型错误
-store.actions.increment("1"); // Type 'string' is not assignable to type 'number'
+store.actions.increment('1'); // Type 'string' is not assignable to type 'number'
 ```

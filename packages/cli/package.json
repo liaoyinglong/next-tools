@@ -6,7 +6,14 @@
     "url": "https://github.com/liaoyinglong/next-tools.git",
     "directory": "packages/cli"
   },
+  "bin": {
+    "dune": "./dist/cli.mjs"
+  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.mjs"
@@ -23,13 +30,9 @@
     },
     "./package.json": "./package.json"
   },
-  "types": "dist/index.d.ts",
-  "bin": {
-    "dune": "./dist/cli.mjs"
+  "publishConfig": {
+    "access": "public"
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsdown --splitting --clean",
     "dev": "pnpm run build --watch",
@@ -52,8 +55,5 @@
     "openapi-types": "^12.0.2",
     "prettier": "^3",
     "tsdown": "^0.19.0"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

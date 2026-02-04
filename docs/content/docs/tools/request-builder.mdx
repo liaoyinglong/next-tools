@@ -22,7 +22,7 @@ description: 基于 TanStack Query 封装的类型安全 API 请求构建器
 ### 导入
 
 ```tsx
-import { RequestBuilder } from "@dune2/tools/rq";
+import { RequestBuilder } from '@dune2/tools/rq';
 ```
 
 ### 创建 RequestBuilder 实例
@@ -35,20 +35,24 @@ const userApi = new RequestBuilder<UserRequest, UserResponse>({
 });
 
 // 带路径参数
-const userDetailApi = new RequestBuilder<UserDetailRequest, UserDetailResponse>({
-  url: '/api/users/{userId}',
-  method: 'get',
-  urlPathParams: ['userId'],
-});
+const userDetailApi = new RequestBuilder<UserDetailRequest, UserDetailResponse>(
+  {
+    url: '/api/users/{userId}',
+    method: 'get',
+    urlPathParams: ['userId'],
+  },
+);
 
 // 完整配置
-const createUserApi = new RequestBuilder<CreateUserRequest, CreateUserResponse>({
-  url: '/api/users',
-  method: 'post',
-  queryClient: customQueryClient,
-  requestFn: customRequestFn,
-  meta: { requiresAuth: true },
-});
+const createUserApi = new RequestBuilder<CreateUserRequest, CreateUserResponse>(
+  {
+    url: '/api/users',
+    method: 'post',
+    queryClient: customQueryClient,
+    requestFn: customRequestFn,
+    meta: { requiresAuth: true },
+  },
+);
 ```
 
 ### 发送请求
@@ -60,7 +64,7 @@ const response = await userApi.request({ page: 1, limit: 10 });
 // 使用自定义配置发送请求
 const response = await userApi.requestWithConfig({
   params: { page: 1, limit: 10 },
-  headers: { 'Authorization': 'Bearer token' },
+  headers: { Authorization: 'Bearer token' },
 });
 ```
 
@@ -76,7 +80,7 @@ function UserList() {
       enabled: true,
       staleTime: 5000,
       refetchOnWindowFocus: false,
-    }
+    },
   );
 
   if (isLoading) return <div>Loading...</div>;
@@ -84,7 +88,7 @@ function UserList() {
 
   return (
     <ul>
-      {data?.users.map(user => (
+      {data?.users.map((user) => (
         <li key={user.id}>{user.name}</li>
       ))}
     </ul>
@@ -114,7 +118,7 @@ function CreateUserForm() {
   return (
     <form onSubmit={handleSubmit}>
       {/* 表单内容 */}
-      <button type="submit" disabled={mutation.isPending}>
+      <button type='submit' disabled={mutation.isPending}>
         {mutation.isPending ? 'Creating...' : 'Create User'}
       </button>
     </form>
@@ -126,34 +130,26 @@ function CreateUserForm() {
 
 ```tsx
 function InfiniteUserList() {
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-  } = userApi.useInfiniteQuery(
-    { pageSize: 20 },
-    {
-      getNextPageParam: (lastPage, pages) => {
-        return lastPage.hasMore ? pages.length + 1 : undefined;
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    userApi.useInfiniteQuery(
+      { pageSize: 20 },
+      {
+        getNextPageParam: (lastPage, pages) => {
+          return lastPage.hasMore ? pages.length + 1 : undefined;
+        },
       },
-    }
-  );
+    );
 
   if (isLoading) return <div>Loading...</div>;
 
   return (
     <div>
-      {data?.map(user => (
+      {data?.map((user) => (
         <div key={user.id}>{user.name}</div>
       ))}
-      
+
       {hasNextPage && (
-        <button 
-          onClick={() => fetchNextPage()}
-          disabled={isFetchingNextPage}
-        >
+        <button onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
           {isFetchingNextPage ? 'Loading more...' : 'Load More'}
         </button>
       )}
@@ -219,11 +215,11 @@ RequestBuilder.setRequestFn(async (config) => {
     headers: config.headers,
     body: config.data ? JSON.stringify(config.data) : undefined,
   });
-  
+
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
   }
-  
+
   return response.json();
 });
 
@@ -301,7 +297,7 @@ const requestFn = async (config) => {
       Authorization: `Bearer ${getAuthToken()}`,
     };
   }
-  
+
   return fetch(config.url, config);
 };
 ```
@@ -357,7 +353,7 @@ const deleteUserApi = new RequestBuilder<{ id: string }, void>({
 // 使用示例
 function UserManagement() {
   const [search, setSearch] = useState('');
-  
+
   const { data: users, isLoading } = userListApi.useQuery({
     page: 1,
     limit: 20,
@@ -385,22 +381,20 @@ function UserManagement() {
   return (
     <div>
       <input
-        type="text"
+        type='text'
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="搜索用户..."
+        placeholder='搜索用户...'
       />
-      
+
       {isLoading ? (
         <div>Loading...</div>
       ) : (
         <div>
-          {users?.users.map(user => (
+          {users?.users.map((user) => (
             <div key={user.id}>
               <span>{user.name}</span>
-              <button onClick={() => updateMutation.mutate(user)}>
-                编辑
-              </button>
+              <button onClick={() => updateMutation.mutate(user)}>编辑</button>
               <button onClick={() => deleteMutation.mutate({ id: user.id })}>
                 删除
               </button>
@@ -463,13 +457,13 @@ function FileUpload() {
   return (
     <div>
       <input
-        type="file"
+        type='file'
         onChange={(e) => {
           const file = e.target.files?.[0];
           if (file) handleFileSelect(file);
         }}
       />
-      
+
       {uploadMutation.isPending && <div>Uploading...</div>}
       {uploadMutation.isSuccess && <div>Upload successful!</div>}
       {uploadMutation.isError && <div>Upload failed!</div>}
@@ -568,7 +562,7 @@ function UserList() {
         console.error('Failed to fetch users:', error);
         // 可以在这里显示错误通知
       },
-    }
+    },
   );
 
   if (error) {

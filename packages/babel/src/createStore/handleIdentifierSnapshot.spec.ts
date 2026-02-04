@@ -1,12 +1,12 @@
-import generate from "@babel/generator";
-import { parse } from "@babel/parser";
-import traverse from "@babel/traverse";
-import { describe, expect, it } from "vitest";
-import { handleIdentifierSnapshot } from "./handleIdentifierSnapshot";
+import generate from '@babel/generator';
+import { parse } from '@babel/parser';
+import traverse from '@babel/traverse';
+import { describe, expect, it } from 'vitest';
+import { handleIdentifierSnapshot } from './handleIdentifierSnapshot';
 
 export function transform(code: string) {
   const ast = parse(code, {
-    plugins: ["typescript", "jsx"],
+    plugins: ['typescript', 'jsx'],
   });
 
   traverse(ast, {
@@ -22,8 +22,8 @@ export function transform(code: string) {
   return res.code;
 }
 
-describe("handleIdentifierSnapshot", () => {
-  it("correct", () => {
+describe('handleIdentifierSnapshot', () => {
+  it('correct', () => {
     const tsx = String.raw;
     const code = tsx`
 function App() {
@@ -73,7 +73,7 @@ function App() {
     `);
   });
 
-  it("should_keep_selector_when_snapshot_has_selector", () => {
+  it('should_keep_selector_when_snapshot_has_selector', () => {
     const tsx = String.raw;
     const code = tsx`
 function App() {
@@ -98,7 +98,7 @@ function App() {
       }"
     `);
   });
-  it("raw keep", () => {
+  it('raw keep', () => {
     const tsx = String.raw;
     const code = tsx`
 function App() {
@@ -127,7 +127,7 @@ function App() {
       }"
     `);
   });
-  it("raw keep2 ", () => {
+  it('raw keep2 ', () => {
     const tsx = String.raw;
     const code = tsx`
     function Keep2() {

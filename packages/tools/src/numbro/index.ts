@@ -1,8 +1,8 @@
-import BigNumber from "bignumber.js";
-import type { Format } from "./shared";
-import { RoundingMode } from "./shared";
+import BigNumber from 'bignumber.js';
+import type { Format } from './shared';
+import { RoundingMode } from './shared';
 
-export * from "./shared";
+export * from './shared';
 
 // 可以参与运算的参数
 type OperationParams =
@@ -32,9 +32,9 @@ export class Numbro {
     if (other instanceof Numbro) {
       other = other.bigNumber;
     }
-    if (typeof other === "string") {
+    if (typeof other === 'string') {
       // case: "1,000" => "1000"
-      other = other.trim().replace(/,/g, "");
+      other = other.trim().replace(/,/g, '');
     }
     const res = new Numbro.BN(other as never);
     return res;
@@ -90,8 +90,8 @@ export class Numbro {
     const combinedFormat: BigNumber.Format = {
       suffix: postfix,
       groupSize: thousandSeparated ? 3 : 0,
-      groupSeparator: thousandSeparated ? "," : "",
-      decimalSeparator: ".",
+      groupSeparator: thousandSeparated ? ',' : '',
+      decimalSeparator: '.',
       ...rest,
     };
 
@@ -103,9 +103,9 @@ export class Numbro {
     }
 
     // 百分比
-    if (output === "percent") {
+    if (output === 'percent') {
       num = num.multipliedBy(100);
-      combinedFormat.suffix = "%";
+      combinedFormat.suffix = '%';
     }
     // 格式化成 1k, 1m, 1b, 1t
     if (average) {
@@ -148,14 +148,14 @@ export class Numbro {
   private getPrefixSign(forceSign: boolean | undefined) {
     // 如果是 NaN 或者 0，那么不显示正负号
     if (forceSign === false || this.bigNumber.isNaN() || this.bigNumber.eq(0)) {
-      return "";
+      return '';
     }
     // 强制显示正负号
     if (forceSign) {
-      return this.bigNumber.isPositive() ? "+" : "-";
+      return this.bigNumber.isPositive() ? '+' : '-';
     }
     // 如果没有指定 forceSign，那么需要判断是否小于 0
-    return this.bigNumber.isPositive() ? "" : "-";
+    return this.bigNumber.isPositive() ? '' : '-';
   }
   //#endregion
 
@@ -171,10 +171,10 @@ export class Numbro {
       thousand: Math.pow(10, 3),
     };
     const config = [
-      [powers.trillion, "T"],
-      [powers.billion, "B"],
-      [powers.million, "M"],
-      [powers.thousand, "K"],
+      [powers.trillion, 'T'],
+      [powers.billion, 'B'],
+      [powers.million, 'M'],
+      [powers.thousand, 'K'],
     ] as const;
 
     for (let i = 0; i < config.length; i++) {
@@ -193,7 +193,7 @@ export class Numbro {
     deleteInvalidZero: boolean | undefined,
     mantissa: number | undefined | null | string,
     outputFormat: string,
-    suffix = "",
+    suffix = '',
   ) {
     const num = this.bigNumber;
     let shouldDeleteEndZero = false;
@@ -203,13 +203,13 @@ export class Numbro {
       // 先转成数字 移除无效0
       // case: 1.00100 => 1.001
       let cloned = num.toString();
-      let clonedDecimal = cloned.split(".")[1]?.length ?? 0;
+      let clonedDecimal = cloned.split('.')[1]?.length ?? 0;
       // 移除无效 0 后，小数位数还比指定的小数位数多，那么就不用删除尾数 0
       shouldDeleteEndZero = !(clonedDecimal > (mantissa as number));
     }
 
     if (shouldDeleteEndZero) {
-      const isDecimal = outputFormat.includes(".");
+      const isDecimal = outputFormat.includes('.');
       if (isDecimal) {
         // 移除尾数 0
         // outputFormat = outputFormat.replace(/\.?0+$/, "");

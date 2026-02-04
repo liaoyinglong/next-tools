@@ -1,11 +1,11 @@
-import { RequestBuilder } from "../../src/rq/RequestBuilder";
+import { RequestBuilder } from '../../src/rq/RequestBuilder';
 
 export const authOauthTokenPostApi = new RequestBuilder<
   authOauthTokenPostApi.Req,
   authOauthTokenPostApi.Res
 >({
-  method: "post",
-  url: "/v1/auth/oauth/token",
+  method: 'post',
+  url: '/v1/auth/oauth/token',
 });
 
 export namespace authOauthTokenPostApi {

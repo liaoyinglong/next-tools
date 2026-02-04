@@ -1,7 +1,7 @@
-import { render } from "@testing-library/react";
-import type { PropsWithChildren } from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mapProps } from "../../src/factory/mapProps";
+import { render } from '@testing-library/react';
+import type { PropsWithChildren } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { mapProps } from '../../src/factory/mapProps';
 
 interface Props {
   age?: number;
@@ -19,50 +19,50 @@ beforeEach(() => {
   spy.mockClear();
 });
 
-describe("mapProps", () => {
-  describe("should work with custom component", () => {
-    it("map with object ", () => {
+describe('mapProps', () => {
+  describe('should work with custom component', () => {
+    it('map with object ', () => {
       const MappedApp = mapProps(App, {
-        className: "newClassName",
+        className: 'newClassName',
         age: 10,
-        style: { display: "flex" },
+        style: { display: 'flex' },
       });
-      render(<MappedApp name="test" />);
+      render(<MappedApp name='test' />);
 
       expect(spy).toBeCalledTimes(1);
       expect(spy).toBeCalledWith({
-        className: "newClassName",
+        className: 'newClassName',
         age: 10,
         ref: null,
-        style: { display: "flex" },
-        name: "test",
+        style: { display: 'flex' },
+        name: 'test',
       });
     });
-    it("map with function ", () => {
+    it('map with function ', () => {
       const MappedApp = mapProps(App, (p) => ({
         ...p,
-        className: "newClassName",
+        className: 'newClassName',
         age: 10,
-        style: { display: "flex" },
+        style: { display: 'flex' },
       }));
-      render(<MappedApp name="test" />);
+      render(<MappedApp name='test' />);
 
       expect(spy).toBeCalledTimes(1);
       expect(spy).toBeCalledWith({
         ref: null,
-        className: "newClassName",
+        className: 'newClassName',
         age: 10,
-        style: { display: "flex" },
-        name: "test",
+        style: { display: 'flex' },
+        name: 'test',
       });
     });
   });
 
-  describe("should work with intrinsic component", () => {
-    it("map with object ", () => {
-      const Container = mapProps("div", {
-        className: "container",
-        style: { display: "flex" },
+  describe('should work with intrinsic component', () => {
+    it('map with object ', () => {
+      const Container = mapProps('div', {
+        className: 'container',
+        style: { display: 'flex' },
       });
       const { container } = render(<Container />);
       expect(container.firstChild).toMatchInlineSnapshot(`
@@ -72,17 +72,17 @@ describe("mapProps", () => {
           />
       `);
     });
-    it("map with function ", () => {
-      const Container = mapProps("div", (p) => ({
+    it('map with function ', () => {
+      const Container = mapProps('div', (p) => ({
         ...p,
-        className: "container " + (p.className ?? ""),
-        style: { display: "flex", ...p.style },
+        className: 'container ' + (p.className ?? ''),
+        style: { display: 'flex', ...p.style },
       }));
       const { container } = render(
         <Container
-          className={"container2"}
+          className={'container2'}
           style={{
-            color: "red",
+            color: 'red',
           }}
         />,
       );

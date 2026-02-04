@@ -10,7 +10,7 @@
  *    output : 0
  */
 export function letterToNumber(letters: string | number) {
-  if (typeof letters === "number" || !Number.isNaN(+letters)) {
+  if (typeof letters === 'number' || !Number.isNaN(+letters)) {
     return +letters;
   }
 
@@ -26,7 +26,7 @@ export function letterToNumber(letters: string | number) {
 /**
  * fork from https://github.com/matthewmueller/number-to-letter
  */
-const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const base = alphabet.length;
 /**
  * numberToLetter(0)    // A
@@ -52,5 +52,5 @@ export function numberToLetter(n: number) {
     chars.push(alphabet[digits.pop()!]);
   }
 
-  return chars.join("");
+  return chars.join('');
 }

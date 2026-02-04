@@ -1,16 +1,16 @@
-import { Plugin } from "prettier";
-import { parsers as prettierParsers } from "prettier/plugins/babel";
-import { defaultJsonSorter } from "./shared/defaultJsonSorter";
+import { Plugin } from 'prettier';
+import { parsers as prettierParsers } from 'prettier/plugins/babel';
+import { defaultJsonSorter } from './shared/defaultJsonSorter';
 
-const i18nJsonExt = ".i18n.json";
+const i18nJsonExt = '.i18n.json';
 
 const jsonParser = prettierParsers.json;
 
 // 配置 i18n.json
-export const languages: Plugin["languages"] = [
+export const languages: Plugin['languages'] = [
   {
-    name: "dune-i18n-json",
-    parsers: ["json"],
+    name: 'dune-i18n-json',
+    parsers: ['json'],
     extensions: [i18nJsonExt],
   },
 ];
@@ -21,7 +21,7 @@ export const languages: Plugin["languages"] = [
  * 对齐 cli 生成的 i18n.json 文件顺序
  * 方便查看和比较
  */
-export const parsers: Plugin["parsers"] = {
+export const parsers: Plugin['parsers'] = {
   json: {
     ...jsonParser,
     async preprocess(text, options) {

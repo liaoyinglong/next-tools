@@ -6,21 +6,21 @@
  */
 export enum LocalesEnum {
   //  中文 Chinese
-  zh = "zh",
+  zh = 'zh',
   // 印尼 Indonesian
-  id = "id",
+  id = 'id',
   // 英文 English
-  en = "en",
+  en = 'en',
   // 立陶宛 Lithuanian
-  lt = "lt",
+  lt = 'lt',
   // 俄罗斯 Russian
-  ru = "ru",
+  ru = 'ru',
   // 日本 Japanese
-  ja = "ja",
+  ja = 'ja',
   // 土耳其 Turkish
-  tr = "tr",
+  tr = 'tr',
   // 韩国 Korean
-  ko = "ko",
+  ko = 'ko',
 }
 
 // 让 vite 能识别成 es-module

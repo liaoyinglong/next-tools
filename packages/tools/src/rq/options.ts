@@ -3,17 +3,17 @@ import type {
   FetchQueryOptions as RQFetchQueryOptions,
   UseMutationOptions,
   useQuery,
-} from "@tanstack/react-query";
+} from '@tanstack/react-query';
 
 // 定义 HTTP 方法类型
 export type HttpMethod =
-  | "get"
-  | "post"
-  | "put"
-  | "delete"
-  | "patch"
-  | "head"
-  | "options";
+  | 'get'
+  | 'post'
+  | 'put'
+  | 'delete'
+  | 'patch'
+  | 'head'
+  | 'options';
 // 外部可以重写这个类型
 export interface RequestBuilderMeta {}
 
@@ -48,23 +48,19 @@ export interface QueryClientBasic {
   queryClient?: QueryClient;
 }
 
-type OmitMetaAndPartial<T> = Partial<Omit<T, "meta">>;
+type OmitMetaAndPartial<T> = Partial<Omit<T, 'meta'>>;
 
 type RawUseQueryOptions<T> = Parameters<typeof useQuery<T>>[0];
 // 透传给 useQuery
 export interface UseQueryOptions<T>
-  extends OmitMetaAndPartial<RawUseQueryOptions<T>>,
-    Basic {}
+  extends OmitMetaAndPartial<RawUseQueryOptions<T>>, Basic {}
 
 // 透传给 ensureQueryData / fetchQuery / prefetchQuery 等
 export interface FetchQueryOptions<T>
-  extends OmitMetaAndPartial<RQFetchQueryOptions<T>>,
-    Basic,
-    QueryClientBasic {}
+  extends OmitMetaAndPartial<RQFetchQueryOptions<T>>, Basic, QueryClientBasic {}
 
 export interface RequestBuilderOptions<Req, Res>
-  extends Basic,
-    QueryClientBasic {
+  extends Basic, QueryClientBasic {
   /**
    * 请求方法
    * @default "get"

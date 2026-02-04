@@ -1,4 +1,4 @@
-import Cookies from "js-cookie";
+import Cookies from 'js-cookie';
 
 type CookieAttributes = Cookies.CookieAttributes;
 type CookiesStatic = Cookies.CookiesStatic;
@@ -78,7 +78,7 @@ export function createCookieStorage<T extends Record<any, any>>(
       namespace,
       String(key),
       // cookie 只能存 string
-      storageMap[key] + "",
+      storageMap[key] + '',
     );
   });
 

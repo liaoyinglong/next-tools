@@ -7,7 +7,7 @@ pre-commit:
     #oxlint:
     #  glob: '**/*.{ts,tsx}'
     #  run: pnpm exec oxlint {staged_files}
-    prettier:
-      glob: "*"
-      run: pnpm exec prettier --ignore-unknown --write {staged_files}
+    oxfmt:
+      glob: '*'
+      run: pnpm exec oxfmt --no-error-on-unmatched-pattern {staged_files}
       stage_fixed: true

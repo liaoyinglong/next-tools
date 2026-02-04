@@ -1,6 +1,6 @@
 ---
 title: createApi
-description: "为自定义 requestFn 快速创建可用的 RequestBuilder，继续享受 TanStack Query 的缓存与异步状态管理"
+description: '为自定义 requestFn 快速创建可用的 RequestBuilder，继续享受 TanStack Query 的缓存与异步状态管理'
 ---
 
 # createApi
@@ -16,13 +16,13 @@ description: "为自定义 requestFn 快速创建可用的 RequestBuilder，继�
 ## 基本用法
 
 ```ts
-import { createApi } from "@dune2/tools/rq/createApi";
+import { createApi } from '@dune2/tools/rq/createApi';
 
 type Req = { userId: string };
 type Res = { id: string; name: string };
 
 const getUserApi = createApi<Req, Res>({
-  queryKey: "sdk.getUser",
+  queryKey: 'sdk.getUser',
   requestFn: async (params) => {
     // 这里写你自己的调用逻辑（可以不是 HTTP）
     return mySdk.getUser(params.userId);

@@ -1,8 +1,8 @@
-import { assertType, describe, it } from "vitest";
-import type { Overwrite } from "../../src/shared/Overwrite";
+import { assertType, describe, it } from 'vitest';
+import type { Overwrite } from '../../src/shared/Overwrite';
 
-describe("Overwrite", () => {
-  it("should be ok", () => {
+describe('Overwrite', () => {
+  it('should be ok', () => {
     type A = {
       name: string;
       age: number;
@@ -14,6 +14,6 @@ describe("Overwrite", () => {
     type C = Overwrite<A, B>;
     //   ^? { name: number; age: number; work?: string; }
 
-    assertType<C>({ name: 1, age: 1, work: "1" });
+    assertType<C>({ name: 1, age: 1, work: '1' });
   });
 });

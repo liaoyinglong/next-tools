@@ -1,11 +1,11 @@
-import { Options, defineConfig } from "tsdown";
+import { Options, defineConfig } from 'tsdown';
 
 const common: Options = {
-  name: "dune",
-  target: "node16",
+  name: 'dune',
+  target: 'node16',
   sourcemap: true,
-  tsconfig: "./tsconfig.json",
-  format: ["esm"],
+  tsconfig: './tsconfig.json',
+  format: ['esm'],
   dts: true,
 };
 
@@ -13,17 +13,17 @@ export default defineConfig([
   {
     ...common,
     entry: {
-      index: "src/index.ts",
-      cli: "src/cli.ts",
-      normalizeConfig: "src/shared/config/normalizeConfig.ts",
+      index: 'src/index.ts',
+      cli: 'src/cli.ts',
+      normalizeConfig: 'src/shared/config/normalizeConfig.ts',
     },
   },
   {
     ...common,
-    format: ["esm", "cjs"],
-    external: ["prettier"],
+    format: ['esm', 'cjs'],
+    external: ['prettier'],
     entry: {
-      prettier: "src/prettier.ts",
+      prettier: 'src/prettier.ts',
     },
   },
 ]);

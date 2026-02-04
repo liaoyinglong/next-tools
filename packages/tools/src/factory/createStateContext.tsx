@@ -1,6 +1,6 @@
-"use client";
-import type { ComponentType, FC, PropsWithChildren } from "react";
-import React, { use, useContext } from "react";
+'use client';
+import type { ComponentType, FC, PropsWithChildren } from 'react';
+import React, { use, useContext } from 'react';
 
 interface Params<P, T> {
   /**

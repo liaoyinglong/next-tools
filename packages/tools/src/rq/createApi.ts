@@ -1,8 +1,10 @@
-import type { RequestBuilderOptions } from "./options";
-import { RequestBuilder } from "./RequestBuilder";
+import type { RequestBuilderOptions } from './options';
+import { RequestBuilder } from './RequestBuilder';
 
-interface Options<Req, Res>
-  extends Omit<Partial<RequestBuilderOptions<Req, Res>>, "requestFn"> {
+interface Options<Req, Res> extends Omit<
+  Partial<RequestBuilderOptions<Req, Res>>,
+  'requestFn'
+> {
   /**
    * 相当于 url
    */
@@ -30,7 +32,7 @@ export function createApi<Req, Res>(opts: Options<Req, Res>) {
   const api = new RequestBuilder<Req, Res>({
     url: opts.queryKey,
     // 给定 get 则 在 requestFn 中可以通过 params 获取到参数，否则是 data 字段
-    method: "get",
+    method: 'get',
     requestFn: (config) => {
       return requestFn(config.params) as never;
     },

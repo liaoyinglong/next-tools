@@ -1,4 +1,4 @@
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient } from '@tanstack/react-query';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -9,11 +9,11 @@ export const queryClient = new QueryClient({
       // 在mac上，chrome 浏览器可能会出现没有请求的现象
       // 主要是 navigator.onLine 的值为 false
       // 但是实际上是没有断网的
-      networkMode: "always",
+      networkMode: 'always',
     },
     mutations: {
       retry: false,
-      networkMode: "always",
+      networkMode: 'always',
     },
   },
 });

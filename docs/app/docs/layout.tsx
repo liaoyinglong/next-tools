@@ -1,6 +1,6 @@
-import { source } from "@/lib/source";
-import { DocsLayout } from "fumadocs-ui/layouts/docs";
-import type { ReactNode } from "react";
+import { source } from '@/lib/source';
+import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
@@ -10,8 +10,8 @@ export default function Layout({ children }: { children: ReactNode }) {
       nav={{
         title: (
           <div>
-            <b>Dune Tools</b>{" "}
-            <span style={{ opacity: "60%" }}>Dune Tools Collection</span>
+            <b>Dune Tools</b>{' '}
+            <span style={{ opacity: '60%' }}>Dune Tools Collection</span>
           </div>
         ),
       }}

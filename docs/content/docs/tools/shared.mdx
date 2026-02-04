@@ -1,6 +1,6 @@
 ---
 title: Shared
-description: "共享 Hook 与 TypeScript 类型工具（useIsomorphicLayoutEffect / OptionalKeys / Overwrite / Print）"
+description: '共享 Hook 与 TypeScript 类型工具（useIsomorphicLayoutEffect / OptionalKeys / Overwrite / Print）'
 ---
 
 # Shared
@@ -12,7 +12,7 @@ description: "共享 Hook 与 TypeScript 类型工具（useIsomorphicLayoutEffec
 当代码会在 SSR 环境运行时，直接使用 `useLayoutEffect` 会产生警告；`useIsomorphicLayoutEffect` 会在浏览器使用 `useLayoutEffect`，在 SSR 自动回退为 `useEffect`。
 
 ```ts
-import { useIsomorphicLayoutEffect } from "@dune2/tools/shared";
+import { useIsomorphicLayoutEffect } from '@dune2/tools/shared';
 
 useIsomorphicLayoutEffect(() => {
   // 安全：SSR 时等价于 useEffect
@@ -26,7 +26,7 @@ useIsomorphicLayoutEffect(() => {
 用于取出 “A 中哪些 key 在 B 中是可选/可覆盖的” 的 key 集合（常用于组合 props 类型）。
 
 ```ts
-import type { OptionalKeys } from "@dune2/tools/shared/OptionalKeys";
+import type { OptionalKeys } from '@dune2/tools/shared/OptionalKeys';
 ```
 
 ### Overwrite
@@ -34,7 +34,7 @@ import type { OptionalKeys } from "@dune2/tools/shared/OptionalKeys";
 用 B 覆盖 A 的同名字段类型。
 
 ```ts
-import type { Overwrite } from "@dune2/tools/shared/Overwrite";
+import type { Overwrite } from '@dune2/tools/shared/Overwrite';
 
 type A = { id: string; count: number };
 type B = { count: string };
@@ -46,5 +46,5 @@ type C = Overwrite<A, B>; // { id: string; count: string }
 辅助“展开”复杂类型，方便在 IDE 里查看最终类型结果（类型调试用）。
 
 ```ts
-import type { Print } from "@dune2/tools/shared/Print";
+import type { Print } from '@dune2/tools/shared/Print';
 ```

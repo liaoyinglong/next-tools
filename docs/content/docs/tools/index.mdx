@@ -1,6 +1,6 @@
 ---
 title: Tools 总览
-description: "@dune2/tools 提供的运行时工具与类型工具概览（factory / storage / rq / store / numbro / shared）"
+description: '@dune2/tools 提供的运行时工具与类型工具概览（factory / storage / rq / store / numbro / shared）'
 ---
 
 # Tools 总览
@@ -8,13 +8,13 @@ description: "@dune2/tools 提供的运行时工具与类型工具概览（facto
 `@dune2/tools` 是一个按“子路径导出（subpath exports）”组织的工具集合。**请使用子路径导入**，例如：
 
 ```ts
-import { RequestBuilder } from "@dune2/tools/rq";
-import { createStorage } from "@dune2/tools/storage";
-import { createStore } from "@dune2/tools/store";
-import { numbro } from "@dune2/tools/numbro";
-import { createStateContext } from "@dune2/tools/factory/createStateContext";
-import { mapProps } from "@dune2/tools/factory/mapProps";
-import { fieldsMap } from "@dune2/tools/factory/fieldsMap";
+import { RequestBuilder } from '@dune2/tools/rq';
+import { createStorage } from '@dune2/tools/storage';
+import { createStore } from '@dune2/tools/store';
+import { numbro } from '@dune2/tools/numbro';
+import { createStateContext } from '@dune2/tools/factory/createStateContext';
+import { mapProps } from '@dune2/tools/factory/mapProps';
+import { fieldsMap } from '@dune2/tools/factory/fieldsMap';
 ```
 
 > 说明：当前版本 `@dune2/tools` 的根入口（`@dune2/tools`）不提供稳定的聚合导出，推荐始终使用子路径导入以避免打包/类型问题。

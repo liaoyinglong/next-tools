@@ -1,16 +1,16 @@
-import { defineConfig } from "tsdown";
+import { defineConfig } from 'tsdown';
 
 export default defineConfig([
   {
-    name: "babel",
-    target: "node16",
+    name: 'babel',
+    target: 'node16',
     sourcemap: true,
-    tsconfig: "./tsconfig.json",
+    tsconfig: './tsconfig.json',
     dts: true,
-    format: ["esm", "cjs"],
+    format: ['esm', 'cjs'],
     entry: {
-      index: "src/index.ts",
-      createStore: "src/createStore/index.ts",
+      index: 'src/index.ts',
+      createStore: 'src/createStore/index.ts',
     },
   },
 ]);

@@ -15,10 +15,10 @@ npm install @dune2/tools
 React state management utilities for creating context providers.
 
 ```typescript
-import { createStateContext } from "@dune2/tools/factory/createStateContext";
+import { createStateContext } from '@dune2/tools/factory/createStateContext';
 
 const { Provider, useContextValue } = createStateContext({
-  name: "Counter",
+  name: 'Counter',
   useValueHooks: ({ initialCount = 0 }) => {
     const [count, setCount] = useState(initialCount);
     return { count, setCount };
@@ -31,17 +31,17 @@ const { Provider, useContextValue } = createStateContext({
 Browser storage wrapper with React hooks integration.
 
 ```typescript
-import { createStorage } from "@dune2/tools/storage";
+import { createStorage } from '@dune2/tools/storage';
 
 class DataMap {
-  token = "";
+  token = '';
   user = null;
 }
 
 const storage = createStorage({
   DataMap,
-  namespace: "app",
-  storageType: "local", // or 'session'
+  namespace: 'app',
+  storageType: 'local', // or 'session'
 });
 
 // Use in React
@@ -53,16 +53,16 @@ const token = storage.token.useValue();
 Enhanced React Query utilities with built-in request building.
 
 ```typescript
-import { RequestBuilder } from "@dune2/tools/rq";
+import { RequestBuilder } from '@dune2/tools/rq';
 
 const userApi = new RequestBuilder({
-  url: "/api/users/{id}",
-  method: "get",
-  urlPathParams: ["id"],
+  url: '/api/users/{id}',
+  method: 'get',
+  urlPathParams: ['id'],
 });
 
 // Use in components
-const { data, isLoading } = userApi.useQuery({ id: "123" });
+const { data, isLoading } = userApi.useQuery({ id: '123' });
 ```
 
 ### Store
@@ -70,10 +70,10 @@ const { data, isLoading } = userApi.useQuery({ id: "123" });
 Valtio-based state management with TypeScript support.
 
 ```typescript
-import { createStore } from "@dune2/tools/store";
+import { createStore } from '@dune2/tools/store';
 
 const counterStore = createStore({
-  name: "counter",
+  name: 'counter',
   state: { count: 0 },
   actionsCreator: (state) => ({
     increment: () => state.count++,
@@ -90,11 +90,11 @@ const { count } = counterStore.useSnapshot();
 BigNumber.js wrapper for precise number formatting and calculations.
 
 ```typescript
-import { numbro } from "@dune2/tools/numbro";
+import { numbro } from '@dune2/tools/numbro';
 
 const price = numbro(123.456);
 price.format({ mantissa: 2 }); // "123.46"
-price.formatCurrency({ symbol: "$" }); // "$123.46"
+price.formatCurrency({ symbol: '$' }); // "$123.46"
 ```
 
 ### Shared
@@ -102,5 +102,5 @@ price.formatCurrency({ symbol: "$" }); // "$123.46"
 TypeScript utility types for better type safety.
 
 ```typescript
-import type { OptionalKeys, Overwrite, Print } from "@dune2/tools/shared";
+import type { OptionalKeys, Overwrite, Print } from '@dune2/tools/shared';
 ```

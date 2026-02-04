@@ -3,17 +3,17 @@ import type {
   FetchQueryOptions as RQFetchQueryOptions,
   UseMutationOptions,
   useQuery,
-} from "@tanstack/react-query";
+} from '@tanstack/react-query';
 
 // 定义 HTTP 方法类型
 export type HttpMethod =
-  | "get"
-  | "post"
-  | "put"
-  | "delete"
-  | "patch"
-  | "head"
-  | "options";
+  | 'get'
+  | 'post'
+  | 'put'
+  | 'delete'
+  | 'patch'
+  | 'head'
+  | 'options';
 // 外部可以重写这个类型
 export interface RequestBuilderMeta {}
 
@@ -48,7 +48,7 @@ export interface QueryClientBasic {
   queryClient?: QueryClient;
 }
 
-type OmitMetaAndPartial<T> = Partial<Omit<T, "meta">>;
+type OmitMetaAndPartial<T> = Partial<Omit<T, 'meta'>>;
 
 type RawUseQueryOptions<T> = Parameters<typeof useQuery<T>>[0];
 // 透传给 useQuery

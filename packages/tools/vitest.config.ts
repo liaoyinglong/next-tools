@@ -1,16 +1,16 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    environment: "happy-dom",
+    environment: 'happy-dom',
     typecheck: {
-      checker: "tsc",
+      checker: 'tsc',
     },
     onConsoleLog() {
       return true;
     },
   },
   esbuild: {
-    jsx: "automatic",
+    jsx: 'automatic',
   },
 });

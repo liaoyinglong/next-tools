@@ -1,18 +1,18 @@
-import { assertType, describe, it } from "vitest";
-import { authOauthTokenPostApi } from "./api";
+import { assertType, describe, it } from 'vitest';
+import { authOauthTokenPostApi } from './api';
 
-describe("rq.query", () => {
+describe('rq.query', () => {
   const req = {
-    client_id: "string",
-    scope: "string",
-    grant_type: "string",
-    username: "string",
-    password: "string",
-    login_mode: "string",
-    attach: "string",
+    client_id: 'string',
+    scope: 'string',
+    grant_type: 'string',
+    username: 'string',
+    password: 'string',
+    login_mode: 'string',
+    attach: 'string',
   };
 
-  it("options queryKey is partial", () => {
+  it('options queryKey is partial', () => {
     authOauthTokenPostApi.useQuery(req, {
       enabled: true,
     });
@@ -27,27 +27,27 @@ describe("rq.query", () => {
     });
   });
 
-  it("can pass meta", () => {
+  it('can pass meta', () => {
     authOauthTokenPostApi.useQuery(req, {
       enabled: true,
-      meta: "string",
+      meta: 'string',
     });
 
     authOauthTokenPostApi.ensureQueryData(req, {
       staleTime: Infinity,
-      meta: "string",
+      meta: 'string',
     });
     authOauthTokenPostApi.fetchQuery(req, {
       staleTime: Infinity,
-      meta: "string",
+      meta: 'string',
     });
     authOauthTokenPostApi.prefetchQuery(req, {
       staleTime: Infinity,
-      meta: "string",
+      meta: 'string',
     });
   });
 
-  it("use query return type", () => {
+  it('use query return type', () => {
     {
       // 默认 res
       const res = authOauthTokenPostApi.useQuery(req);

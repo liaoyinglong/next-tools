@@ -8,6 +8,6 @@ pre-commit:
     #  glob: '**/*.{ts,tsx}'
     #  run: pnpm exec oxlint {staged_files}
     oxfmt:
-      glob: "*"
+      glob: '*'
       run: pnpm exec oxfmt --no-error-on-unmatched-pattern {staged_files}
       stage_fixed: true

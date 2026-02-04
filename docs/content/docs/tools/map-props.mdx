@@ -28,20 +28,20 @@ description: 用于修改和增强 React 组件 props 的高阶函数
 ### 导入
 
 ```tsx
-import { mapProps } from "@dune2/tools/factory/mapProps";
+import { mapProps } from '@dune2/tools/factory/mapProps';
 ```
 
 ### 为原生 HTML 元素添加默认属性
 
 ```tsx
 // 创建一个带有默认样式的 div 容器
-const Container = mapProps("div", {
-  className: "container",
-  style: { display: "flex", padding: "20px" },
+const Container = mapProps('div', {
+  className: 'container',
+  style: { display: 'flex', padding: '20px' },
 });
 
 // 使用时可以覆盖默认属性
-<Container className="custom-container" style={{ display: "grid" }} />;
+<Container className='custom-container' style={{ display: 'grid' }} />;
 ```
 
 ### 为自定义组件添加默认属性
@@ -49,20 +49,20 @@ const Container = mapProps("div", {
 ```tsx
 interface CardProps {
   title: string;
-  theme?: "light" | "dark";
+  theme?: 'light' | 'dark';
 }
 
-const Card = ({ title, theme = "light" }: CardProps) => {
+const Card = ({ title, theme = 'light' }: CardProps) => {
   return <div className={`card ${theme}`}>{title}</div>;
 };
 
 // 创建一个暗色主题的卡片组件
 const DarkCard = mapProps(Card, {
-  theme: "dark",
+  theme: 'dark',
 });
 
 // 使用时只需要提供 title
-<DarkCard title="Hello World" />;
+<DarkCard title='Hello World' />;
 ```
 
 ## 高级用法
@@ -70,14 +70,14 @@ const DarkCard = mapProps(Card, {
 ### 动态计算 Props
 
 ```tsx
-const EnhancedButton = mapProps("button", (props) => ({
+const EnhancedButton = mapProps('button', (props) => ({
   ...props,
-  className: `btn ${props.disabled ? "btn-disabled" : ""} ${props.className || ""}`,
-  "aria-disabled": props.disabled,
+  className: `btn ${props.disabled ? 'btn-disabled' : ''} ${props.className || ''}`,
+  'aria-disabled': props.disabled,
 }));
 
 // 使用
-<EnhancedButton disabled onClick={() => console.log("clicked")}>
+<EnhancedButton disabled onClick={() => console.log('clicked')}>
   Click me
 </EnhancedButton>;
 ```
@@ -104,7 +104,7 @@ const ModernInput = mapProps(
 );
 
 // 现在可以使用现代的 API
-<ModernInput value="hello" onChange={(value) => console.log(value)} />;
+<ModernInput value='hello' onChange={(value) => console.log(value)} />;
 ```
 
 ### 创建主题化组件
@@ -112,14 +112,14 @@ const ModernInput = mapProps(
 ```tsx
 interface ButtonProps {
   children: React.ReactNode;
-  variant?: "primary" | "secondary" | "danger";
-  size?: "small" | "medium" | "large";
+  variant?: 'primary' | 'secondary' | 'danger';
+  size?: 'small' | 'medium' | 'large';
 }
 
 const BaseButton = ({
   children,
-  variant = "primary",
-  size = "medium",
+  variant = 'primary',
+  size = 'medium',
 }: ButtonProps) => {
   return (
     <button className={`btn btn-${variant} btn-${size}`}>{children}</button>
@@ -127,29 +127,29 @@ const BaseButton = ({
 };
 
 // 创建主题化的按钮组件
-const PrimaryButton = mapProps(BaseButton, { variant: "primary" });
-const DangerButton = mapProps(BaseButton, { variant: "danger" });
-const SmallButton = mapProps(BaseButton, { size: "small" });
+const PrimaryButton = mapProps(BaseButton, { variant: 'primary' });
+const DangerButton = mapProps(BaseButton, { variant: 'danger' });
+const SmallButton = mapProps(BaseButton, { size: 'small' });
 
 // 组合使用
-const SmallDangerButton = mapProps(DangerButton, { size: "small" });
+const SmallDangerButton = mapProps(DangerButton, { size: 'small' });
 ```
 
 ### 条件渲染增强
 
 ```tsx
-const ConditionalWrapper = mapProps("div", (props) => {
+const ConditionalWrapper = mapProps('div', (props) => {
   const { show, children, ...rest } = props;
 
   if (!show) {
-    return { style: { display: "none" }, ...rest, children };
+    return { style: { display: 'none' }, ...rest, children };
   }
 
   return { ...rest, children };
 });
 
 // 使用
-<ConditionalWrapper show={isVisible} className="wrapper">
+<ConditionalWrapper show={isVisible} className='wrapper'>
   <p>This content is conditionally visible</p>
 </ConditionalWrapper>;
 ```
@@ -157,7 +157,7 @@ const ConditionalWrapper = mapProps("div", (props) => {
 ### 事件处理增强
 
 ```tsx
-const TrackedButton = mapProps("button", (props) => {
+const TrackedButton = mapProps('button', (props) => {
   const { onClick, trackingId, ...rest } = props;
 
   return {
@@ -165,7 +165,7 @@ const TrackedButton = mapProps("button", (props) => {
     onClick: (e) => {
       // 添加埋点逻辑
       if (trackingId) {
-        analytics.track("button_click", { id: trackingId });
+        analytics.track('button_click', { id: trackingId });
       }
       onClick?.(e);
     },
@@ -173,7 +173,7 @@ const TrackedButton = mapProps("button", (props) => {
 });
 
 // 使用
-<TrackedButton trackingId="hero-cta" onClick={() => console.log("clicked")}>
+<TrackedButton trackingId='hero-cta' onClick={() => console.log('clicked')}>
   Call to Action
 </TrackedButton>;
 ```
@@ -244,21 +244,21 @@ const BaseInput = (props: React.InputHTMLAttributes<HTMLInputElement>) => {
 
 // 创建不同尺寸的输入框
 const SmallInput = mapProps(BaseInput, {
-  className: "input input-sm",
-  style: { padding: "4px 8px" },
+  className: 'input input-sm',
+  style: { padding: '4px 8px' },
 });
 
 const LargeInput = mapProps(BaseInput, {
-  className: "input input-lg",
-  style: { padding: "12px 16px" },
+  className: 'input input-lg',
+  style: { padding: '12px 16px' },
 });
 
 // 创建特定类型的输入框
 const SearchInput = mapProps(BaseInput, (props) => ({
   ...props,
-  type: "search",
-  placeholder: props.placeholder || "搜索...",
-  className: `${props.className || ""} search-input`.trim(),
+  type: 'search',
+  placeholder: props.placeholder || '搜索...',
+  className: `${props.className || ''} search-input`.trim(),
 }));
 ```
 
@@ -274,13 +274,13 @@ interface FormFieldProps {
 
 const FormField = ({ label, error, required, children }: FormFieldProps) => {
   return (
-    <div className="form-field">
+    <div className='form-field'>
       <label>
         {label}
-        {required && <span className="required">*</span>}
+        {required && <span className='required'>*</span>}
       </label>
       {children}
-      {error && <span className="error">{error}</span>}
+      {error && <span className='error'>{error}</span>}
     </div>
   );
 };
@@ -293,7 +293,7 @@ const OptionalFormField = mapProps(FormField, { required: false });
 ### 3. 响应式组件
 
 ```tsx
-const ResponsiveImage = mapProps("img", (props) => {
+const ResponsiveImage = mapProps('img', (props) => {
   const { src, alt, breakpoints, ...rest } = props;
 
   // 根据屏幕尺寸选择合适的图片
@@ -303,10 +303,10 @@ const ResponsiveImage = mapProps("img", (props) => {
     ...rest,
     src: currentSrc,
     alt,
-    loading: "lazy",
+    loading: 'lazy',
     onError: (e) => {
       // 图片加载失败时的处理
-      e.currentTarget.src = "/fallback-image.jpg";
+      e.currentTarget.src = '/fallback-image.jpg';
       props.onError?.(e);
     },
   };
@@ -320,12 +320,12 @@ const ResponsiveImage = mapProps("img", (props) => {
 ```tsx
 // ❌ 错误做法 - 每次渲染都会创建新组件
 function MyComponent() {
-  const StyledButton = mapProps("button", { className: "styled-btn" });
+  const StyledButton = mapProps('button', { className: 'styled-btn' });
   return <StyledButton>Click me</StyledButton>;
 }
 
 // ✅ 正确做法 - 在组件外部创建
-const StyledButton = mapProps("button", { className: "styled-btn" });
+const StyledButton = mapProps('button', { className: 'styled-btn' });
 
 function MyComponent() {
   return <StyledButton>Click me</StyledButton>;
@@ -337,7 +337,7 @@ function MyComponent() {
 ```tsx
 function MyComponent({ theme }: { theme: string }) {
   const ThemedButton = useMemo(
-    () => mapProps("button", { className: `btn btn-${theme}` }),
+    () => mapProps('button', { className: `btn btn-${theme}` }),
     [theme],
   );
 
@@ -351,20 +351,20 @@ function MyComponent({ theme }: { theme: string }) {
 
 ```tsx
 // ✅ 好的做法
-const TrackedButton = mapProps("button", (props) => {
+const TrackedButton = mapProps('button', (props) => {
   return {
     ...props,
     onClick: (e) => {
-      analytics.track("click", { id: props.id });
+      analytics.track('click', { id: props.id });
       props.onClick?.(e);
     },
   };
 });
 
 // ❌ 避免的做法
-const TrackedButton = mapProps("button", (props) => {
+const TrackedButton = mapProps('button', (props) => {
   // 不要在 mapper 中执行副作用
-  console.log("Creating tracked button"); // 这会在每次渲染时执行
+  console.log('Creating tracked button'); // 这会在每次渲染时执行
   return props;
 });
 ```
@@ -374,8 +374,8 @@ const TrackedButton = mapProps("button", (props) => {
 ```tsx
 // 定义清晰的类型
 interface ButtonProps {
-  variant: "primary" | "secondary";
-  size: "small" | "large";
+  variant: 'primary' | 'secondary';
+  size: 'small' | 'large';
   children: React.ReactNode;
 }
 
@@ -386,20 +386,20 @@ const Button = ({ variant, size, children }: ButtonProps) => {
 };
 
 // 使用类型安全的 mapProps
-const PrimaryButton = mapProps(Button, { variant: "primary" as const });
+const PrimaryButton = mapProps(Button, { variant: 'primary' as const });
 ```
 
 ### 3. 组件命名规范
 
 ```tsx
 // 使用描述性的名称
-const PrimaryButton = mapProps(Button, { variant: "primary" });
-const DangerButton = mapProps(Button, { variant: "danger" });
-const SmallButton = mapProps(Button, { size: "small" });
+const PrimaryButton = mapProps(Button, { variant: 'primary' });
+const DangerButton = mapProps(Button, { variant: 'danger' });
+const SmallButton = mapProps(Button, { size: 'small' });
 
 // 避免模糊的名称
-const Button1 = mapProps(Button, { variant: "primary" });
-const Button2 = mapProps(Button, { variant: "danger" });
+const Button1 = mapProps(Button, { variant: 'primary' });
+const Button2 = mapProps(Button, { variant: 'danger' });
 ```
 
 ## 注意事项

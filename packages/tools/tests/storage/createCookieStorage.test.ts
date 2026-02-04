@@ -1,9 +1,9 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { createCookieStorage } from "../../src/storage/cookie";
+import { beforeEach, describe, expect, it } from 'vitest';
+import { createCookieStorage } from '../../src/storage/cookie';
 
 //#region mock document.cookie
-let cookie = "";
-Object.defineProperty(document, "cookie", {
+let cookie = '';
+Object.defineProperty(document, 'cookie', {
   get(): any {
     return cookie;
   },
@@ -14,63 +14,63 @@ Object.defineProperty(document, "cookie", {
 //#endregion
 
 class DataMap {
-  name = "";
-  age = "0";
+  name = '';
+  age = '0';
 }
 type A = typeof DataMap;
 
-const namespace = "test";
+const namespace = 'test';
 const storage = createCookieStorage({
   DataMap,
   namespace,
 });
 
-describe("createCookieStorage", () => {
+describe('createCookieStorage', () => {
   beforeEach(() => {
-    document.cookie = "";
+    document.cookie = '';
   });
 
-  it("namespace correct", () => {
-    expect(storage.age.key).toBe("test.age");
+  it('namespace correct', () => {
+    expect(storage.age.key).toBe('test.age');
   });
 
-  it("get default value", () => {
-    expect(storage.age.get()).toBe("0");
+  it('get default value', () => {
+    expect(storage.age.get()).toBe('0');
   });
 
-  it("set value", () => {
-    storage.age.set("1");
-    expect(storage.age.get()).toBe("1");
+  it('set value', () => {
+    storage.age.set('1');
+    expect(storage.age.get()).toBe('1');
   });
 
-  it("remove", () => {
-    storage.age.set("1");
-    expect(storage.age.get()).toBe("1");
+  it('remove', () => {
+    storage.age.set('1');
+    expect(storage.age.get()).toBe('1');
     storage.age.remove();
-    expect(storage.age.get()).toBe("0");
+    expect(storage.age.get()).toBe('0');
   });
 
-  it("string integration", () => {
-    expect(storage.name.get()).toBe("");
+  it('string integration', () => {
+    expect(storage.name.get()).toBe('');
 
-    storage.name.set("test");
-    expect(storage.name.get()).toBe("test");
+    storage.name.set('test');
+    expect(storage.name.get()).toBe('test');
 
     storage.name.remove();
-    expect(storage.name.get()).toBe("");
+    expect(storage.name.get()).toBe('');
   });
 
-  it("number integration", () => {
-    expect(storage.age.get()).toBe("0");
+  it('number integration', () => {
+    expect(storage.age.get()).toBe('0');
 
-    storage.age.set("1");
-    expect(storage.age.get()).toBe("1");
+    storage.age.set('1');
+    expect(storage.age.get()).toBe('1');
 
     storage.age.remove();
-    expect(storage.age.get()).toBe("0");
+    expect(storage.age.get()).toBe('0');
 
     // @ts-expect-error 只能传入 string
     storage.age.set(1);
-    expect(storage.age.get()).toBe("1");
+    expect(storage.age.get()).toBe('1');
   });
 });

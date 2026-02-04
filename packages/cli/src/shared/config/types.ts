@@ -1,5 +1,5 @@
-import type SwaggerParser from "@apidevtools/swagger-parser";
-import { OpenAPIV3 } from "openapi-types";
+import type SwaggerParser from '@apidevtools/swagger-parser';
+import { OpenAPIV3 } from 'openapi-types';
 
 export interface ApiConfig {
   /**

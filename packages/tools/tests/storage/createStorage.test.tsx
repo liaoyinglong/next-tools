@@ -1,12 +1,12 @@
-import { act, render, renderHook } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createStorage } from "../../src/storage";
+import { act, render, renderHook } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createStorage } from '../../src/storage';
 class DataMap {
-  name = "";
+  name = '';
   age = 0;
   setting: { isLogin: boolean } = { isLogin: false };
 }
-const namespace = "test";
+const namespace = 'test';
 function initStorage() {
   const storage = createStorage({
     DataMap,
@@ -17,32 +17,32 @@ function initStorage() {
 }
 let storage = initStorage();
 
-describe("createStorage", () => {
+describe('createStorage', () => {
   beforeEach((v) => {
     storage = initStorage();
   });
 
-  it("namespace correct", () => {
-    expect(storage.age.key).toBe("test.age");
+  it('namespace correct', () => {
+    expect(storage.age.key).toBe('test.age');
   });
 
-  it("get default value", () => {
+  it('get default value', () => {
     expect(storage.age.get()).toBe(0);
   });
 
-  it("set value", () => {
+  it('set value', () => {
     storage.age.set(1);
     expect(storage.age.get()).toBe(1);
   });
 
-  it("remove", () => {
+  it('remove', () => {
     storage.age.set(1);
     expect(storage.age.get()).toBe(1);
     storage.age.remove();
     expect(storage.age.get()).toBe(0);
   });
 
-  it("object integration", () => {
+  it('object integration', () => {
     expect(storage.setting.get()).toEqual({ isLogin: false });
 
     storage.setting.set({ isLogin: true });
@@ -52,17 +52,17 @@ describe("createStorage", () => {
     expect(storage.setting.get()).toEqual({ isLogin: false });
   });
 
-  it("string integration", () => {
-    expect(storage.name.get()).toBe("");
+  it('string integration', () => {
+    expect(storage.name.get()).toBe('');
 
-    storage.name.set("test");
-    expect(storage.name.get()).toBe("test");
+    storage.name.set('test');
+    expect(storage.name.get()).toBe('test');
 
     storage.name.remove();
-    expect(storage.name.get()).toBe("");
+    expect(storage.name.get()).toBe('');
   });
 
-  it("number integration", () => {
+  it('number integration', () => {
     expect(storage.age.get()).toBe(0);
 
     storage.age.set(1);
@@ -72,8 +72,8 @@ describe("createStorage", () => {
     expect(storage.age.get()).toBe(0);
   });
 
-  describe("react hooks", () => {
-    it("should work", () => {
+  describe('react hooks', () => {
+    it('should work', () => {
       const { result } = renderHook(() => storage.age.useValue());
       expect(result.current).toBe(0);
       act(() => {
@@ -82,7 +82,7 @@ describe("createStorage", () => {
       expect(result.current).toBe(1);
     });
 
-    it("with object", () => {
+    it('with object', () => {
       const { result } = renderHook(() => storage.setting.useValue());
       expect(result.current).toEqual({ isLogin: false });
       act(() => {
@@ -91,7 +91,7 @@ describe("createStorage", () => {
       expect(result.current).toEqual({ isLogin: true });
     });
 
-    it("local storage 中没有初始值，没有多余的 rerender", () => {
+    it('local storage 中没有初始值，没有多余的 rerender', () => {
       let count = 0;
       const { result } = renderHook(() => {
         count++;
@@ -114,10 +114,10 @@ describe("createStorage", () => {
       expect(result.current).toEqual({ isLogin: true });
     });
 
-    it("local storage 中有初始值，没有多余的 rerender", () => {
+    it('local storage 中有初始值，没有多余的 rerender', () => {
       // 设置初始值
       storage.age.set(10);
-      storage.name.set("foo");
+      storage.name.set('foo');
       storage.setting.set({ isLogin: true });
       let count = 0;
       const { result } = renderHook(() => {
@@ -141,10 +141,10 @@ describe("createStorage", () => {
       expect(result.current).toEqual({ isLogin: false });
     });
 
-    it("SSR 场景，local storage 中有初始值", () => {
+    it('SSR 场景，local storage 中有初始值', () => {
       // 设置初始值
       storage.age.set(1);
-      storage.name.set("foo");
+      storage.name.set('foo');
       storage.setting.set({ isLogin: true });
 
       let count = 0;
@@ -156,12 +156,12 @@ describe("createStorage", () => {
         return (
           <>
             <span>{count}</span>
-            <span>{value?.isLogin + ""}</span>
+            <span>{value?.isLogin + ''}</span>
           </>
         );
       }
 
-      const container = document.createElement("div");
+      const container = document.createElement('div');
       // 这里模拟 SSR 的初始化html
       container.innerHTML = `<span>1</span><span>false</span>`;
 

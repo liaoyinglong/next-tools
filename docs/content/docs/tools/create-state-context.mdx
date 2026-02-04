@@ -19,14 +19,14 @@ description: 快速创建 React Context 和 Provider 组件的工具函数
 ### 导入
 
 ```tsx
-import { createStateContext } from "@dune2/tools/factory/createStateContext";
+import { createStateContext } from '@dune2/tools/factory/createStateContext';
 ```
 
 ### 创建 Context
 
 ```tsx
-import { useState } from "react";
-import { createStateContext } from "@dune2/tools/factory/createStateContext";
+import { useState } from 'react';
+import { createStateContext } from '@dune2/tools/factory/createStateContext';
 
 // 定义状态和操作
 function useCounter(props: { initialValue: number }) {
@@ -42,7 +42,7 @@ function useCounter(props: { initialValue: number }) {
 
 // 创建 Context
 const CounterContext = createStateContext({
-  name: "Counter",
+  name: 'Counter',
   useValueHooks: useCounter,
   defaultValue: {
     count: 0,
@@ -143,7 +143,7 @@ function CounterPage() {
 ### 复杂状态管理
 
 ```tsx
-import { useReducer } from "react";
+import { useReducer } from 'react';
 
 // 定义状态类型
 interface TodoState {
@@ -152,14 +152,14 @@ interface TodoState {
 
 // 定义操作类型
 type TodoAction =
-  | { type: "ADD_TODO"; text: string }
-  | { type: "TOGGLE_TODO"; id: number }
-  | { type: "REMOVE_TODO"; id: number };
+  | { type: 'ADD_TODO'; text: string }
+  | { type: 'TOGGLE_TODO'; id: number }
+  | { type: 'REMOVE_TODO'; id: number };
 
 // Reducer 函数
 function todoReducer(state: TodoState, action: TodoAction): TodoState {
   switch (action.type) {
-    case "ADD_TODO":
+    case 'ADD_TODO':
       return {
         ...state,
         todos: [
@@ -167,7 +167,7 @@ function todoReducer(state: TodoState, action: TodoAction): TodoState {
           { id: Date.now(), text: action.text, completed: false },
         ],
       };
-    case "TOGGLE_TODO":
+    case 'TOGGLE_TODO':
       return {
         ...state,
         todos: state.todos.map((todo) =>
@@ -176,7 +176,7 @@ function todoReducer(state: TodoState, action: TodoAction): TodoState {
             : todo,
         ),
       };
-    case "REMOVE_TODO":
+    case 'REMOVE_TODO':
       return {
         ...state,
         todos: state.todos.filter((todo) => todo.id !== action.id),
@@ -187,22 +187,22 @@ function todoReducer(state: TodoState, action: TodoAction): TodoState {
 }
 
 // 创建自定义 Hook
-function useTodos(props: { initialTodos?: TodoState["todos"] }) {
+function useTodos(props: { initialTodos?: TodoState['todos'] }) {
   const [state, dispatch] = useReducer(todoReducer, {
     todos: props.initialTodos || [],
   });
 
   return {
     todos: state.todos,
-    addTodo: (text: string) => dispatch({ type: "ADD_TODO", text }),
-    toggleTodo: (id: number) => dispatch({ type: "TOGGLE_TODO", id }),
-    removeTodo: (id: number) => dispatch({ type: "REMOVE_TODO", id }),
+    addTodo: (text: string) => dispatch({ type: 'ADD_TODO', text }),
+    toggleTodo: (id: number) => dispatch({ type: 'TOGGLE_TODO', id }),
+    removeTodo: (id: number) => dispatch({ type: 'REMOVE_TODO', id }),
   };
 }
 
 // 创建 Context
 const TodoContext = createStateContext({
-  name: "Todo",
+  name: 'Todo',
   useValueHooks: useTodos,
 });
 
@@ -224,7 +224,7 @@ function TodoList() {
       {todos.map((todo) => (
         <li key={todo.id}>
           <input
-            type="checkbox"
+            type='checkbox'
             checked={todo.completed}
             onChange={() => toggleTodo(todo.id)}
           />
@@ -238,25 +238,25 @@ function TodoList() {
 
 function AddTodoForm() {
   const { addTodo } = TodoContext.useContextValue();
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (text.trim()) {
       addTodo(text);
-      setText("");
+      setText('');
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <input
-        type="text"
+        type='text'
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Add a todo..."
+        placeholder='Add a todo...'
       />
-      <button type="submit">Add</button>
+      <button type='submit'>Add</button>
     </form>
   );
 }
@@ -269,13 +269,13 @@ function AddTodoForm() {
 ```tsx
 // 好的命名
 const UserContext = createStateContext({
-  name: "User", // 清晰的名称，便于调试
+  name: 'User', // 清晰的名称，便于调试
   useValueHooks: useUser,
 });
 
 // 避免的命名
 const Context1 = createStateContext({
-  name: "ctx", // 名称不清晰
+  name: 'ctx', // 名称不清晰
   useValueHooks: useHook,
 });
 ```
@@ -307,7 +307,7 @@ function useAuthState() {
 
 // 然后在 Context 中使用
 const AuthContext = createStateContext({
-  name: "Auth",
+  name: 'Auth',
   useValueHooks: useAuthState,
 });
 ```
@@ -316,7 +316,7 @@ const AuthContext = createStateContext({
 
 ```tsx
 const AuthContext = createStateContext({
-  name: "Auth",
+  name: 'Auth',
   useValueHooks: useAuthState,
   defaultValue: {
     user: null,

@@ -1,5 +1,5 @@
-import { ChildA, ChildB } from "./Child";
-import { Provider } from "./shared";
+import { ChildA, ChildB } from './Child';
+import { Provider } from './shared';
 
 export default function App() {
   return (

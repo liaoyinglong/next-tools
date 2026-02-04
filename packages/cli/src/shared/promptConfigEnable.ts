@@ -1,5 +1,5 @@
-import enquirer from "enquirer";
-import { ApiConfig } from "./config";
+import enquirer from 'enquirer';
+import { ApiConfig } from './config';
 const { prompt } = enquirer;
 
 interface Opt<T> {
@@ -22,19 +22,19 @@ export async function promptConfigEnable<T>(opt: Opt<T>) {
 
   const choices = [
     {
-      name: "全部",
-      message: "全部",
+      name: '全部',
+      message: '全部',
       choices: configArr.map((item) => {
         return getChoiceItem(item);
       }),
     },
   ];
   const res = await prompt<{ enabled: string[] }>({
-    type: "multiselect",
-    message: "选择要生效的配置项",
+    type: 'multiselect',
+    message: '选择要生效的配置项',
     // @ts-ignore
-    hint: "(空格选中，回车确认)",
-    name: "enabled",
+    hint: '(空格选中，回车确认)',
+    name: 'enabled',
     validate(value) {
       return value.length === 0 ? `至少选择一项` : true;
     },

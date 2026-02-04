@@ -22,7 +22,7 @@ description: 基于 TanStack Query 封装的类型安全 API 请求构建器
 ### 导入
 
 ```tsx
-import { RequestBuilder } from "@dune2/tools/rq";
+import { RequestBuilder } from '@dune2/tools/rq';
 ```
 
 ### 创建 RequestBuilder 实例
@@ -30,24 +30,24 @@ import { RequestBuilder } from "@dune2/tools/rq";
 ```tsx
 // 基础用法
 const userApi = new RequestBuilder<UserRequest, UserResponse>({
-  url: "/api/users",
-  method: "get",
+  url: '/api/users',
+  method: 'get',
 });
 
 // 带路径参数
 const userDetailApi = new RequestBuilder<UserDetailRequest, UserDetailResponse>(
   {
-    url: "/api/users/{userId}",
-    method: "get",
-    urlPathParams: ["userId"],
+    url: '/api/users/{userId}',
+    method: 'get',
+    urlPathParams: ['userId'],
   },
 );
 
 // 完整配置
 const createUserApi = new RequestBuilder<CreateUserRequest, CreateUserResponse>(
   {
-    url: "/api/users",
-    method: "post",
+    url: '/api/users',
+    method: 'post',
     queryClient: customQueryClient,
     requestFn: customRequestFn,
     meta: { requiresAuth: true },
@@ -64,7 +64,7 @@ const response = await userApi.request({ page: 1, limit: 10 });
 // 使用自定义配置发送请求
 const response = await userApi.requestWithConfig({
   params: { page: 1, limit: 10 },
-  headers: { Authorization: "Bearer token" },
+  headers: { Authorization: 'Bearer token' },
 });
 ```
 
@@ -102,12 +102,12 @@ function UserList() {
 function CreateUserForm() {
   const mutation = createUserApi.useMutation({
     onSuccess: (data) => {
-      console.log("User created:", data);
+      console.log('User created:', data);
       // 刷新用户列表
       userApi.invalidateQuery();
     },
     onError: (error) => {
-      console.error("Failed to create user:", error);
+      console.error('Failed to create user:', error);
     },
   });
 
@@ -118,8 +118,8 @@ function CreateUserForm() {
   return (
     <form onSubmit={handleSubmit}>
       {/* 表单内容 */}
-      <button type="submit" disabled={mutation.isPending}>
-        {mutation.isPending ? "Creating..." : "Create User"}
+      <button type='submit' disabled={mutation.isPending}>
+        {mutation.isPending ? 'Creating...' : 'Create User'}
       </button>
     </form>
   );
@@ -150,7 +150,7 @@ function InfiniteUserList() {
 
       {hasNextPage && (
         <button onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
-          {isFetchingNextPage ? "Loading more..." : "Load More"}
+          {isFetchingNextPage ? 'Loading more...' : 'Load More'}
         </button>
       )}
     </div>
@@ -225,8 +225,8 @@ RequestBuilder.setRequestFn(async (config) => {
 
 // 为特定实例设置请求函数
 const customApi = new RequestBuilder({
-  url: "/api/custom",
-  method: "post",
+  url: '/api/custom',
+  method: 'post',
   requestFn: customRequestFunction,
 });
 ```
@@ -234,7 +234,7 @@ const customApi = new RequestBuilder({
 ### 自定义查询客户端
 
 ```tsx
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient } from '@tanstack/react-query';
 
 const customQueryClient = new QueryClient({
   defaultOptions: {
@@ -250,8 +250,8 @@ RequestBuilder.setQueryClient(customQueryClient);
 
 // 为特定实例设置查询客户端
 const api = new RequestBuilder({
-  url: "/api/data",
-  method: "get",
+  url: '/api/data',
+  method: 'get',
   queryClient: customQueryClient,
 });
 ```
@@ -264,14 +264,14 @@ const userDetailApi = new RequestBuilder<
   { userId: string; includeProfile: boolean },
   UserDetailResponse
 >({
-  url: "/api/users/{userId}",
-  method: "get",
-  urlPathParams: ["userId"],
+  url: '/api/users/{userId}',
+  method: 'get',
+  urlPathParams: ['userId'],
 });
 
 // 使用时会自动替换路径参数
 const response = await userDetailApi.request({
-  userId: "123",
+  userId: '123',
   includeProfile: true,
 });
 // 实际请求: GET /api/users/123?includeProfile=true
@@ -281,11 +281,11 @@ const response = await userDetailApi.request({
 
 ```tsx
 const authApi = new RequestBuilder({
-  url: "/api/protected",
-  method: "get",
+  url: '/api/protected',
+  method: 'get',
   meta: {
     requiresAuth: true,
-    permissions: ["read:users"],
+    permissions: ['read:users'],
   },
 });
 
@@ -329,30 +329,30 @@ interface UserListResponse {
 
 // API 定义
 const userListApi = new RequestBuilder<UserListRequest, UserListResponse>({
-  url: "/api/users",
-  method: "get",
+  url: '/api/users',
+  method: 'get',
 });
 
-const createUserApi = new RequestBuilder<Omit<User, "id">, User>({
-  url: "/api/users",
-  method: "post",
+const createUserApi = new RequestBuilder<Omit<User, 'id'>, User>({
+  url: '/api/users',
+  method: 'post',
 });
 
 const updateUserApi = new RequestBuilder<User, User>({
-  url: "/api/users/{id}",
-  method: "put",
-  urlPathParams: ["id"],
+  url: '/api/users/{id}',
+  method: 'put',
+  urlPathParams: ['id'],
 });
 
 const deleteUserApi = new RequestBuilder<{ id: string }, void>({
-  url: "/api/users/{id}",
-  method: "delete",
-  urlPathParams: ["id"],
+  url: '/api/users/{id}',
+  method: 'delete',
+  urlPathParams: ['id'],
 });
 
 // 使用示例
 function UserManagement() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
   const { data: users, isLoading } = userListApi.useQuery({
     page: 1,
@@ -381,10 +381,10 @@ function UserManagement() {
   return (
     <div>
       <input
-        type="text"
+        type='text'
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="搜索用户..."
+        placeholder='搜索用户...'
       />
 
       {isLoading ? (
@@ -422,17 +422,17 @@ interface UploadResponse {
 }
 
 const uploadApi = new RequestBuilder<UploadRequest, UploadResponse>({
-  url: "/api/upload",
-  method: "post",
+  url: '/api/upload',
+  method: 'post',
   requestFn: async (config) => {
     const formData = new FormData();
-    formData.append("file", config.data.file);
+    formData.append('file', config.data.file);
     if (config.data.folder) {
-      formData.append("folder", config.data.folder);
+      formData.append('folder', config.data.folder);
     }
 
     const response = await fetch(config.url, {
-      method: "POST",
+      method: 'POST',
       body: formData,
     });
 
@@ -443,21 +443,21 @@ const uploadApi = new RequestBuilder<UploadRequest, UploadResponse>({
 function FileUpload() {
   const uploadMutation = uploadApi.useMutation({
     onSuccess: (data) => {
-      console.log("File uploaded:", data.url);
+      console.log('File uploaded:', data.url);
     },
     onError: (error) => {
-      console.error("Upload failed:", error);
+      console.error('Upload failed:', error);
     },
   });
 
   const handleFileSelect = (file: File) => {
-    uploadMutation.mutate({ file, folder: "documents" });
+    uploadMutation.mutate({ file, folder: 'documents' });
   };
 
   return (
     <div>
       <input
-        type="file"
+        type='file'
         onChange={(e) => {
           const file = e.target.files?.[0];
           if (file) handleFileSelect(file);
@@ -479,7 +479,7 @@ function FileUpload() {
 ```tsx
 interface RequestBuilderOptions<Req, Res> {
   url: string;
-  method?: "get" | "post" | "put" | "delete" | "patch" | "head" | "options";
+  method?: 'get' | 'post' | 'put' | 'delete' | 'patch' | 'head' | 'options';
   urlPathParams?: string[];
   queryClient?: QueryClient;
   requestFn?: (config: RequestConfig) => Promise<Res>;
@@ -531,21 +531,21 @@ interface RequestBuilderOptions<Req, Res> {
 interface CreateUserRequest {
   name: string;
   email: string;
-  role: "admin" | "user";
+  role: 'admin' | 'user';
 }
 
 interface User {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "user";
+  role: 'admin' | 'user';
   createdAt: string;
 }
 
 // 使用类型安全的 RequestBuilder
 const createUserApi = new RequestBuilder<CreateUserRequest, User>({
-  url: "/api/users",
-  method: "post",
+  url: '/api/users',
+  method: 'post',
 });
 ```
 
@@ -559,7 +559,7 @@ function UserList() {
       retry: 3,
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
       onError: (error) => {
-        console.error("Failed to fetch users:", error);
+        console.error('Failed to fetch users:', error);
         // 可以在这里显示错误通知
       },
     },
@@ -578,8 +578,8 @@ function UserList() {
 ```tsx
 // 使用适当的缓存策略
 const userApi = new RequestBuilder({
-  url: "/api/users",
-  method: "get",
+  url: '/api/users',
+  method: 'get',
   useQueryOptions: {
     staleTime: 1000 * 60 * 5, // 5分钟内不重新获取
     cacheTime: 1000 * 60 * 30, // 30分钟后从缓存中移除
@@ -600,7 +600,7 @@ function UserProfile({ userId }: { userId: string }) {
 ```tsx
 // 创建统一的 API 基类
 class BaseApi<Req, Res> extends RequestBuilder<Req, Res> {
-  constructor(options: Omit<RequestBuilderOptions<Req, Res>, "requestFn">) {
+  constructor(options: Omit<RequestBuilderOptions<Req, Res>, 'requestFn'>) {
     super({
       ...options,
       requestFn: async (config) => {
@@ -614,8 +614,8 @@ class BaseApi<Req, Res> extends RequestBuilder<Req, Res> {
 
 // 使用基类创建 API
 const userApi = new BaseApi<UserRequest, UserResponse>({
-  url: "/api/users",
-  method: "get",
+  url: '/api/users',
+  method: 'get',
 });
 ```
 

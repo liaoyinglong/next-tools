@@ -1,6 +1,6 @@
-import type { ComponentProps, ComponentType, FC, JSX } from "react";
-import { forwardRef } from "react";
-import type { OptionalKeys } from "../shared/OptionalKeys";
+import type { ComponentProps, ComponentType, FC, JSX } from 'react';
+import { forwardRef } from 'react';
+import type { OptionalKeys } from '../shared/OptionalKeys';
 
 /**
  * ```js
@@ -48,7 +48,7 @@ export function mapProps<C, P extends Record<any, any>>(
 ) {
   const MappedComponent = (props: P, ref: any) => {
     let newProps =
-      typeof mapper === "function"
+      typeof mapper === 'function'
         ? mapper(props)
         : {
             ...mapper,
@@ -57,16 +57,16 @@ export function mapProps<C, P extends Record<any, any>>(
 
     return <BaseComponent {...newProps} ref={ref}></BaseComponent>;
   };
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== 'production') {
     MappedComponent.displayName = `mapProps(${getDisplayName(BaseComponent)})`;
   }
 
   return forwardRef<any, P>(MappedComponent);
 }
 function getDisplayName(Component: ComponentType<any>): string {
-  return typeof Component === "string"
+  return typeof Component === 'string'
     ? Component
-    : Component.displayName || Component.name || "Unknown";
+    : Component.displayName || Component.name || 'Unknown';
 }
 
 // type helper

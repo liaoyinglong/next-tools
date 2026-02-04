@@ -1,5 +1,5 @@
-import { mapProps } from "@dune2/tools/factory/mapProps";
-import React, { PropsWithChildren } from "react";
+import { mapProps } from '@dune2/tools/factory/mapProps';
+import React, { PropsWithChildren } from 'react';
 
 function Comp(
   props: PropsWithChildren<{
@@ -11,7 +11,7 @@ function Comp(
 
 export const MappedComp1 = mapProps(Comp, {
   style: {
-    color: "red",
+    color: 'red',
   },
 });
 
@@ -19,7 +19,7 @@ export const MappedComp2 = mapProps(Comp, (p) => {
   return {
     ...p,
     style: {
-      color: "red",
+      color: 'red',
       fontSize: 20,
     },
   };

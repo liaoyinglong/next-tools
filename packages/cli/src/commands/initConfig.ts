@@ -1,9 +1,9 @@
-import fs from "node:fs/promises";
-import path from "path";
-import { createLogger } from "../shared";
-import { configName } from "../shared/config";
+import fs from 'node:fs/promises';
+import path from 'path';
+import { createLogger } from '../shared';
+import { configName } from '../shared/config';
 
-const log = createLogger("initConfig");
+const log = createLogger('initConfig');
 
 const tpl = `\
 import { defineConfig } from "@dune2/cli";

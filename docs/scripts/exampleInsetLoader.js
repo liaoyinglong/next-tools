@@ -1,5 +1,5 @@
-const fs = require("fs/promises");
-const path = require("path");
+const fs = require('fs/promises');
+const path = require('path');
 
 const logEnabled = false;
 const log = (...args) => {
@@ -22,7 +22,7 @@ const exampleInsetLoader = async function (content) {
       [...matched].map(async (v) => {
         const [match, p1] = v;
         const examplePath = path.resolve(dirname, p1);
-        log("examplePath", examplePath);
+        log('examplePath', examplePath);
 
         const fileNames = await fs.readdir(examplePath);
         const files = {};
@@ -31,7 +31,7 @@ const exampleInsetLoader = async function (content) {
           fileNames.map(async (file) => {
             const s = await fs.readFile(
               path.resolve(examplePath, file),
-              "utf-8",
+              'utf-8',
             );
             files[`/${file}`] = s;
           }),
@@ -52,7 +52,7 @@ import { LiveCode } from "@/components/LiveCode";
     log(`newContent`, newContent);
     callback(null, newContent);
   } catch (e) {
-    console.error("exampleInsetLoader error, fall back to default");
+    console.error('exampleInsetLoader error, fall back to default');
     console.log(e);
     return content;
   }

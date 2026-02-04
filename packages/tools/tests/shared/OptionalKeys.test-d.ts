@@ -1,8 +1,8 @@
-import { assertType, describe, it } from "vitest";
-import type { OptionalKeys } from "../../src/shared/OptionalKeys";
+import { assertType, describe, it } from 'vitest';
+import type { OptionalKeys } from '../../src/shared/OptionalKeys';
 
-describe("OptionalKeys", () => {
-  it("should be ok", () => {
+describe('OptionalKeys', () => {
+  it('should be ok', () => {
     type A = {
       name: string;
       age: number;
@@ -14,9 +14,9 @@ describe("OptionalKeys", () => {
     type C = OptionalKeys<A, B>;
     //   ^? "work" | "name"
 
-    assertType<C>("work");
-    assertType<C>("name");
+    assertType<C>('work');
+    assertType<C>('name');
     // @ts-expect-error wrong types
-    assertType<C>("age");
+    assertType<C>('age');
   });
 });

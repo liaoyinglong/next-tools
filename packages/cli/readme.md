@@ -41,7 +41,7 @@ Commands:
 初始化项目配置文件，创建 `dune.config.ts` 配置文件模板：
 
 ```typescript
-import { defineConfig } from "@dune2/cli";
+import { defineConfig } from '@dune2/cli';
 
 export default defineConfig({
   i18n: [],

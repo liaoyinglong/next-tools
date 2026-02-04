@@ -1,10 +1,10 @@
-import { isEqual } from "es-toolkit";
+import { isEqual } from 'es-toolkit';
 
-import { useSyncExternalStore } from "react";
-import type { StoreType } from "store2";
-import baseStore from "store2";
+import { useSyncExternalStore } from 'react';
+import type { StoreType } from 'store2';
+import baseStore from 'store2';
 
-type StorageType = "local" | "session";
+type StorageType = 'local' | 'session';
 
 interface CreateStorageConfig<T> {
   /**
@@ -90,11 +90,11 @@ class StorageHelper<V = any> {
     // for current window
     this.listeners.add(listener);
     // for other windows
-    window.addEventListener("storage", listener);
+    window.addEventListener('storage', listener);
 
     return () => {
       this.listeners.delete(listener);
-      window.removeEventListener("storage", listener);
+      window.removeEventListener('storage', listener);
     };
   };
 
@@ -120,7 +120,7 @@ class StorageHelper<V = any> {
 export function createStorage<T extends Record<string, any>>(
   config: CreateStorageConfig<T>,
 ) {
-  const { DataMap, namespace, storageType = "local" } = config;
+  const { DataMap, namespace, storageType = 'local' } = config;
 
   const store = baseStore[storageType].namespace(namespace);
 

@@ -7,12 +7,12 @@ import type {
   RefetchOptions,
   UseInfiniteQueryOptions,
   UseMutationOptions,
-} from "@tanstack/react-query";
-import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
+} from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 
-import { useDebugValue, useMemo } from "react";
-import { fieldsMap, type FieldsMap } from "../factory/fieldsMap";
-import { queryClient } from "./defaultQueryClient";
+import { useDebugValue, useMemo } from 'react';
+import { fieldsMap, type FieldsMap } from '../factory/fieldsMap';
+import { queryClient } from './defaultQueryClient';
 import type {
   Basic,
   FetchQueryOptions,
@@ -21,19 +21,19 @@ import type {
   RequestBuilderOptions,
   RequestConfig,
   UseQueryOptions,
-} from "./options";
+} from './options';
 
 export class RequestBuilder<Req = any, Res = any> {
   constructor(public options: RequestBuilderOptions<Req, Res>) {
     this.defaultQueryFn = this.defaultQueryFn.bind(this);
     this.request = this.request.bind(this);
     this.requestWithConfig = this.requestWithConfig.bind(this);
-    this.options.method ??= "get";
+    this.options.method ??= 'get';
   }
 
   //#region default requestFn
-  static requestFn: Basic["requestFn"] | null = null;
-  static setRequestFn(requestFn: Basic["requestFn"] | null) {
+  static requestFn: Basic['requestFn'] | null = null;
+  static setRequestFn(requestFn: Basic['requestFn'] | null) {
     RequestBuilder.requestFn = requestFn;
   }
   //#endregion
@@ -57,7 +57,7 @@ export class RequestBuilder<Req = any, Res = any> {
       this.options.queryClient ??
       RequestBuilder.queryClient;
     if (!queryClient) {
-      throw new Error("queryClient is not defined");
+      throw new Error('queryClient is not defined');
     }
     return queryClient;
   }
@@ -84,7 +84,7 @@ export class RequestBuilder<Req = any, Res = any> {
     const method = this.options.method!;
     let data;
     // 根据请求方法来放到 url 上或者 body 里
-    if (!["get", "head", "options"].includes(method)) {
+    if (!['get', 'head', 'options'].includes(method)) {
       data = params;
       params = undefined;
     }
@@ -108,10 +108,10 @@ export class RequestBuilder<Req = any, Res = any> {
     let requestFn =
       config.requestFn ?? this.options.requestFn ?? RequestBuilder.requestFn;
     if (!requestFn) {
-      throw new Error("request function is not defined");
+      throw new Error('request function is not defined');
     }
     this.options.urlPathParams?.forEach((param) => {
-      let t = "";
+      let t = '';
       //#region config.params || config.data 在 queryHash 之后不变的话，会保持同一个引用，这里需要做个浅拷贝，将引用打破
       if (config.params?.[param]) {
         config.params = { ...config.params };
@@ -139,7 +139,7 @@ export class RequestBuilder<Req = any, Res = any> {
    * 通常配置 react-query 的 queryKey
    */
   getQueryKey(params?: Req) {
-    if (typeof params === "undefined") {
+    if (typeof params === 'undefined') {
       return [this.options.url, this.options.method];
     }
     return [this.options.url, this.options.method!, params] as const;
@@ -150,7 +150,7 @@ export class RequestBuilder<Req = any, Res = any> {
     return this.request(queryKey[2], {
       signal: ctx.signal,
       meta: ctx.meta,
-      requestFn: ctx.meta?.["requestFn"] as never,
+      requestFn: ctx.meta?.['requestFn'] as never,
     });
   }
 
@@ -295,7 +295,7 @@ export class RequestBuilder<Req = any, Res = any> {
       );
     }, [rawData]);
 
-    type Data<T> = T extends PageData ? T["result"] : T;
+    type Data<T> = T extends PageData ? T['result'] : T;
 
     const result = { ...res, data: data as Data<Res>, rawData };
     useDebugValue(result);

@@ -1,7 +1,7 @@
-import type { NodePath } from "@babel/traverse";
-import type { VariableDeclarator } from "@babel/types";
-import t from "@babel/types";
-import { handleSelectorArgument } from "./shared";
+import type { NodePath } from '@babel/traverse';
+import type { VariableDeclarator } from '@babel/types';
+import t from '@babel/types';
+import { handleSelectorArgument } from './shared';
 
 /**
  * 处理 store.useSnapshot() 的变量声明
@@ -25,21 +25,21 @@ export function handleObjectPattern(path: NodePath<VariableDeclarator>) {
   const callee = init.callee;
   if (
     !t.isIdentifier(callee.property) ||
-    callee.property.name !== "useSnapshot"
+    callee.property.name !== 'useSnapshot'
   ) {
     return;
   }
   // 如果已经有 selector 参数，则不需要转换
   if (init.arguments.length > 0) {
     if (handleSelectorArgument(init)) {
-      callee.property.name = "useShallowSnapshot";
+      callee.property.name = 'useShallowSnapshot';
     }
     return;
   }
 
   // 进入主流程
   // 进入主流程
-  const selectorName = path.scope.generateUidIdentifier("selector_");
+  const selectorName = path.scope.generateUidIdentifier('selector_');
 
   // 创建 selector 函数，使用相同的解构模式
   const selector = t.functionDeclaration(
@@ -52,7 +52,7 @@ export function handleObjectPattern(path: NodePath<VariableDeclarator>) {
             if (t.isRestElement(v)) {
               if (!t.isIdentifier(v.argument)) {
                 throw path.buildCodeFrameError(
-                  "Rest element in object pattern must be a simple identifier",
+                  'Rest element in object pattern must be a simple identifier',
                 );
               }
               return t.spreadElement(t.cloneDeepWithoutLoc(v.argument));
@@ -68,6 +68,6 @@ export function handleObjectPattern(path: NodePath<VariableDeclarator>) {
   path.parentPath.insertBefore(selector);
 
   // 修改为使用 useShallowSnapshot 并传入选择器
-  callee.property.name = "useShallowSnapshot";
+  callee.property.name = 'useShallowSnapshot';
   init.arguments = [selectorName];
 }

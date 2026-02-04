@@ -1,6 +1,6 @@
-import BigNumber from "bignumber.js";
-import { beforeEach, describe, expect, it } from "vitest";
-import { Numbro, numbro } from "../../src/numbro";
+import BigNumber from 'bignumber.js';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { Numbro, numbro } from '../../src/numbro';
 
 //#region reset to default format
 beforeEach(() => {
@@ -10,11 +10,11 @@ beforeEach(() => {
 });
 //#endregion
 
-describe("numbro", () => {
-  it("normalizeInput", () => {
+describe('numbro', () => {
+  it('normalizeInput', () => {
     [
       [1, 1],
-      ["", NaN],
+      ['', NaN],
       [null, NaN],
       [undefined, NaN],
       [NaN, NaN],
@@ -22,8 +22,8 @@ describe("numbro", () => {
       [Infinity, Infinity],
       [-Infinity, -Infinity],
 
-      ["1,000", 1000],
-      ["1,000.000", 1000],
+      ['1,000', 1000],
+      ['1,000.000', 1000],
 
       [100n, 100],
     ].forEach(([input, output]) => {
@@ -31,29 +31,29 @@ describe("numbro", () => {
     });
   });
 
-  it("default format", function () {
-    expect(numbro("1.230000").format()).toEqual("1.23");
-    expect(numbro("1234.230000").format()).toEqual("1,234.23");
-    expect(numbro(0).format()).toEqual("0");
-    expect(numbro(+0).format()).toEqual("0");
-    expect(numbro(-0).format()).toEqual("0");
-    expect(numbro("0.00").format()).toEqual("0");
-    expect(numbro(null).format()).toEqual("0");
-    expect(numbro(undefined).format()).toEqual("0");
-    expect(numbro(NaN).format()).toEqual("0");
+  it('default format', function () {
+    expect(numbro('1.230000').format()).toEqual('1.23');
+    expect(numbro('1234.230000').format()).toEqual('1,234.23');
+    expect(numbro(0).format()).toEqual('0');
+    expect(numbro(+0).format()).toEqual('0');
+    expect(numbro(-0).format()).toEqual('0');
+    expect(numbro('0.00').format()).toEqual('0');
+    expect(numbro(null).format()).toEqual('0');
+    expect(numbro(undefined).format()).toEqual('0');
+    expect(numbro(NaN).format()).toEqual('0');
 
-    expect(numbro("1.230000").toString()).toEqual("1.23");
-    expect(numbro("1234.230000").toString()).toEqual("1234.23");
+    expect(numbro('1.230000').toString()).toEqual('1.23');
+    expect(numbro('1234.230000').toString()).toEqual('1234.23');
   });
 
-  it("运算之后为 NaN 时的 format", () => {
-    expect(numbro(1).add(null).format()).toBe("0");
-    expect(numbro(1).subtract(null).format()).toBe("0");
-    expect(numbro(1).difference(null).format()).toBe("0");
-    expect(numbro(1).multiply(null).format()).toBe("0");
-    expect(numbro(1).divide(null).format()).toBe("0");
+  it('运算之后为 NaN 时的 format', () => {
+    expect(numbro(1).add(null).format()).toBe('0');
+    expect(numbro(1).subtract(null).format()).toBe('0');
+    expect(numbro(1).difference(null).format()).toBe('0');
+    expect(numbro(1).multiply(null).format()).toBe('0');
+    expect(numbro(1).divide(null).format()).toBe('0');
 
-    let NaNFormat = "N/A";
+    let NaNFormat = 'N/A';
     expect(numbro(1).add(null).format({ NaNFormat })).toBe(NaNFormat);
     expect(numbro(1).subtract(null).format({ NaNFormat })).toBe(NaNFormat);
     expect(numbro(1).difference(null).format({ NaNFormat })).toBe(NaNFormat);
@@ -71,29 +71,29 @@ describe("numbro", () => {
     expect(numbro(1).divide(null).format()).toBe(NaNFormat);
   });
 
-  it("deleteInvalidZero 支持 删除尾数 0", function () {
+  it('deleteInvalidZero 支持 删除尾数 0', function () {
     expect(
-      numbro("50000000000000000").format({
+      numbro('50000000000000000').format({
         deleteEndZero: true,
       }),
-    ).toEqual("50,000,000,000,000,000");
+    ).toEqual('50,000,000,000,000,000');
 
     [
-      ["1.000000", 2, "1"],
-      ["1.000000", 3, "1"],
-      ["1.000000", 4, "1"],
+      ['1.000000', 2, '1'],
+      ['1.000000', 3, '1'],
+      ['1.000000', 4, '1'],
 
-      ["1.200001", 2, "1.20"],
-      ["1.200001", 3, "1.200"],
-      ["1.200001", 4, "1.2000"],
+      ['1.200001', 2, '1.20'],
+      ['1.200001', 3, '1.200'],
+      ['1.200001', 4, '1.2000'],
 
-      ["1.200010", 2, "1.20"],
-      ["1.200010", 3, "1.200"],
-      ["1.200010", 4, "1.2000"],
+      ['1.200010', 2, '1.20'],
+      ['1.200010', 3, '1.200'],
+      ['1.200010', 4, '1.2000'],
 
-      ["0.1234567800000", 2, "0.12"],
-      ["0.1234567800000", 3, "0.123"],
-      ["0.1234567800000", 4, "0.1234"],
+      ['0.1234567800000', 2, '0.12'],
+      ['0.1234567800000', 3, '0.123'],
+      ['0.1234567800000', 4, '0.1234'],
     ].forEach(([input, mantissa, output]) => {
       expect(
         numbro(input).format({ mantissa, deleteInvalidZero: true }),
@@ -101,62 +101,62 @@ describe("numbro", () => {
     });
 
     [
-      ["0.1000000", 2, "10%"],
-      ["0.1000001", 2, "10.00%"],
-      ["0.1000001", 3, "10.000%"],
-      ["0.1000010", 2, "10.00%"],
-      ["0.1000010", 3, "10.000%"],
+      ['0.1000000', 2, '10%'],
+      ['0.1000001', 2, '10.00%'],
+      ['0.1000001', 3, '10.000%'],
+      ['0.1000010', 2, '10.00%'],
+      ['0.1000010', 3, '10.000%'],
     ].forEach(([input, mantissa, output]) => {
       expect(
         numbro(input).format({
           mantissa,
           deleteInvalidZero: true,
-          output: "percent",
+          output: 'percent',
         }),
       ).toEqual(output);
     });
 
     expect(
-      numbro("-0.0112").format({
+      numbro('-0.0112').format({
         mantissa: 2,
-        output: "percent",
+        output: 'percent',
       }),
-    ).toEqual("-1.12%");
+    ).toEqual('-1.12%');
 
     [
-      ["1.000000", 2, "1 BTC"],
-      ["1.000001", 2, "1.00 BTC"],
-      ["1.000001", 3, "1.000 BTC"],
-      ["1.000010", 2, "1.00 BTC"],
-      ["1.000010", 3, "1.000 BTC"],
+      ['1.000000', 2, '1 BTC'],
+      ['1.000001', 2, '1.00 BTC'],
+      ['1.000001', 3, '1.000 BTC'],
+      ['1.000010', 2, '1.00 BTC'],
+      ['1.000010', 3, '1.000 BTC'],
     ].forEach(([input, mantissa, output]) => {
       expect(
         numbro(input).format({
           mantissa,
           deleteInvalidZero: true,
-          suffix: " BTC",
+          suffix: ' BTC',
         }),
       ).toEqual(output);
     });
   });
 
-  it("deleteEndZero 支持 删除尾数 0", function () {
+  it('deleteEndZero 支持 删除尾数 0', function () {
     [
-      ["1.000000", 2, "1"],
-      ["1.000000", 3, "1"],
-      ["1.000000", 4, "1"],
+      ['1.000000', 2, '1'],
+      ['1.000000', 3, '1'],
+      ['1.000000', 4, '1'],
 
-      ["1.200001", 2, "1.2"],
-      ["1.200001", 3, "1.2"],
-      ["1.200001", 4, "1.2"],
+      ['1.200001', 2, '1.2'],
+      ['1.200001', 3, '1.2'],
+      ['1.200001', 4, '1.2'],
 
-      ["1.230000", 2, "1.23"],
-      ["1.230000", 3, "1.23"],
-      ["1.230000", 4, "1.23"],
+      ['1.230000', 2, '1.23'],
+      ['1.230000', 3, '1.23'],
+      ['1.230000', 4, '1.23'],
 
-      ["0.1234567800000", 2, "0.12"],
-      ["0.1234567800000", 3, "0.123"],
-      ["0.1234567800000", 4, "0.1234"],
+      ['0.1234567800000', 2, '0.12'],
+      ['0.1234567800000', 3, '0.123'],
+      ['0.1234567800000', 4, '0.1234'],
     ].forEach(([input, mantissa, output]) => {
       expect(numbro(input).format({ mantissa, deleteEndZero: true })).toEqual(
         output,
@@ -164,122 +164,122 @@ describe("numbro", () => {
     });
 
     [
-      ["0.1000000", 2, "10%"],
-      ["0.1000001", 2, "10%"],
-      ["0.1000001", 3, "10%"],
+      ['0.1000000', 2, '10%'],
+      ['0.1000001', 2, '10%'],
+      ['0.1000001', 3, '10%'],
     ].forEach(([input, mantissa, output]) => {
       expect(
         numbro(input).format({
           mantissa,
           deleteEndZero: true,
-          output: "percent",
+          output: 'percent',
         }),
       ).toEqual(output);
     });
 
     [
-      ["1.000000", 2, "1 BTC"],
-      ["1.000001", 2, "1 BTC"],
-      ["1.000001", 3, "1 BTC"],
+      ['1.000000', 2, '1 BTC'],
+      ['1.000001', 2, '1 BTC'],
+      ['1.000001', 3, '1 BTC'],
     ].forEach(([input, mantissa, output]) => {
       expect(
         numbro(input).format({
           mantissa,
           deleteEndZero: true,
-          suffix: " BTC",
+          suffix: ' BTC',
         }),
       ).toEqual(output);
     });
   });
 
-  it("格式化不丢失精度", function () {
+  it('格式化不丢失精度', function () {
     const a = [
-      [1, 2, "1.00"],
-      [1.1, 2, "1.10"],
-      [1000, 2, "1,000.00"],
-      ["24411725.000021970552501575", 18, "24,411,725.000021970552501575"],
-      ["24411725.000021970552501575", 8, "24,411,725.00002197"],
-      ["2131232131231232312312", 2, "2,131,232,131,231,232,312,312.00"],
-      [10000000000000000000000n, 2, "10,000,000,000,000,000,000,000.00"],
+      [1, 2, '1.00'],
+      [1.1, 2, '1.10'],
+      [1000, 2, '1,000.00'],
+      ['24411725.000021970552501575', 18, '24,411,725.000021970552501575'],
+      ['24411725.000021970552501575', 8, '24,411,725.00002197'],
+      ['2131232131231232312312', 2, '2,131,232,131,231,232,312,312.00'],
+      [10000000000000000000000n, 2, '10,000,000,000,000,000,000,000.00'],
     ] as const;
     a.forEach(([num, precision, output]) => {
       expect(numbro(num).format({ mantissa: precision })).toEqual(output);
     });
   });
 
-  it("forceSign correct", function () {
+  it('forceSign correct', function () {
     [
-      [1, "+1"],
-      [0, "0"],
-      [-0, "0"],
-      [-1, "-1"],
+      [1, '+1'],
+      [0, '0'],
+      [-0, '0'],
+      [-1, '-1'],
     ].forEach(([input, output]) => {
       expect(numbro(input).format({ forceSign: true })).toEqual(output);
     });
   });
 
-  it("roundingMode correct", function () {
+  it('roundingMode correct', function () {
     const instance = numbro(1.23456789);
     (
       [
-        [numbro.RoundingMode.RoundDown, 2, "1.23"],
-        [numbro.RoundingMode.RoundFloor, 2, "1.23"],
-        [numbro.RoundingMode.RoundUp, 2, "1.24"],
-        [numbro.RoundingMode.RoundCeil, 2, "1.24"],
-        [numbro.RoundingMode.RoundHalfUp, 2, "1.23"],
+        [numbro.RoundingMode.RoundDown, 2, '1.23'],
+        [numbro.RoundingMode.RoundFloor, 2, '1.23'],
+        [numbro.RoundingMode.RoundUp, 2, '1.24'],
+        [numbro.RoundingMode.RoundCeil, 2, '1.24'],
+        [numbro.RoundingMode.RoundHalfUp, 2, '1.23'],
         // ------------------------------
-        [numbro.RoundingMode.RoundDown, 3, "1.234"],
-        [numbro.RoundingMode.RoundFloor, 3, "1.234"],
-        [numbro.RoundingMode.RoundUp, 3, "1.235"],
-        [numbro.RoundingMode.RoundCeil, 3, "1.235"],
-        [numbro.RoundingMode.RoundHalfUp, 3, "1.235"],
+        [numbro.RoundingMode.RoundDown, 3, '1.234'],
+        [numbro.RoundingMode.RoundFloor, 3, '1.234'],
+        [numbro.RoundingMode.RoundUp, 3, '1.235'],
+        [numbro.RoundingMode.RoundCeil, 3, '1.235'],
+        [numbro.RoundingMode.RoundHalfUp, 3, '1.235'],
         // ------------------------------
-        [numbro.RoundingMode.RoundDown, 4, "1.2345"],
-        [numbro.RoundingMode.RoundFloor, 4, "1.2345"],
-        [numbro.RoundingMode.RoundUp, 4, "1.2346"],
-        [numbro.RoundingMode.RoundCeil, 4, "1.2346"],
-        [numbro.RoundingMode.RoundHalfUp, 4, "1.2346"],
+        [numbro.RoundingMode.RoundDown, 4, '1.2345'],
+        [numbro.RoundingMode.RoundFloor, 4, '1.2345'],
+        [numbro.RoundingMode.RoundUp, 4, '1.2346'],
+        [numbro.RoundingMode.RoundCeil, 4, '1.2346'],
+        [numbro.RoundingMode.RoundHalfUp, 4, '1.2346'],
       ] as const
     ).forEach(([roundingMode, mantissa, output]) => {
       expect(instance.format({ roundingMode, mantissa })).toEqual(output);
     });
   });
 
-  it("percent correct", function () {
+  it('percent correct', function () {
     [
-      [1, "100%"],
-      [0, "0%"],
-      [-0, "0%"],
-      [-1, "-100%"],
+      [1, '100%'],
+      [0, '0%'],
+      [-0, '0%'],
+      [-1, '-100%'],
     ].forEach(([input, output]) => {
-      expect(numbro(input).format({ output: "percent" })).toEqual(output);
+      expect(numbro(input).format({ output: 'percent' })).toEqual(output);
     });
   });
 
-  it("average correct ", function () {
+  it('average correct ', function () {
     [
-      [1, "1"],
-      [100, "100"],
-      ["1000", "1K"],
-      ["10000", "10K"],
-      ["100000", "100K"],
-      ["1000000", "1M"],
+      [1, '1'],
+      [100, '100'],
+      ['1000', '1K'],
+      ['10000', '10K'],
+      ['100000', '100K'],
+      ['1000000', '1M'],
 
-      ["9999", "9K"],
-      ["99999", "99K"],
-      ["999999", "999K"],
-      ["9999999", "9M"],
-      ["99999999", "99M"],
-      ["999999999", "999M"],
-      ["9999999999", "9B"],
-      ["99999999999", "99B"],
-      ["999999999999", "999B"],
+      ['9999', '9K'],
+      ['99999', '99K'],
+      ['999999', '999K'],
+      ['9999999', '9M'],
+      ['99999999', '99M'],
+      ['999999999', '999M'],
+      ['9999999999', '9B'],
+      ['99999999999', '99B'],
+      ['999999999999', '999B'],
     ].forEach(([input, output]) => {
       expect(numbro(input).format({ average: true })).toEqual(output);
     });
   });
 
-  it("add correct", function () {
+  it('add correct', function () {
     const testCase: [any, any, number][] = [
       [0.1, 0.2, 0.3],
       [new BigNumber(0.1), new BigNumber(0.2), 0.3],
@@ -299,7 +299,7 @@ describe("numbro", () => {
     });
   });
 
-  it("subtract correct", function () {
+  it('subtract correct', function () {
     const testCase: [any, any, number][] = [
       [0.3, 0.2, 0.1],
       [new BigNumber(0.3), new BigNumber(0.2), 0.1],
@@ -318,7 +318,7 @@ describe("numbro", () => {
     });
   });
 
-  it("multiply correct", function () {
+  it('multiply correct', function () {
     const testCase: [any, any, number][] = [
       [0.1, 0.2, 0.02],
       [new BigNumber(0.1), new BigNumber(0.2), 0.02],
@@ -338,7 +338,7 @@ describe("numbro", () => {
     });
   });
 
-  it("divide correct", function () {
+  it('divide correct', function () {
     const testCase: [any, any, number][] = [
       [0.1, 0.2, 0.5],
       [new BigNumber(0.1), new BigNumber(0.2), 0.5],
@@ -356,7 +356,7 @@ describe("numbro", () => {
     });
   });
 
-  it("比较方法正确", () => {
+  it('比较方法正确', () => {
     const a = numbro(10);
     const b = numbro(5);
     const c = numbro(10);
@@ -380,55 +380,55 @@ describe("numbro", () => {
 
     expect(numbro(1).gt(new BigNumber(0.5))).toBe(true);
     expect(numbro(1).lt(new Numbro(2))).toBe(true);
-    expect(numbro("1,000").eq(1000)).toBe(true);
+    expect(numbro('1,000').eq(1000)).toBe(true);
   });
 
-  it("mantissa 配置项", () => {
-    expect(numbro(1.2345).format({ mantissa: 2 })).toEqual("1.23");
-    expect(numbro(1.2345).format({ mantissa: 3 })).toEqual("1.234");
-    expect(numbro(1.2345).format({ mantissa: 4 })).toEqual("1.2345");
+  it('mantissa 配置项', () => {
+    expect(numbro(1.2345).format({ mantissa: 2 })).toEqual('1.23');
+    expect(numbro(1.2345).format({ mantissa: 3 })).toEqual('1.234');
+    expect(numbro(1.2345).format({ mantissa: 4 })).toEqual('1.2345');
 
-    expect(numbro(1.2345).format({ mantissa: "2" })).toEqual("1.23");
-    expect(numbro(1.2345).format({ mantissa: "3" })).toEqual("1.234");
-    expect(numbro(1.2345).format({ mantissa: "4" })).toEqual("1.2345");
+    expect(numbro(1.2345).format({ mantissa: '2' })).toEqual('1.23');
+    expect(numbro(1.2345).format({ mantissa: '3' })).toEqual('1.234');
+    expect(numbro(1.2345).format({ mantissa: '4' })).toEqual('1.2345');
 
-    expect(numbro(1.2345).format({ mantissa: null })).toEqual("1.2345");
-    expect(numbro(1.2345).format({ mantissa: undefined })).toEqual("1.2345");
+    expect(numbro(1.2345).format({ mantissa: null })).toEqual('1.2345');
+    expect(numbro(1.2345).format({ mantissa: undefined })).toEqual('1.2345');
   });
 
-  it("异常情况兼容", function () {
+  it('异常情况兼容', function () {
     const n = numbro(1.2345);
     expect(
       n.format({
         mantissa: NaN,
       }),
-    ).toEqual("1.2345");
+    ).toEqual('1.2345');
   });
 
-  it("can set default by setDefaultFormat", () => {
+  it('can set default by setDefaultFormat', () => {
     Numbro.setDefaultFormat({
       thousandSeparated: true,
       mantissa: 2,
     });
-    expect(numbro(1000).format()).toEqual("1,000.00");
+    expect(numbro(1000).format()).toEqual('1,000.00');
   });
 
-  it("support NaNFormat", () => {
-    expect(numbro(NaN).format()).toEqual("0");
-    expect(numbro(NaN).format({ NaNFormat: "-" })).toEqual("-");
-    expect(numbro(undefined).format({ NaNFormat: "-" })).toEqual("-");
-    expect(numbro(null).format({ NaNFormat: "-" })).toEqual("-");
+  it('support NaNFormat', () => {
+    expect(numbro(NaN).format()).toEqual('0');
+    expect(numbro(NaN).format({ NaNFormat: '-' })).toEqual('-');
+    expect(numbro(undefined).format({ NaNFormat: '-' })).toEqual('-');
+    expect(numbro(null).format({ NaNFormat: '-' })).toEqual('-');
   });
-  it("support NaNFormat with default format", () => {
+  it('support NaNFormat with default format', () => {
     Numbro.setDefaultFormat({
-      NaNFormat: "-",
+      NaNFormat: '-',
     });
-    expect(numbro(NaN).format()).toEqual("-");
-    expect(numbro(undefined).format()).toEqual("-");
-    expect(numbro(null).format()).toEqual("-");
+    expect(numbro(NaN).format()).toEqual('-');
+    expect(numbro(undefined).format()).toEqual('-');
+    expect(numbro(null).format()).toEqual('-');
   });
 
-  it("valueOf correct", () => {
+  it('valueOf correct', () => {
     expect(numbro(NaN).valueOf()).toEqual(0);
     expect(numbro(1).valueOf()).toEqual(1);
   });

@@ -1,14 +1,14 @@
-import cac from "cac";
-import debug from "debug";
+import cac from 'cac';
+import debug from 'debug';
 
-export const cli = cac("dune");
+export const cli = cac('dune');
 
 export const createLogger = (name: string) => {
   const info = debug(`${cli.name}:${name}`);
   return {
     ...info,
     info,
-    error: info.extend("error"),
+    error: info.extend('error'),
   };
 };
 

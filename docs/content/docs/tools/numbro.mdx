@@ -20,7 +20,7 @@ description: 基于 BigNumber.js 封装的精确数字处理工具，提供格�
 ## 安装和导入
 
 ```tsx
-import { numbro, Numbro } from "@dune2/tools/numbro";
+import { numbro, Numbro } from '@dune2/tools/numbro';
 ```
 
 ## 基本用法
@@ -30,7 +30,7 @@ import { numbro, Numbro } from "@dune2/tools/numbro";
 ```tsx
 // 使用 numbro 函数（推荐）
 const num1 = numbro(123.456);
-const num2 = numbro("1,234.56"); // 自动处理千分位分隔符
+const num2 = numbro('1,234.56'); // 自动处理千分位分隔符
 const num3 = numbro(null); // 自动转为 0
 
 // 使用 new Numbro()
@@ -44,10 +44,10 @@ const num4 = new Numbro(123.456);
 numbro(123.456);
 
 // 字符串（自动移除逗号）
-numbro("1,234.56");
+numbro('1,234.56');
 
 // BigNumber 实例
-numbro(new BigNumber("123.456"));
+numbro(new BigNumber('123.456'));
 
 // Numbro 实例
 numbro(numbro(123));
@@ -72,9 +72,9 @@ numbro(1234.5678).format({ mantissa: 2 }); // "1234.57"
 numbro(1234567).format({ thousandSeparated: true }); // "1,234,567"
 
 // 百分比格式
-numbro(0.1234).format({ output: "percent" }); // "12.34%"
+numbro(0.1234).format({ output: 'percent' }); // "12.34%"
 numbro(0.1234).format({
-  output: "percent",
+  output: 'percent',
   mantissa: 1,
 }); // "12.3%"
 ```
@@ -138,18 +138,18 @@ numbro(-123).format({ absoluteValue: true }); // "123"
 
 ```tsx
 // deleteInvalidZero: 智能删除无效尾零
-numbro("1.00100").format({
+numbro('1.00100').format({
   mantissa: 3,
   deleteInvalidZero: true,
 }); // "1.001" (原始精度 > 指定精度时删除尾零)
 
-numbro("1.20000").format({
+numbro('1.20000').format({
   mantissa: 3,
   deleteInvalidZero: true,
 }); // "1.2" (原始精度 <= 指定精度时删除尾零)
 
 // deleteEndZero: 强制删除所有尾零
-numbro("1.20000").format({
+numbro('1.20000').format({
   mantissa: 3,
   deleteEndZero: true,
 }); // "1.2" (直接删除格式化后的尾零)
@@ -164,8 +164,8 @@ numbro(null).format(); // "0"
 numbro(undefined).format(); // "0"
 
 // 自定义 NaN 格式
-numbro(NaN).format({ NaNFormat: "-" }); // "-"
-numbro(NaN).format({ NaNFormat: "N/A" }); // "N/A"
+numbro(NaN).format({ NaNFormat: '-' }); // "-"
+numbro(NaN).format({ NaNFormat: 'N/A' }); // "N/A"
 
 // 禁用 NaN 格式化
 numbro(NaN).format({ NaNFormat: false }); // "0"
@@ -175,16 +175,16 @@ numbro(NaN).format({ NaNFormat: false }); // "0"
 
 ```tsx
 // 使用 postfix 添加后缀
-numbro(100).format({ postfix: "px" }); // "100px"
-numbro(50).format({ postfix: "%" }); // "50%"
+numbro(100).format({ postfix: 'px' }); // "100px"
+numbro(50).format({ postfix: '%' }); // "50%"
 
 // BigNumber.Format 的其他选项
 numbro(1234).format({
-  prefix: "$",
-  suffix: " USD",
+  prefix: '$',
+  suffix: ' USD',
   groupSize: 3,
-  groupSeparator: ",",
-  decimalSeparator: ".",
+  groupSeparator: ',',
+  decimalSeparator: '.',
 }); // "$1,234 USD"
 ```
 
@@ -197,8 +197,8 @@ numbro(1234).format({
 numbro(1234.56).formatCurrency(); // "Rp1,234.56"
 
 // 指定语言环境
-numbro(1234.56).formatCurrency({ locale: "en" }); // "$1,234.56"
-numbro(1234.56).formatCurrency({ locale: "zh" }); // "¥1,234.56"
+numbro(1234.56).formatCurrency({ locale: 'en' }); // "$1,234.56"
+numbro(1234.56).formatCurrency({ locale: 'zh' }); // "¥1,234.56"
 ```
 
 ### 自定义货币格式
@@ -206,20 +206,20 @@ numbro(1234.56).formatCurrency({ locale: "zh" }); // "¥1,234.56"
 ```tsx
 // 自定义货币符号
 numbro(1234.56).formatCurrency({
-  symbol: "€",
+  symbol: '€',
   mantissa: 2,
 }); // "€1,234.56"
 
 // 货币符号位置
 numbro(1234.56).formatCurrency({
-  symbol: "USD",
-  position: "postfix",
+  symbol: 'USD',
+  position: 'postfix',
 }); // "1,234.56USD"
 
 // 添加空格分隔
 numbro(1234.56).formatCurrency({
-  symbol: "€",
-  position: "postfix",
+  symbol: '€',
+  position: 'postfix',
   spaceSeparated: true,
 }); // "1,234.56 €"
 ```
@@ -228,18 +228,18 @@ numbro(1234.56).formatCurrency({
 
 ```tsx
 // 负数货币格式
-numbro(-1234.56).formatCurrency({ locale: "en" }); // "-$1,234.56"
+numbro(-1234.56).formatCurrency({ locale: 'en' }); // "-$1,234.56"
 
 // 强制显示正号
 numbro(1234.56).formatCurrency({
-  locale: "en",
+  locale: 'en',
   forceSign: true,
 }); // "+$1,234.56"
 
 // 使用绝对值（在货币格式中自动处理符号）
 numbro(-1234.56).formatCurrency({
-  symbol: "$",
-  position: "prefix",
+  symbol: '$',
+  position: 'prefix',
 }); // "-$1,234.56"
 ```
 
@@ -275,7 +275,7 @@ const num = numbro(100);
 num.add(50).format(); // "150"
 
 // 与字符串运算
-num.add("1,000").format(); // "1,100"
+num.add('1,000').format(); // "1,100"
 
 // 与其他 Numbro 实例运算
 num.add(numbro(25)).format(); // "125"
@@ -355,12 +355,12 @@ numbro(1234.5678).format({ mantissa: 0 }); // "1,235"
 console.log(Numbro.locale); // "id" (默认印尼)
 
 // 设置语言环境
-Numbro.setLocale("en"); // 英文
-Numbro.setLocale("zh"); // 中文
+Numbro.setLocale('en'); // 英文
+Numbro.setLocale('zh'); // 中文
 
 // 语言环境必须在 defaultCurrencies 中存在
 try {
-  Numbro.setLocale("fr"); // 会抛出错误
+  Numbro.setLocale('fr'); // 会抛出错误
 } catch (error) {
   console.log(error.message); // "在 defaultCurrencies 中，找不到 fr，请先检查"
 }
@@ -381,21 +381,21 @@ console.log(Numbro.defaultCurrencies);
 Numbro.setDefaultCurrencies({
   ...Numbro.defaultCurrencies,
   eur: {
-    symbol: "€",
-    position: "postfix",
+    symbol: '€',
+    position: 'postfix',
     mantissa: 2,
     spaceSeparated: true,
   },
   jpy: {
-    symbol: "¥",
-    position: "prefix",
+    symbol: '¥',
+    position: 'prefix',
     mantissa: 0, // 日元通常不显示小数
   },
 });
 
 // 使用新的货币配置
-numbro(1234.56).formatCurrency({ locale: "eur" }); // "1,234.56 €"
-numbro(1234.56).formatCurrency({ locale: "jpy" }); // "¥1,235"
+numbro(1234.56).formatCurrency({ locale: 'eur' }); // "1,234.56 €"
+numbro(1234.56).formatCurrency({ locale: 'jpy' }); // "¥1,235"
 ```
 
 ## 枚举和常量
@@ -420,7 +420,7 @@ numbro.RoundingMode.RoundDown;
 
 ```tsx
 interface Format extends BigNumber.Format {
-  output?: "percent"; // 输出百分比格式
+  output?: 'percent'; // 输出百分比格式
   postfix?: string; // 后缀（同 suffix）
   average?: boolean; // 启用 K/M/B/T 简化
   mantissa?: number | string | null; // 小数位数
@@ -439,7 +439,7 @@ interface Format extends BigNumber.Format {
 ```tsx
 interface CurrencyFormat extends Format {
   symbol?: string; // 货币符号
-  position?: "prefix" | "postfix"; // 符号位置
+  position?: 'prefix' | 'postfix'; // 符号位置
   locale?: LocalesEnum | string; // 语言环境
   spaceSeparated?: boolean; // 符号与数字间是否有空格
 }
@@ -466,7 +466,7 @@ const complex = numbro(100)
 
 ```tsx
 // ✅ 重用配置对象
-const currencyConfig = { locale: "zh", mantissa: 2 };
+const currencyConfig = { locale: 'zh', mantissa: 2 };
 const prices = [99.99, 149.5, 29.99];
 const formatted = prices.map((price) =>
   numbro(price).formatCurrency(currencyConfig),
@@ -482,7 +482,7 @@ Numbro.setDefaultFormat({ thousandSeparated: true, mantissa: 2 });
 // ✅ 使用 NaNFormat 处理空值
 const formatWithFallback = (value: any) =>
   numbro(value).format({
-    NaNFormat: "--",
+    NaNFormat: '--',
     mantissa: 2,
   });
 ```

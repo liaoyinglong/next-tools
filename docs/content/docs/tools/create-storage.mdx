@@ -21,7 +21,7 @@ description: 用于创建和管理本地存储（localStorage 或 sessionStorage
 ### 导入
 
 ```tsx
-import { createStorage } from "@dune2/tools/storage";
+import { createStorage } from '@dune2/tools/storage';
 ```
 
 ### 创建存储实例
@@ -29,11 +29,11 @@ import { createStorage } from "@dune2/tools/storage";
 ```tsx
 // 定义数据结构
 class DataMap {
-  token = "";
-  userInfo = { name: "", age: 0 };
-  theme = "light";
+  token = '';
+  userInfo = { name: '', age: 0 };
+  theme = 'light';
   preferences = {
-    language: "zh-CN",
+    language: 'zh-CN',
     fontSize: 14,
     notifications: true,
   };
@@ -42,8 +42,8 @@ class DataMap {
 // 创建存储实例
 const storage = createStorage({
   DataMap,
-  namespace: "myApp",
-  storageType: "local", // 可选，默认为 "local"
+  namespace: 'myApp',
+  storageType: 'local', // 可选，默认为 "local"
 });
 ```
 
@@ -54,7 +54,7 @@ const storage = createStorage({
 const token = storage.token.get(); // 获取 token，若不存在返回 ""
 
 // 设置值
-storage.token.set("new_token"); // 设置新的 token
+storage.token.set('new_token'); // 设置新的 token
 
 // 删除值
 storage.token.remove(); // 删除 token
@@ -62,7 +62,7 @@ storage.token.set(undefined); // 等同于 remove()
 
 // 对象类型的存储
 const userInfo = storage.userInfo.get();
-storage.userInfo.set({ name: "张三", age: 25 });
+storage.userInfo.set({ name: '张三', age: 25 });
 
 // 获取存储键名
 console.log(storage.token.key); // "myApp.token"
@@ -75,7 +75,7 @@ function ThemeSwitch() {
   const theme = storage.theme.useValue(); // 自动订阅值的变化
 
   const toggleTheme = () => {
-    storage.theme.set(theme === "light" ? "dark" : "light");
+    storage.theme.set(theme === 'light' ? 'dark' : 'light');
   };
 
   return <button onClick={toggleTheme}>当前主题：{theme}</button>;
@@ -106,7 +106,7 @@ function UserProfile() {
 interface CreateStorageConfig<T> {
   DataMap: new () => T;
   namespace: string;
-  storageType?: "local" | "session";
+  storageType?: 'local' | 'session';
 }
 ```
 
@@ -137,7 +137,7 @@ const theme = storage.theme.get(); // 返回 "light" 或存储的值
 设置存储值，传入 `undefined` 时会删除该存储项。
 
 ```tsx
-storage.theme.set("dark"); // 设置主题为深色
+storage.theme.set('dark'); // 设置主题为深色
 storage.theme.set(undefined); // 删除主题设置
 ```
 
@@ -167,7 +167,7 @@ function MyComponent() {
 
 ```tsx
 const unsubscribe = storage.theme.subscribe(() => {
-  console.log("主题已更改为:", storage.theme.get());
+  console.log('主题已更改为:', storage.theme.get());
 });
 
 // 取消订阅
@@ -200,10 +200,10 @@ console.log(storage.theme.defaultValue); // "light"
 
 ```tsx
 class DataMap {
-  config = { theme: "light", fontSize: 14 };
+  config = { theme: 'light', fontSize: 14 };
 }
 
-const storage = createStorage({ DataMap, namespace: "app" });
+const storage = createStorage({ DataMap, namespace: 'app' });
 
 // 1. 防止重复渲染
 function ConfigPanel() {
@@ -228,7 +228,7 @@ function PageA() {
   return (
     <div>
       <div>当前主题：{theme}</div>
-      <button onClick={() => storage.theme.set("dark")}>切换到深色</button>
+      <button onClick={() => storage.theme.set('dark')}>切换到深色</button>
     </div>
   );
 }
@@ -250,25 +250,25 @@ class DataMap {
   count: number = 0;
   user: { name: string; age: number } | null = null;
   settings: {
-    theme: "light" | "dark";
+    theme: 'light' | 'dark';
     language: string;
   } = {
-    theme: "light",
-    language: "zh-CN",
+    theme: 'light',
+    language: 'zh-CN',
   };
 }
 
-const storage = createStorage({ DataMap, namespace: "app" });
+const storage = createStorage({ DataMap, namespace: 'app' });
 
 // ✅ 正确的使用
 storage.count.set(42);
-storage.user.set({ name: "张三", age: 25 });
-storage.settings.set({ theme: "dark", language: "en-US" });
+storage.user.set({ name: '张三', age: 25 });
+storage.settings.set({ theme: 'dark', language: 'en-US' });
 
 // ❌ 类型错误
-storage.count.set("123"); // 错误：类型不匹配
-storage.user.set({ name: "张三" }); // 错误：缺少必需属性 'age'
-storage.settings.set({ theme: "blue" }); // 错误：theme 值不在联合类型中
+storage.count.set('123'); // 错误：类型不匹配
+storage.user.set({ name: '张三' }); // 错误：缺少必需属性 'age'
+storage.settings.set({ theme: 'blue' }); // 错误：theme 值不在联合类型中
 ```
 
 ## 实际应用示例
@@ -277,7 +277,7 @@ storage.settings.set({ theme: "blue" }); // 错误：theme 值不在联合类型
 
 ```tsx
 class AuthDataMap {
-  token = "";
+  token = '';
   user = null as { id: string; name: string; email: string } | null;
   isLoggedIn = false;
   lastLoginTime = 0;
@@ -285,13 +285,13 @@ class AuthDataMap {
 
 const authStorage = createStorage({
   DataMap: AuthDataMap,
-  namespace: "auth",
-  storageType: "local",
+  namespace: 'auth',
+  storageType: 'local',
 });
 
 // 认证服务
 class AuthService {
-  static login(token: string, user: AuthDataMap["user"]) {
+  static login(token: string, user: AuthDataMap['user']) {
     authStorage.token.set(token);
     authStorage.user.set(user);
     authStorage.isLoggedIn.set(true);
@@ -340,8 +340,8 @@ function LoginStatus() {
 
 ```tsx
 class SettingsDataMap {
-  theme = "light" as "light" | "dark";
-  language = "zh-CN";
+  theme = 'light' as 'light' | 'dark';
+  language = 'zh-CN';
   fontSize = 14;
   notifications = {
     email: true,
@@ -356,18 +356,18 @@ class SettingsDataMap {
 
 const settingsStorage = createStorage({
   DataMap: SettingsDataMap,
-  namespace: "settings",
+  namespace: 'settings',
 });
 
 // 设置管理器
 class SettingsManager {
-  static updateTheme(theme: "light" | "dark") {
+  static updateTheme(theme: 'light' | 'dark') {
     settingsStorage.theme.set(theme);
-    document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.setAttribute('data-theme', theme);
   }
 
   static updateNotifications(
-    type: keyof SettingsDataMap["notifications"],
+    type: keyof SettingsDataMap['notifications'],
     enabled: boolean,
   ) {
     const current = settingsStorage.notifications.get();
@@ -401,11 +401,11 @@ function SettingsPanel() {
         <select
           value={theme}
           onChange={(e) =>
-            SettingsManager.updateTheme(e.target.value as "light" | "dark")
+            SettingsManager.updateTheme(e.target.value as 'light' | 'dark')
           }
         >
-          <option value="light">浅色</option>
-          <option value="dark">深色</option>
+          <option value='light'>浅色</option>
+          <option value='dark'>深色</option>
         </select>
       </div>
 
@@ -415,15 +415,15 @@ function SettingsPanel() {
           value={language}
           onChange={(e) => settingsStorage.language.set(e.target.value)}
         >
-          <option value="zh-CN">中文</option>
-          <option value="en-US">English</option>
+          <option value='zh-CN'>中文</option>
+          <option value='en-US'>English</option>
         </select>
       </div>
 
       <div>
         <label>字体大小：</label>
         <input
-          type="number"
+          type='number'
           value={fontSize}
           onChange={(e) => settingsStorage.fontSize.set(Number(e.target.value))}
         />
@@ -433,20 +433,20 @@ function SettingsPanel() {
         <h3>通知设置</h3>
         <label>
           <input
-            type="checkbox"
+            type='checkbox'
             checked={notifications.email}
             onChange={(e) =>
-              SettingsManager.updateNotifications("email", e.target.checked)
+              SettingsManager.updateNotifications('email', e.target.checked)
             }
           />
           邮件通知
         </label>
         <label>
           <input
-            type="checkbox"
+            type='checkbox'
             checked={notifications.push}
             onChange={(e) =>
-              SettingsManager.updateNotifications("push", e.target.checked)
+              SettingsManager.updateNotifications('push', e.target.checked)
             }
           />
           推送通知
@@ -481,11 +481,11 @@ class CartDataMap {
 
 const cartStorage = createStorage({
   DataMap: CartDataMap,
-  namespace: "cart",
+  namespace: 'cart',
 });
 
 class CartManager {
-  static addItem(item: Omit<CartItem, "quantity">, quantity = 1) {
+  static addItem(item: Omit<CartItem, 'quantity'>, quantity = 1) {
     const items = cartStorage.items.get();
     const existingItem = items.find((i) => i.id === item.id);
 
@@ -589,10 +589,10 @@ function CartSummary() {
 ```tsx
 // ✅ 好的做法 - 扁平化结构
 class AppDataMap {
-  theme = "light";
-  userId = "";
-  userName = "";
-  userEmail = "";
+  theme = 'light';
+  userId = '';
+  userName = '';
+  userEmail = '';
   notificationEnabled = true;
   sidebarCollapsed = false;
 }
@@ -602,8 +602,8 @@ class AppDataMap {
   user = {
     profile: {
       basic: {
-        name: "",
-        email: "",
+        name: '',
+        email: '',
       },
       settings: {
         notifications: {
@@ -622,20 +622,20 @@ class AppDataMap {
 // 用户相关存储
 const userStorage = createStorage({
   DataMap: UserDataMap,
-  namespace: "user",
+  namespace: 'user',
 });
 
 // 应用设置存储
 const settingsStorage = createStorage({
   DataMap: SettingsDataMap,
-  namespace: "settings",
+  namespace: 'settings',
 });
 
 // 缓存数据存储（使用 sessionStorage）
 const cacheStorage = createStorage({
   DataMap: CacheDataMap,
-  namespace: "cache",
-  storageType: "session",
+  namespace: 'cache',
+  storageType: 'session',
 });
 ```
 

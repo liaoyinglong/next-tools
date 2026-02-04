@@ -12,7 +12,7 @@ export const interactive = async (args: any) => {
     return false;
   });
 
-  const commandMap = new Map<string, typeof commands[number]>();
+  const commandMap = new Map<string, (typeof commands)[number]>();
   const res = await prompt<{ command: string }>({
     type: "autocomplete",
     name: "command",

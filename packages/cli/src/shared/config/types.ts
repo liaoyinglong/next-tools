@@ -53,7 +53,7 @@ export interface ApiConfig {
   /**
    * 生成代码完毕后执行的代码格式化命令
    * 用户可自定义格式化工具及参数
-   * @default "prettier --write"
+   * @default "oxfmt"
    */
   codeFormatterCmd?: string;
   /**

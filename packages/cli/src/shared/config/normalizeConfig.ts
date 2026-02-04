@@ -15,7 +15,7 @@ export function apiConfigNormalizer(item: ApiConfig) {
   item.RequestBuilderImportPath ??= `import { RequestBuilder } from '@dune2/tools/rq';`;
   item.enableTs ??= true;
   item.enabled ??= true;
-  item.codeFormatterCmd ??= "prettier --write";
+  item.codeFormatterCmd ??= "oxfmt";
   item.responseSchemaTransformer ??= (schema) =>
     schema.properties?.data ?? schema;
   return item;

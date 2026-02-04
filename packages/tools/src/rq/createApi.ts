@@ -1,8 +1,10 @@
 import type { RequestBuilderOptions } from "./options";
 import { RequestBuilder } from "./RequestBuilder";
 
-interface Options<Req, Res>
-  extends Omit<Partial<RequestBuilderOptions<Req, Res>>, "requestFn"> {
+interface Options<Req, Res> extends Omit<
+  Partial<RequestBuilderOptions<Req, Res>>,
+  "requestFn"
+> {
   /**
    * 相当于 url
    */

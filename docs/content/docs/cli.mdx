@@ -119,7 +119,8 @@ export default defineConfig({
 
       // RequestBuilder 导入路径（导入变量名必须是 RequestBuilder）
       // 默认值：import { RequestBuilder } from '@dune2/tools/rq';
-      RequestBuilderImportPath: "import { RequestBuilder } from '@dune2/tools/rq';",
+      RequestBuilderImportPath:
+        "import { RequestBuilder } from '@dune2/tools/rq';",
 
       // QueryClient 导入路径（可选）
       queryClientImportPath: "import { queryClient } from '@/utils/request'",
@@ -137,8 +138,8 @@ export default defineConfig({
       enableTs: true,
 
       // 生成代码完毕后执行的格式化命令（可自定义）
-      // 默认值：prettier --write
-      codeFormatterCmd: "prettier --write",
+      // 默认值：oxfmt
+      codeFormatterCmd: "oxfmt",
     },
   ],
 });
@@ -191,7 +192,7 @@ export default defineConfig({
 #### `codeFormatterCmd`
 
 - **类型**: `string`
-- **默认值**: `"prettier --write"`
+- **默认值**: `"oxfmt"`
 - **描述**: 生成代码完毕后执行的格式化命令（可自定义工具及参数）
 
 #### `swaggerUiUrl`
@@ -326,8 +327,8 @@ pnpm dune generateApi
    - 确认 `@dune2/tools` 包已正确安装
 
 3. **代码格式化失败**
-   - 确认项目已安装 prettier
-   - 检查 prettier 配置是否正确
+   - 确认项目已安装 oxfmt
+   - 检查 oxfmt 配置是否正确（例如 `.oxfmtrc.jsonc`）
 
 ### 调试模式
 

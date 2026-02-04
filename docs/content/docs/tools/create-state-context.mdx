@@ -25,31 +25,31 @@ import { createStateContext } from "@dune2/tools/factory/createStateContext";
 ### 创建 Context
 
 ```tsx
-import { useState } from 'react';
+import { useState } from "react";
 import { createStateContext } from "@dune2/tools/factory/createStateContext";
 
 // 定义状态和操作
 function useCounter(props: { initialValue: number }) {
   const [count, setCount] = useState(props.initialValue);
-  
+
   return {
     count,
-    increment: () => setCount(c => c + 1),
-    decrement: () => setCount(c => c - 1),
-    reset: () => setCount(props.initialValue)
+    increment: () => setCount((c) => c + 1),
+    decrement: () => setCount((c) => c - 1),
+    reset: () => setCount(props.initialValue),
   };
 }
 
 // 创建 Context
 const CounterContext = createStateContext({
-  name: 'Counter',
+  name: "Counter",
   useValueHooks: useCounter,
   defaultValue: {
     count: 0,
     increment: () => {},
     decrement: () => {},
-    reset: () => {}
-  }
+    reset: () => {},
+  },
 });
 ```
 
@@ -89,12 +89,17 @@ function CounterControls() {
 创建一个新的 Context 和相关组件。
 
 ```tsx
-function createStateContext<P, T>(params: Params<P, T>): {
+function createStateContext<P, T>(
+  params: Params<P, T>,
+): {
   useContextValue: () => T;
   Provider: FC<PropsWithChildren<P>>;
-  withProvider: <C extends object>(Comp: ComponentType<C>, providerProps?: P) => ComponentType<C>;
+  withProvider: <C extends object>(
+    Comp: ComponentType<C>,
+    providerProps?: P,
+  ) => ComponentType<C>;
   Context: React.Context<T>;
-}
+};
 ```
 
 #### 参数
@@ -121,7 +126,7 @@ function createStateContext<P, T>(params: Params<P, T>): {
 ```tsx
 // 为组件包装 Provider
 const CounterPageWithProvider = CounterContext.withProvider(CounterPage, {
-  initialValue: 5
+  initialValue: 5,
 });
 
 function CounterPage() {
@@ -138,7 +143,7 @@ function CounterPage() {
 ### 复杂状态管理
 
 ```tsx
-import { useReducer } from 'react';
+import { useReducer } from "react";
 
 // 定义状态类型
 interface TodoState {
@@ -147,32 +152,34 @@ interface TodoState {
 
 // 定义操作类型
 type TodoAction =
-  | { type: 'ADD_TODO'; text: string }
-  | { type: 'TOGGLE_TODO'; id: number }
-  | { type: 'REMOVE_TODO'; id: number };
+  | { type: "ADD_TODO"; text: string }
+  | { type: "TOGGLE_TODO"; id: number }
+  | { type: "REMOVE_TODO"; id: number };
 
 // Reducer 函数
 function todoReducer(state: TodoState, action: TodoAction): TodoState {
   switch (action.type) {
-    case 'ADD_TODO':
+    case "ADD_TODO":
       return {
         ...state,
         todos: [
           ...state.todos,
-          { id: Date.now(), text: action.text, completed: false }
-        ]
+          { id: Date.now(), text: action.text, completed: false },
+        ],
       };
-    case 'TOGGLE_TODO':
+    case "TOGGLE_TODO":
       return {
         ...state,
-        todos: state.todos.map(todo =>
-          todo.id === action.id ? { ...todo, completed: !todo.completed } : todo
-        )
+        todos: state.todos.map((todo) =>
+          todo.id === action.id
+            ? { ...todo, completed: !todo.completed }
+            : todo,
+        ),
       };
-    case 'REMOVE_TODO':
+    case "REMOVE_TODO":
       return {
         ...state,
-        todos: state.todos.filter(todo => todo.id !== action.id)
+        todos: state.todos.filter((todo) => todo.id !== action.id),
       };
     default:
       return state;
@@ -180,23 +187,23 @@ function todoReducer(state: TodoState, action: TodoAction): TodoState {
 }
 
 // 创建自定义 Hook
-function useTodos(props: { initialTodos?: TodoState['todos'] }) {
+function useTodos(props: { initialTodos?: TodoState["todos"] }) {
   const [state, dispatch] = useReducer(todoReducer, {
-    todos: props.initialTodos || []
+    todos: props.initialTodos || [],
   });
 
   return {
     todos: state.todos,
-    addTodo: (text: string) => dispatch({ type: 'ADD_TODO', text }),
-    toggleTodo: (id: number) => dispatch({ type: 'TOGGLE_TODO', id }),
-    removeTodo: (id: number) => dispatch({ type: 'REMOVE_TODO', id })
+    addTodo: (text: string) => dispatch({ type: "ADD_TODO", text }),
+    toggleTodo: (id: number) => dispatch({ type: "TOGGLE_TODO", id }),
+    removeTodo: (id: number) => dispatch({ type: "REMOVE_TODO", id }),
   };
 }
 
 // 创建 Context
 const TodoContext = createStateContext({
-  name: 'Todo',
-  useValueHooks: useTodos
+  name: "Todo",
+  useValueHooks: useTodos,
 });
 
 // 使用
@@ -211,10 +218,10 @@ function TodoApp() {
 
 function TodoList() {
   const { todos, toggleTodo, removeTodo } = TodoContext.useContextValue();
-  
+
   return (
     <ul>
-      {todos.map(todo => (
+      {todos.map((todo) => (
         <li key={todo.id}>
           <input
             type="checkbox"
@@ -231,13 +238,13 @@ function TodoList() {
 
 function AddTodoForm() {
   const { addTodo } = TodoContext.useContextValue();
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (text.trim()) {
       addTodo(text);
-      setText('');
+      setText("");
     }
   };
 
@@ -262,14 +269,14 @@ function AddTodoForm() {
 ```tsx
 // 好的命名
 const UserContext = createStateContext({
-  name: 'User', // 清晰的名称，便于调试
-  useValueHooks: useUser
+  name: "User", // 清晰的名称，便于调试
+  useValueHooks: useUser,
 });
 
 // 避免的命名
 const Context1 = createStateContext({
-  name: 'ctx', // 名称不清晰
-  useValueHooks: useHook
+  name: "ctx", // 名称不清晰
+  useValueHooks: useHook,
 });
 ```
 
@@ -280,7 +287,7 @@ const Context1 = createStateContext({
 function useAuthState() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
-  
+
   const login = async (credentials) => {
     setLoading(true);
     try {
@@ -290,18 +297,18 @@ function useAuthState() {
       setLoading(false);
     }
   };
-  
+
   const logout = () => {
     setUser(null);
   };
-  
+
   return { user, loading, login, logout };
 }
 
 // 然后在 Context 中使用
 const AuthContext = createStateContext({
-  name: 'Auth',
-  useValueHooks: useAuthState
+  name: "Auth",
+  useValueHooks: useAuthState,
 });
 ```
 
@@ -309,14 +316,14 @@ const AuthContext = createStateContext({
 
 ```tsx
 const AuthContext = createStateContext({
-  name: 'Auth',
+  name: "Auth",
   useValueHooks: useAuthState,
   defaultValue: {
     user: null,
     loading: false,
     login: async () => {},
-    logout: () => {}
-  }
+    logout: () => {},
+  },
 });
 ```
 
@@ -334,12 +341,12 @@ const AuthContext = createStateContext({
 
 ## 与其他状态管理方案的比较
 
-| 特性 | createStateContext | Redux | Zustand | Valtio |
-|------|-------------------|--------|---------|--------|
-| 学习曲线 | 低 | 高 | 低 | 中 |
-| 包大小 | 小 | 大 | 小 | 小 |
-| TypeScript 支持 | 完整 | 完整 | 完整 | 完整 |
-| 调试工具 | React DevTools | Redux DevTools | Redux DevTools | Valtio DevTools |
-| 适用场景 | 组件级状态共享 | 全局状态管理 | 轻量级全局状态 | 响应式状态管理 |
+| 特性            | createStateContext | Redux          | Zustand        | Valtio          |
+| --------------- | ------------------ | -------------- | -------------- | --------------- |
+| 学习曲线        | 低                 | 高             | 低             | 中              |
+| 包大小          | 小                 | 大             | 小             | 小              |
+| TypeScript 支持 | 完整               | 完整           | 完整           | 完整            |
+| 调试工具        | React DevTools     | Redux DevTools | Redux DevTools | Valtio DevTools |
+| 适用场景        | 组件级状态共享     | 全局状态管理   | 轻量级全局状态 | 响应式状态管理  |
 
 `createStateContext` 最适合用于组件级别的状态共享，当你需要在组件树的某个分支中共享状态时，它是一个很好的选择。

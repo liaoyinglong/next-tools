@@ -24,7 +24,7 @@
     "@types/react-dom": "^19.2.3",
     "happy-dom": "^20.5.3",
     "lefthook": "^2.1.0",
-    "oxfmt": "^0.28.0",
+    "oxfmt": "^0.35.0",
     "turbo": "^2.5.0",
     "typescript": "^5.9.3",
     "vitest": "4.0.15"

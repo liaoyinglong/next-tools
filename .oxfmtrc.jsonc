@@ -7,4 +7,7 @@
     "packages/swc_plugin/tests/fixture/**/*.js",
     ".nx/workspace-data",
   ],
+  "sortImports": {
+    "newlinesBetween": false,
+  },
 }

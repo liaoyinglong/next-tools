@@ -1,4 +1,3 @@
-import { source } from '@/lib/source';
 import {
   DocsBody,
   DocsDescription,
@@ -7,6 +6,7 @@ import {
 } from 'fumadocs-ui/page';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { source } from '@/lib/source';
 
 export default async function Page({
   params,

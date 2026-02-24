@@ -1,5 +1,4 @@
 import { isEqual } from 'es-toolkit';
-
 import { useSyncExternalStore } from 'react';
 import type { StoreType } from 'store2';
 import baseStore from 'store2';

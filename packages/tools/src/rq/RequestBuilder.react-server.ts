@@ -1,5 +1,4 @@
 import type { QueryClient } from '@tanstack/react-query';
-
 import type { Basic, RequestBuilderOptions, RequestConfig } from './options';
 
 export class RequestBuilder<Req = any, Res = any> {

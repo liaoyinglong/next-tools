@@ -9,7 +9,6 @@ import type {
   UseMutationOptions,
 } from '@tanstack/react-query';
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
-
 import { useDebugValue, useMemo } from 'react';
 import { fieldsMap, type FieldsMap } from '../factory/fieldsMap';
 import { queryClient } from './defaultQueryClient';

@@ -1,5 +1,5 @@
-import { cli, createLogger } from '../shared';
 import enquirer from 'enquirer';
+import { cli, createLogger } from '../shared';
 const { prompt } = enquirer;
 
 const log = createLogger('interactive');

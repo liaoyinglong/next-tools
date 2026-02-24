@@ -1,6 +1,6 @@
-import { createMDX } from 'fumadocs-mdx/next';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { createMDX } from 'fumadocs-mdx/next';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

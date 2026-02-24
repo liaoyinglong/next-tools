@@ -1,12 +1,12 @@
+import { AsyncLocalStorage } from 'node:async_hooks';
+import fs from 'node:fs/promises';
+import * as os from 'os';
+import path from 'path';
 import SwaggerParser from '@apidevtools/swagger-parser';
 import { camelCase, isPlainObject, merge } from 'es-toolkit';
 import { compile } from 'json-schema-to-typescript';
-import { AsyncLocalStorage } from 'node:async_hooks';
-import fs from 'node:fs/promises';
 import { OpenAPIV3 } from 'openapi-types';
-import * as os from 'os';
 import pMap from 'p-map';
-import path from 'path';
 import { createLogger } from '../../shared';
 import { ApiConfig, getConfig } from '../../shared/config';
 import { promptApiConfigEnable } from '../../shared/promptConfigEnable';

@@ -37,10 +37,9 @@ export class RequestBuilder<Req = any, Res = any> {
   }
   //#endregion
 
-  // 这是默认的 Query Client 实例
-  static queryClient: QueryClient | null = queryClient;
-  static setQueryClient(queryClient: QueryClient | null) {
-    RequestBuilder.queryClient = queryClient;
+  static queryClientFactory: (() => QueryClient) | null = () => queryClient;
+  static setQueryClientFactory(factory: (() => QueryClient) | null) {
+    RequestBuilder.queryClientFactory = factory;
   }
 
   /**
@@ -48,13 +47,13 @@ export class RequestBuilder<Req = any, Res = any> {
    * 会依次从以下地方获取
    * - options
    * - 当前实例 options
-   * - RequestBuilder.queryClient
+   * - RequestBuilder.queryClientFactory()
    */
   ensureQueryClient(options?: { queryClient?: QueryClient }) {
     const queryClient =
       options?.queryClient ??
       this.options.queryClient ??
-      RequestBuilder.queryClient;
+      RequestBuilder.queryClientFactory?.();
     if (!queryClient) {
       throw new Error('queryClient is not defined');
     }

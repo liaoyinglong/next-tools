@@ -245,8 +245,8 @@ const customQueryClient = new QueryClient({
   },
 });
 
-// 设置全局查询客户端
-RequestBuilder.setQueryClient(customQueryClient);
+// 设置全局查询客户端工厂
+RequestBuilder.setQueryClientFactory(() => customQueryClient);
 
 // 为特定实例设置查询客户端
 const api = new RequestBuilder({
@@ -520,7 +520,7 @@ interface RequestBuilderOptions<Req, Res> {
 ### 静态方法
 
 - `RequestBuilder.setRequestFn(requestFn: RequestFn | null)`
-- `RequestBuilder.setQueryClient(queryClient: QueryClient | null)`
+- `RequestBuilder.setQueryClientFactory(factory: (() => QueryClient) | null)`
 
 ## 最佳实践
 

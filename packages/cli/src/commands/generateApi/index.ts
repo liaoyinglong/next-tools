@@ -5,7 +5,7 @@ import path from 'path';
 import SwaggerParser from '@apidevtools/swagger-parser';
 import { camelCase, isPlainObject, merge } from 'es-toolkit';
 import { compile } from 'json-schema-to-typescript';
-import { OpenAPIV3 } from 'openapi-types';
+import type { OpenAPIV3 } from 'openapi-types';
 import pMap from 'p-map';
 import { createLogger } from '../../shared';
 import { ApiConfig, getConfig } from '../../shared/config';

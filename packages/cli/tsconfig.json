@@ -8,7 +8,7 @@
     "noEmit": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "strictNullChecks": true,
     "stripInternal": true,
     "skipLibCheck": true

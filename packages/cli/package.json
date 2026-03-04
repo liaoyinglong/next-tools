@@ -24,10 +24,6 @@
     "./normalizeConfig": {
       "import": "./dist/normalizeConfig.mjs"
     },
-    "./prettier": {
-      "import": "./dist/prettier.mjs",
-      "require": "./dist/prettier.cjs"
-    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -42,7 +38,7 @@
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^12.1.0",
-    "cac": "^6.7.14",
+    "cac": "^7.0.0",
     "debug": "^4.4.3",
     "enquirer": "^2.3.6",
     "es-toolkit": "^1.44.0",
@@ -54,6 +50,6 @@
     "@types/debug": "^4.1.12",
     "openapi-types": "^12.0.2",
     "prettier": "^3.8.1",
-    "tsdown": "^0.19.0"
+    "tsdown": "^0.20.3"
   }
 }

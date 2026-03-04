@@ -3,6 +3,7 @@
   //"oxc.typeAware": true,
   //"oxc.unusedDisableDirectives": "deny",
   // oxc fmt
+  "oxc.enable.oxfmt": true,
   "[javascript]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },

@@ -1,16 +1,16 @@
 function Normal() {
   function _selector_(state) {
     return {
-      _prop_: state.a,
-      _prop_2: state.c.name,
+      a: state.a,
+      'c.name': state.c.name,
     };
   }
   const state = store.useShallowSnapshot(_selector_);
   return (
     <div>
-      {state._prop_}
+      {state.a}
       --
-      {state._prop_2}
+      {state['c.name']}
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import type { NodePath } from '@babel/traverse';
 import type {
-  Identifier,
   MemberExpression,
   OptionalMemberExpression,
   VariableDeclarator,
@@ -47,7 +46,7 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
   // memberAccessors 用于存储所有的成员访问表达式
   // accessorMap 用于缓存已处理过的访问路径，避免重复创建
   const memberAccessors: MemberAccessor[] = [];
-  const accessorMap = new Map<string, Identifier>();
+  const accessorMap = new Map<string, string>();
   {
     // 获取变量的绑定信息，用于查找所有引用
     const binding = path.scope.getOwnBinding(id.name);
@@ -75,22 +74,24 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
     // 3. 替换原始表达式为新的访问方式
     arr.forEach((item) => {
       const { memberExprStart, nodePath, accessKey } = item;
-      let propIdentifier = accessorMap.get(accessKey);
-      if (!propIdentifier) {
-        // 生成唯一的属性标识符
-        propIdentifier = path.scope.generateUidIdentifier('prop_');
-        accessorMap.set(accessKey, propIdentifier);
+      let key = accessorMap.get(accessKey);
+      if (!key) {
+        // 使用访问路径作为属性名，如 'a', 'c.name'
+        key = accessKey.slice(1);
+        accessorMap.set(accessKey, key);
         memberAccessors.push({
           node: t.cloneDeepWithoutLoc(memberExprStart!),
-          identifier: propIdentifier,
+          key,
         });
       }
 
       // 替换原始的成员表达式为新的访问方式
+      const isComputed = key.includes('.');
       nodePath!.replaceWith(
         t.memberExpression(
           t.cloneWithoutLoc(id),
-          t.cloneDeepWithoutLoc(propIdentifier),
+          isComputed ? t.stringLiteral(key) : t.identifier(key),
+          isComputed,
         ),
       );
     });
@@ -110,7 +111,11 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
       t.returnStatement(
         t.objectExpression(
           memberAccessors.map((accessor) => {
-            return t.objectProperty(accessor.identifier, accessor.node);
+            const isComputed = accessor.key.includes('.');
+            const propKey = isComputed
+              ? t.stringLiteral(accessor.key)
+              : t.identifier(accessor.key);
+            return t.objectProperty(propKey, accessor.node);
           }),
         ),
       ),
@@ -125,7 +130,7 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
 
 type MemberAccessor = {
   node: MemberExpression | OptionalMemberExpression;
-  identifier: Identifier;
+  key: string;
 };
 
 /**

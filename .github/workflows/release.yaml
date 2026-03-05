@@ -33,3 +33,11 @@ jobs:
 
       - name: Release
         run: NODE_AUTH_TOKEN="" pnpm run release
+
+      - name: Commit and push tags
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "ci: version packages" || echo "No changes to commit"
+          git push --follow-tags

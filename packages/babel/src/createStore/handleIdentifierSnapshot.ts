@@ -165,6 +165,15 @@ function findMemberExpression(path: NodePath) {
       (t.isMemberExpression(node) || t.isOptionalMemberExpression(node)) &&
       t.isIdentifier(node.property)
     ) {
+      // 如果该成员表达式是 CallExpression 的 callee，说明是方法调用，停止收集
+      const grandParent = parent.parentPath;
+      if (
+        grandParent &&
+        t.isCallExpression(grandParent.node) &&
+        grandParent.node.callee === node
+      ) {
+        break;
+      }
       memberExprStart = node;
       current = parent;
       accessKey += '.' + node.property.name;

@@ -33,5 +33,3 @@ jobs:
 
       - name: Release
         run: pnpm run release
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

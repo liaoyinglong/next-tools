@@ -1,5 +1,5 @@
 ---
-'@dune2/cli': major
+'@dune2/cli': minor
 ---
 
 upgrade deps

@@ -40,8 +40,8 @@ function Destructure() {
     const expectCode = transform(code);
 
     expect(expectCode).toMatchInlineSnapshot(`
-      "
-      function Destructure() {function _selector_({ a, c: { name } }) {return { a, c: { name } };}
+      "function _selector_({ a, c: { name } }) {return { a, c: { name } };}
+      function Destructure() {
         const {
           a,
           c: { name }

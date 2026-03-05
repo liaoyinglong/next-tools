@@ -64,8 +64,15 @@ export function handleObjectPattern(path: NodePath<VariableDeclarator>) {
     ]),
   );
 
-  // 插入 selector 函数声明
-  path.parentPath.insertBefore(selector);
+  // 将 selector 函数提升到组件外部，使其更持久化
+  const funcParent =
+    path.findParent(
+      (p) =>
+        p.isFunctionDeclaration() ||
+        p.isFunctionExpression() ||
+        p.isArrowFunctionExpression(),
+    ) ?? path.parentPath;
+  funcParent.insertBefore(selector);
 
   // 修改为使用 useShallowSnapshot 并传入选择器
   callee.property.name = 'useShallowSnapshot';

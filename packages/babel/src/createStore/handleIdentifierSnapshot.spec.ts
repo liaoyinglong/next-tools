@@ -49,8 +49,8 @@ function App() {
     const expectCode = transform(code);
 
     expect(expectCode).toMatchInlineSnapshot(`
-      "
-      function App() {function _selector_(a) {return { b: a?.b, c: a.c, "c.name": a.c.name };}
+      "function _selector_(a) {return { b: a?.b, c: a.c, "c.name": a.c.name };}
+      function App() {
         const a = store.useShallowSnapshot(_selector_);
         useEffect(() => {
           console.log(a.b);

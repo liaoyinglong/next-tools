@@ -1,10 +1,10 @@
+function _selector_(state) {
+  return {
+    a: state.a,
+    'c.name': state.c.name,
+  };
+}
 function Normal() {
-  function _selector_(state) {
-    return {
-      a: state.a,
-      'c.name': state.c.name,
-    };
-  }
   const state = store.useShallowSnapshot(_selector_);
   return (
     <div>
@@ -14,15 +14,15 @@ function Normal() {
     </div>
   );
 }
+function _selector_2({ a, c: { name } }) {
+  return {
+    a,
+    c: {
+      name,
+    },
+  };
+}
 function Destructure() {
-  function _selector_2({ a, c: { name } }) {
-    return {
-      a,
-      c: {
-        name,
-      },
-    };
-  }
   const {
     a,
     c: { name },

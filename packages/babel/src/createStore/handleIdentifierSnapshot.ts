@@ -121,7 +121,15 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
       ),
     ]),
   );
-  path.parentPath.insertBefore(selector);
+  // 将 selector 函数提升到组件外部，使其更持久化
+  const funcParent =
+    path.findParent(
+      (p) =>
+        p.isFunctionDeclaration() ||
+        p.isFunctionExpression() ||
+        p.isArrowFunctionExpression(),
+    ) ?? path.parentPath;
+  funcParent.insertBefore(selector);
 
   // 修改原始调用为 useShallowSnapshot
   callee.property.name = 'useShallowSnapshot';

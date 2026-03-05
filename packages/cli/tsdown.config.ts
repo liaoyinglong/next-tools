@@ -7,6 +7,10 @@ const common: UserConfig = {
   tsconfig: './tsconfig.json',
   format: ['esm'],
   dts: true,
+  inlineOnly: false,
+  checks: {
+    pluginTimings: false,
+  },
 };
 
 export default defineConfig([

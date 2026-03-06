@@ -6,3 +6,6 @@ onlyBuiltDependencies:
   - lefthook
 ignoredBuiltDependencies:
   - esbuild
+catalog:
+  '@types/debug': ^4.1.7
+  tsdown: ^0.21.0

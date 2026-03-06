@@ -47,9 +47,9 @@
     "p-map": "^7.0.4"
   },
   "devDependencies": {
-    "@types/debug": "^4.1.12",
+    "@types/debug": "catalog:@types/debug",
     "openapi-types": "^12.0.2",
     "prettier": "^3.8.1",
-    "tsdown": "^0.20.3"
+    "tsdown": "catalog:tsdown"
   }
 }

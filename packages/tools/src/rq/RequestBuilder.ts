@@ -8,7 +8,12 @@ import type {
   UseInfiniteQueryOptions,
   UseMutationOptions,
 } from '@tanstack/react-query';
-import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
 import { useDebugValue, useMemo } from 'react';
 import { fieldsMap, type FieldsMap } from '../factory/fieldsMap';
 import { queryClient } from './defaultQueryClient';
@@ -19,6 +24,7 @@ import type {
   QueryClientBasic,
   RequestBuilderOptions,
   RequestConfig,
+  UseSuspenseQueryOptions,
   UseQueryOptions,
 } from './options';
 
@@ -167,6 +173,23 @@ export class RequestBuilder<Req = any, Res = any> {
       meta: this.normalizeMeta(options),
     });
     return res as ReturnType<typeof useQuery<T>>;
+  }
+
+  /**
+   * 对 useSuspenseQuery 的封装
+   * 获取数据的时候可以直接调用这个
+   * @see https://tanstack.com/query/latest/docs/framework/react/reference/useSuspenseQuery
+   */
+  useSuspenseQuery<T = Res>(params?: Req, options?: UseSuspenseQueryOptions<T>) {
+    const { useSuspenseQueryOptions } = this.options;
+    const res = useSuspenseQuery({
+      queryFn: this.defaultQueryFn,
+      queryKey: this.getQueryKey(params),
+      ...useSuspenseQueryOptions,
+      ...(options as any),
+      meta: this.normalizeMeta(options),
+    });
+    return res as ReturnType<typeof useSuspenseQuery<T>>;
   }
 
   /**

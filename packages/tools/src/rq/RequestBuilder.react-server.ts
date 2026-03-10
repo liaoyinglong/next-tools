@@ -120,6 +120,13 @@ export class RequestBuilder<Req = any, Res = any> {
   useQuery = throwErrorInRSC;
 
   /**
+   * 对 useSuspenseQuery 的封装
+   * 获取数据的时候可以直接调用这个
+   * @see https://tanstack.com/query/latest/docs/framework/react/reference/useSuspenseQuery
+   */
+  useSuspenseQuery = throwErrorInRSC;
+
+  /**
    * 用来预请求接口
    * @see https://tanstack.com/query/v4/docs/guides/prefetching
    */

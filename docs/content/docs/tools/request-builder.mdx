@@ -96,6 +96,21 @@ function UserList() {
 }
 ```
 
+### useSuspenseQuery - Suspense 查询
+
+```tsx
+function UserProfile({ userId }: { userId: string }) {
+  const { data } = userDetailApi.useSuspenseQuery(
+    { userId },
+    {
+      staleTime: 5000,
+    },
+  );
+
+  return <div>{data.name}</div>;
+}
+```
+
 ### useMutation - 数据变更
 
 ```tsx
@@ -499,6 +514,7 @@ interface RequestBuilderOptions<Req, Res> {
 #### 查询方法
 
 - `useQuery<T = Res>(params?: Req, options?: UseQueryOptions<T>)`
+- `useSuspenseQuery<T = Res>(params?: Req, options?: UseSuspenseQueryOptions<T>)`
 - `useInfiniteQuery(params?: Req, options?: UseInfiniteQueryOptions<Res>)`
 - `useMutation(options?: UseMutationOptions<Res, unknown, Req>)`
 

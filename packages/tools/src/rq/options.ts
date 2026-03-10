@@ -2,6 +2,7 @@ import type {
   QueryClient,
   FetchQueryOptions as RQFetchQueryOptions,
   UseMutationOptions,
+  useSuspenseQuery,
   useQuery,
 } from '@tanstack/react-query';
 
@@ -55,6 +56,11 @@ type RawUseQueryOptions<T> = Parameters<typeof useQuery<T>>[0];
 export interface UseQueryOptions<T>
   extends OmitMetaAndPartial<RawUseQueryOptions<T>>, Basic {}
 
+type RawUseSuspenseQueryOptions<T> = Parameters<typeof useSuspenseQuery<T>>[0];
+// 透传给 useSuspenseQuery
+export interface UseSuspenseQueryOptions<T>
+  extends OmitMetaAndPartial<RawUseSuspenseQueryOptions<T>>, Basic {}
+
 // 透传给 ensureQueryData / fetchQuery / prefetchQuery 等
 export interface FetchQueryOptions<T>
   extends OmitMetaAndPartial<RQFetchQueryOptions<T>>, Basic, QueryClientBasic {}
@@ -73,6 +79,9 @@ export interface RequestBuilderOptions<Req, Res>
 
   // 透传给 useQuery 的 options
   useQueryOptions?: Partial<RawUseQueryOptions<Res>>;
+
+  // 透传给 useSuspenseQuery 的 options
+  useSuspenseQueryOptions?: Partial<RawUseSuspenseQueryOptions<Res>>;
 
   // 透传给 useMutation 的 options
   useMutationOptions?: UseMutationOptions<Res, unknown, Req>;

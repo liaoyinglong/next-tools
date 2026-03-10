@@ -16,6 +16,9 @@ describe('rq.query', () => {
     authOauthTokenPostApi.useQuery(req, {
       enabled: true,
     });
+    authOauthTokenPostApi.useSuspenseQuery(req, {
+      staleTime: Infinity,
+    });
     authOauthTokenPostApi.ensureQueryData(req, {
       staleTime: Infinity,
     });
@@ -30,6 +33,10 @@ describe('rq.query', () => {
   it('can pass meta', () => {
     authOauthTokenPostApi.useQuery(req, {
       enabled: true,
+      meta: 'string',
+    });
+    authOauthTokenPostApi.useSuspenseQuery(req, {
+      staleTime: Infinity,
       meta: 'string',
     });
 
@@ -54,6 +61,11 @@ describe('rq.query', () => {
       assertType<authOauthTokenPostApi.Res | undefined>(res.data);
     }
     {
+      // suspense 下 data 一定存在
+      const res = authOauthTokenPostApi.useSuspenseQuery(req);
+      assertType<authOauthTokenPostApi.Res>(res.data);
+    }
+    {
       // 特殊 res
       type Res = {
         userId: number;
@@ -66,6 +78,20 @@ describe('rq.query', () => {
         },
       });
       assertType<Res | undefined>(res.data);
+    }
+    {
+      // suspense 下支持 select 推导
+      type Res = {
+        userId: number;
+      };
+      const res = authOauthTokenPostApi.useSuspenseQuery<Res>(req, {
+        select(data) {
+          return {
+            userId: data.userId,
+          };
+        },
+      });
+      assertType<Res>(res.data);
     }
   });
 });

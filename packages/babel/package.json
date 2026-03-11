@@ -41,8 +41,8 @@
     "@types/babel__core": "^7.20.1",
     "@types/babel__generator": "^7.6.8",
     "@types/babel__traverse": "^7.20.6",
-    "@types/debug": "catalog:@types/debug",
+    "@types/debug": "catalog:",
     "prettier": "^3.8.1",
-    "tsdown": "catalog:tsdown"
+    "tsdown": "catalog:"
   }
 }

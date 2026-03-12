@@ -1,5 +1,11 @@
 # @dune2/tools
 
+## 1.2.1
+
+### Patch Changes
+
+- 8aed962: Add `useSuspenseQuery` support to `RequestBuilder`, including matching option types and tests.
+
 ## 1.2.0
 
 ### Minor Changes

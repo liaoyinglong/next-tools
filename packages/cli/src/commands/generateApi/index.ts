@@ -5,7 +5,7 @@ import path from 'path';
 import SwaggerParser from '@apidevtools/swagger-parser';
 import { camelCase, isPlainObject, merge } from 'es-toolkit';
 import { compile } from 'json-schema-to-typescript';
-import type { OpenAPIV3 } from 'openapi-types';
+import type { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import pMap from 'p-map';
 import { createLogger } from '../../shared';
 import { ApiConfig, getConfig } from '../../shared/config';
@@ -13,10 +13,24 @@ import { promptApiConfigEnable } from '../../shared/promptConfigEnable';
 
 const log = createLogger('generateApi');
 
+type ParsedDocument = OpenAPIV2.Document | OpenAPIV3.Document;
+
 export const asyncLocalStorage = new AsyncLocalStorage<{
-  parsed: OpenAPIV3.Document;
+  parsed: ParsedDocument;
   parser: SwaggerParser;
 }>();
+
+function getCompileSchemaContext(parsed: ParsedDocument | undefined) {
+  if (!parsed) return {};
+  const context: Record<string, unknown> = {};
+  if ('components' in parsed && parsed.components) {
+    context.components = parsed.components;
+  }
+  if ('definitions' in parsed && parsed.definitions) {
+    context.definitions = parsed.definitions;
+  }
+  return context;
+}
 
 export async function generateApi() {
   const config = await getConfig();
@@ -397,9 +411,7 @@ async function compileRequestParams(
 
   const finalSchema = isPlainObject(schemaOrRefObject)
     ? Object.assign(
-        {
-          components: store?.parsed.components,
-        },
+        getCompileSchemaContext(store?.parsed),
         '$ref' in schemaOrRefObject
           ? store?.parser.$refs.get(schemaOrRefObject.$ref)
           : schemaOrRefObject,
@@ -449,6 +461,10 @@ async function compileResponseParams(
       const temp = arg.content?.['application/json'] || arg.content?.['*/*'];
       return resolveSchema(temp?.schema);
     }
+    // 兼容 swagger v2 的 response.schema
+    if ('schema' in arg && arg.schema) {
+      return resolveSchema(arg.schema as never);
+    }
 
     let schema = apiConfig.responseSchemaTransformer!(arg as never) as
       | OpenAPIV3.ReferenceObject
@@ -460,12 +476,7 @@ async function compileResponseParams(
   }
   const schemaObject = resolveSchema(operationObject.responses['200']);
   const finalSchema = schemaObject
-    ? Object.assign(
-        {
-          components: store?.parsed.components,
-        },
-        schemaObject,
-      )
+    ? Object.assign(getCompileSchemaContext(store?.parsed), schemaObject)
     : void 0;
 
   let code = '';

@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { generateApiRequestCode } from '../src/commands/generateApi';
+import {
+  asyncLocalStorage,
+  generateApiRequestCode,
+} from '../src/commands/generateApi';
 import { apiConfigNormalizer } from '../src/shared/config/normalizeConfig';
 
 const paramsInQuery = {
@@ -317,5 +320,75 @@ describe('api 生成', function () {
 
     expect(result).toMatchSnapshot();
     expect(result2).toEqual(result);
+  });
+
+  it('支持 swagger v2 definitions 引用', async () => {
+    const definitions = {
+      protoAppleValidatedResponse: {
+        type: 'object',
+        required: ['result'],
+        properties: {
+          result: {
+            $ref: '#/definitions/applePayload',
+          },
+        },
+      },
+      applePayload: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+          },
+        },
+      },
+    };
+
+    const parser = {
+      $refs: {
+        get(ref: string) {
+          if (!ref.startsWith('#/definitions/')) {
+            throw new Error(`unexpected ref: ${ref}`);
+          }
+          return definitions[ref.replace('#/definitions/', '')];
+        },
+      },
+    };
+
+    const result = await asyncLocalStorage.run(
+      {
+        parsed: {
+          swagger: '2.0',
+          paths: {},
+          definitions,
+        } as never,
+        parser: parser as never,
+      },
+      () =>
+        generateApiRequestCode({
+          url: '/apple',
+          method: 'get',
+          operationObject: {
+            tags: ['v2'],
+            summary: 'swagger v2 引用 definitions',
+            operationId: 'swaggerV2Definitions',
+            parameters: [],
+            responses: {
+              '200': {
+                description: 'OK',
+                schema: {
+                  $ref: '#/definitions/protoAppleValidatedResponse',
+                },
+              },
+            },
+          } as never,
+          apiConfig: apiConfigNormalizer({
+            swaggerJSONPath: '',
+            swaggerUiUrl: '',
+          }),
+        }),
+    );
+
+    expect(result).toContain('export interface Res');
+    expect(result).toContain('result: ApplePayload;');
   });
 });

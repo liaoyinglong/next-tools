@@ -12,5 +12,10 @@ export default defineConfig({
       swaggerJSONPath: './src/swagger/wma.json',
       swaggerUiUrl: 'http://localhost:3000/swagger',
     },
+    {
+      output: './src/apis/swagger',
+      swaggerJSONPath: './src/swagger/swagger.json',
+      swaggerUiUrl: 'http://localhost:3000/swagger',
+    },
   ],
 });

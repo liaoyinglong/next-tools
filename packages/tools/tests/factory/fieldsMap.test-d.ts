@@ -70,4 +70,64 @@ describe('FieldsMap', () => {
     assertType<Result['metadata']>('metadata');
     assertType<Result['children']>('children');
   });
+
+  it('should flatten deep fields from optional nested array objects', () => {
+    type Res = {
+      id?: number;
+      validationResult?: EfrValidationResultVO[];
+      customerBalanceDetail?: CustomerBalanceDetailVO[];
+      onboardingRecord?: UserOnboardingRecordResp[];
+      eid?: string;
+    };
+
+    type EfrValidationResultVO = {
+      identityCardValidationResult?: EftValidationFieldResult[];
+      result?: EfrResultCodeObj;
+    };
+
+    type EftValidationFieldResult = {
+      fileName?: string;
+      value?: string;
+      result?: string;
+    };
+
+    type EfrResultCodeObj = {
+      code?: string;
+      message?: string;
+    };
+
+    type CustomerBalanceDetailVO = {
+      customerDocuments?: CustomerDocument[];
+      balances?: BalanceVO[];
+    };
+
+    type CustomerDocument = {
+      documentNumber?: string;
+      documentType?: 'EID';
+    };
+
+    type BalanceVO = {
+      availableBalance?: number;
+      currencyCode?: string;
+    };
+
+    type UserOnboardingRecordResp = {
+      creatorName?: string;
+      createdTime?: string;
+    };
+
+    type Result = FieldsMap<Res>;
+
+    assertType<Result['id']>('id');
+    assertType<Result['eid']>('eid');
+    assertType<Result['validationResult']>('validationResult');
+    assertType<Result['fileName']>('fileName');
+    assertType<Result['code']>('code');
+    assertType<Result['documentNumber']>('documentNumber');
+    assertType<Result['availableBalance']>('availableBalance');
+    assertType<Result['creatorName']>('creatorName');
+
+    // @ts-expect-error invalid key should not be allowed
+    assertType<Result['unknownDeepField']>('unknownDeepField');
+  });
 });

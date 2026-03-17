@@ -1,5 +1,11 @@
 # @dune2/tools
 
+## 1.2.2
+
+### Patch Changes
+
+- 99f3b9e: Fix `FieldsMap` cycle detection so nested array item fields are not skipped when the root type and item type share optional keys.
+
 ## 1.2.1
 
 ### Patch Changes

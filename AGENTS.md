@@ -33,3 +33,10 @@ See `package.json` scripts at the root. Summary:
 - **Catalog syntax bug**: The `catalog:@types/debug` and `catalog:tsdown` entries in `packages/babel/package.json` and `packages/cli/package.json` are invalid pnpm catalog syntax (should be `catalog:`). This has been fixed in the environment setup commit. If you encounter `ERR_PNPM_CATALOG_ENTRY_NOT_FOUND_FOR_SPEC`, verify these entries use `catalog:` (not `catalog:package-name`).
 - **sharp build warning**: pnpm may warn about ignored `sharp` build scripts. This is non-blocking; `sharp` has been added to `onlyBuiltDependencies` in `pnpm-workspace.yaml`.
 - The `@dune2/tools` package exports source `.ts`/`.tsx` files directly (no dist output), so the turbo warning about missing output files for `@dune2/tools#build` is expected.
+- **Changeset format**: Do not hand-write changeset frontmatter in heading style like `## "@dune2/tools": patch`. Use `pnpm changeset` to generate it when possible. In non-TTY environments, use `pnpm changeset add --empty` and then fill the generated file with proper frontmatter:
+  ```md
+  ---
+  '@dune2/tools': patch
+  ---
+  ```
+  `pnpm changeset status` may still fail locally if the repo cannot find a diverged `main`, but that is separate from file format correctness.

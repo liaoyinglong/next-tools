@@ -180,7 +180,10 @@ export class RequestBuilder<Req = any, Res = any> {
    * 获取数据的时候可以直接调用这个
    * @see https://tanstack.com/query/latest/docs/framework/react/reference/useSuspenseQuery
    */
-  useSuspenseQuery<T = Res>(params?: Req, options?: UseSuspenseQueryOptions<T>) {
+  useSuspenseQuery<T = Res>(
+    params?: Req,
+    options?: UseSuspenseQueryOptions<T>,
+  ) {
     const { useSuspenseQueryOptions } = this.options;
     const res = useSuspenseQuery({
       queryFn: this.defaultQueryFn,

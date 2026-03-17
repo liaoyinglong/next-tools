@@ -48,7 +48,7 @@ const store = createStore({
 const state = store.getState();
 
 // 在 React 组件中使用
-const count = store.useSnapshot((state) => state.count);
+const count = store.useSnapshot();
 ```
 
 ### 修改状态
@@ -78,16 +78,84 @@ unsubscribe();
 
 ### useSnapshot
 
-`useSnapshot` 用于在组件中订阅状态变化，基于 valtio 的 useSnapshot：
+`useSnapshot` 用于在组件中订阅状态变化，基于 valtio 的 useSnapshot。它通过 Proxy 自动追踪组件渲染时访问的属性，只有被访问的路径发生变化时才触发重渲染：
 
 ```typescript
 function Counter() {
-  // 订阅完整状态
   const state = store.useSnapshot();
-
   return <div>{state.count}</div>;
 }
 ```
+
+### useShallowSnapshot
+
+`useShallowSnapshot` 通过 selector 精确选择需要的状态切片，使用 `isEqual` 深比较来避免不必要的重渲染。返回普通值而非 Proxy 对象：
+
+```typescript
+function Counter() {
+  const { count, user } = store.useShallowSnapshot((s) => ({
+    count: s.count,
+    user: s.user,
+  }));
+  return <div>{count} - {user.name}</div>;
+}
+```
+
+### useSnapshot vs useShallowSnapshot
+
+|                  | `useSnapshot`                                            | `useShallowSnapshot`                                       |
+| ---------------- | -------------------------------------------------------- | ---------------------------------------------------------- |
+| **追踪方式**     | 基于 `proxy-compare`，自动追踪渲染中访问的属性           | 通过 selector 手动声明需要的状态                           |
+| **返回值**       | Proxy 对象                                               | 普通值                                                     |
+| **Hook 开销**    | 7 个 hook（含 useMemo、useCallback、useLayoutEffect 等） | 3 个 hook（useRef + useSyncExternalStore + useDebugValue） |
+| **渲染时开销**   | 每次属性访问经过 Proxy trap                              | 无额外开销                                                 |
+| **第三方库兼容** | 未知                                                     | ✅ 普通值，无兼容问题                                      |
+| **调试体验**     | Proxy 对象在 DevTools 中不直观                           | 普通值，调试友好                                           |
+
+### Babel 插件自动优化
+
+`@dune2/babel` 提供了编译时插件，自动将 `useSnapshot` 转换为 `useShallowSnapshot`。插件会分析组件中实际访问的属性，自动生成最优的 selector：
+
+```typescript
+// 编译前：开发者正常使用 useSnapshot
+function Normal() {
+  const state = store.useSnapshot();
+  return <div>{state.a} -- {state.c.name}</div>;
+}
+
+// 编译后：自动转换为 useShallowSnapshot + 生成 selector
+function _selector_(state) {
+  return { a: state.a, 'c.name': state.c.name };
+}
+function Normal() {
+  const state = store.useShallowSnapshot(_selector_);
+  return <div>{state.a} -- {state['c.name']}</div>;
+}
+```
+
+解构写法同样支持：
+
+```typescript
+// 编译前
+const {
+  a,
+  c: { name },
+} = store.useSnapshot();
+
+// 编译后
+const {
+  a,
+  c: { name },
+} = store.useShallowSnapshot(({ a, c: { name } }) => ({
+  a,
+  c: { name },
+}));
+```
+
+插件会保留以下场景不做转换：
+
+- 状态作为整体传递（如 `<Child state={state} />`），因为无法静态分析哪些属性被访问
+- 已经手动传入 selector 的调用
 
 ## 调试支持
 

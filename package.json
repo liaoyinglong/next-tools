@@ -14,6 +14,7 @@
     "format:check": "oxfmt --check",
     "graph": "turbo run build --graph",
     "release": "pnpm test && changeset version && changeset publish",
+    "release:workflow": "gh workflow run .github/workflows/release.yaml",
     "test": "turbo run test --filter='@dune2/*'"
   },
   "devDependencies": {

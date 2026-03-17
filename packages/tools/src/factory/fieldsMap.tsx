@@ -43,15 +43,32 @@ type UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (
   ? I
   : never;
 
-// 递归收集各层属性（保留原属性引用），数组下钻元素，忽略 undefined/null，遇到循环则停止
-type Pieces<T, Seen extends readonly unknown[] = []> = T extends Seen[number]
-  ? // 已经走过这一层，避免循环
-    {}
-  : T extends readonly (infer U)[]
-    ? Pieces<U, Seen>
-    : T extends object
-      ? {
-          // 保留原属性引用 + 下钻
-          [K in keyof T]-?: Pick<T, K> & Pieces<T[K], [...Seen, T]>;
-        }[keyof T]
-      : {};
+type IsEqual<A, B> =
+  (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2
+    ? (<T>() => T extends B ? 1 : 2) extends <T>() => T extends A ? 1 : 2
+      ? true
+      : false
+    : false;
+
+type IncludesExact<Seen extends readonly unknown[], T> = Seen extends readonly [
+  infer Head,
+  ...infer Tail,
+]
+  ? IsEqual<Head, T> extends true
+    ? true
+    : IncludesExact<Tail, T>
+  : false;
+
+// 递归收集各层属性（保留原属性引用），数组下钻元素，忽略 undefined/null，遇到完全相同的类型时停止
+type Pieces<T, Seen extends readonly unknown[] = []> =
+  IncludesExact<Seen, T> extends true
+    ? // 已经走过这一层，避免循环
+      {}
+    : T extends readonly (infer U)[]
+      ? Pieces<U, Seen>
+      : T extends object
+        ? {
+            // 保留原属性引用 + 下钻
+            [K in keyof T]-?: Pick<T, K> & Pieces<T[K], [...Seen, T]>;
+          }[keyof T]
+        : {};

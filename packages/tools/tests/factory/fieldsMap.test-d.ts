@@ -71,61 +71,28 @@ describe('FieldsMap', () => {
     assertType<Result['children']>('children');
   });
 
-  it('should flatten deep fields from optional nested array objects', () => {
+  it('should keep flattening nested array item fields when root shares optional keys', () => {
     type Res = {
       id?: number;
-      validationResult?: EfrValidationResultVO[];
-      customerBalanceDetail?: CustomerBalanceDetailVO[];
+      userId?: number;
       onboardingRecord?: UserOnboardingRecordResp[];
-      eid?: string;
-    };
-
-    type EfrValidationResultVO = {
-      identityCardValidationResult?: EftValidationFieldResult[];
-      result?: EfrResultCodeObj;
-    };
-
-    type EftValidationFieldResult = {
-      fileName?: string;
-      value?: string;
-      result?: string;
-    };
-
-    type EfrResultCodeObj = {
-      code?: string;
-      message?: string;
-    };
-
-    type CustomerBalanceDetailVO = {
-      customerDocuments?: CustomerDocument[];
-      balances?: BalanceVO[];
-    };
-
-    type CustomerDocument = {
-      documentNumber?: string;
-      documentType?: 'EID';
-    };
-
-    type BalanceVO = {
-      availableBalance?: number;
-      currencyCode?: string;
     };
 
     type UserOnboardingRecordResp = {
-      creatorName?: string;
-      createdTime?: string;
+      // 这里故意和 Res 共享可选字段。
+      // 旧实现用 `T extends Seen[number]` 做循环检测时，
+      // 会因为结构兼容把这个类型误判成已经访问过，从而丢掉 `action`。
+      id?: number;
+      userId?: number;
+      action?: 'RESET_APP_KYC' | 'APPROVE_KYC';
     };
 
     type Result = FieldsMap<Res>;
 
     assertType<Result['id']>('id');
-    assertType<Result['eid']>('eid');
-    assertType<Result['validationResult']>('validationResult');
-    assertType<Result['fileName']>('fileName');
-    assertType<Result['code']>('code');
-    assertType<Result['documentNumber']>('documentNumber');
-    assertType<Result['availableBalance']>('availableBalance');
-    assertType<Result['creatorName']>('creatorName');
+    assertType<Result['userId']>('userId');
+    assertType<Result['onboardingRecord']>('onboardingRecord');
+    assertType<Result['action']>('action');
 
     // @ts-expect-error invalid key should not be allowed
     assertType<Result['unknownDeepField']>('unknownDeepField');

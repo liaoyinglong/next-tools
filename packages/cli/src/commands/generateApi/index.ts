@@ -108,10 +108,17 @@ export async function generateApi() {
 
     let parsed: unknown;
     try {
-      parsed = await parser.bundle(
-        apiConfig.swaggerJSONPath,
-        dereferenceConfig,
-      );
+      // swagger-parser's built-in HTTP resolver fails on remote URLs,
+      // so we fetch the JSON ourselves and pass the parsed object instead.
+      const isRemoteUrl = /^https?:\/\//.test(apiConfig.swaggerJSONPath);
+      const bundleInput = isRemoteUrl
+        ? await fetch(apiConfig.swaggerJSONPath).then((res) => {
+            if (!res.ok)
+              throw new Error(`HTTP ${res.status} ${res.statusText}`);
+            return res.json();
+          })
+        : apiConfig.swaggerJSONPath;
+      parsed = await parser.bundle(bundleInput, dereferenceConfig);
       log.info(
         '解析 %s 成功，耗时 %dms',
         apiConfig.swaggerJSONPath,

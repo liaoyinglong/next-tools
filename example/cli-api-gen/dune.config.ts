@@ -17,5 +17,15 @@ export default defineConfig({
       swaggerJSONPath: './src/swagger/swagger.json',
       swaggerUiUrl: 'http://localhost:3000/swagger',
     },
+    {
+      output: './src/apis/elysia',
+      swaggerJSONPath: './src/swagger/elysia.json',
+      swaggerUiUrl: 'http://localhost:3000/swagger',
+    },
+    {
+      output: './src/apis/elysia2',
+      swaggerJSONPath: 'http://localhost:3456/api/openapi/json',
+      swaggerUiUrl: 'http://localhost:3000/swagger',
+    },
   ],
 });

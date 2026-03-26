@@ -1,5 +1,11 @@
 # @dune2/cli
 
+## 1.2.2
+
+### Patch Changes
+
+- 0bba693: fix: swagger-parser fails to resolve remote HTTP URLs, pre-fetch JSON before bundling
+
 ## 1.2.1
 
 ### Patch Changes

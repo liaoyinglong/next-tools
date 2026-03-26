@@ -1,5 +1,11 @@
 # @dune2/tools
 
+## 1.2.3
+
+### Patch Changes
+
+- 56a6946: Refactor `FieldsMap` type helpers for readability and fix the `fieldsMap` Proxy availability check.
+
 ## 1.2.2
 
 ### Patch Changes

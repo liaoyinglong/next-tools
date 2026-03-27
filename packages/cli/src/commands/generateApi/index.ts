@@ -355,74 +355,99 @@ async function compileRequestParams(
   operationObject: OpenAPIV3.OperationObject,
 ) {
   const store = asyncLocalStorage.getStore();
-  const schemaOrRefObject = (() => {
-    if (operationObject.requestBody) {
-      if ('$ref' in operationObject.requestBody) {
-        return operationObject.requestBody;
-      }
-      return operationObject.requestBody.content['application/json'].schema;
+  const requestBodySchemaOrRef = (() => {
+    if (!operationObject.requestBody) {
+      return;
     }
-    if (operationObject.parameters) {
-      const extraProperties = {};
-      const parameters: OpenAPIV3.ParameterObject[] = [];
-      (operationObject.parameters as OpenAPIV3.ParameterObject[]).forEach(
-        (item) => {
-          if (!['query', 'path'].includes(item.in)) {
-            return;
-          }
-          if (
-            item.schema &&
-            'type' in item.schema &&
-            item.schema.type === 'object'
-          ) {
-            // swagger get 请求上 有些参数是 object 类型 应该拍平
-            Object.assign(
-              extraProperties,
-              (item.schema as OpenAPIV3.SchemaObject).properties || {},
-            );
-          } else {
-            parameters.push(item);
-          }
-        },
-      );
-      // 必填参数中忽略 分页相关的参数
-      const required = parameters
-        .filter(
-          (p) =>
-            p.required && !['pageNum', 'pageSize', 'count'].includes(p.name),
-        )
-        .map((p) => p.name);
-      const properties = Object.fromEntries(
-        parameters
-          // 后端 swagger 可能出现没有 schema 的情况，这里过滤掉
-          .filter((p) => !!p.schema)
-          .map((p) => {
-            const schema = p.schema;
-            return [
-              p.name,
-              {
-                ...schema,
-                description: p.description,
-                // enum: schema.enum ?? [],
-              },
-            ];
-          }),
-      );
-      return {
-        required,
-        type: 'object',
-        properties: { ...properties, ...extraProperties },
-      };
+    if ('$ref' in operationObject.requestBody) {
+      return operationObject.requestBody;
     }
+    return operationObject.requestBody.content['application/json'].schema;
   })();
 
-  const finalSchema = isPlainObject(schemaOrRefObject)
-    ? Object.assign(
-        getCompileSchemaContext(store?.parsed),
-        '$ref' in schemaOrRefObject
-          ? store?.parser.$refs.get(schemaOrRefObject.$ref)
-          : schemaOrRefObject,
+  const parameterSchema = (() => {
+    if (!operationObject.parameters) {
+      return;
+    }
+    const extraProperties = {};
+    const parameters: OpenAPIV3.ParameterObject[] = [];
+    (operationObject.parameters as OpenAPIV3.ParameterObject[]).forEach(
+      (item) => {
+        if (!['query', 'path'].includes(item.in)) {
+          return;
+        }
+        if (
+          item.schema &&
+          'type' in item.schema &&
+          item.schema.type === 'object'
+        ) {
+          // swagger get 请求上 有些参数是 object 类型 应该拍平
+          Object.assign(
+            extraProperties,
+            (item.schema as OpenAPIV3.SchemaObject).properties || {},
+          );
+        } else {
+          parameters.push(item);
+        }
+      },
+    );
+    // 必填参数中忽略 分页相关的参数
+    const required = parameters
+      .filter(
+        (p) => p.required && !['pageNum', 'pageSize', 'count'].includes(p.name),
       )
+      .map((p) => p.name);
+    const properties = Object.fromEntries(
+      parameters
+        // 后端 swagger 可能出现没有 schema 的情况，这里过滤掉
+        .filter((p) => !!p.schema)
+        .map((p) => {
+          const schema = p.schema;
+          return [
+            p.name,
+            {
+              ...schema,
+              description: p.description,
+              // enum: schema.enum ?? [],
+            },
+          ];
+        }),
+    );
+    return {
+      required,
+      type: 'object',
+      properties: { ...properties, ...extraProperties },
+    } satisfies OpenAPIV3.SchemaObject;
+  })();
+
+  const requestBodySchema = isPlainObject(requestBodySchemaOrRef)
+    ? '$ref' in requestBodySchemaOrRef
+      ? (store?.parser.$refs.get(
+          requestBodySchemaOrRef.$ref,
+        ) as OpenAPIV3.SchemaObject)
+      : requestBodySchemaOrRef
+    : void 0;
+
+  const schemaObject =
+    requestBodySchema && parameterSchema
+      ? ({
+          ...requestBodySchema,
+          type: 'object',
+          required: [
+            ...new Set([
+              ...(requestBodySchema.required || []),
+              ...(parameterSchema.required || []),
+            ]),
+          ],
+          properties: {
+            ...(requestBodySchema.properties || {}),
+            ...(parameterSchema.properties || {}),
+          },
+        } satisfies OpenAPIV3.SchemaObject)
+      : requestBodySchema || parameterSchema;
+
+  const finalSchema = schemaObject
+    ? Object.assign(getCompileSchemaContext(store?.parsed), schemaObject)
     : void 0;
 
   let code = '';

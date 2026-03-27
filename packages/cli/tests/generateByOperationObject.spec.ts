@@ -270,6 +270,24 @@ const paramsInBody = {
   },
 };
 
+const paramsInBodyAndPath = {
+  ...paramsInBody,
+  summary: '编辑项目',
+  operationId: 'updateProjectById',
+  parameters: [
+    {
+      name: 'id',
+      in: 'path',
+      required: true,
+      description: '项目 id',
+      schema: {
+        type: 'string',
+        format: 'uuid',
+      },
+    },
+  ],
+};
+
 const generate = (data, methods: string) => {
   return generateApiRequestCode({
     url: '/users',
@@ -291,6 +309,13 @@ describe('api 生成', function () {
   it('参数在 body 里', async function () {
     const result = await generate(paramsInBody, 'post');
     expect(result).toMatchSnapshot();
+  });
+
+  it('参数同时在 body 和 path 里', async function () {
+    const result = await generate(paramsInBodyAndPath, 'put');
+    expect(result).toContain(`urlPathParams: ["id"]`);
+    expect(result).toContain('id: string;');
+    expect(result).toContain('pageNum: number;');
   });
 
   it('参数或响应为空', async () => {

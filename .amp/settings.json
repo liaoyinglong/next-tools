@@ -1,0 +1,5 @@
+{
+  "amp.git.commit.ampThread.enabled": true,
+  "amp.git.commit.coauthor.enabled": true,
+  "amp.dangerouslyAllowAll": true
+}

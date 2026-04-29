@@ -61,6 +61,11 @@ describe('FieldsMap', () => {
       metadata?: {
         [k: string]: any;
       };
+      payload: {
+        [k: string]: {
+          fileId: string;
+        };
+      };
       children?: Item[];
     };
     type Result = FieldsMap<Item[]>;
@@ -69,6 +74,8 @@ describe('FieldsMap', () => {
     assertType<Result['age']>('age');
     assertType<Result['metadata']>('metadata');
     assertType<Result['children']>('children');
+
+    assertType<Result['fileId']>('fileId');
 
     // @ts-expect-error invalid key should not be allowed
     assertType<Result['unknownField']>('unknownField');

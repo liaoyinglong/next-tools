@@ -72,7 +72,10 @@ type HasIndexSignature<T> = string extends keyof T
 // 1. 数组下钻到元素类型
 // 2. 对象既保留当前层字段，也继续下钻
 // 3. 只有遇到"完全相同"的类型时才停止，避免把结构兼容误判成循环
-// 4. 带 index signature 的对象不再下钻，防止 string/number 键泄漏
+// 4. 带 index signature 的对象：跳过当前层宽键，但继续递归 value 类型
+// 提取 index signature 的 value 类型
+type IndexSignatureValue<T> = T extends Record<string, infer V> ? V : never;
+
 type CollectFieldPieces<T, Seen extends readonly unknown[] = []> =
   HasSeenExact<Seen, T> extends true
     ? {}
@@ -80,7 +83,7 @@ type CollectFieldPieces<T, Seen extends readonly unknown[] = []> =
       ? CollectFieldPieces<U, Seen>
       : T extends object
         ? HasIndexSignature<T> extends true
-          ? {}
+          ? CollectFieldPieces<IndexSignatureValue<T>, [...Seen, T]>
           : {
               [K in keyof T]-?: Pick<T, K> &
                 CollectFieldPieces<T[K], [...Seen, T]>;

@@ -1,5 +1,11 @@
 # @dune2/tools
 
+## 1.2.5
+
+### Patch Changes
+
+- 82c6d27: fix(tools): recurse into index signature value types in FieldsMap
+
 ## 1.2.4
 
 ### Patch Changes

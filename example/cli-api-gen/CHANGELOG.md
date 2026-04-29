@@ -1,5 +1,12 @@
 # cli-api-gen
 
+## 1.0.7
+
+### Patch Changes
+
+- Updated dependencies [82c6d27]
+  - @dune2/tools@1.2.5
+
 ## 1.0.6
 
 ### Patch Changes

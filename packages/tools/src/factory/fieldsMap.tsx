@@ -44,7 +44,7 @@ type UnionToIntersection<T> = (T extends any ? (x: T) => void : never) extends (
   ? I
   : never;
 
-// 类型层面的精确相等判断，避免把“结构兼容”误判为同一个类型
+// 类型层面的精确相等判断，避免把"结构兼容"误判为同一个类型
 type IsExactlyEqual<A, B> =
   (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2
     ? (<T>() => T extends B ? 1 : 2) extends <T>() => T extends A ? 1 : 2
@@ -61,21 +61,30 @@ type HasSeenExact<Seen extends readonly unknown[], T> = Seen extends readonly [
     : HasSeenExact<Tail, T>
   : false;
 
+// index signature 检测：string 或 number 可赋值给 keyof T 时说明存在索引签名
+type HasIndexSignature<T> = string extends keyof T
+  ? true
+  : number extends keyof T
+    ? true
+    : false;
+
 // 递归收集各层字段片段：
 // 1. 数组下钻到元素类型
 // 2. 对象既保留当前层字段，也继续下钻
-// 3. 只有遇到“完全相同”的类型时才停止，避免把结构兼容误判成循环
+// 3. 只有遇到"完全相同"的类型时才停止，避免把结构兼容误判成循环
+// 4. 带 index signature 的对象不再下钻，防止 string/number 键泄漏
 type CollectFieldPieces<T, Seen extends readonly unknown[] = []> =
   HasSeenExact<Seen, T> extends true
-    ? // 已经走过这一层，避免循环
-      {}
+    ? {}
     : T extends readonly (infer U)[]
       ? CollectFieldPieces<U, Seen>
       : T extends object
-        ? {
-            [K in keyof T]-?: Pick<T, K> &
-              CollectFieldPieces<T[K], [...Seen, T]>;
-          }[keyof T]
+        ? HasIndexSignature<T> extends true
+          ? {}
+          : {
+              [K in keyof T]-?: Pick<T, K> &
+                CollectFieldPieces<T[K], [...Seen, T]>;
+            }[keyof T]
         : {};
 
 type FlattenFieldKeys<T> = keyof UnionToIntersection<CollectFieldPieces<T>>;

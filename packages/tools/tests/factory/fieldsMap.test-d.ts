@@ -69,6 +69,9 @@ describe('FieldsMap', () => {
     assertType<Result['age']>('age');
     assertType<Result['metadata']>('metadata');
     assertType<Result['children']>('children');
+
+    // @ts-expect-error invalid key should not be allowed
+    assertType<Result['unknownField']>('unknownField');
   });
 
   it('should keep flattening nested array item fields when root shares optional keys', () => {

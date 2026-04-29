@@ -1,5 +1,11 @@
 # @dune2/tools
 
+## 1.2.4
+
+### Patch Changes
+
+- d2f16ed: fix(tools): prevent index signature keys from leaking into FieldsMap result
+
 ## 1.2.3
 
 ### Patch Changes

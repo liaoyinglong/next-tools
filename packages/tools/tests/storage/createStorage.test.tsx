@@ -26,6 +26,35 @@ describe('createStorage', () => {
     expect(storage.age.key).toBe('test.age');
   });
 
+  describe('without namespace', () => {
+    function initNoNsStorage() {
+      const s = createStorage({ DataMap });
+      s._store.clearAll();
+      return s;
+    }
+
+    it('key 不带前缀', () => {
+      const s = initNoNsStorage();
+      expect(s.age.key).toBe('age');
+      expect(s.name.key).toBe('name');
+    });
+
+    it('读写正常', () => {
+      const s = initNoNsStorage();
+      expect(s.age.get()).toBe(0);
+      s.age.set(42);
+      expect(s.age.get()).toBe(42);
+      s.age.remove();
+      expect(s.age.get()).toBe(0);
+    });
+
+    it('空字符串 namespace 等同于不传', () => {
+      const s = createStorage({ DataMap, namespace: '' });
+      s._store.clearAll();
+      expect(s.age.key).toBe('age');
+    });
+  });
+
   it('get default value', () => {
     expect(storage.age.get()).toBe(0);
   });

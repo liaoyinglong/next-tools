@@ -13,10 +13,10 @@ interface CreateStorageConfig<T> {
    */
   DataMap: new () => T;
   /**
-   * 命名空间
-   * 会在存储的 key 前面加上命名空间
+   * 命名空间，会在存储的 key 前面加上 `namespace.` 前缀
+   * 不传或传空字符串时，直接使用原始 key（适用于兼容老项目已有 key）
    */
-  namespace: string;
+  namespace?: string;
   /**
    * 默认创建 localStorage 的存储
    * 如果需要创建 sessionStorage 的存储，需要传入 storageType: "session"
@@ -118,7 +118,7 @@ export function createStorage<T extends Record<string, any>>(
   Object.keys(storageMap).forEach((key) => {
     storage[key] = new StorageHelper(
       store,
-      `${namespace}.${String(key)}`,
+      namespace ? `${namespace}.${String(key)}` : String(key),
       storageMap[key],
     );
   });

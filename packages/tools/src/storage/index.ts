@@ -26,14 +26,6 @@ interface CreateStorageConfig<T> {
 }
 class StorageHelper<V = any> {
   /**
-   * 存的key 包含 namespace
-   * @example
-   * namespace = "test"
-   * 传入的key = "token"
-   * 获取到的 key = "test.token"
-   */
-  key: string;
-  /**
    * 用来缓存当前值
    * - 防止值是 object 的时候，每次 get 都都返回新的对象，导致 react 的 重复渲染
    * - 在 set 时，如果值没有发生变化，则不触发 storage 事件
@@ -41,17 +33,15 @@ class StorageHelper<V = any> {
    */
   private currentValue: V | undefined = undefined;
   constructor(
-    public store: StoreType,
-    public namespace: string,
-    public baseKey: string,
+    public store: StoreType['local'],
+    public key: string,
     public defaultValue: V,
   ) {
-    this.key = `${namespace}.${baseKey}`;
     this.currentValue = this.defaultValue;
   }
 
   get(): V | undefined {
-    const r = this.store.get(this.baseKey) ?? this.defaultValue;
+    const r = this.store.get(this.key) ?? this.defaultValue;
     if (!isEqual(r, this.currentValue)) {
       this.currentValue = r;
     }
@@ -66,9 +56,7 @@ class StorageHelper<V = any> {
       return;
     }
     this.currentValue = v;
-    v === undefined
-      ? this.store.remove(this.baseKey)
-      : this.store.set(this.baseKey, v);
+    v === undefined ? this.store.remove(this.key) : this.store.set(this.key, v);
     this.notifyListeners();
   }
 
@@ -121,7 +109,7 @@ export function createStorage<T extends Record<string, any>>(
 ) {
   const { DataMap, namespace, storageType = 'local' } = config;
 
-  const store = baseStore[storageType].namespace(namespace);
+  const store: StoreType['local'] = baseStore[storageType];
 
   const storage: any = {
     _store: store,
@@ -130,8 +118,7 @@ export function createStorage<T extends Record<string, any>>(
   Object.keys(storageMap).forEach((key) => {
     storage[key] = new StorageHelper(
       store,
-      namespace,
-      String(key),
+      `${namespace}.${String(key)}`,
       storageMap[key],
     );
   });

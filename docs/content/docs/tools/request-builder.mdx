@@ -260,15 +260,41 @@ const customQueryClient = new QueryClient({
   },
 });
 
-// 设置全局查询客户端工厂
-RequestBuilder.setQueryClientFactory(() => customQueryClient);
-
 // 为特定实例设置查询客户端
 const api = new RequestBuilder({
   url: '/api/data',
   method: 'get',
   queryClient: customQueryClient,
 });
+```
+
+`setQueryClientFactory` 主要用于 SSR 场景。在服务端渲染时，每个请求需要独立的 `QueryClient` 实例以避免不同用户之间的数据串漏。通过工厂函数，可以在每次调用时动态返回当前请求上下文对应的 `QueryClient`：
+
+```tsx
+import { AsyncLocalStorage } from 'node:async_hooks';
+import { QueryClient } from '@tanstack/react-query';
+
+const asyncStorage = new AsyncLocalStorage<{ queryClient: QueryClient }>();
+
+// 工厂函数每次调用时从 AsyncLocalStorage 中获取当前请求的 QueryClient
+RequestBuilder.setQueryClientFactory(() => {
+  const store = asyncStorage.getStore();
+  if (!store) {
+    throw new Error('QueryClient not found in async context');
+  }
+  return store.queryClient;
+});
+
+// 服务端处理请求时，为每个用户创建独立的 QueryClient
+async function handleRequest(req: Request) {
+  const queryClient = new QueryClient();
+  return asyncStorage.run({ queryClient }, async () => {
+    // 在这个上下文中，所有 RequestBuilder 调用都会使用这个 queryClient
+    const data = await someApi.request({ id: '1' });
+    const html = renderToString(/* ... */);
+    return new Response(html);
+  });
+}
 ```
 
 ### 路径参数处理

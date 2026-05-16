@@ -105,7 +105,7 @@ function UserProfile() {
 ```tsx
 interface CreateStorageConfig<T> {
   DataMap: new () => T;
-  namespace: string;
+  namespace?: string;
   storageType?: 'local' | 'session';
 }
 ```
@@ -113,7 +113,7 @@ interface CreateStorageConfig<T> {
 #### 参数说明
 
 - `DataMap`: 用于生成存储映射的类，其属性值将作为对应存储项的默认值
-- `namespace`: 命名空间，用于隔离不同模块的存储，会作为存储键名的前缀
+- `namespace`: 命名空间，用于隔离不同模块的存储，会作为存储键名的前缀（如 `"myApp"` → 键名为 `"myApp.token"`）。不传或传空字符串时，直接使用原始属性名作为键名，适用于兼容老项目已有的 storage key
 - `storageType`: 存储类型
   - `"local"`: 使用 localStorage（默认值）
   - `"session"`: 使用 sessionStorage
@@ -178,10 +178,14 @@ unsubscribe();
 
 #### `key: string`
 
-完整的存储键名（包含命名空间）。
+完整的存储键名。设置了 namespace 时包含前缀，未设置时为原始属性名。
 
 ```tsx
+// 有 namespace
 console.log(storage.token.key); // "myApp.token"
+
+// 无 namespace
+console.log(storage.token.key); // "token"
 ```
 
 #### `defaultValue: T`
@@ -637,6 +641,20 @@ const cacheStorage = createStorage({
   namespace: 'cache',
   storageType: 'session',
 });
+```
+
+### 3. 兼容老项目已有的 storage key
+
+如果你正在迁移一个老项目，localStorage 中已有不带前缀的 key（如 `"token"`、`"userInfo"`），可以省略 `namespace` 来直接复用：
+
+```tsx
+// 老项目中已有的 key: "token", "userInfo"
+const legacyStorage = createStorage({
+  DataMap: LegacyDataMap,
+  // 不传 namespace，key 直接就是属性名
+});
+
+console.log(legacyStorage.token.key); // "token" — 兼容老数据
 ```
 
 ## 注意事项

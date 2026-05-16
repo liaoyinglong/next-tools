@@ -21,7 +21,7 @@ description: 用于创建和管理本地存储（localStorage 或 sessionStorage
 ### 导入
 
 ```tsx
-import { createStorage } from '@dune2/tools/storage';
+import { createStorage, createStorageHelper } from '@dune2/tools/storage';
 ```
 
 ### 创建存储实例
@@ -274,6 +274,50 @@ storage.count.set('123'); // 错误：类型不匹配
 storage.user.set({ name: '张三' }); // 错误：缺少必需属性 'age'
 storage.settings.set({ theme: 'blue' }); // 错误：theme 值不在联合类型中
 ```
+
+### 动态 key（createStorageHelper）
+
+`createStorage` 要求在定义时就确定所有 key。如果你需要在运行时才确定 key（比如兼容老项目的动态 key），可以使用 `createStorageHelper` 来创建单个存储项：
+
+```tsx
+import { createStorageHelper } from '@dune2/tools/storage';
+
+// 基本用法
+const tokenHelper = createStorageHelper('token', '');
+tokenHelper.set('abc');
+tokenHelper.get(); // 'abc'
+
+// 运行时拼接 key
+function getUserToken(userId: string) {
+  return createStorageHelper(`token_${userId}`, '');
+}
+const helper = getUserToken('123');
+helper.key; // "token_123"
+
+// 使用 sessionStorage
+const cache = createStorageHelper('pageCache', null, 'session');
+```
+
+`createStorageHelper` 返回的实例和 `createStorage` 中的每个属性完全一致，支持 `get`、`set`、`remove`、`useValue`、`subscribe` 等全部方法。
+
+如果同一组 key 结构相同、只是前缀不同，也可以用 `createStorage` 配合动态 `namespace`：
+
+```tsx
+function createUserPrefs(userId: string) {
+  return createStorage({
+    DataMap: class {
+      theme = 'light';
+      lang = 'zh-CN';
+    },
+    namespace: `user_${userId}`,
+  });
+}
+
+const prefsA = createUserPrefs('alice');
+prefsA.theme.set('dark'); // key: "user_alice.theme"
+```
+
+> **注意**：在 React 组件中使用 `useValue` 时，需要保证 `StorageHelper` 实例的引用稳定（在组件外创建，或用 `useRef` 持有），否则每次渲染都会创建新实例导致 `useValue` 失效。
 
 ## 实际应用示例
 

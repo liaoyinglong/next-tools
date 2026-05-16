@@ -1,6 +1,6 @@
 import { act, render, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createStorage } from '../../src/storage';
+import { createStorage, createStorageHelper } from '../../src/storage';
 class DataMap {
   name = '';
   age = 0;
@@ -170,6 +170,17 @@ describe('createStorage', () => {
       expect(result.current).toEqual({ isLogin: false });
     });
 
+    it('createStorageHelper useValue', () => {
+      const helper = createStorageHelper('dynamic_hook', 0);
+      helper.store.clearAll();
+      const { result } = renderHook(() => helper.useValue());
+      expect(result.current).toBe(0);
+      act(() => {
+        helper.set(99);
+      });
+      expect(result.current).toBe(99);
+    });
+
     it('SSR 场景，local storage 中有初始值', () => {
       // 设置初始值
       storage.age.set(1);
@@ -222,6 +233,44 @@ describe('createStorage', () => {
       });
       expect(count).toBe(3);
       expect(value).toEqual({ isLogin: false });
+    });
+  });
+
+  describe('createStorageHelper', () => {
+    it('动态 key 读写', () => {
+      const helper = createStorageHelper('dynamic_token', '');
+      helper.store.clearAll();
+      expect(helper.key).toBe('dynamic_token');
+      expect(helper.get()).toBe('');
+      helper.set('abc');
+      expect(helper.get()).toBe('abc');
+      helper.remove();
+      expect(helper.get()).toBe('');
+    });
+
+    it('支持运行时拼接 key', () => {
+      const userId = '42';
+      const helper = createStorageHelper(`token_${userId}`, '');
+      helper.store.clearAll();
+      expect(helper.key).toBe('token_42');
+      helper.set('secret');
+      expect(helper.get()).toBe('secret');
+    });
+
+    it('支持对象类型', () => {
+      const helper = createStorageHelper('dynamic_obj', { x: 1 });
+      helper.store.clearAll();
+      expect(helper.get()).toEqual({ x: 1 });
+      helper.set({ x: 2 });
+      expect(helper.get()).toEqual({ x: 2 });
+    });
+
+    it('支持 sessionStorage', () => {
+      const helper = createStorageHelper('sess_key', 0, 'session');
+      helper.store.clearAll();
+      expect(helper.get()).toBe(0);
+      helper.set(7);
+      expect(helper.get()).toBe(7);
     });
   });
 });

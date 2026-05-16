@@ -24,7 +24,7 @@ interface CreateStorageConfig<T> {
    */
   storageType?: StorageType;
 }
-class StorageHelper<V = any> {
+export class StorageHelper<V = any> {
   /**
    * 用来缓存当前值
    * - 防止值是 object 的时候，每次 get 都都返回新的对象，导致 react 的 重复渲染
@@ -99,6 +99,21 @@ class StorageHelper<V = any> {
   private getServerSnapshot = () => {
     return this.defaultValue;
   };
+}
+
+/**
+ * 创建单个动态 key 的存储项
+ * 适用于 key 在运行时才确定的场景（如兼容老项目的动态 key）
+ *
+ * 注意：在 React 组件中使用 useValue 时，需要保证实例引用稳定（在组件外创建或用 useRef 持有）
+ */
+export function createStorageHelper<V>(
+  key: string,
+  defaultValue: V,
+  storageType: StorageType = 'local',
+): StorageHelper<V> {
+  const store: StoreType['local'] = baseStore[storageType];
+  return new StorageHelper(store, key, defaultValue);
 }
 
 /**

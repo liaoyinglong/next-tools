@@ -30,16 +30,9 @@
     "test:u": "vitest -u"
   },
   "dependencies": {
-    "@babel/core": "^7.25.2",
-    "@babel/plugin-syntax-jsx": "^7.25.9",
-    "@babel/plugin-syntax-typescript": "^7.28.6",
-    "@babel/types": "^7.29.0"
+    "@ast-grep/napi": "^0.40.0"
   },
   "devDependencies": {
-    "@babel/parser": "^7.26.5",
-    "@babel/traverse": "^7.25.3",
-    "@types/babel__core": "^7.20.1",
-    "@types/babel__traverse": "^7.20.6",
     "prettier": "^3.8.1",
     "tsdown": "catalog:",
     "vite": "^7.0.0"

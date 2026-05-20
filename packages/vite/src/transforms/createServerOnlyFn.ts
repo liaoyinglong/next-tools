@@ -1,40 +1,38 @@
-import type babel from '@babel/core';
-import type { PluginObj } from '@babel/core';
-import t from '@babel/types';
-import { isImportedBinding } from './shared';
+import { type Edit, type SgNode, parse } from '@ast-grep/napi';
+import { detectLang } from './shared';
 
 /**
- * Server-target transform for `createServerOnlyFn(fn)` — replaces the call
- * with its single function argument. Matches TanStack Start's
- * `handleEnvOnly.ts` behavior on the server env.
+ * Replaces `createServerOnlyFn(fn)` with `fn`. Matches by identifier name
+ * only (no scope analysis); shadowed locals will be rewritten too.
  */
-export const createServerOnlyFnPlugin = (_api: typeof babel): PluginObj => {
-  return {
-    name: 'dune2-create-server-only-fn',
-    visitor: {
-      CallExpression(path) {
-        const callee = path.node.callee;
-        if (
-          callee.type !== 'Identifier' ||
-          callee.name !== 'createServerOnlyFn'
-        ) {
-          return;
-        }
-        if (!isImportedBinding(path, 'createServerOnlyFn')) {
-          return;
-        }
+export function createServerOnlyFnTransform(
+  root: SgNode,
+  edits: Edit[],
+  filename: string,
+): void {
+  const calls = root.findAll('createServerOnlyFn($$$ARGS)');
+  for (const node of calls) {
+    const args = node.getMultipleMatches('ARGS');
+    if (args.length !== 1) {
+      const { start } = node.range();
+      throw new Error(
+        '[@dune2/vite] createServerOnlyFn() must be called with a single function argument. ' +
+          `(at ${filename}:${start.line + 1}:${start.column + 1})`,
+      );
+    }
+    const inner = args[0]!;
+    edits.push(node.replace(inner.text()));
+  }
+}
 
-        const args = path.node.arguments;
-        const inner = args[0];
-        if (args.length !== 1 || !inner || !t.isExpression(inner)) {
-          throw path.buildCodeFrameError(
-            '[@dune2/vite] createServerOnlyFn() must be called with a single function argument.',
-          );
-        }
-        path.replaceWith(inner);
-      },
-    },
-  };
-};
+export function compileCreateServerOnlyFn(
+  code: string,
+  filename: string,
+): string {
+  const root = parse(detectLang(filename), code).root();
+  const edits: Edit[] = [];
+  createServerOnlyFnTransform(root, edits, filename);
+  return root.commitEdits(edits);
+}
 
-export default createServerOnlyFnPlugin;
+export default createServerOnlyFnTransform;

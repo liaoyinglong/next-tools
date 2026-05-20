@@ -1,75 +1,75 @@
-import type babel from '@babel/core';
-import type { PluginObj } from '@babel/core';
-import type { NodePath } from '@babel/traverse';
-import t from '@babel/types';
-import { isImportedBinding } from './shared';
+import { type Edit, type SgNode, parse } from '@ast-grep/napi';
+import { detectLang } from './shared';
 
 /**
  * Server-target transform for `createIsomorphicFn().server(s).client(c)`.
  *
- * Walks up from the innermost `createIsomorphicFn()` call through any
- * chained `.server(fn)` / `.client(fn)` method calls. Replaces the
- * outermost chain expression with the argument passed to `.server(...)`,
- * or `() => {}` if no `.server` arm was provided. Matches TanStack
- * Start's `handleCreateIsomorphicFn.ts` behavior on the server env.
+ * Walks up from each `createIsomorphicFn()` seed through alternating
+ * member_expression → call_expression parents, collecting the argument
+ * passed to `.server(...)` (last write wins). Replaces the outermost
+ * chain expression with the server arg, or `() => {}` if absent.
  */
-export const createIsomorphicFnPlugin = (_api: typeof babel): PluginObj => {
-  return {
-    name: 'dune2-create-isomorphic-fn',
-    visitor: {
-      CallExpression(path) {
-        const callee = path.node.callee;
-        if (
-          callee.type !== 'Identifier' ||
-          callee.name !== 'createIsomorphicFn'
-        ) {
-          return;
-        }
-        if (!isImportedBinding(path, 'createIsomorphicFn')) {
-          return;
-        }
+export function createIsomorphicFnTransform(
+  root: SgNode,
+  edits: Edit[],
+  _filename: string,
+): void {
+  const seeds = root.findAll('createIsomorphicFn()');
+  for (const seed of seeds) {
+    let outer: SgNode = seed;
+    let serverArg: SgNode | null = null;
 
-        let outer: NodePath = path;
-        let serverArg: t.Expression | null = null;
+    while (true) {
+      const member = outer.parent();
+      if (!member || member.kind() !== 'member_expression') break;
+      const obj = member.field('object');
+      if (!obj || !rangeEq(obj.range(), outer.range())) break;
+      const prop = member.field('property');
+      if (!prop) break;
+      const propName = prop.text();
 
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-          const member = outer.parentPath;
-          if (
-            !member ||
-            !member.isMemberExpression() ||
-            member.node.object !== outer.node ||
-            member.node.computed
-          ) {
-            break;
-          }
-          const prop = member.node.property;
-          if (!t.isIdentifier(prop)) {
-            break;
-          }
-          const call = member.parentPath;
-          if (
-            !call ||
-            !call.isCallExpression() ||
-            call.node.callee !== member.node
-          ) {
-            break;
-          }
-          if (prop.name === 'server') {
-            const first = call.node.arguments[0];
-            if (first && t.isExpression(first)) {
-              serverArg = first;
-            }
-          }
-          outer = call;
-        }
+      const call = member.parent();
+      if (!call || call.kind() !== 'call_expression') break;
+      const callee = call.field('function');
+      if (!callee || !rangeEq(callee.range(), member.range())) break;
 
-        const replacement =
-          serverArg ?? t.arrowFunctionExpression([], t.blockStatement([]));
-        outer.replaceWith(replacement);
-      },
-    },
-  };
-};
+      if (propName === 'server') {
+        const args = call.field('arguments');
+        const first = args ? firstNonPunct(args) : null;
+        if (first) serverArg = first;
+      }
+      outer = call;
+    }
 
-export default createIsomorphicFnPlugin;
+    const replacement = serverArg ? serverArg.text() : '() => {}';
+    edits.push(outer.replace(replacement));
+  }
+}
+
+function rangeEq(
+  a: ReturnType<SgNode['range']>,
+  b: ReturnType<SgNode['range']>,
+): boolean {
+  return a.start.index === b.start.index && a.end.index === b.end.index;
+}
+
+function firstNonPunct(args: SgNode): SgNode | null {
+  for (const child of args.children()) {
+    const k = child.kind();
+    if (k === '(' || k === ')' || k === ',') continue;
+    return child;
+  }
+  return null;
+}
+
+export function compileCreateIsomorphicFn(
+  code: string,
+  filename: string,
+): string {
+  const root = parse(detectLang(filename), code).root();
+  const edits: Edit[] = [];
+  createIsomorphicFnTransform(root, edits, filename);
+  return root.commitEdits(edits);
+}
+
+export default createIsomorphicFnTransform;

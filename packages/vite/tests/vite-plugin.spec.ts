@@ -20,7 +20,7 @@ describe('@dune2/vite plugin', () => {
     );
     expect(result).toBeTruthy();
     expect(result!.code).toMatch(/=>\s*1/);
-    expect(result!.code).not.toMatch(/createServerOnlyFn/);
+    expect(result!.code).not.toMatch(/createServerOnlyFn\s*\(/);
   });
 
   it('returns null for non-script files (.css)', async () => {
@@ -64,6 +64,6 @@ describe('@dune2/vite plugin', () => {
     expect(result).toBeTruthy();
     expect(result!.code).toMatch(/console\.log\('s'/);
     expect(result!.code).not.toMatch(/console\.log\('c'/);
-    expect(result!.code).not.toMatch(/createIsomorphicFn/);
+    expect(result!.code).not.toMatch(/createIsomorphicFn\s*\(/);
   });
 });

@@ -1,8 +1,6 @@
 import { type Edit, parse } from '@ast-grep/napi';
 import type { Plugin } from 'vite';
 import { createIsomorphicFnTransform } from './transforms/createIsomorphicFn';
-import { createServerFnTransform } from './transforms/createServerFn';
-import { createServerOnlyFnTransform } from './transforms/createServerOnlyFn';
 import { TRIGGER, detectLang } from './transforms/shared';
 
 export interface Dune2ViteOptions {
@@ -23,8 +21,6 @@ export default function dune2(options: Dune2ViteOptions = {}): Plugin {
 
       const root = parse(detectLang(id), code).root();
       const edits: Edit[] = [];
-      createServerFnTransform(root, edits, id);
-      createServerOnlyFnTransform(root, edits, id);
       createIsomorphicFnTransform(root, edits, id);
 
       if (edits.length === 0) return null;
@@ -34,5 +30,3 @@ export default function dune2(options: Dune2ViteOptions = {}): Plugin {
 }
 
 export { createIsomorphicFnTransform } from './transforms/createIsomorphicFn';
-export { createServerFnTransform } from './transforms/createServerFn';
-export { createServerOnlyFnTransform } from './transforms/createServerOnlyFn';

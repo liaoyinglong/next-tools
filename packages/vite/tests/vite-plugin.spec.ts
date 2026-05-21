@@ -13,16 +13,6 @@ async function runTransform(code: string, id: string) {
 }
 
 describe('@dune2/vite plugin', () => {
-  it('transforms .ts files containing createServerOnlyFn', async () => {
-    const result = await runTransform(
-      `import { createServerOnlyFn } from 'stub';\nexport const f = createServerOnlyFn(() => 1);`,
-      '/abs/path/foo.ts',
-    );
-    expect(result).toBeTruthy();
-    expect(result!.code).toMatch(/=>\s*1/);
-    expect(result!.code).not.toMatch(/createServerOnlyFn\s*\(/);
-  });
-
   it('returns null for non-script files (.css)', async () => {
     const result = await runTransform(
       `body { color: red; }`,
@@ -41,19 +31,10 @@ describe('@dune2/vite plugin', () => {
 
   it('skips virtual module ids', async () => {
     const result = await runTransform(
-      `import { createServerOnlyFn } from 'stub';\nconst f = createServerOnlyFn(() => 1);`,
+      `import { createIsomorphicFn } from 'stub';\nconst f = createIsomorphicFn().server(() => 1).client(() => 2);`,
       '\0virtual:foo.ts',
     );
     expect(result).toBeNull();
-  });
-
-  it('throws codeframe error when createServerFn is used', async () => {
-    await expect(
-      runTransform(
-        `import { createServerFn } from '@tanstack/react-start';\nconst fn = createServerFn().handler(() => 1);`,
-        '/abs/path/server.ts',
-      ),
-    ).rejects.toThrow(/createServerFn\(\) is not supported/);
   });
 
   it('transforms createIsomorphicFn().server().client() chain', async () => {

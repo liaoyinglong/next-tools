@@ -35,9 +35,6 @@
   "devDependencies": {
     "prettier": "^3.8.1",
     "tsdown": "catalog:",
-    "vite": "^7.0.0"
-  },
-  "peerDependencies": {
-    "vite": "^5.0.0 || ^6.0.0 || ^7.0.0"
+    "vite": "^8"
   }
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import dune2 from '../src/index';
+import { dune2Vite as dune2 } from '../src/index';
 
 async function runTransform(code: string, id: string) {
   const plugin = dune2();

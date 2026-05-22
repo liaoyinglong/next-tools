@@ -10,7 +10,7 @@ export interface Dune2ViteOptions {
 
 const DEFAULT_INCLUDE = /\.[mc]?[jt]sx?$/;
 
-export default function dune2(options: Dune2ViteOptions = {}): Plugin {
+export function dune2Vite(options: Dune2ViteOptions = {}): Plugin {
   const include = options.include ?? DEFAULT_INCLUDE;
   return {
     name: '@dune2/vite',

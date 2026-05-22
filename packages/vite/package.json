@@ -35,6 +35,9 @@
   "devDependencies": {
     "oxfmt": "^0.35.0",
     "tsdown": "catalog:",
-    "vite": "^8"
+    "vite": "^8.0.0"
+  },
+  "peerDependencies": {
+    "vite": "^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0"
   }
 }

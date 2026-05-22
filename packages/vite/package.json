@@ -33,7 +33,7 @@
     "@ast-grep/napi": "^0.40.0"
   },
   "devDependencies": {
-    "prettier": "^3.8.1",
+    "oxfmt": "^0.35.0",
     "tsdown": "catalog:",
     "vite": "^8"
   }

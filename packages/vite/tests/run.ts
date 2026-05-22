@@ -1,8 +1,16 @@
 import { readFileSync } from 'fs';
 import { readdir } from 'fs/promises';
 import { join } from 'path';
-import { format } from 'prettier';
+import { format } from 'oxfmt';
 import { expect, it } from 'vitest';
+
+async function formatTs(filePath: string, source: string) {
+  const { code, errors } = await format(filePath, source);
+  if (errors.length) {
+    throw new Error(errors.map((e) => e.message).join('\n'));
+  }
+  return code;
+}
 
 export type Compile = (code: string, filename: string) => string;
 
@@ -25,8 +33,8 @@ async function fixture(dir: string, compile: Compile) {
   const actualCode = compile(code, inputFilePath);
 
   const [actuallyOutput, expectedOutput] = await Promise.all([
-    format(actualCode, { parser: 'typescript' }),
-    format(expectedCode, { parser: 'typescript' }),
+    formatTs(outputFilePath, actualCode),
+    formatTs(outputFilePath, expectedCode),
   ]);
 
   expect(actuallyOutput).toEqual(expectedOutput);

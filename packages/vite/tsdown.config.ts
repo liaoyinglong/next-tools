@@ -3,7 +3,7 @@ import { defineConfig } from 'tsdown';
 export default defineConfig([
   {
     name: 'vite',
-    target: 'node18',
+    target: 'node',
     sourcemap: true,
     tsconfig: './tsconfig.json',
     dts: true,

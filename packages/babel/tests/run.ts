@@ -2,8 +2,16 @@ import { readFileSync } from 'fs';
 import { readdir } from 'fs/promises';
 import { join } from 'path';
 import { PluginItem, parseAsync, transformFromAstAsync } from '@babel/core';
-import { format } from 'prettier';
+import { format } from 'oxfmt';
 import { expect, it } from 'vitest';
+
+async function formatTs(filePath: string, source: string) {
+  const { code, errors } = await format(filePath, source);
+  if (errors.length) {
+    throw new Error(errors.map((e) => e.message).join('\n'));
+  }
+  return code;
+}
 
 const loadCode = (path: string) => {
   let r = readFileSync(path, 'utf-8');
@@ -50,12 +58,8 @@ async function fixture(dir: string, plugin: PluginItem | PluginItem[]) {
   expect(res!.code).toBeTruthy();
 
   const [actuallyOutput, expectedOutput] = await Promise.all([
-    format(res!.code!, {
-      parser: 'typescript',
-    }),
-    format(loadCode(outputFilePath), {
-      parser: 'typescript',
-    }),
+    formatTs(outputFilePath, res!.code!),
+    formatTs(outputFilePath, loadCode(outputFilePath)),
   ]);
   //console.log(actuallyOutput);
   expect(actuallyOutput).toEqual(expectedOutput);

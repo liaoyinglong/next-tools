@@ -2,7 +2,7 @@ import { defineConfig, type UserConfig } from 'tsdown';
 
 const common: UserConfig = {
   name: 'dune',
-  target: 'node16',
+  target: 'node',
   sourcemap: true,
   tsconfig: './tsconfig.json',
   format: ['esm'],

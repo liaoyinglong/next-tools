@@ -84,7 +84,7 @@ export function createStore<
         },
       );
       useDebugValue(slice);
-      return slice;
+      return slice!;
     },
   };
 

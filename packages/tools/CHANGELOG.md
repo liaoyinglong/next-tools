@@ -1,5 +1,12 @@
 # @dune2/tools
 
+## 1.3.1
+
+### Patch Changes
+
+- 0c850bb: Export `snapshot` from store module for converting proxy objects to plain values
+- c286885: Fix `useShallowSnapshot` return type to be non-nullable via non-null assertion
+
 ## 1.3.0
 
 ### Minor Changes

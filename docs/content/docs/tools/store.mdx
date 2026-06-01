@@ -112,6 +112,36 @@ function Counter() {
 | **第三方库兼容** | 未知                                                     | ✅ 普通值，无兼容问题                                      |
 | **调试体验**     | Proxy 对象在 DevTools 中不直观                           | 普通值，调试友好                                           |
 
+### 注意：Proxy 对象不能直接传递给子组件
+
+`useSnapshot` 返回的是 Proxy 对象。如果你从中取出 object 或 array 类型的值并传递给其他组件，可能会导致意想不到的错误（如子组件内部对该值做序列化、比较等操作时出现异常）。
+
+有两种解决方案：
+
+**方案一：使用 `useShallowSnapshot`（推荐）**
+
+`useShallowSnapshot` 返回的是普通值，可以安全传递：
+
+```typescript
+function Parent() {
+  const { user } = store.useShallowSnapshot((s) => ({ user: s.user }));
+  return <Child user={user} />;
+}
+```
+
+**方案二：使用 `snapshot` 转换**
+
+如果仍想使用 `useSnapshot`，在传递给子组件前用 `snapshot` 把 Proxy 对象转换为普通对象：
+
+```typescript
+import { snapshot } from '@dune2/tools/store';
+
+function Parent() {
+  const state = store.useSnapshot();
+  return <Child user={snapshot(state.user)} />;
+}
+```
+
 ### Babel 插件自动优化
 
 `@dune2/babel` 提供了编译时插件，自动将 `useSnapshot` 转换为 `useShallowSnapshot`。插件会分析组件中实际访问的属性，自动生成最优的 selector：

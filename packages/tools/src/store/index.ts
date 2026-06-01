@@ -24,7 +24,7 @@ type Config<S extends object, A extends Record<string, Action<S, any>>> = {
   state: S;
   actionsCreator: (state: S) => A;
 };
-
+export { snapshot };
 export function createStore<
   S extends object,
   A extends Record<string, Action<S, any>>,

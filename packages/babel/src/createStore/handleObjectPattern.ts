@@ -72,7 +72,13 @@ export function handleObjectPattern(path: NodePath<VariableDeclarator>) {
         p.isFunctionExpression() ||
         p.isArrowFunctionExpression(),
     ) ?? path.parentPath;
-  funcParent.insertBefore(selector);
+
+  // 找到可以插入语句的位置：向上找到最近的 Statement 级别节点
+  let insertTarget = funcParent;
+  while (insertTarget && !insertTarget.isStatement()) {
+    insertTarget = insertTarget.parentPath!;
+  }
+  (insertTarget ?? funcParent).insertBefore(selector);
 
   // 修改为使用 useShallowSnapshot 并传入选择器
   callee.property.name = 'useShallowSnapshot';

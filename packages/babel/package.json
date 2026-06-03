@@ -16,6 +16,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./createStore": {
+      "types": "./dist/createStore.d.mts",
+      "import": "./dist/createStore.mjs",
+      "require": "./dist/createStore.cjs"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {

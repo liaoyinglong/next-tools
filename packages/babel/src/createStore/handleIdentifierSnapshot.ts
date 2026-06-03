@@ -129,7 +129,12 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
         p.isFunctionExpression() ||
         p.isArrowFunctionExpression(),
     ) ?? path.parentPath;
-  funcParent.insertBefore(selector);
+
+  let insertTarget = funcParent;
+  while (insertTarget && !insertTarget.isStatement()) {
+    insertTarget = insertTarget.parentPath!;
+  }
+  (insertTarget ?? funcParent).insertBefore(selector);
 
   // 修改原始调用为 useShallowSnapshot
   callee.property.name = 'useShallowSnapshot';

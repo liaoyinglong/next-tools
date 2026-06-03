@@ -1,5 +1,11 @@
 # @dune2/babel
 
+## 1.0.3
+
+### Patch Changes
+
+- c574bc0: fix(babel): selector 函数插入位置错误，当 useSnapshot 在箭头函数回调内时会崩溃
+
 ## 1.0.2
 
 ### Patch Changes

@@ -1,14 +1,36 @@
 import { describe, expect, it } from 'vitest';
 import { dune2Vite as dune2 } from '../src/index';
 
+function testFilter(value: string, spec: unknown): boolean {
+  if (!spec) return true;
+  if (spec instanceof RegExp) return spec.test(value);
+  if (typeof spec === 'string') return value.includes(spec);
+  if (Array.isArray(spec)) return spec.some((s) => testFilter(value, s));
+  if (typeof spec === 'object' && spec !== null) {
+    const { include, exclude } = spec as Record<string, unknown>;
+    if (exclude && testFilter(value, exclude)) return false;
+    if (include) return testFilter(value, include);
+  }
+  return true;
+}
+
 async function runTransform(code: string, id: string) {
   const plugin = dune2();
   const transform = plugin.transform;
-  if (typeof transform !== 'function') {
-    throw new Error('plugin.transform is not a function');
+  if (!transform) {
+    throw new Error('plugin.transform is not defined');
   }
-  // Vite plugins expose transform as an object on newer versions; handle both.
-  const fn = (transform as any).handler ?? transform;
+  const fn =
+    typeof transform === 'function' ? transform : (transform as any).handler;
+  if (typeof fn !== 'function') {
+    throw new Error('plugin.transform.handler is not a function');
+  }
+  const filter =
+    typeof transform === 'object' ? (transform as any).filter : null;
+  if (filter) {
+    if (!testFilter(id, filter.id)) return null;
+    if (!testFilter(code, filter.code)) return null;
+  }
   return fn.call({} as any, code, id);
 }
 

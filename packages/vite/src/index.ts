@@ -17,7 +17,7 @@ export function dune2Vite(options: Dune2ViteOptions = {}): Plugin {
     enforce: 'pre',
     transform: {
       filter: {
-        id: include,
+        id: { include, exclude: /^\0/ },
         code: TRIGGER,
       },
       handler(code, id) {

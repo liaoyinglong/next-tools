@@ -15,16 +15,19 @@ export function dune2Vite(options: Dune2ViteOptions = {}): Plugin {
   return {
     name: '@dune2/vite',
     enforce: 'pre',
-    async transform(code, id) {
-      if (id.includes('\0') || !include.test(id)) return null;
-      if (!TRIGGER.test(code)) return null;
+    transform: {
+      filter: {
+        id: include,
+        code: TRIGGER,
+      },
+      handler(code, id) {
+        const root = parse(detectLang(id), code).root();
+        const edits: Edit[] = [];
+        createIsomorphicFnTransform(root, edits, id);
 
-      const root = parse(detectLang(id), code).root();
-      const edits: Edit[] = [];
-      createIsomorphicFnTransform(root, edits, id);
-
-      if (edits.length === 0) return null;
-      return { code: root.commitEdits(edits), map: null };
+        if (edits.length === 0) return null;
+        return { code: root.commitEdits(edits), map: null };
+      },
     },
   };
 }

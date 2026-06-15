@@ -1,5 +1,11 @@
 # @dune2/tools
 
+## 1.3.3
+
+### Patch Changes
+
+- 27c0ddd: fix(tools): select 的 data 参数类型应为 API 原始返回类型，而非 select 返回类型
+
 ## 1.3.2
 
 ### Patch Changes

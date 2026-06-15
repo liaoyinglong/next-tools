@@ -1,5 +1,12 @@
 # docs
 
+## 0.2.9
+
+### Patch Changes
+
+- Updated dependencies [9273d45]
+  - @dune2/tools@1.3.2
+
 ## 0.2.8
 
 ### Patch Changes

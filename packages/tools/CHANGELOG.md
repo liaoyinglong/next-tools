@@ -1,5 +1,11 @@
 # @dune2/tools
 
+## 1.3.2
+
+### Patch Changes
+
+- 9273d45: Fix `useQuery` type inference when using `placeholderData: keepPreviousData`
+
 ## 1.3.1
 
 ### Patch Changes

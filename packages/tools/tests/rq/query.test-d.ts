@@ -1,3 +1,4 @@
+import { keepPreviousData } from '@tanstack/react-query';
 import { assertType, describe, it } from 'vitest';
 import { authOauthTokenPostApi } from './api';
 
@@ -92,6 +93,34 @@ describe('rq.query', () => {
         },
       });
       assertType<Res>(res.data);
+    }
+    {
+      // placeholderData: keepPreviousData - 默认泛型
+      const res = authOauthTokenPostApi.useQuery(req, {
+        placeholderData: keepPreviousData,
+      });
+      assertType<authOauthTokenPostApi.Res | undefined>(res.data);
+    }
+    {
+      // placeholderData: keepPreviousData - 显式泛型
+      const res = authOauthTokenPostApi.useQuery<authOauthTokenPostApi.Res>(
+        req,
+        {
+          placeholderData: keepPreviousData,
+        },
+      );
+      assertType<authOauthTokenPostApi.Res | undefined>(res.data);
+    }
+    {
+      // placeholderData: keepPreviousData + select
+      type Res = { userId: number };
+      const res = authOauthTokenPostApi.useQuery<Res>(req, {
+        placeholderData: keepPreviousData,
+        select(data) {
+          return { userId: data.userId };
+        },
+      });
+      assertType<Res | undefined>(res.data);
     }
   });
 });

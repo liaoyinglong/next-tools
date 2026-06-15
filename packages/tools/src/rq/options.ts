@@ -1,4 +1,5 @@
 import type {
+  DefaultError,
   QueryClient,
   FetchQueryOptions as RQFetchQueryOptions,
   UseMutationOptions,
@@ -51,15 +52,20 @@ export interface QueryClientBasic {
 
 type OmitMetaAndPartial<T> = Partial<Omit<T, 'meta'>>;
 
-type RawUseQueryOptions<T> = Parameters<typeof useQuery<T>>[0];
-// 透传给 useQuery
-export interface UseQueryOptions<T>
-  extends OmitMetaAndPartial<RawUseQueryOptions<T>>, Basic {}
+type RawUseQueryOptions<TQueryFnData, TData = TQueryFnData> = Parameters<
+  typeof useQuery<TQueryFnData, DefaultError, TData>
+>[0];
+export interface UseQueryOptions<TQueryFnData, TData = TQueryFnData>
+  extends OmitMetaAndPartial<RawUseQueryOptions<TQueryFnData, TData>>, Basic {}
 
-type RawUseSuspenseQueryOptions<T> = Parameters<typeof useSuspenseQuery<T>>[0];
-// 透传给 useSuspenseQuery
-export interface UseSuspenseQueryOptions<T>
-  extends OmitMetaAndPartial<RawUseSuspenseQueryOptions<T>>, Basic {}
+type RawUseSuspenseQueryOptions<
+  TQueryFnData,
+  TData = TQueryFnData,
+> = Parameters<typeof useSuspenseQuery<TQueryFnData, DefaultError, TData>>[0];
+export interface UseSuspenseQueryOptions<TQueryFnData, TData = TQueryFnData>
+  extends
+    OmitMetaAndPartial<RawUseSuspenseQueryOptions<TQueryFnData, TData>>,
+    Basic {}
 
 // 透传给 ensureQueryData / fetchQuery / prefetchQuery 等
 export interface FetchQueryOptions<T>

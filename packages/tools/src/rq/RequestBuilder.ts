@@ -163,7 +163,7 @@ export class RequestBuilder<Req = any, Res = any> {
    * 获取数据的时候可以直接调用这个
    * @see https://tanstack.com/query/v4/docs/guides/queries
    */
-  useQuery<T = Res>(params?: Req, options?: UseQueryOptions<NoInfer<T>>) {
+  useQuery<TData = Res>(params?: Req, options?: UseQueryOptions<Res, TData>) {
     const { useQueryOptions } = this.options;
     const res = useQuery({
       queryFn: this.defaultQueryFn,
@@ -172,7 +172,7 @@ export class RequestBuilder<Req = any, Res = any> {
       ...(options as any),
       meta: this.normalizeMeta(options),
     });
-    return res as ReturnType<typeof useQuery<T>>;
+    return res as ReturnType<typeof useQuery<Res, DefaultError, TData>>;
   }
 
   /**
@@ -180,9 +180,9 @@ export class RequestBuilder<Req = any, Res = any> {
    * 获取数据的时候可以直接调用这个
    * @see https://tanstack.com/query/latest/docs/framework/react/reference/useSuspenseQuery
    */
-  useSuspenseQuery<T = Res>(
+  useSuspenseQuery<TData = Res>(
     params?: Req,
-    options?: UseSuspenseQueryOptions<T>,
+    options?: UseSuspenseQueryOptions<Res, TData>,
   ) {
     const { useSuspenseQueryOptions } = this.options;
     const res = useSuspenseQuery({
@@ -192,7 +192,7 @@ export class RequestBuilder<Req = any, Res = any> {
       ...(options as any),
       meta: this.normalizeMeta(options),
     });
-    return res as ReturnType<typeof useSuspenseQuery<T>>;
+    return res as ReturnType<typeof useSuspenseQuery<Res, DefaultError, TData>>;
   }
 
   /**

@@ -67,32 +67,28 @@ describe('rq.query', () => {
       assertType<authOauthTokenPostApi.Res>(res.data);
     }
     {
-      // 特殊 res
-      type Res = {
-        userId: number;
-      };
-      const res = authOauthTokenPostApi.useQuery<Res>(req, {
+      // select 自动推导: data 是 API 原始类型, 返回值自动推导
+      const res = authOauthTokenPostApi.useQuery(req, {
         select(data) {
+          assertType<authOauthTokenPostApi.Res>(data);
           return {
             userId: data.userId,
           };
         },
       });
-      assertType<Res | undefined>(res.data);
+      assertType<{ userId: string } | undefined>(res.data);
     }
     {
       // suspense 下支持 select 推导
-      type Res = {
-        userId: number;
-      };
-      const res = authOauthTokenPostApi.useSuspenseQuery<Res>(req, {
+      const res = authOauthTokenPostApi.useSuspenseQuery(req, {
         select(data) {
+          assertType<authOauthTokenPostApi.Res>(data);
           return {
             userId: data.userId,
           };
         },
       });
-      assertType<Res>(res.data);
+      assertType<{ userId: string }>(res.data);
     }
     {
       // placeholderData: keepPreviousData - 默认泛型
@@ -113,14 +109,14 @@ describe('rq.query', () => {
     }
     {
       // placeholderData: keepPreviousData + select
-      type Res = { userId: number };
-      const res = authOauthTokenPostApi.useQuery<Res>(req, {
+      const res = authOauthTokenPostApi.useQuery(req, {
         placeholderData: keepPreviousData,
         select(data) {
+          assertType<authOauthTokenPostApi.Res>(data);
           return { userId: data.userId };
         },
       });
-      assertType<Res | undefined>(res.data);
+      assertType<{ userId: string } | undefined>(res.data);
     }
   });
 });

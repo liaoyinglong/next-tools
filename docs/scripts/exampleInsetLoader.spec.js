@@ -12,9 +12,9 @@ describe('exampleInsetLoader', () => {
         (match, p1) => `import CreateStateContext from "${p1}";`,
       ),
     ).toMatchInlineSnapshot(`
-      "import CreateStateContext from \\"
+      "import CreateStateContext from "
         ./examples/CreateStateContext
-      \\";"
+      ";"
     `);
   });
 });

@@ -94,6 +94,9 @@ web_modules/
 .next
 out
 
+# TanStack Start / Vite build output
+.output
+
 # Nuxt.js build / generate output
 .nuxt
 dist
@@ -135,7 +138,7 @@ dist
 .turbo
 .nx
 tsconfig.vitest-temp.json
-docs/next-env.d.ts
 .claude
 .source
+routeTree.gen.ts
 .pnpm-store

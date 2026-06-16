@@ -9,12 +9,15 @@ description: '@dune2/tools 提供的运行时工具与类型工具概览（facto
 
 ```ts
 import { RequestBuilder } from '@dune2/tools/rq';
-import { createStorage } from '@dune2/tools/storage';
-import { createStore } from '@dune2/tools/store';
-import { numbro } from '@dune2/tools/numbro';
+import { createApi } from '@dune2/tools/rq/createApi';
+import { createStorage, createStorageHelper } from '@dune2/tools/storage';
+import { createCookieStorage } from '@dune2/tools/storage/cookie';
+import { createStore, snapshot } from '@dune2/tools/store';
+import { numbro, Numbro, RoundingMode } from '@dune2/tools/numbro';
 import { createStateContext } from '@dune2/tools/factory/createStateContext';
 import { mapProps } from '@dune2/tools/factory/mapProps';
 import { fieldsMap } from '@dune2/tools/factory/fieldsMap';
+import { useIsomorphicLayoutEffect } from '@dune2/tools/shared';
 ```
 
 > 说明：当前版本 `@dune2/tools` 的根入口（`@dune2/tools`）不提供稳定的聚合导出，推荐始终使用子路径导入以避免打包/类型问题。
@@ -38,6 +41,9 @@ import { fieldsMap } from '@dune2/tools/factory/fieldsMap';
 - **createStorage**：基于 `localStorage/sessionStorage` 的类型安全封装，带 `useValue()` 订阅与跨标签页同步
   - 典型场景：主题/语言、登录态 token、用户偏好设置、轻量缓存
   - 详见：[createStorage](./create-storage)
+- **createStorageHelper**：为动态 key 创建独立的 `StorageHelper` 实例
+  - 典型场景：运行时才能确定 key 的场景（如按用户 ID 隔离数据）
+  - 详见：[createStorage](./create-storage)
 - **createCookieStorage**：基于 `cookie` 的字符串存储封装（注意大小限制）
   - 典型场景：需要在服务端/中间件可读取的少量状态（如 AB 实验桶、轻量会话标识）
   - 详见：[createCookieStorage](./cookie-storage)
@@ -50,14 +56,18 @@ import { fieldsMap } from '@dune2/tools/factory/fieldsMap';
 - **createApi**：为“非 HTTP/非通用 requestFn”的异步函数快速创建一个可用的 `RequestBuilder`（仍能享受 rq 的缓存/状态）
   - 典型场景：ethers.js/合约方法调用、SDK 调用、WebWorker 调用等
   - 详见：[createApi](./create-api)
-- **defaultQueryClient / options**：提供默认 `QueryClient` 与请求/Hook 选项类型
-  - 典型场景：快速落地，或在项目里做统一封装时作为类型/默认实现基础
+- **queryClient / options**：提供预配置的默认 `QueryClient` 与请求/Hook 选项类型
+  - 默认配置：`refetchOnWindowFocus: false`、`retry: false`、`networkMode: 'always'`
+
+> **RSC 支持**：在 React Server Components 中导入 `@dune2/tools/rq` 时，自动使用 RSC 安全版本——仅 `request`、`requestWithConfig`、`getQueryKey`、`ensureQueryClient` 及静态方法可用，调用 Hooks 或缓存方法会抛出错误。
 
 ### Store（valtio 状态管理封装）
 
 - **createStore**：将 `state` 与 `actions` 分离，提供 `useSnapshot/useShallowSnapshot` 与调试辅助
   - 典型场景：全局/跨页面状态（用户信息、权限、购物车等），同时希望保持可变式写法
   - 详见：[Store](./store)
+- **snapshot**：re-export 自 valtio，将 Proxy 对象转换为普通对象
+  - 典型场景：将 `useSnapshot` 返回的 Proxy 值安全传递给子组件
 
 ### Numbro（精确数值处理）
 

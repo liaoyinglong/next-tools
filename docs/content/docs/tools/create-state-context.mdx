@@ -97,8 +97,9 @@ function createStateContext<P, T>(
   withProvider: <C extends object>(
     Comp: ComponentType<C>,
     providerProps?: P,
-  ) => ComponentType<C>;
+  ) => FC<C>;
   Context: React.Context<T>;
+  use: () => T;
 };
 ```
 
@@ -114,10 +115,11 @@ function createStateContext<P, T>(
 
 #### 返回值
 
-- `useContextValue: () => T` - 获取 Context 值的 Hook
+- `useContextValue: () => T` - 获取 Context 值的 Hook（内部使用 `useContext`）
 - `Provider: FC<PropsWithChildren<P>>` - Provider 组件
-- `withProvider: <C extends object>(Comp: ComponentType<C>, providerProps?: P) => ComponentType<C>` - 高阶组件
+- `withProvider: <C extends object>(Comp: ComponentType<C>, providerProps?: P) => FC<C>` - 高阶组件
 - `Context: React.Context<T>` - 原始 Context 对象
+- `use: () => T` - 使用 React 19 的 `use()` API 读取 Context 值（支持在异步组件中使用）
 
 ## 高级用法
 

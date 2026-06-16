@@ -10,10 +10,9 @@ description: 基于 BigNumber.js 封装的精确数字处理工具，提供格�
 ## 特性
 
 - 🔢 **精确运算**: 基于 BigNumber.js，避免浮点数精度问题
-- 🌍 **多语言支持**: 内置中文、英文、印尼等多种语言的货币格式
 - 📊 **智能格式化**: 支持百分比、千分位分隔、平均值简化（K/M/B/T）
 - 🎯 **精度控制**: 灵活的小数位数控制和四舍五入模式
-- 💰 **货币格式化**: 完整的货币格式化支持，包括符号位置、间距等
+- 🔗 **链式调用**: 所有运算方法返回新 Numbro 实例，支持链式操作
 - 🛡️ **类型安全**: 完整的 TypeScript 类型支持
 - ⚙️ **全局配置**: 支持全局默认格式配置
 
@@ -188,59 +187,31 @@ numbro(1234).format({
 }); // "$1,234 USD"
 ```
 
-## 货币格式化
+## 货币风格格式化
 
-### 基础货币格式化
-
-```tsx
-// 使用默认语言环境（印尼）
-numbro(1234.56).formatCurrency(); // "Rp1,234.56"
-
-// 指定语言环境
-numbro(1234.56).formatCurrency({ locale: 'en' }); // "$1,234.56"
-numbro(1234.56).formatCurrency({ locale: 'zh' }); // "¥1,234.56"
-```
-
-### 自定义货币格式
+`Numbro` 本身不提供 `formatCurrency` 方法，但可以通过 `format()` 的 `prefix`/`postfix` 配置实现货币风格展示：
 
 ```tsx
-// 自定义货币符号
-numbro(1234.56).formatCurrency({
-  symbol: '€',
+// 美元格式
+numbro(1234.56).format({
+  prefix: '$',
+  thousandSeparated: true,
   mantissa: 2,
-}); // "€1,234.56"
+}); // "$1,234.56"
 
-// 货币符号位置
-numbro(1234.56).formatCurrency({
-  symbol: 'USD',
-  position: 'postfix',
-}); // "1,234.56USD"
+// 人民币格式
+numbro(1234.56).format({
+  prefix: '¥',
+  thousandSeparated: true,
+  mantissa: 2,
+}); // "¥1,234.56"
 
-// 添加空格分隔
-numbro(1234.56).formatCurrency({
-  symbol: '€',
-  position: 'postfix',
-  spaceSeparated: true,
+// 符号在后面
+numbro(1234.56).format({
+  suffix: ' €',
+  thousandSeparated: true,
+  mantissa: 2,
 }); // "1,234.56 €"
-```
-
-### 货币格式的正负号处理
-
-```tsx
-// 负数货币格式
-numbro(-1234.56).formatCurrency({ locale: 'en' }); // "-$1,234.56"
-
-// 强制显示正号
-numbro(1234.56).formatCurrency({
-  locale: 'en',
-  forceSign: true,
-}); // "+$1,234.56"
-
-// 使用绝对值（在货币格式中自动处理符号）
-numbro(-1234.56).formatCurrency({
-  symbol: '$',
-  position: 'prefix',
-}); // "-$1,234.56"
 ```
 
 ## 数值运算
@@ -348,54 +319,17 @@ numbro(1234.5678).format(); // "1,234.57"
 numbro(1234.5678).format({ mantissa: 0 }); // "1,235"
 ```
 
-### 语言环境配置
+### 静态属性
 
 ```tsx
-// 查看当前语言环境
-console.log(Numbro.locale); // "id" (默认印尼)
+// 访问底层 BigNumber 构造函数
+Numbro.rawBigNumber; // BigNumber 类
 
-// 设置语言环境
-Numbro.setLocale('en'); // 英文
-Numbro.setLocale('zh'); // 中文
+// 访问 RoundingMode 枚举
+Numbro.RoundingMode;
 
-// 语言环境必须在 defaultCurrencies 中存在
-try {
-  Numbro.setLocale('fr'); // 会抛出错误
-} catch (error) {
-  console.log(error.message); // "在 defaultCurrencies 中，找不到 fr，请先检查"
-}
-```
-
-### 货币配置
-
-```tsx
-// 查看默认货币配置
-console.log(Numbro.defaultCurrencies);
-// {
-//   "en": { symbol: "$", position: "prefix", mantissa: 2 },
-//   "id": { symbol: "Rp", position: "prefix", mantissa: 2 },
-//   "zh": { symbol: "¥", position: "prefix", mantissa: 2 }
-// }
-
-// 扩展货币配置
-Numbro.setDefaultCurrencies({
-  ...Numbro.defaultCurrencies,
-  eur: {
-    symbol: '€',
-    position: 'postfix',
-    mantissa: 2,
-    spaceSeparated: true,
-  },
-  jpy: {
-    symbol: '¥',
-    position: 'prefix',
-    mantissa: 0, // 日元通常不显示小数
-  },
-});
-
-// 使用新的货币配置
-numbro(1234.56).formatCurrency({ locale: 'eur' }); // "1,234.56 €"
-numbro(1234.56).formatCurrency({ locale: 'jpy' }); // "¥1,235"
+// 预配置的 BigNumber clone（默认 ROUND_DOWN）
+Numbro.BN;
 ```
 
 ## 枚举和常量
@@ -434,15 +368,16 @@ interface Format extends BigNumber.Format {
 }
 ```
 
-### CurrencyFormat 接口
+### 比较方法
 
 ```tsx
-interface CurrencyFormat extends Format {
-  symbol?: string; // 货币符号
-  position?: 'prefix' | 'postfix'; // 符号位置
-  locale?: LocalesEnum | string; // 语言环境
-  spaceSeparated?: boolean; // 符号与数字间是否有空格
-}
+const num = numbro(100);
+
+num.gt(50); // true  — 大于
+num.gte(100); // true  — 大于等于
+num.lt(200); // true  — 小于
+num.lte(100); // true  — 小于等于
+num.eq(100); // true  — 等于
 ```
 
 ## 最佳实践

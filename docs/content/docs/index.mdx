@@ -1,42 +1,36 @@
 ---
 title: Next Tools
-description: 这是一个基于 Next.js 的工具集合，旨在提供一系列实用工具和插件，帮助开发者更高效地构建 Next.js 应用。
+description: 一套面向 React / Next.js 应用的工具集合，包含运行时工具库、CLI 代码生成器和 Babel 编译优化插件。
 ---
 
 # Next Tools
 
-这是一个基于 Next.js 的工具集合，旨在提供一系列实用工具和插件，帮助开发者更高效地构建 Next.js 应用。
+一套面向 React / Next.js 应用的工具集合，包含运行时工具库、CLI 代码生成器和 Babel 编译优化插件。
 
 ## 功能特性
 
-### i18n
-
-基于 [lingui](https://lingui.js.org/) 的国际化解决方案，专门为 Next.js 优化：
-
-- 支持 React Server Components
-- 基于 SWC 的编译时优化
-- 提供便捷的翻译文本提取工具
-
-### Next Plugin
-
-为 Next.js 提供的插件预设，集成了常用的开发工具和优化配置。
-
 ### Tools
 
-运行时工具库，提供了一系列实用的开发工具和组件。
+运行时工具库（`@dune2/tools`），提供了一系列实用的开发工具和组件。
 
 #### 模块一览
 
 - **factory**：`createStateContext` / `mapProps` / `fieldsMap` 等 React 工具
   - 入口：[Tools 总览](./tools)
-- **storage**：`createStorage` / `createCookieStorage`
-- **rq**：`RequestBuilder` / `createApi`（TanStack Query 封装）
-- **store**：`createStore`（valtio 封装）
+- **storage**：`createStorage` / `createStorageHelper` / `createCookieStorage`
+- **rq**：`RequestBuilder` / `createApi`（TanStack Query 封装，支持 RSC）
+- **store**：`createStore` / `snapshot`（valtio 封装）
 - **numbro**：精确数值计算与格式化
 - **shared**：共享 hook 与类型工具
 
 ### CLI
 
-命令行工具集合，用于自动化开发流程和提高开发效率。
+命令行工具（`@dune2/cli`），从 Swagger/OpenAPI 规范自动生成类型安全的 API 客户端代码。
 
 - 入口：[CLI](./cli)
+
+### Babel
+
+编译时优化插件（`@dune2/babel`），自动将 `store.useSnapshot()` 转换为性能更优的 `store.useShallowSnapshot(selector)`。
+
+- 入口：[Babel 插件](./babel)

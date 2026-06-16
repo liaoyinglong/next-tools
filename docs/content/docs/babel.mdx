@@ -1,0 +1,100 @@
+---
+title: Babel 插件
+description: '@dune2/babel 编译时优化插件，自动将 useSnapshot 转换为 useShallowSnapshot'
+---
+
+# Babel 插件
+
+`@dune2/babel` 提供了一个 Babel 编译时插件 `createStorePlugin`，自动将 `store.useSnapshot()` 转换为性能更优的 `store.useShallowSnapshot(selector)`，让开发者以自然写法享受最优性能。
+
+## 安装
+
+```bash
+pnpm add @dune2/babel -D
+```
+
+## 配置
+
+```javascript
+import { createStorePlugin } from '@dune2/babel/createStore';
+
+export default {
+  plugins: [createStorePlugin],
+};
+```
+
+## 工作原理
+
+插件在编译时分析组件中对 `store.useSnapshot()` 返回值的属性访问，自动生成一个 selector 函数并将调用替换为 `useShallowSnapshot`。
+
+### 标识符模式
+
+当 `useSnapshot()` 的返回值赋给一个变量，且所有使用处都是属性访问时：
+
+```typescript
+// 编译前
+function Counter() {
+  const state = store.useSnapshot();
+  return <div>{state.count} -- {state.user.name}</div>;
+}
+
+// 编译后
+function _selector_(state) {
+  return { count: state.count, 'user.name': state.user.name };
+}
+function Counter() {
+  const state = store.useShallowSnapshot(_selector_);
+  return <div>{state.count} -- {state['user.name']}</div>;
+}
+```
+
+### 解构模式
+
+当使用解构获取属性时：
+
+```typescript
+// 编译前
+const {
+  count,
+  user: { name },
+} = store.useSnapshot();
+
+// 编译后
+function _selector_({ count, user: { name } }) {
+  return { count, user: { name } };
+}
+const {
+  count,
+  user: { name },
+} = store.useShallowSnapshot(_selector_);
+```
+
+### 已有 selector 的升级
+
+如果 `useSnapshot` 已传入一个返回对象的 selector，插件仅将方法名替换为 `useShallowSnapshot`：
+
+```typescript
+// 编译前
+const state = store.useSnapshot((s) => ({ count: s.count }));
+
+// 编译后
+const state = store.useShallowSnapshot((s) => ({ count: s.count }));
+```
+
+## 不会转换的场景
+
+以下情况插件会保守地跳过，保持 `useSnapshot` 不变：
+
+- **整体传递**：`<Child state={state} />` — 无法静态分析哪些属性被访问
+- **非对象 selector**：`useSnapshot((s) => s.count)` — 返回原始值
+- **数组 selector**：`useSnapshot((s) => [s.a, s.b])`
+- **命名函数引用**：`useSnapshot(mySelector)`
+- **混合使用**：同时有属性访问和整体引用
+
+## Selector 提升
+
+生成的 selector 函数会被提升到组件外部，避免每次渲染重新创建。当一个文件有多个组件使用 `useSnapshot` 时，会生成 `_selector_`、`_selector_2` 等唯一命名。
+
+## 与 Store 的关系
+
+此插件是 `@dune2/tools/store` 的编译时配套优化。关于 `useSnapshot` 和 `useShallowSnapshot` 的运行时区别，参见 [Store 工具](./tools/store)。

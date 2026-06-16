@@ -661,6 +661,54 @@ const userApi = new BaseApi<UserRequest, UserResponse>({
 });
 ```
 
+## React Server Components 支持
+
+`@dune2/tools/rq` 通过 `package.json` 的 `react-server` 条件导出实现 RSC 安全。在 RSC 环境中导入时自动使用精简版本：
+
+**RSC 中可用的方法：**
+
+- `request()` / `requestWithConfig()` — 直接发送请求
+- `getQueryKey()` — 获取 query key
+- `ensureQueryClient()` — 获取 QueryClient 实例
+- 静态方法：`setRequestFn()` / `setQueryClientFactory()`
+
+**RSC 中调用以下方法会抛出错误：**
+
+- 所有 Hooks：`useQuery`、`useSuspenseQuery`、`useMutation`、`useInfiniteQuery`
+- 所有缓存方法：`prefetchQuery`、`fetchQuery`、`invalidateQuery`、`getQueryData`、`setQueryData` 等
+
+```typescript
+// 在 Server Component 中安全使用
+import { RequestBuilder } from '@dune2/tools/rq';
+
+const userApi = new RequestBuilder<void, User[]>({
+  url: '/api/users',
+  method: 'get',
+});
+
+export default async function UsersPage() {
+  const users = await userApi.request();
+  return <UserList users={users} />;
+}
+```
+
+## 实例属性
+
+| 属性        | 类型                              | 说明                 |
+| ----------- | --------------------------------- | -------------------- |
+| `options`   | `RequestBuilderOptions<Req, Res>` | 构造时传入的完整配置 |
+| `reqFields` | `FieldsMap<Req>`                  | 请求类型的字段名代理 |
+| `resFields` | `FieldsMap<Res>`                  | 响应类型的字段名代理 |
+
+`reqFields` / `resFields` 用于类型安全地引用字段名，常见于表格列配置：
+
+```tsx
+const columns = [
+  { title: '用户名', dataIndex: userApi.resFields.name },
+  { title: '邮箱', dataIndex: userApi.resFields.email },
+];
+```
+
 ## 注意事项
 
 1. **类型安全**: 确保为 RequestBuilder 提供正确的类型参数，这样可以获得完整的类型检查和智能提示。
@@ -671,6 +719,6 @@ const userApi = new BaseApi<UserRequest, UserResponse>({
 
 4. **性能考虑**: 合理使用预取和缓存，避免过度请求。
 
-5. **测试**: 为 API 请求编写单元测试，确保功能正常。
+5. **RSC 边界**: 在 Server Components 中只使用 `request()` 进行数据获取，Hooks 仅在 Client Components 中使用。
 
 `RequestBuilder` 是一个功能强大的 API 请求工具，特别适合与类型安全的 API 代码生成工具配合使用，可以大大提高开发效率和代码质量。

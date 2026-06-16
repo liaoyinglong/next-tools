@@ -7,6 +7,12 @@ description: 基于 valtio 的状态管理工具，通过分离 actions 和 stat
 
 一个基于 valtio 的状态管理工具，通过分离 actions 和 state 提供更规范的使用方式和更好的类型支持。
 
+## 导入
+
+```typescript
+import { createStore, snapshot } from '@dune2/tools/store';
+```
+
 ## 基本用法
 
 ### 创建 Store
@@ -39,16 +45,31 @@ const store = createStore({
 - `state`: 定义初始状态，必须是一个对象
 - `actionsCreator`: 定义修改状态的方法，接收 state 参数并返回 actions 对象
 
+## Store API
+
+创建的 store 实例包含以下属性和方法：
+
+- `state` — 可变 Proxy 对象，直接写入即触发更新
+- `initialState` — 初始状态的快照（只读）
+- `getState()` — 获取当前状态快照
+- `actions` — 由 `actionsCreator` 返回的操作方法
+- `subscribe(fn)` — 订阅状态变化，返回取消函数
+- `useSnapshot()` — React Hook，基于 valtio 的 Proxy 追踪
+- `useShallowSnapshot(selector)` — React Hook，通过 selector 精确选择 + 深比较
+
 ## 状态管理
 
 ### 获取状态
 
 ```typescript
-// 获取完整状态
+// 获取完整状态快照
 const state = store.getState();
 
+// 获取初始状态
+const initial = store.initialState;
+
 // 在 React 组件中使用
-const count = store.useSnapshot();
+const state = store.useSnapshot();
 ```
 
 ### 修改状态

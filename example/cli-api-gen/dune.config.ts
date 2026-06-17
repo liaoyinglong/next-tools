@@ -8,6 +8,11 @@ export default defineConfig({
       swaggerUiUrl: 'http://localhost:3000/swagger',
     },
     {
+      output: './src/apis/ayshei',
+      swaggerJSONPath: './src/swagger/ayshei.json',
+      swaggerUiUrl: 'http://localhost:3000/swagger',
+    },
+    {
       output: './src/apis/wma',
       swaggerJSONPath: './src/swagger/wma.json',
       swaggerUiUrl: 'http://localhost:3000/swagger',

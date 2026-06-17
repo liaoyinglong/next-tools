@@ -32,6 +32,24 @@ function getCompileSchemaContext(parsed: ParsedDocument | undefined) {
   return context;
 }
 
+function stripDefaultKeywordDeep(value: unknown) {
+  if (!value || typeof value !== 'object') {
+    return;
+  }
+
+  if (Array.isArray(value)) {
+    value.forEach((item) => stripDefaultKeywordDeep(item));
+    return;
+  }
+
+  const record = value as Record<string, unknown>;
+  if ('default' in record) {
+    delete record.default;
+  }
+
+  Object.values(record).forEach((item) => stripDefaultKeywordDeep(item));
+}
+
 export async function generateApi() {
   const config = await getConfig();
   const selectedConfigs = await promptApiConfigEnable(config.api);
@@ -119,6 +137,10 @@ export async function generateApi() {
           })
         : apiConfig.swaggerJSONPath;
       parsed = await parser.bundle(bundleInput, dereferenceConfig);
+      // default 值经常和 type 不一致（例如 integer + ""），
+      // 会被 json-schema-to-typescript 推断成交叉类型（number & string）。
+      // 生成前统一移除 default，避免污染类型。
+      stripDefaultKeywordDeep(parsed);
       log.info(
         '解析 %s 成功，耗时 %dms',
         apiConfig.swaggerJSONPath,
@@ -446,6 +468,10 @@ async function compileRequestParams(
         } satisfies OpenAPIV3.SchemaObject)
       : requestBodySchema || parameterSchema;
 
+  if (schemaObject) {
+    stripDefaultKeywordDeep(schemaObject);
+  }
+
   const finalSchema = schemaObject
     ? Object.assign(getCompileSchemaContext(store?.parsed), schemaObject)
     : void 0;
@@ -507,6 +533,10 @@ async function compileResponseParams(
     return schema;
   }
   const schemaObject = resolveSchema(operationObject.responses['200']);
+  if (schemaObject) {
+    stripDefaultKeywordDeep(schemaObject);
+  }
+
   const finalSchema = schemaObject
     ? Object.assign(getCompileSchemaContext(store?.parsed), schemaObject)
     : void 0;

@@ -347,6 +347,67 @@ describe('api 生成', function () {
     expect(result2).toEqual(result);
   });
 
+  it('忽略 default 避免交叉类型污染', async () => {
+    const result = await generate(
+      {
+        tags: ['Catalog APIs'],
+        summary: 'default mismatch',
+        operationId: 'defaultMismatch',
+        parameters: [
+          {
+            name: 'sellerId',
+            in: 'query',
+            required: true,
+            schema: {
+              type: 'string',
+            },
+          },
+          {
+            name: 'pageNum',
+            in: 'query',
+            schema: {
+              type: 'integer',
+              default: '',
+            },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'OK',
+            content: {
+              '*/*': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    total: {
+                      type: 'integer',
+                      default: '',
+                    },
+                    records: {
+                      type: 'array',
+                      default: '',
+                      items: {
+                        type: 'string',
+                      },
+                    },
+                  },
+                  required: ['records'],
+                },
+              },
+            },
+          },
+        },
+      } as never,
+      'get',
+    );
+
+    expect(result).toContain('pageNum?: number;');
+    expect(result).toContain('total?: number;');
+    expect(result).toContain('records: string[];');
+    expect(result).not.toContain('number & string');
+    expect(result).not.toContain('string &');
+  });
+
   it('支持 swagger v2 definitions 引用', async () => {
     const definitions = {
       protoAppleValidatedResponse: {

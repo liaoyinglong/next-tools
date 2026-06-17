@@ -1,5 +1,11 @@
 # @dune2/cli
 
+## 1.2.4
+
+### Patch Changes
+
+- 58d02c6: fix type generation by stripping schema `default` values before compile to avoid invalid intersections like `number & string`.
+
 ## 1.2.3
 
 ### Patch Changes

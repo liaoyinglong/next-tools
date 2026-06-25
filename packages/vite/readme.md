@@ -10,6 +10,7 @@
 - 跳过 Vite 虚拟模块（路径含 `\0`）
 - 支持静态配置与按环境动态配置（`Dune2ViteOptionsFactory`）
 - 导出 `createIsomorphicFnTransform` / `createServerOnlyFnTransform` / `createClientOnlyFnTransform`，便于在测试或自定义工具链中复用
+- 内部采用 rule / pattern 驱动的统一改写引擎，新增 transform 只需新增规则并注册
 
 ## 安装
 
@@ -111,7 +112,34 @@ dune2Vite((environment) => {
 
 ## 高级用法
 
-插件额外导出 `createIsomorphicFnTransform`、`createServerOnlyFnTransform`、`createClientOnlyFnTransform`，可在自定义 AST 流水线中复用同一套改写规则（需自行 `parse` / `commitEdits`，用法见 `src/transforms/*.ts`）。
+插件额外导出 `createIsomorphicFnTransform`、`createServerOnlyFnTransform`、`createClientOnlyFnTransform`，也导出 `compileTransform` 便于在自定义工具链中直接复用。
+
+```ts
+import {
+  createIsomorphicFnTransform,
+  createServerOnlyFnTransform,
+  createClientOnlyFnTransform,
+  compileTransform,
+} from '@dune2/vite';
+
+const code = `export const f = createIsomorphicFn().server(() => 1).client(() => 2);`;
+const filename = '/virtual/entry.ts';
+
+const serverCode = compileTransform(
+  code,
+  filename,
+  createIsomorphicFnTransform,
+  'server',
+);
+const clientCode = compileTransform(
+  code,
+  filename,
+  createIsomorphicFnTransform,
+  'client',
+);
+```
+
+若你在插件外按 AST 管线组合多个 transform，也可直接调用各 `createXxxTransform`。
 
 ## 开发
 

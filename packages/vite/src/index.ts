@@ -1,12 +1,9 @@
 import { type Edit, parse } from '@ast-grep/napi';
 import type { Plugin } from 'vite';
 import { createClientOnlyFnTransform } from './transforms/createClientOnlyFn';
-import {
-  createIsomorphicFnTransform,
-  type Dune2Consumer,
-} from './transforms/createIsomorphicFn';
+import { createIsomorphicFnTransform } from './transforms/createIsomorphicFn';
 import { createServerOnlyFnTransform } from './transforms/createServerOnlyFn';
-import { TRIGGER, detectLang } from './transforms/shared';
+import { TRIGGER, detectLang, type Dune2Consumer } from './transforms/shared';
 
 type Dune2ViteEnvironment = Parameters<
   NonNullable<Plugin['applyToEnvironment']>
@@ -83,3 +80,4 @@ export function dune2Vite(
 export { createIsomorphicFnTransform } from './transforms/createIsomorphicFn';
 export { createServerOnlyFnTransform } from './transforms/createServerOnlyFn';
 export { createClientOnlyFnTransform } from './transforms/createClientOnlyFn';
+export { compileTransform, type Dune2Consumer } from './transforms/shared';

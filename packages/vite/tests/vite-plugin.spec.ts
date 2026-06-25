@@ -1,5 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { dune2Vite as dune2 } from '../src/index';
+import {
+  dune2Vite as dune2,
+  type Dune2ViteOptions,
+  type Dune2ViteOptionsFactory,
+} from '../src/index';
+
+type Dune2ViteInput = Dune2ViteOptions | Dune2ViteOptionsFactory;
+type TestEnvironment = {
+  config: {
+    consumer: 'server' | 'client';
+  };
+};
 
 function testFilter(value: string, spec: unknown): boolean {
   if (!spec) return true;
@@ -14,8 +25,23 @@ function testFilter(value: string, spec: unknown): boolean {
   return true;
 }
 
-async function runTransform(code: string, id: string) {
-  const plugin = dune2();
+async function runTransform(
+  code: string,
+  id: string,
+  options?: Dune2ViteInput,
+  environment?: TestEnvironment,
+) {
+  let plugin = dune2(options as Dune2ViteInput) as any;
+  if (typeof plugin.applyToEnvironment === 'function') {
+    const applied = await plugin.applyToEnvironment(
+      environment ?? ({ config: { consumer: 'server' } } as TestEnvironment),
+    );
+    if (applied === false) return null;
+    if (applied && typeof applied === 'object') {
+      plugin = applied;
+    }
+  }
+
   const transform = plugin.transform;
   if (!transform) {
     throw new Error('plugin.transform is not defined');
@@ -68,5 +94,60 @@ describe('@dune2/vite plugin', () => {
     expect(result!.code).toMatch(/console\.log\('s'/);
     expect(result!.code).not.toMatch(/console\.log\('c'/);
     expect(result!.code).not.toMatch(/createIsomorphicFn\s*\(/);
+  });
+
+  it('keeps client branch when consumer is client', async () => {
+    const result = await runTransform(
+      `import { createIsomorphicFn } from 'stub';\nexport const log = createIsomorphicFn().server((m) => console.log('s', m)).client((m) => console.log('c', m));`,
+      '/abs/path/iso.ts',
+      { consumer: 'client' },
+    );
+    expect(result).toBeTruthy();
+    expect(result!.code).toMatch(/console\.log\('c'/);
+    expect(result!.code).not.toMatch(/console\.log\('s'/);
+    expect(result!.code).not.toMatch(/createIsomorphicFn\s*\(/);
+  });
+
+  it('supports environment resolver for different consumers', async () => {
+    const options: Dune2ViteOptionsFactory = (environment) => {
+      return { consumer: environment.config.consumer };
+    };
+    const [serverResult, clientResult] = await Promise.all([
+      runTransform(
+        `import { createIsomorphicFn } from 'stub';\nexport const log = createIsomorphicFn().server((m) => console.log('s', m)).client((m) => console.log('c', m));`,
+        '/abs/path/iso.ts',
+        options,
+        { config: { consumer: 'server' } },
+      ),
+      runTransform(
+        `import { createIsomorphicFn } from 'stub';\nexport const log = createIsomorphicFn().server((m) => console.log('s', m)).client((m) => console.log('c', m));`,
+        '/abs/path/iso.ts',
+        options,
+        { config: { consumer: 'client' } },
+      ),
+    ]);
+
+    expect(serverResult).toBeTruthy();
+    expect(serverResult!.code).toMatch(/console\.log\('s'/);
+    expect(serverResult!.code).not.toMatch(/console\.log\('c'/);
+
+    expect(clientResult).toBeTruthy();
+    expect(clientResult!.code).toMatch(/console\.log\('c'/);
+    expect(clientResult!.code).not.toMatch(/console\.log\('s'/);
+  });
+
+  it('supports disabling transform by environment resolver', async () => {
+    const options: Dune2ViteOptionsFactory = (environment) => {
+      if (environment.config.consumer === 'server') return false;
+      return { consumer: 'client' };
+    };
+    const result = await runTransform(
+      `import { createIsomorphicFn } from 'stub';\nexport const log = createIsomorphicFn().server((m) => console.log('s', m)).client((m) => console.log('c', m));`,
+      '/abs/path/iso.ts',
+      options,
+      { config: { consumer: 'server' } },
+    );
+
+    expect(result).toBeNull();
   });
 });

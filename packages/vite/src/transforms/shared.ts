@@ -1,6 +1,7 @@
 import { Lang } from '@ast-grep/napi';
 
-export const TRIGGER = /\bcreateIsomorphicFn\b/;
+export const TRIGGER =
+  /\b(?:createIsomorphicFn|createServerOnlyFn|createClientOnlyFn)\b/;
 
 export function detectLang(filename: string): Lang {
   if (/\.(tsx|jsx)$/.test(filename)) return Lang.Tsx;

@@ -108,6 +108,71 @@ describe('@dune2/vite plugin', () => {
     expect(result!.code).not.toMatch(/createIsomorphicFn\s*\(/);
   });
 
+  it('transforms createServerOnlyFn by default server consumer', async () => {
+    const result = await runTransform(
+      `import { createServerOnlyFn } from 'stub';\nexport const getSecret = createServerOnlyFn(() => 'secret');`,
+      '/abs/path/server-only.ts',
+    );
+
+    expect(result).toBeTruthy();
+    expect(result!.code).toMatch(/\(\) => 'secret'/);
+    expect(result!.code).not.toMatch(/createServerOnlyFn\s*\(/);
+  });
+
+  it('replaces createServerOnlyFn with thrower for client consumer', async () => {
+    const result = await runTransform(
+      `import { createServerOnlyFn } from 'stub';\nexport const getSecret = createServerOnlyFn(() => 'secret');`,
+      '/abs/path/server-only.ts',
+      { consumer: 'client' },
+    );
+
+    expect(result).toBeTruthy();
+    expect(result!.code).toMatch(
+      /createServerOnlyFn\(\) functions can only be called on the server!/,
+    );
+    expect(result!.code).toMatch(/export const getSecret = \(\) => \{/);
+  });
+
+  it('replaces createClientOnlyFn with thrower for default server consumer', async () => {
+    const result = await runTransform(
+      `import { createClientOnlyFn } from 'stub';\nexport const readWindow = createClientOnlyFn(() => window.location.href);`,
+      '/abs/path/client-only.ts',
+    );
+
+    expect(result).toBeTruthy();
+    expect(result!.code).toMatch(
+      /createClientOnlyFn\(\) functions can only be called on the client!/,
+    );
+    expect(result!.code).toMatch(/export const readWindow = \(\) => \{/);
+  });
+
+  it('keeps createClientOnlyFn function for client consumer', async () => {
+    const result = await runTransform(
+      `import { createClientOnlyFn } from 'stub';\nexport const readWindow = createClientOnlyFn(() => window.location.href);`,
+      '/abs/path/client-only.ts',
+      { consumer: 'client' },
+    );
+
+    expect(result).toBeTruthy();
+    expect(result!.code).toMatch(/\(\) => window\.location\.href/);
+    expect(result!.code).not.toMatch(/createClientOnlyFn\s*\(/);
+  });
+
+  it('transforms independent helper calls in one pass', async () => {
+    const result = await runTransform(
+      `import { createIsomorphicFn, createClientOnlyFn } from 'stub';\nexport const run = createIsomorphicFn().server(() => 'server').client(() => 'client');\nexport const readWindow = createClientOnlyFn(() => window.location.href);`,
+      '/abs/path/mixed.ts',
+      { consumer: 'server' },
+    );
+
+    expect(result).toBeTruthy();
+    expect(result!.code).toMatch(
+      /createClientOnlyFn\(\) functions can only be called on the client!/,
+    );
+    expect(result!.code).not.toMatch(/createIsomorphicFn\s*\(/);
+    expect(result!.code).not.toMatch(/readWindow = createClientOnlyFn\s*\(/);
+  });
+
   it('supports environment resolver for different consumers', async () => {
     const options: Dune2ViteOptionsFactory = (environment) => {
       return { consumer: environment.config.consumer };

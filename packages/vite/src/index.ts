@@ -1,9 +1,11 @@
 import { type Edit, parse } from '@ast-grep/napi';
 import type { Plugin } from 'vite';
+import { createClientOnlyFnTransform } from './transforms/createClientOnlyFn';
 import {
   createIsomorphicFnTransform,
   type Dune2Consumer,
 } from './transforms/createIsomorphicFn';
+import { createServerOnlyFnTransform } from './transforms/createServerOnlyFn';
 import { TRIGGER, detectLang } from './transforms/shared';
 
 type Dune2ViteEnvironment = Parameters<
@@ -22,6 +24,11 @@ export type Dune2ViteOptionsFactory = (
 ) => Dune2ViteOptions | false | null | undefined;
 
 const DEFAULT_INCLUDE = /\.[mc]?[jt]sx?$/;
+const TRANSFORMS = [
+  createIsomorphicFnTransform,
+  createServerOnlyFnTransform,
+  createClientOnlyFnTransform,
+];
 
 function createPlugin(options: Dune2ViteOptions = {}): Plugin {
   const include = options.include ?? DEFAULT_INCLUDE;
@@ -35,12 +42,22 @@ function createPlugin(options: Dune2ViteOptions = {}): Plugin {
         code: TRIGGER,
       },
       handler(code, id) {
-        const root = parse(detectLang(id), code).root();
+        const lang = detectLang(id);
+        let transformed = code;
+
+        const root = parse(lang, transformed).root();
         const edits: Edit[] = [];
-        createIsomorphicFnTransform(root, edits, id, consumer);
+
+        // These transforms target independent call expressions, so one AST
+        // scan and one commit avoids reparsing after each transform.
+        for (const transform of TRANSFORMS) {
+          transform(root, edits, id, consumer);
+        }
 
         if (edits.length === 0) return null;
-        return { code: root.commitEdits(edits), map: null };
+        transformed = root.commitEdits(edits);
+
+        return { code: transformed, map: null };
       },
     },
   };
@@ -64,3 +81,5 @@ export function dune2Vite(
 }
 
 export { createIsomorphicFnTransform } from './transforms/createIsomorphicFn';
+export { createServerOnlyFnTransform } from './transforms/createServerOnlyFn';
+export { createClientOnlyFnTransform } from './transforms/createClientOnlyFn';

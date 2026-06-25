@@ -5,11 +5,11 @@
 ## 功能特性
 
 - 基于 [ast-grep](https://ast-grep.github.io/) 做 AST 级改写
-- 仅在源码包含 `createIsomorphicFn` 时参与转换
+- 仅在源码包含 `createIsomorphicFn` / `createServerOnlyFn` / `createClientOnlyFn` 时参与转换
 - 默认匹配 `.ts` / `.tsx` / `.js` / `.jsx` / `.mjs` / `.cjs`，可通过 `include` 自定义
 - 跳过 Vite 虚拟模块（路径含 `\0`）
 - 支持静态配置与按环境动态配置（`Dune2ViteOptionsFactory`）
-- 导出 `createIsomorphicFnTransform`，便于在测试或自定义工具链中复用
+- 导出 `createIsomorphicFnTransform` / `createServerOnlyFnTransform` / `createClientOnlyFnTransform`，便于在测试或自定义工具链中复用
 
 ## 安装
 
@@ -44,6 +44,8 @@ export default defineConfig({
 | `createIsomorphicFn().server(s)`           | `s`                  | `() => {}`           |
 | `createIsomorphicFn().client(c)`           | `() => {}`           | `c`                  |
 | `createIsomorphicFn()`                     | `() => {}`           | `() => {}`           |
+| `createServerOnlyFn(f)`                    | `f`                  | 抛错函数             |
+| `createClientOnlyFn(f)`                    | 抛错函数             | `f`                  |
 
 示例：
 
@@ -59,6 +61,11 @@ export const log = (m) => console.log('server:', m);
 // consumer: 'client' 输出
 export const log = (m) => console.log('client:', m);
 ```
+
+错误文案：
+
+- `createServerOnlyFn` 在 client 侧替换为：`createServerOnlyFn() functions can only be called on the server!`
+- `createClientOnlyFn` 在 server 侧替换为：`createClientOnlyFn() functions can only be called on the client!`
 
 ## 配置项
 
@@ -104,7 +111,7 @@ dune2Vite((environment) => {
 
 ## 高级用法
 
-插件额外导出 `createIsomorphicFnTransform`，可在自定义 AST 流水线中复用同一套改写规则（需自行 `parse` / `commitEdits`，用法见 `src/transforms/createIsomorphicFn.ts`）。
+插件额外导出 `createIsomorphicFnTransform`、`createServerOnlyFnTransform`、`createClientOnlyFnTransform`，可在自定义 AST 流水线中复用同一套改写规则（需自行 `parse` / `commitEdits`，用法见 `src/transforms/*.ts`）。
 
 ## 开发
 

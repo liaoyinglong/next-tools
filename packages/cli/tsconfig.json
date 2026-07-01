@@ -11,7 +11,8 @@
     "moduleResolution": "bundler",
     "strictNullChecks": true,
     "stripInternal": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "lib": ["es2017"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

@@ -20,15 +20,82 @@ export const asyncLocalStorage = new AsyncLocalStorage<{
   parser: SwaggerParser;
 }>();
 
-function getCompileSchemaContext(parsed: ParsedDocument | undefined) {
-  if (!parsed) return {};
+/**
+ * 只收集 rootSchema 里真正引用到的 `$ref`（含传递依赖），
+ * 构造一个最小化的定义上下文。
+ *
+ * 之前是把整个 components/definitions 直接挂到每个待编译的 schema 上，
+ * 导致 json-schema-to-typescript 每次 compile 都要遍历整份 API 的类型图，
+ * 261 个接口 × 2（Req/Res）= 522 次全量遍历，非常慢。
+ * 这里改为按需收集可达定义，输出结果不变，但速度大幅提升。
+ */
+function buildRefContext(
+  rootSchema: unknown,
+  parsed: ParsedDocument | undefined,
+): Record<string, unknown> {
   const context: Record<string, unknown> = {};
-  if ('components' in parsed && parsed.components) {
-    context.components = parsed.components;
+  if (!parsed || !rootSchema || typeof rootSchema !== 'object') {
+    return context;
   }
-  if ('definitions' in parsed && parsed.definitions) {
-    context.definitions = parsed.definitions;
+
+  const seen = new Set<string>();
+  const queue: string[] = [];
+
+  const collectRefs = (obj: unknown) => {
+    if (!obj || typeof obj !== 'object') return;
+    if (Array.isArray(obj)) {
+      obj.forEach(collectRefs);
+      return;
+    }
+    for (const [key, value] of Object.entries(obj)) {
+      if (
+        key === '$ref' &&
+        typeof value === 'string' &&
+        value.startsWith('#/')
+      ) {
+        queue.push(value);
+      } else {
+        collectRefs(value);
+      }
+    }
+  };
+
+  const decodeSegment = (segment: string) =>
+    segment.replace(/~1/g, '/').replace(/~0/g, '~');
+
+  const resolvePointer = (ref: string) => {
+    const parts = ref.slice(2).split('/').map(decodeSegment);
+    let cur: unknown = parsed;
+    for (const part of parts) {
+      if (!cur || typeof cur !== 'object') return undefined;
+      cur = (cur as Record<string, unknown>)[part];
+    }
+    return cur === undefined ? undefined : { parts, value: cur };
+  };
+
+  const setPointer = (parts: string[], value: unknown) => {
+    let cur = context;
+    for (let i = 0; i < parts.length - 1; i++) {
+      const part = parts[i];
+      if (!cur[part] || typeof cur[part] !== 'object') {
+        cur[part] = {};
+      }
+      cur = cur[part] as Record<string, unknown>;
+    }
+    cur[parts[parts.length - 1]] = value;
+  };
+
+  collectRefs(rootSchema);
+  while (queue.length) {
+    const ref = queue.shift()!;
+    if (seen.has(ref)) continue;
+    seen.add(ref);
+    const resolved = resolvePointer(ref);
+    if (!resolved) continue;
+    setPointer(resolved.parts, resolved.value);
+    collectRefs(resolved.value);
   }
+
   return context;
 }
 
@@ -473,7 +540,7 @@ async function compileRequestParams(
   }
 
   const finalSchema = schemaObject
-    ? Object.assign(getCompileSchemaContext(store?.parsed), schemaObject)
+    ? Object.assign(buildRefContext(schemaObject, store?.parsed), schemaObject)
     : void 0;
 
   let code = '';
@@ -484,7 +551,9 @@ async function compileRequestParams(
         ignoreMinAndMaxItems: !!1,
         additionalProperties: false,
         unknownAny: false,
-        // format: false,
+        // 生成完成后会统一用 codeFormatterCmd 格式化，
+        // 这里关闭内置 prettier，避免每个类型都跑一次格式化拖慢速度。
+        format: false,
       });
     } catch (e) {
       log.error('生成请求参数类型失败，请检查 %o', {
@@ -538,7 +607,7 @@ async function compileResponseParams(
   }
 
   const finalSchema = schemaObject
-    ? Object.assign(getCompileSchemaContext(store?.parsed), schemaObject)
+    ? Object.assign(buildRefContext(schemaObject, store?.parsed), schemaObject)
     : void 0;
 
   let code = '';
@@ -549,7 +618,9 @@ async function compileResponseParams(
         ignoreMinAndMaxItems: !!1,
         additionalProperties: false,
         unknownAny: false,
-        // format: false,
+        // 生成完成后会统一用 codeFormatterCmd 格式化，
+        // 这里关闭内置 prettier，避免每个类型都跑一次格式化拖慢速度。
+        format: false,
       });
     } catch (e) {
       log.error('转换响应参数类型失败，请检查 %o', {

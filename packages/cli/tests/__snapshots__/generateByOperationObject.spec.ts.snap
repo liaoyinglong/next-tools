@@ -17,47 +17,47 @@ export namespace usersPostApi {
  * 分页查询统一结构体
  */
 export interface Req {
-  /**
-   * 页码数，该值的范围是 1~1024
-   */
-  pageNum: number;
-  /**
-   * 页大小，该值的范围是 1~99999
-   */
-  pageSize: number;
-  /**
-   * 是否查询总记录数。查询总记录数会严重影响性能，非必要不查询。
-   */
-  count: boolean;
-  /**
-   * 币种列表查询参数
-   */
-  params: {
-    /**
-     * 币种代码或者币种名称
-     */
-    nameOrCode?: string;
-    /**
-     * 币种状态 (NEW, ACTIVE, INACTIVE)
-     */
-    status?: "NEW" | "ACTIVE" | "INACTIVE";
-  };
-  /**
-   * 分页查询的排序规则，最大不能超过 10 个排序字段
-   *
-   * @minItems 0
-   * @maxItems 10
-   */
-  orders?: {
-    /**
-     * 字段名称
-     */
-    fieldName: string;
-    /**
-     * 排序规则
-     */
-    type: "asc" | "desc";
-  }[];
+/**
+ * 页码数，该值的范围是 1~1024
+ */
+pageNum: number
+/**
+ * 页大小，该值的范围是 1~99999
+ */
+pageSize: number
+/**
+ * 是否查询总记录数。查询总记录数会严重影响性能，非必要不查询。
+ */
+count: boolean
+/**
+ * 币种列表查询参数
+ */
+params: {
+/**
+ * 币种代码或者币种名称
+ */
+nameOrCode?: string
+/**
+ * 币种状态 (NEW, ACTIVE, INACTIVE)
+ */
+status?: ("NEW" | "ACTIVE" | "INACTIVE")
+}
+/**
+ * 分页查询的排序规则，最大不能超过 10 个排序字段
+ * 
+ * @minItems 0
+ * @maxItems 10
+ */
+orders?: {
+/**
+ * 字段名称
+ */
+fieldName: string
+/**
+ * 排序规则
+ */
+type: ("asc" | "desc")
+}[]
 }
 
  
@@ -65,54 +65,54 @@ export interface Req {
  * 分页查询结果统计结构体
  */
 export interface Res {
-  payload?: any;
-  /**
-   * 总记录数。如果请求参数中'是否查询总记录数'为 true 则此参数将会返回。
-   */
-  total?: number;
-  /**
-   * 分页查询的结果
-   */
-  result: {
-    /**
-     * 币种管理
-     */
-    coin?: {
-      /**
-       * 币种 id
-       */
-      id?: number;
-      /**
-       * crypto 来源 Id，crypto_datasource 表的 Id
-       */
-      sourceId?: number;
-      /**
-       * Coin 的名称，如：Bitcoin
-       */
-      name?: string;
-      /**
-       * Coin 的符号，如：BTC
-       */
-      code?: string;
-      /**
-       * 币种状态 (NEW,ACTIVE,INACTIVE)
-       */
-      status?: string;
-    };
-    /**
-     * 币种支持的网络
-     */
-    networks?: {
-      /**
-       * 表 Id，coin 唯一标识
-       */
-      id?: number;
-      /**
-       * 币种的唯一标识，用于将网络关联到币种
-       */
-      coinId?: number;
-    }[];
-  }[];
+payload?: any
+/**
+ * 总记录数。如果请求参数中'是否查询总记录数'为 true 则此参数将会返回。
+ */
+total?: number
+/**
+ * 分页查询的结果
+ */
+result: {
+/**
+ * 币种管理
+ */
+coin?: {
+/**
+ * 币种 id
+ */
+id?: number
+/**
+ * crypto 来源 Id，crypto_datasource 表的 Id
+ */
+sourceId?: number
+/**
+ * Coin 的名称，如：Bitcoin
+ */
+name?: string
+/**
+ * Coin 的符号，如：BTC
+ */
+code?: string
+/**
+ * 币种状态 (NEW,ACTIVE,INACTIVE)
+ */
+status?: string
+}
+/**
+ * 币种支持的网络
+ */
+networks?: {
+/**
+ * 表 Id，coin 唯一标识
+ */
+id?: number
+/**
+ * 币种的唯一标识，用于将网络关联到币种
+ */
+coinId?: number
+}[]
+}[]
 }
 
 };"
@@ -132,10 +132,10 @@ export const usersGetApi = new RequestBuilder<usersGetApi.Req, usersGetApi.Res>(
 
 export namespace usersGetApi {
  export interface Req {
-  /**
-   * 用户 id
-   */
-  id: number;
+/**
+ * 用户 id
+ */
+id: number
 }
 
  
@@ -143,28 +143,28 @@ export namespace usersGetApi {
  * 查询用户响应结果
  */
 export interface Res {
-  /**
-   * agreement document payload
-   */
-  payload?: {
-    [k: string]: any;
-  };
-  /**
-   * 用户 id
-   */
-  id?: number;
-  /**
-   * 邮箱
-   */
-  email?: string;
-  /**
-   * 姓名
-   */
-  realName?: string;
-  /**
-   * 用户状态 (ACTIVE, INACTIVE)
-   */
-  status?: "NEW" | "ACTIVE" | "INACTIVE";
+/**
+ * agreement document payload
+ */
+payload?: {
+[k: string]: any
+}
+/**
+ * 用户 id
+ */
+id?: number
+/**
+ * 邮箱
+ */
+email?: string
+/**
+ * 姓名
+ */
+realName?: string
+/**
+ * 用户状态 (ACTIVE, INACTIVE)
+ */
+status?: ("NEW" | "ACTIVE" | "INACTIVE")
 }
 
 };"
@@ -183,7 +183,9 @@ export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Re
 });
 
 export namespace usersPostApi {
- export interface Req {}
+ export interface Req {
+
+}
 
  
  export type Res = any;
@@ -204,10 +206,10 @@ export const usersGetApi = new RequestBuilder<usersGetApi.Req, usersGetApi.Res>(
 
 export namespace usersGetApi {
  export interface Req {
-  /**
-   * 用户 id
-   */
-  id: number;
+/**
+ * 用户 id
+ */
+id: number
 }
 
  
@@ -215,28 +217,28 @@ export namespace usersGetApi {
  * 查询用户响应结果
  */
 export interface Res {
-  /**
-   * agreement document payload
-   */
-  payload?: {
-    [k: string]: any;
-  };
-  /**
-   * 用户 id
-   */
-  id?: number;
-  /**
-   * 邮箱
-   */
-  email?: string;
-  /**
-   * 姓名
-   */
-  realName?: string;
-  /**
-   * 用户状态 (ACTIVE, INACTIVE)
-   */
-  status?: "NEW" | "ACTIVE" | "INACTIVE";
+/**
+ * agreement document payload
+ */
+payload?: {
+[k: string]: any
+}
+/**
+ * 用户 id
+ */
+id?: number
+/**
+ * 邮箱
+ */
+email?: string
+/**
+ * 姓名
+ */
+realName?: string
+/**
+ * 用户状态 (ACTIVE, INACTIVE)
+ */
+status?: ("NEW" | "ACTIVE" | "INACTIVE")
 }
 
 };"

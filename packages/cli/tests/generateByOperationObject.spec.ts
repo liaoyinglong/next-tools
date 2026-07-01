@@ -314,8 +314,8 @@ describe('api 生成', function () {
   it('参数同时在 body 和 path 里', async function () {
     const result = await generate(paramsInBodyAndPath, 'put');
     expect(result).toContain(`urlPathParams: ["id"]`);
-    expect(result).toContain('id: string;');
-    expect(result).toContain('pageNum: number;');
+    expect(result).toContain('id: string');
+    expect(result).toContain('pageNum: number');
   });
 
   it('参数或响应为空', async () => {
@@ -401,9 +401,9 @@ describe('api 生成', function () {
       'get',
     );
 
-    expect(result).toContain('pageNum?: number;');
-    expect(result).toContain('total?: number;');
-    expect(result).toContain('records: string[];');
+    expect(result).toContain('pageNum?: number');
+    expect(result).toContain('total?: number');
+    expect(result).toContain('records: string[]');
     expect(result).not.toContain('number & string');
     expect(result).not.toContain('string &');
   });
@@ -475,6 +475,6 @@ describe('api 生成', function () {
     );
 
     expect(result).toContain('export interface Res');
-    expect(result).toContain('result: ApplePayload;');
+    expect(result).toContain('result: ApplePayload');
   });
 });

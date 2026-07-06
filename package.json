@@ -15,20 +15,24 @@
     "graph": "turbo run build --graph",
     "release": "pnpm test && changeset version && changeset publish",
     "release:workflow": "gh workflow run .github/workflows/release.yaml",
-    "test": "turbo run test --filter='@dune2/*'"
+    "test": "turbo run test --filter='@dune2/*'",
+    "build:packages": "turbo run build --filter='@dune2/*'",
+    "build:docs": "turbo run build --filter=docs",
+    "test:packages": "turbo run test --filter='@dune2/*'",
+    "test:docs": "turbo run test --filter=docs",
+    "lint": "turbo run lint --filter='@dune2/*'"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.4",
     "@testing-library/react": "^16.3.2",
-    "@types/node": "^24.10.12",
-    "@types/react": "^19.2.13",
-    "@types/react-dom": "^19.2.3",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "happy-dom": "^20.5.3",
     "lefthook": "^2.1.0",
-    "oxfmt": "^0.35.0",
+    "oxfmt": "catalog:",
     "turbo": "^2.5.0",
-    "typescript": "^5.9.3",
-    "vitest": "4.0.15"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "packageManager": "pnpm@10.16.0+sha512.8066e7b034217b700a9a4dbb3a005061d641ba130a89915213a10b3ca4919c19c037bec8066afdc559b89635fdb806b16ea673f2468fbb28aabfa13c53e3f769"
 }

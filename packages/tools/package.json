@@ -37,20 +37,26 @@
   },
   "scripts": {
     "build": "tsc --diagnostics",
+    "lint": "tsc --diagnostics",
     "test": "vitest run --typecheck",
     "test:u": "vitest -u",
     "typecheck": "vitest run --typecheck.only"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5",
     "bignumber.js": "^9.3.1",
-    "es-toolkit": "^1.44.0",
+    "es-toolkit": "catalog:",
     "js-cookie": "^3.0.5",
-    "store2": "^2.14.3",
-    "valtio": "^2.3.0"
+    "store2": "^2.14.3"
   },
   "devDependencies": {
+    "@tanstack/react-query": "^5",
     "@types/js-cookie": "3.0.3",
-    "react": "^19.2.4"
+    "react": "catalog:",
+    "valtio": "^2.3.0"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5",
+    "react": "^19.0.0",
+    "valtio": "^2.3.0"
   }
 }

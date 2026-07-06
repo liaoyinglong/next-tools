@@ -1,12 +1,40 @@
 {
   "$schema": "./node_modules/turbo/schema.json",
+  "globalDependencies": ["pnpm-lock.yaml", "pnpm-workspace.yaml", ".nvmrc"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "out/**"]
+      "outputs": ["dist/**", "out/**"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "tsconfig.json",
+        "tsdown.config.ts",
+        "vite.config.ts",
+        "source.config.ts"
+      ]
     },
     "test": {
-      "dependsOn": ["build"]
+      "dependsOn": ["build"],
+      "outputs": [],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "vitest.config.ts",
+        "tests/**",
+        "src/**/*.spec.ts",
+        "src/**/*.test.ts"
+      ]
+    },
+    "lint": {
+      "outputs": [],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "tsconfig.json",
+        "tsconfig.*.json",
+        "tsdown.config.ts",
+        "vite.config.ts",
+        "vitest.config.ts",
+        "source.config.ts"
+      ]
     }
   }
 }

@@ -1,17 +1,14 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "module": "ESNext",
     "target": "ES2015",
     "sourceMap": true,
     "declaration": true,
     "outDir": "dist",
     "noEmit": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
     "moduleResolution": "Node",
     "strictNullChecks": true,
-    "stripInternal": true,
-    "skipLibCheck": true
+    "stripInternal": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

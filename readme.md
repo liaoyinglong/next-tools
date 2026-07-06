@@ -18,7 +18,7 @@ React utility library with common tools and components.
 
 ## Development
 
-This project uses pnpm for package management and Lerna for monorepo management.
+This project uses pnpm workspaces and Turborepo for monorepo task orchestration.
 
 ### Getting Started
 
@@ -36,9 +36,11 @@ pnpm run test
 ### Commands
 
 - `pnpm run build` - Build all @dune2/\* packages
+- `pnpm run build:docs` - Build the docs workspace
 - `pnpm run test` - Run tests for all @dune2/\* packages
+- `pnpm run test:docs` - Run docs workspace tests
 - `pnpm run release` - Run tests and publish new versions
 
 ## Documentation
 
-The [docs](./docs) folder contains a Next.js documentation site with examples and API references for all tools.
+The [docs](./docs) folder contains a Vite + TanStack Start + Fumadocs site with examples and API references for all tools.

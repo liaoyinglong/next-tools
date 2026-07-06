@@ -12,8 +12,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
     "./createStore": {
@@ -31,6 +31,7 @@
     "build": "tsdown --clean --splitting",
     "build-fast": "pnpm run build --no-dts",
     "dev": "pnpm run build-fast --watch",
+    "lint": "tsc --diagnostics --noEmit",
     "test": "vitest run",
     "test:u": "vitest -u"
   },
@@ -47,7 +48,7 @@
     "@types/babel__generator": "^7.6.8",
     "@types/babel__traverse": "^7.20.6",
     "@types/debug": "catalog:",
-    "oxfmt": "^0.35.0",
+    "oxfmt": "catalog:",
     "tsdown": "catalog:"
   }
 }

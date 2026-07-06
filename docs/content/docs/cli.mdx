@@ -198,7 +198,7 @@ export default defineConfig({
 
 ##### 格式化工具指南（同时支持 Prettier 与 Oxfmt）
 
-`codeFormatterCmd` 本质上就是一段会被执行的命令。你可以选择 **Oxfmt（推荐）** 或继续使用 **Prettier（兼容）**。
+`codeFormatterCmd` 会被拆分为命令和参数，再把输出目录追加到最后执行；执行过程不经过 shell。
 
 ###### 方案 A：Oxfmt（推荐）
 

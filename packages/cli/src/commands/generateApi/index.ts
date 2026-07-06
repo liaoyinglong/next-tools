@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
+import { spawn } from 'node:child_process';
 import fs from 'node:fs/promises';
 import * as os from 'os';
 import path from 'path';
@@ -19,6 +20,168 @@ export const asyncLocalStorage = new AsyncLocalStorage<{
   parsed: ParsedDocument;
   parser: SwaggerParser;
 }>();
+
+const HTTP_METHODS = ['get', 'put', 'post', 'delete', 'patch'] as const;
+const DEFAULT_FETCH_TIMEOUT = 30_000;
+const FORMATTER_ARGUMENT_PATTERN = /"([^"]*)"|'([^']*)'|(\S+)/g;
+
+function getCodegenConcurrency() {
+  const parallelism =
+    typeof os.availableParallelism === 'function'
+      ? os.availableParallelism()
+      : os.cpus().length;
+  return Math.max(1, parallelism - 1);
+}
+
+function isPathInside(parent: string, child: string) {
+  const relative = path.relative(parent, child);
+  return !!relative && !relative.startsWith('..') && !path.isAbsolute(relative);
+}
+
+export function resolveOutputDir(cwd: string, output: string) {
+  const resolvedCwd = path.resolve(cwd);
+  const resolvedOutput = path.resolve(resolvedCwd, output);
+  if (!isPathInside(resolvedCwd, resolvedOutput)) {
+    throw new Error(`output must be inside cwd: ${output}`);
+  }
+  return resolvedOutput;
+}
+
+function sanitizeOutputSegment(segment: string) {
+  const sanitized = segment.replace(/[<>:"\\|?*\u0000-\u001F]/g, '_');
+  return sanitized === '.' || sanitized === '..' || sanitized.length === 0
+    ? '_'
+    : sanitized;
+}
+
+export function resolveOperationOutputPath(options: {
+  outputDir: string;
+  url: string;
+  method: string;
+  enableTs?: boolean;
+}) {
+  const outputDir = path.resolve(options.outputDir);
+  const urlSegments = options.url
+    .split('/')
+    .filter(Boolean)
+    .map(sanitizeOutputSegment);
+  const fileName = `${sanitizeOutputSegment(options.method)}.${
+    options.enableTs === false ? 'js' : 'ts'
+  }`;
+  const outputPath = path.resolve(outputDir, ...urlSegments, fileName);
+  if (!isPathInside(outputDir, outputPath)) {
+    throw new Error(`operation output escaped output dir: ${options.url}`);
+  }
+  return outputPath;
+}
+
+function parseFormatterCommand(command: string) {
+  const args = [...command.matchAll(FORMATTER_ARGUMENT_PATTERN)]
+    .map((match) => match[1] ?? match[2] ?? match[3] ?? '')
+    .filter(Boolean);
+  const [file, ...rest] = args;
+  if (!file) {
+    throw new Error('codeFormatterCmd is empty');
+  }
+  return { file, args: rest };
+}
+
+async function runFormatter(command: string, outputDir: string) {
+  const { file, args } = parseFormatterCommand(command);
+  await new Promise<void>((resolve, reject) => {
+    const child = spawn(file, [...args, outputDir], {
+      shell: false,
+      stdio: 'inherit',
+    });
+    child.on('error', reject);
+    child.on('exit', (code, signal) => {
+      if (code === 0) {
+        resolve();
+        return;
+      }
+      reject(
+        new Error(
+          signal
+            ? `formatter exited with signal ${signal}`
+            : `formatter exited with code ${code}`,
+        ),
+      );
+    });
+  });
+}
+
+function getHttpTimeout(options: SwaggerParser.Options) {
+  const http = options.resolve?.http;
+  if (http && typeof http === 'object' && 'timeout' in http) {
+    return typeof http.timeout === 'number'
+      ? http.timeout
+      : DEFAULT_FETCH_TIMEOUT;
+  }
+  return DEFAULT_FETCH_TIMEOUT;
+}
+
+function isJsonContentType(contentType: string) {
+  const mediaType = contentType.split(';', 1)[0].trim().toLowerCase();
+  return (
+    mediaType === 'application/json' ||
+    mediaType === '*/*' ||
+    mediaType.endsWith('/json') ||
+    mediaType.endsWith('+json')
+  );
+}
+
+function pickJsonMedia(
+  content: Record<string, OpenAPIV3.MediaTypeObject> | undefined,
+) {
+  if (!content) return undefined;
+  return (
+    content['application/json'] ??
+    content['*/*'] ??
+    Object.entries(content).find(([contentType]) =>
+      isJsonContentType(contentType),
+    )?.[1]
+  );
+}
+
+function getRequestBodySchema(
+  requestBody:
+    | OpenAPIV3.ReferenceObject
+    | OpenAPIV3.RequestBodyObject
+    | undefined,
+) {
+  if (!requestBody) return undefined;
+  if ('$ref' in requestBody) return requestBody;
+  return pickJsonMedia(requestBody.content)?.schema;
+}
+
+function pickSuccessResponse(responses: OpenAPIV3.ResponsesObject) {
+  return responses['200'];
+}
+
+function isParsedDocument(value: unknown): value is ParsedDocument {
+  return (
+    !!value &&
+    typeof value === 'object' &&
+    ('paths' in value || 'openapi' in value || 'swagger' in value)
+  );
+}
+
+async function fetchRemoteDocument(
+  url: string,
+  options: SwaggerParser.Options,
+): Promise<ParsedDocument> {
+  const res = await fetch(url, {
+    signal: AbortSignal.timeout(getHttpTimeout(options)),
+  });
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status} ${res.statusText}`);
+  }
+  const json = await res.json();
+  if (!isParsedDocument(json)) {
+    throw new Error(`Remote OpenAPI document is invalid: ${url}`);
+  }
+  return json;
+}
 
 /**
  * 只收集 rootSchema 里真正引用到的 `$ref`（含传递依赖），
@@ -145,14 +308,19 @@ export async function generateApi() {
   const startedAt = Date.now();
 
   const preparedConfigs: ApiConfig[] = [];
+  const cwd = config.cwd ?? process.cwd();
 
   for (const apiConfig of apiConfigs) {
     log.info('开始初始化输出目录 %s', apiConfig.output);
     const prepareStartedAt = Date.now();
     try {
-      await fs.rm(apiConfig.output!, { recursive: true, force: true });
-      await fs.mkdir(apiConfig.output!, { recursive: true });
-      preparedConfigs.push(apiConfig);
+      const outputDir = resolveOutputDir(cwd, apiConfig.output!);
+      await fs.rm(outputDir, { recursive: true, force: true });
+      await fs.mkdir(outputDir, { recursive: true });
+      preparedConfigs.push({
+        ...apiConfig,
+        output: outputDir,
+      });
       log.info(
         '输出目录 %s 初始化完成，耗时 %dms',
         apiConfig.output,
@@ -178,14 +346,14 @@ export async function generateApi() {
 
   for (const apiConfig of preparedConfigs) {
     log.info('开始解析 %s', apiConfig.swaggerJSONPath);
-    const dereferenceConfig = merge(
+    const dereferenceConfig: SwaggerParser.Options = merge(
       {
         resolve: {
           http: {
-            timeout: 30 * 1000,
+            timeout: DEFAULT_FETCH_TIMEOUT,
           },
         },
-      },
+      } satisfies SwaggerParser.Options,
       apiConfig.dereferenceSwaggerConfig || {},
     );
     const parser = new SwaggerParser();
@@ -197,11 +365,10 @@ export async function generateApi() {
       // so we fetch the JSON ourselves and pass the parsed object instead.
       const isRemoteUrl = /^https?:\/\//.test(apiConfig.swaggerJSONPath);
       const bundleInput = isRemoteUrl
-        ? await fetch(apiConfig.swaggerJSONPath).then((res) => {
-            if (!res.ok)
-              throw new Error(`HTTP ${res.status} ${res.statusText}`);
-            return res.json();
-          })
+        ? await fetchRemoteDocument(
+            apiConfig.swaggerJSONPath,
+            dereferenceConfig,
+          )
         : apiConfig.swaggerJSONPath;
       parsed = await parser.bundle(bundleInput, dereferenceConfig);
       // default 值经常和 type 不一致（例如 integer + ""），
@@ -237,61 +404,67 @@ export async function generateApi() {
       continue;
     }
 
+    const codegenConcurrency = getCodegenConcurrency();
+
     await asyncLocalStorage.run(state, async () => {
-      await pMap(pathEntries, async ([url, pathItemObject]) => {
-        if (!pathItemObject) {
-          log.error('路径 %s 未定义 pathItemObject，已跳过', url);
-          skippedCount++;
-          return;
-        }
+      await pMap(
+        pathEntries,
+        async ([url, pathItemObject]) => {
+          if (!pathItemObject) {
+            log.error('路径 %s 未定义 pathItemObject，已跳过', url);
+            skippedCount++;
+            return;
+          }
 
-        log.info('开始生成 %s', url);
-        let generatedForUrl = 0;
-        await pMap(
-          ['get', 'put', 'post', 'delete', 'patch'],
-          async (method) => {
-            const operationObject = pathItemObject[method];
-            if (!operationObject) {
-              return;
-            }
+          log.info('开始生成 %s', url);
+          let generatedForUrl = 0;
+          await pMap(
+            HTTP_METHODS,
+            async (method) => {
+              const operationObject = pathItemObject[method];
+              if (!operationObject) {
+                return;
+              }
 
-            try {
-              const code = await generateApiRequestCode({
-                url: url,
-                method: method,
-                operationObject: operationObject,
-                apiConfig,
-              });
-              const outputPath = path
-                .join(
-                  apiConfig.output!,
+              try {
+                const code = await generateApiRequestCode({
+                  url: url,
+                  method: method,
+                  operationObject: operationObject,
+                  apiConfig,
+                });
+                const outputPath = resolveOperationOutputPath({
+                  outputDir: apiConfig.output!,
                   url,
-                  apiConfig.enableTs ? `${method}.ts` : `${method}.js`,
-                )
-                .replace(/:/g, '_');
-              await fs.mkdir(path.dirname(outputPath), {
-                recursive: true,
-              });
-              await fs.writeFile(outputPath, code);
-              generatedCount++;
-              generatedForUrl++;
-            } catch (error) {
-              skippedCount++;
-              const message =
-                error instanceof Error ? error.message : String(error);
-              log.error(
-                '%s %s 生成失败：%s',
-                method.toUpperCase(),
-                url,
-                message,
-              );
-            }
-          },
-        );
-        if (generatedForUrl === 0) {
-          log.info('路径 %s 未生成任何方法', url);
-        }
-      });
+                  method,
+                  enableTs: apiConfig.enableTs,
+                });
+                await fs.mkdir(path.dirname(outputPath), {
+                  recursive: true,
+                });
+                await fs.writeFile(outputPath, code);
+                generatedCount++;
+                generatedForUrl++;
+              } catch (error) {
+                skippedCount++;
+                const message =
+                  error instanceof Error ? error.message : String(error);
+                log.error(
+                  '%s %s 生成失败：%s',
+                  method.toUpperCase(),
+                  url,
+                  message,
+                );
+              }
+            },
+            { concurrency: 1 },
+          );
+          if (generatedForUrl === 0) {
+            log.info('路径 %s 未生成任何方法', url);
+          }
+        },
+        { concurrency: codegenConcurrency },
+      );
     });
 
     if (!generatedCount) {
@@ -301,21 +474,14 @@ export async function generateApi() {
     }
 
     if (apiConfig.codeFormatterCmd) {
-      const { exec } = await import('child_process');
-      await new Promise<void>((resolve) => {
-        exec(
-          `${apiConfig.codeFormatterCmd} "${apiConfig.output!}"`,
-          (error) => {
-            if (error) {
-              skippedCount++;
-              log.error(`Code formatting failed: ${error.message}`);
-            } else {
-              log.info(`Code formatting success`);
-            }
-            resolve();
-          },
-        );
-      });
+      try {
+        await runFormatter(apiConfig.codeFormatterCmd, apiConfig.output!);
+        log.info(`Code formatting success`);
+      } catch (error) {
+        skippedCount++;
+        const message = error instanceof Error ? error.message : String(error);
+        log.error(`Code formatting failed: ${message}`);
+      }
     }
 
     log.info(
@@ -444,15 +610,9 @@ async function compileRequestParams(
   operationObject: OpenAPIV3.OperationObject,
 ) {
   const store = asyncLocalStorage.getStore();
-  const requestBodySchemaOrRef = (() => {
-    if (!operationObject.requestBody) {
-      return;
-    }
-    if ('$ref' in operationObject.requestBody) {
-      return operationObject.requestBody;
-    }
-    return operationObject.requestBody.content['application/json'].schema;
-  })();
+  const requestBodySchemaOrRef = getRequestBodySchema(
+    operationObject.requestBody,
+  );
 
   const parameterSchema = (() => {
     if (!operationObject.parameters) {
@@ -556,9 +716,10 @@ async function compileRequestParams(
         format: false,
       });
     } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
       log.error('生成请求参数类型失败，请检查 %o', {
         summary: operationObject.summary,
-        message: e.message,
+        message,
         operationId: operationObject.operationId,
       });
     }
@@ -585,8 +746,7 @@ async function compileResponseParams(
     if (!arg) return;
 
     if ('content' in arg) {
-      const temp = arg.content?.['application/json'] || arg.content?.['*/*'];
-      return resolveSchema(temp?.schema);
+      return resolveSchema(pickJsonMedia(arg.content)?.schema);
     }
     // 兼容 swagger v2 的 response.schema
     if ('schema' in arg && arg.schema) {
@@ -601,7 +761,9 @@ async function compileResponseParams(
     }
     return schema;
   }
-  const schemaObject = resolveSchema(operationObject.responses['200']);
+  const schemaObject = resolveSchema(
+    pickSuccessResponse(operationObject.responses),
+  );
   if (schemaObject) {
     stripDefaultKeywordDeep(schemaObject);
   }
@@ -623,9 +785,10 @@ async function compileResponseParams(
         format: false,
       });
     } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
       log.error('转换响应参数类型失败，请检查 %o', {
         summary: operationObject.summary,
-        error: e.message,
+        error: message,
         operationId: operationObject.operationId,
       });
     }

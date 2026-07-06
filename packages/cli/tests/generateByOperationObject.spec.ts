@@ -477,4 +477,111 @@ describe('api 生成', function () {
     expect(result).toContain('export interface Res');
     expect(result).toContain('result: ApplePayload');
   });
+
+  it.each([
+    ['application/problem+json', 'problemCode'],
+    ['application/vnd.api+json', 'resourceId'],
+  ])(
+    'uses JSON-compatible response content type %s',
+    async (contentType, field) => {
+      const result = await generate(
+        {
+          tags: ['JSON compatible'],
+          summary: `${contentType} 响应`,
+          operationId: `jsonCompatible${field}`,
+          parameters: [],
+          responses: {
+            '200': {
+              description: 'OK',
+              content: {
+                [contentType]: {
+                  schema: {
+                    type: 'object',
+                    required: [field],
+                    properties: {
+                      [field]: {
+                        type: 'string',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        } as never,
+        'get',
+      );
+
+      expect(result).toContain('export interface Res');
+      expect(result).toContain(`${field}: string`);
+      expect(result).not.toContain('export type Res = any');
+    },
+  );
+
+  it.each([
+    [
+      'missing application/json schema',
+      {
+        content: {
+          'application/json': {},
+        },
+      },
+    ],
+    [
+      'non-json request body content',
+      {
+        content: {
+          'text/plain': {
+            schema: {
+              type: 'string',
+            },
+          },
+        },
+      },
+    ],
+  ])(
+    'ignores %s and still generates query parameter types',
+    async (_, requestBody) => {
+      const result = await generate(
+        {
+          tags: ['Search'],
+          summary: '按关键字搜索',
+          operationId: 'searchByKeyword',
+          requestBody,
+          parameters: [
+            {
+              name: 'keyword',
+              in: 'query',
+              required: true,
+              schema: {
+                type: 'string',
+              },
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'OK',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      ok: {
+                        type: 'boolean',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        } as never,
+        'post',
+      );
+
+      expect(result).toContain('export interface Req');
+      expect(result).toContain('keyword: string');
+      expect(result).toContain('ok?: boolean');
+    },
+  );
 });

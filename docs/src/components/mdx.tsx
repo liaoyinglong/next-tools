@@ -10,6 +10,7 @@ export function getMDXComponents(components?: MDXComponents) {
   } satisfies MDXComponents;
 }
 
+export const mdxComponents = getMDXComponents();
 export const useMDXComponents = getMDXComponents;
 
 declare global {

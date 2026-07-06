@@ -12,3 +12,5 @@ export function baseOptions(): BaseLayoutProps {
     },
   };
 }
+
+export const sidebarOptions = { defaultOpenLevel: 1 };

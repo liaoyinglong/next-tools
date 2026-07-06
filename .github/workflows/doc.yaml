@@ -36,10 +36,9 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v6
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
       - name: Build docs
-        working-directory: ./docs
-        run: pnpm build
+        run: pnpm --filter docs build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:

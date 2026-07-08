@@ -1,12 +1,17 @@
 import type { QueryClient } from '@tanstack/react-query';
-import type { Basic, RequestBuilderOptions, RequestConfig } from './options';
+import {
+  normalizeHttpMethod,
+  type Basic,
+  type RequestBuilderOptions,
+  type RequestConfig,
+} from './options';
 
 export class RequestBuilder<Req = any, Res = any> {
   constructor(public options: RequestBuilderOptions<Req, Res>) {
     this.defaultQueryFn = this.defaultQueryFn.bind(this);
     this.request = this.request.bind(this);
     this.requestWithConfig = this.requestWithConfig.bind(this);
-    this.options.method ??= 'get';
+    this.options.method = normalizeHttpMethod(this.options.method);
   }
 
   //#region default requestFn
@@ -50,7 +55,7 @@ export class RequestBuilder<Req = any, Res = any> {
     const method = this.options.method!;
     let data;
     // 根据请求方法来放到 url 上或者 body 里
-    if (!['get', 'head', 'options'].includes(method)) {
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
       data = params;
       params = undefined;
     }

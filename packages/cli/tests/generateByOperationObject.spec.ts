@@ -302,17 +302,17 @@ const generate = (data, methods: string) => {
 
 describe('api 生成', function () {
   it('参数在 url 上', async () => {
-    const result = await generate(paramsInQuery, 'get');
+    const result = await generate(paramsInQuery, 'GET');
     expect(result).toMatchSnapshot();
   });
 
   it('参数在 body 里', async function () {
-    const result = await generate(paramsInBody, 'post');
+    const result = await generate(paramsInBody, 'POST');
     expect(result).toMatchSnapshot();
   });
 
   it('参数同时在 body 和 path 里', async function () {
-    const result = await generate(paramsInBodyAndPath, 'put');
+    const result = await generate(paramsInBodyAndPath, 'PUT');
     expect(result).toContain(`urlPathParams: ["id"]`);
     expect(result).toContain('id: string');
     expect(result).toContain('pageNum: number');
@@ -323,14 +323,14 @@ describe('api 生成', function () {
     parmas.parameters = [];
     parmas.responses = {};
     delete parmas.requestBody;
-    const result = await generate(parmas, 'post');
+    const result = await generate(parmas, 'POST');
     expect(result).toMatchSnapshot();
   });
   it('支持 urlTransformer', async () => {
     const f = (urlTransformer) => {
       return generateApiRequestCode({
         url: '/users',
-        method: 'get',
+        method: 'GET',
         operationObject: paramsInQuery as never,
         apiConfig: apiConfigNormalizer({
           swaggerJSONPath: '',
@@ -398,7 +398,7 @@ describe('api 生成', function () {
           },
         },
       } as never,
-      'get',
+      'GET',
     );
 
     expect(result).toContain('pageNum?: number');
@@ -452,7 +452,7 @@ describe('api 生成', function () {
       () =>
         generateApiRequestCode({
           url: '/apple',
-          method: 'get',
+          method: 'GET',
           operationObject: {
             tags: ['v2'],
             summary: 'swagger v2 引用 definitions',
@@ -509,7 +509,7 @@ describe('api 生成', function () {
             },
           },
         } as never,
-        'get',
+        'GET',
       );
 
       expect(result).toContain('export interface Res');
@@ -576,7 +576,7 @@ describe('api 生成', function () {
             },
           },
         } as never,
-        'post',
+        'POST',
       );
 
       expect(result).toContain('export interface Req');

@@ -8,14 +8,25 @@ import type {
 } from '@tanstack/react-query';
 
 // 定义 HTTP 方法类型
-export type HttpMethod =
-  | 'get'
-  | 'post'
-  | 'put'
-  | 'delete'
-  | 'patch'
-  | 'head'
-  | 'options';
+const HTTP_METHOD_TABLE = {
+  GET: true,
+  POST: true,
+  PUT: true,
+  DELETE: true,
+  PATCH: true,
+  HEAD: true,
+  OPTIONS: true,
+} as const;
+export type HttpMethod = keyof typeof HTTP_METHOD_TABLE;
+export const HTTP_METHODS = Object.keys(HTTP_METHOD_TABLE) as HttpMethod[];
+
+export function normalizeHttpMethod(method?: string): HttpMethod {
+  const normalized = (method ?? 'GET').toUpperCase();
+  if (!Object.prototype.hasOwnProperty.call(HTTP_METHOD_TABLE, normalized)) {
+    throw new Error(`Unsupported HTTP method: ${method ?? '<empty>'}`);
+  }
+  return normalized as HttpMethod;
+}
 // 外部可以重写这个类型
 export interface RequestBuilderMeta {}
 
@@ -75,7 +86,7 @@ export interface RequestBuilderOptions<Req, Res>
   extends Basic, QueryClientBasic {
   /**
    * 请求方法
-   * @default "get"
+   * @default "GET"
    */
   method?: HttpMethod;
   // 请求路径

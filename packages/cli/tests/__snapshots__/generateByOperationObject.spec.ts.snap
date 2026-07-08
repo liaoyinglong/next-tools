@@ -9,7 +9,7 @@ import { RequestBuilder } from '@dune2/tools/rq';
   */
 export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Res>({
   url: '/users',
-  method: 'post',
+  method: 'POST',
 });
 
 export namespace usersPostApi {
@@ -127,7 +127,7 @@ import { RequestBuilder } from '@dune2/tools/rq';
   */
 export const usersGetApi = new RequestBuilder<usersGetApi.Req, usersGetApi.Res>({
   url: '/users',
-  method: 'get',
+  method: 'GET',
 });
 
 export namespace usersGetApi {
@@ -179,7 +179,7 @@ import { RequestBuilder } from '@dune2/tools/rq';
   */
 export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Res>({
   url: '/users',
-  method: 'post',
+  method: 'POST',
 });
 
 export namespace usersPostApi {
@@ -201,7 +201,7 @@ import { RequestBuilder } from '@dune2/tools/rq';
   */
 export const usersGetApi = new RequestBuilder<usersGetApi.Req, usersGetApi.Res>({
   url: '/api/v1/users',
-  method: 'get',
+  method: 'GET',
 });
 
 export namespace usersGetApi {

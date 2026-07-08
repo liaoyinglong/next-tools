@@ -511,6 +511,7 @@ export async function generateApiRequestCode(options: {
   apiConfig: ApiConfig;
 }): Promise<string> {
   const { method, operationObject, apiConfig } = options;
+  const requestMethod = method.toUpperCase();
 
   const url = (() => {
     if (typeof apiConfig.urlTransformer === 'string') {
@@ -564,7 +565,7 @@ export async function generateApiRequestCode(options: {
   let builderCode = `\
 export const ${requestBuilderName} = new RequestBuilder({
   url: '${url}',
-  method: '${method}',
+  method: '${requestMethod}',
   ${urlPathParamsCode}
   ${apiConfig.queryClientImportPath ? 'queryClient,' : ''}
 });`

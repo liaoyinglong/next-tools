@@ -4,7 +4,7 @@ export const authOauthTokenPostApi = new RequestBuilder<
   authOauthTokenPostApi.Req,
   authOauthTokenPostApi.Res
 >({
-  method: 'post',
+  method: 'POST',
   url: '/v1/auth/oauth/token',
 });
 

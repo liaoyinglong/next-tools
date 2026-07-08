@@ -31,8 +31,8 @@ export function createApi<Req, Res>(opts: Options<Req, Res>) {
   const { requestFn, ...rest } = opts;
   const api = new RequestBuilder<Req, Res>({
     url: opts.queryKey,
-    // 给定 get 则 在 requestFn 中可以通过 params 获取到参数，否则是 data 字段
-    method: 'get',
+    // 给定 GET 则 在 requestFn 中可以通过 params 获取到参数，否则是 data 字段
+    method: 'GET',
     requestFn: (config) => {
       return requestFn(config.params) as never;
     },

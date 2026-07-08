@@ -32,7 +32,7 @@ describe('rq.useSuspenseQuery', () => {
       { access_token: string }
     >({
       url: '/v1/auth/oauth/token',
-      method: 'post',
+      method: 'POST',
       meta: {
         source: 'builder',
       } as never,

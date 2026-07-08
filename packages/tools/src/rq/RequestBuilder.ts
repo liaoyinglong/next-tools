@@ -17,15 +17,16 @@ import {
 import { useDebugValue, useMemo } from 'react';
 import { fieldsMap, type FieldsMap } from '../factory/fieldsMap';
 import { queryClient } from './defaultQueryClient';
-import type {
-  Basic,
-  FetchQueryOptions,
-  PageData,
-  QueryClientBasic,
-  RequestBuilderOptions,
-  RequestConfig,
-  UseSuspenseQueryOptions,
-  UseQueryOptions,
+import {
+  normalizeHttpMethod,
+  type Basic,
+  type FetchQueryOptions,
+  type PageData,
+  type QueryClientBasic,
+  type RequestBuilderOptions,
+  type RequestConfig,
+  type UseSuspenseQueryOptions,
+  type UseQueryOptions,
 } from './options';
 
 export class RequestBuilder<Req = any, Res = any> {
@@ -33,7 +34,7 @@ export class RequestBuilder<Req = any, Res = any> {
     this.defaultQueryFn = this.defaultQueryFn.bind(this);
     this.request = this.request.bind(this);
     this.requestWithConfig = this.requestWithConfig.bind(this);
-    this.options.method ??= 'get';
+    this.options.method = normalizeHttpMethod(this.options.method);
   }
 
   //#region default requestFn
@@ -88,7 +89,7 @@ export class RequestBuilder<Req = any, Res = any> {
     const method = this.options.method!;
     let data;
     // 根据请求方法来放到 url 上或者 body 里
-    if (!['get', 'head', 'options'].includes(method)) {
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
       data = params;
       params = undefined;
     }

@@ -144,4 +144,22 @@ function App() {
       }"
     `);
   });
+
+  it('should_transform_member_initializer_from_snapshot_call', () => {
+    const tsx = String.raw;
+    const code = tsx`
+function App() {
+  const entries = requestMonitorStore.useSnapshot().entries;
+  return <div>{entries.length}</div>;
+}`;
+    const expectCode = transform(code);
+
+    expect(expectCode).toMatchInlineSnapshot(`
+      "function _selector_(state) {return { entries: state.entries };}
+      function App() {
+        const entries = requestMonitorStore.useShallowSnapshot(_selector_).entries;
+        return <div>{entries.length}</div>;
+      }"
+    `);
+  });
 });

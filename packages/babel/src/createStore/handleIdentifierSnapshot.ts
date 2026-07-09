@@ -1,11 +1,16 @@
 import type { NodePath } from '@babel/traverse';
 import type {
+  CallExpression,
+  FunctionDeclaration,
+  Identifier,
   MemberExpression,
+  Node,
   OptionalMemberExpression,
   VariableDeclarator,
 } from '@babel/types';
 import t from '@babel/types';
 import { handleSelectorArgument } from './shared';
+
 /**
  * 处理 store.useSnapshot() 的变量声明
  * 示例: const state = store.useSnapshot()
@@ -14,30 +19,26 @@ import { handleSelectorArgument } from './shared';
  * const state = store.useShallowSnapshot(selector)
  */
 export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
+  if (handleSnapshotMemberInitializer(path)) {
+    return;
+  }
+
   const { id, init } = path.node;
 
-  // 预检查：确保是 CallExpression 且变量是标识符
-  if (!t.isCallExpression(init) || !t.isIdentifier(id)) {
+  // 预检查：确保是 useSnapshot 调用 且变量是标识符
+  if (!t.isIdentifier(id)) {
     return;
   }
-  if (!t.isMemberExpression(init.callee)) {
-    return;
-  }
-
-  // 检查是否为 store.useSnapshot 调用
-  const callee = init.callee;
-  if (
-    !t.isIdentifier(callee.property) ||
-    callee.property.name !== 'useSnapshot'
-  ) {
+  const snapshotCall = getUseSnapshotCall(init);
+  if (!snapshotCall) {
     return;
   }
 
   // 如果已经有 selector 参数，则需要检查返回值类型
   // 如果返回值是对象类型，则转换为 useShallowSnapshot
-  if (init.arguments.length > 0) {
-    if (handleSelectorArgument(init)) {
-      callee.property.name = 'useShallowSnapshot';
+  if (snapshotCall.call.arguments.length > 0) {
+    if (handleSelectorArgument(snapshotCall.call)) {
+      snapshotCall.callee.property.name = 'useShallowSnapshot';
     }
     return;
   }
@@ -52,7 +53,7 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
     const binding = path.scope.getOwnBinding(id.name);
 
     // 存储所有有效的成员表达式访问
-    const arr: ReturnType<typeof findMemberExpression>[] = [];
+    const arr: ValidMemberExpressionMatch[] = [];
 
     // 第一次遍历：收集所有有效的成员表达式
     binding?.referencePaths.forEach((refPath) => {
@@ -80,14 +81,16 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
         key = accessKey.slice(1);
         accessorMap.set(accessKey, key);
         memberAccessors.push({
-          node: t.cloneDeepWithoutLoc(memberExprStart!),
+          node: t.cloneDeepWithoutLoc(
+            memberExprStart,
+          ) as MemberAccessor['node'],
           key,
         });
       }
 
       // 替换原始的成员表达式为新的访问方式
       const isComputed = key.includes('.');
-      nodePath!.replaceWith(
+      nodePath.replaceWith(
         t.memberExpression(
           t.cloneWithoutLoc(id),
           isComputed ? t.stringLiteral(key) : t.identifier(key),
@@ -121,6 +124,108 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
       ),
     ]),
   );
+
+  insertSelector(path, selector);
+
+  // 修改原始调用为 useShallowSnapshot
+  snapshotCall.callee.property.name = 'useShallowSnapshot';
+  snapshotCall.call.arguments = [selectorName];
+}
+
+type MemberAccessor = {
+  node: MemberExpression | OptionalMemberExpression;
+  key: string;
+};
+
+type MemberExpressionResult = {
+  memberExprStart: MemberAccessor['node'] | undefined;
+  nodePath: NodePath | null;
+  accessKey: string;
+};
+
+type ValidMemberExpressionMatch = {
+  memberExprStart: MemberAccessor['node'];
+  nodePath: NodePath;
+  accessKey: string;
+};
+
+type SnapshotCallee =
+  | (MemberExpression & { property: Identifier })
+  | (OptionalMemberExpression & { property: Identifier });
+
+type SnapshotCall = {
+  call: CallExpression;
+  callee: SnapshotCallee;
+};
+
+function handleSnapshotMemberInitializer(path: NodePath<VariableDeclarator>) {
+  const { id, init } = path.node;
+  if (!t.isIdentifier(id)) {
+    return false;
+  }
+  if (!t.isMemberExpression(init) && !t.isOptionalMemberExpression(init)) {
+    return false;
+  }
+  if (init.computed || !t.isIdentifier(init.property)) {
+    return false;
+  }
+  const snapshotCall = getUseSnapshotCall(init.object);
+  if (!snapshotCall) {
+    return false;
+  }
+  if (snapshotCall.call.arguments.length > 0) {
+    return false;
+  }
+
+  const selectorName = path.scope.generateUidIdentifier('selector_');
+  const selectorParam = t.identifier('state');
+  const selector = t.functionDeclaration(
+    selectorName,
+    [selectorParam],
+    t.blockStatement([
+      t.returnStatement(
+        t.objectExpression([
+          t.objectProperty(
+            t.identifier(init.property.name),
+            t.memberExpression(
+              t.cloneWithoutLoc(selectorParam),
+              t.identifier(init.property.name),
+            ),
+          ),
+        ]),
+      ),
+    ]),
+  );
+
+  insertSelector(path, selector);
+  snapshotCall.callee.property.name = 'useShallowSnapshot';
+  snapshotCall.call.arguments = [selectorName];
+  return true;
+}
+
+function getUseSnapshotCall(
+  node: Node | null | undefined,
+): SnapshotCall | null {
+  if (!t.isCallExpression(node)) {
+    return null;
+  }
+  const { callee } = node;
+  if (!t.isMemberExpression(callee) && !t.isOptionalMemberExpression(callee)) {
+    return null;
+  }
+  if (
+    !t.isIdentifier(callee.property) ||
+    callee.property.name !== 'useSnapshot'
+  ) {
+    return null;
+  }
+  return { call: node, callee: callee as SnapshotCallee };
+}
+
+function insertSelector(
+  path: NodePath<VariableDeclarator>,
+  selector: FunctionDeclaration,
+) {
   // 将 selector 函数提升到组件外部，使其更持久化
   const funcParent =
     path.findParent(
@@ -129,22 +234,16 @@ export function handleIdentifierSnapshot(path: NodePath<VariableDeclarator>) {
         p.isFunctionExpression() ||
         p.isArrowFunctionExpression(),
     ) ?? path.parentPath;
+  if (!funcParent) {
+    return;
+  }
 
-  let insertTarget = funcParent;
+  let insertTarget: NodePath | null = funcParent;
   while (insertTarget && !insertTarget.isStatement()) {
-    insertTarget = insertTarget.parentPath!;
+    insertTarget = insertTarget.parentPath;
   }
   (insertTarget ?? funcParent).insertBefore(selector);
-
-  // 修改原始调用为 useShallowSnapshot
-  callee.property.name = 'useShallowSnapshot';
-  init.arguments = [selectorName];
 }
-
-type MemberAccessor = {
-  node: MemberExpression | OptionalMemberExpression;
-  key: string;
-};
 
 /**
  * 查找成员表达式链
@@ -157,7 +256,7 @@ type MemberAccessor = {
  *   accessKey - 完整的访问路径字符串
  * }
  */
-function findMemberExpression(path: NodePath) {
+function findMemberExpression(path: NodePath): MemberExpressionResult {
   let current: NodePath | null = path;
   let memberExprStart: MemberAccessor['node'] | undefined;
   let accessKey = '';

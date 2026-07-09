@@ -1,5 +1,12 @@
 # @dune2/babel
 
+## 1.0.4
+
+### Patch Changes
+
+- 40b6602: Fix createStore transform for `useSnapshot()` member initializer expressions (e.g. `const entries = store.useSnapshot().entries`) so they are rewritten to `useShallowSnapshot` with a generated selector. Added fixture and unit coverage for this case.
+- e3be89a: Fix package export metadata, align React-related peers, and harden API generation for JSON-compatible 200 responses.
+
 ## 1.0.3
 
 ### Patch Changes

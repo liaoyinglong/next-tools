@@ -1,5 +1,11 @@
 # @dune2/tools
 
+## 1.3.4
+
+### Patch Changes
+
+- e3be89a: Fix package export metadata, align React-related peers, and harden API generation for JSON-compatible 200 responses.
+
 ## 1.3.3
 
 ### Patch Changes

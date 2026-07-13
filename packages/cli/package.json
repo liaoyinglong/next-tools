@@ -41,12 +41,12 @@
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^12.1.0",
+    "@fumari/json-schema-ts": "^1.0.2",
     "cac": "^7.0.0",
     "debug": "^4.4.3",
     "enquirer": "^2.3.6",
     "es-toolkit": "catalog:",
     "jiti": "^2.6.1",
-    "json-schema-to-typescript": "15.0.3",
     "p-map": "^7.0.4"
   },
   "devDependencies": {

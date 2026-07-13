@@ -4,8 +4,8 @@ import fs from 'node:fs/promises';
 import * as os from 'os';
 import path from 'path';
 import SwaggerParser from '@apidevtools/swagger-parser';
+import { generate } from '@fumari/json-schema-ts';
 import { camelCase, isPlainObject, merge } from 'es-toolkit';
-import { compile } from 'json-schema-to-typescript';
 import type { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import pMap from 'p-map';
 import { createLogger } from '../../shared';
@@ -188,7 +188,7 @@ async function fetchRemoteDocument(
  * 构造一个最小化的定义上下文。
  *
  * 之前是把整个 components/definitions 直接挂到每个待编译的 schema 上，
- * 导致 json-schema-to-typescript 每次 compile 都要遍历整份 API 的类型图，
+ * 导致类型生成器每次都要遍历整份 API 的类型图，
  * 261 个接口 × 2（Req/Res）= 522 次全量遍历，非常慢。
  * 这里改为按需收集可达定义，输出结果不变，但速度大幅提升。
  */
@@ -372,8 +372,7 @@ export async function generateApi() {
         : apiConfig.swaggerJSONPath;
       parsed = await parser.bundle(bundleInput, dereferenceConfig);
       // default 值经常和 type 不一致（例如 integer + ""），
-      // 会被 json-schema-to-typescript 推断成交叉类型（number & string）。
-      // 生成前统一移除 default，避免污染类型。
+      // 生成前统一移除，避免输出错误的类型或文档。
       stripDefaultKeywordDeep(parsed);
       log.info(
         '解析 %s 成功，耗时 %dms',
@@ -706,14 +705,8 @@ async function compileRequestParams(
   let code = '';
   if (finalSchema) {
     try {
-      code = await compile(finalSchema as never, 'Req', {
-        bannerComment: '',
-        ignoreMinAndMaxItems: !!1,
-        additionalProperties: false,
-        unknownAny: false,
-        // 生成完成后会统一用 codeFormatterCmd 格式化，
-        // 这里关闭内置 prettier，避免每个类型都跑一次格式化拖慢速度。
-        format: false,
+      code = generate(finalSchema as never, {
+        name: 'Req',
       });
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
@@ -775,14 +768,8 @@ async function compileResponseParams(
   let code = '';
   if (finalSchema) {
     try {
-      code = await compile(finalSchema, 'Res', {
-        bannerComment: '',
-        ignoreMinAndMaxItems: !!1,
-        additionalProperties: false,
-        unknownAny: false,
-        // 生成完成后会统一用 codeFormatterCmd 格式化，
-        // 这里关闭内置 prettier，避免每个类型都跑一次格式化拖慢速度。
-        format: false,
+      code = generate(finalSchema as never, {
+        name: 'Res',
       });
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);

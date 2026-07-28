@@ -618,22 +618,24 @@ async function compileRequestParams(
       return;
     }
     const extraProperties = {};
+    const extraRequired: string[] = [];
     const parameters: OpenAPIV3.ParameterObject[] = [];
     (operationObject.parameters as OpenAPIV3.ParameterObject[]).forEach(
       (item) => {
         if (!['query', 'path'].includes(item.in)) {
           return;
         }
-        if (
-          item.schema &&
-          'type' in item.schema &&
-          item.schema.type === 'object'
-        ) {
-          // swagger get 请求上 有些参数是 object 类型 应该拍平
-          Object.assign(
-            extraProperties,
-            (item.schema as OpenAPIV3.SchemaObject).properties || {},
-          );
+
+        const schema =
+          item.schema && '$ref' in item.schema
+            ? (store?.parser.$refs.get(
+                item.schema.$ref,
+              ) as OpenAPIV3.SchemaObject)
+            : item.schema;
+        if (schema && 'type' in schema && schema.type === 'object') {
+          // swagger get 请求上有些参数是 object 类型（也可能通过 $ref 引用），应该拍平
+          Object.assign(extraProperties, schema.properties || {});
+          extraRequired.push(...(schema.required || []));
         } else {
           parameters.push(item);
         }
@@ -645,6 +647,7 @@ async function compileRequestParams(
         (p) => p.required && !['pageNum', 'pageSize', 'count'].includes(p.name),
       )
       .map((p) => p.name);
+    required.push(...extraRequired);
     const properties = Object.fromEntries(
       parameters
         // 后端 swagger 可能出现没有 schema 的情况，这里过滤掉

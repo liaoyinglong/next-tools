@@ -318,6 +318,65 @@ describe('api 生成', function () {
     expect(result).toContain('pageNum: number');
   });
 
+  it('拍平 query 参数引用的对象 schema', async () => {
+    const requestSchema = {
+      type: 'object',
+      properties: {
+        uuid: {
+          type: 'string',
+          description: 'UAEPass request UUID ticket',
+        },
+      },
+      required: ['uuid'],
+    };
+    const parser = {
+      $refs: {
+        get(ref: string) {
+          if (ref !== '#/components/schemas/UaePassRequestDataRequest') {
+            throw new Error(`unexpected ref: ${ref}`);
+          }
+          return requestSchema;
+        },
+      },
+    };
+
+    const result = await asyncLocalStorage.run(
+      {
+        parsed: {
+          openapi: '3.0.0',
+          paths: {},
+          components: {
+            schemas: { UaePassRequestDataRequest: requestSchema },
+          },
+        } as never,
+        parser: parser as never,
+      },
+      () =>
+        generate(
+          {
+            tags: ['UAE Pass APIs'],
+            summary: 'Get UAE Pass request data by uuid',
+            operationId: 'getUaePassRequestData',
+            parameters: [
+              {
+                name: 'request',
+                in: 'query',
+                required: true,
+                schema: {
+                  $ref: '#/components/schemas/UaePassRequestDataRequest',
+                },
+              },
+            ],
+            responses: {},
+          } as never,
+          'get',
+        ),
+    );
+
+    expect(result).toContain('uuid: string');
+    expect(result).not.toContain('request: UaePassRequestDataRequest');
+  });
+
   it('参数或响应为空', async () => {
     let parmas = JSON.parse(JSON.stringify(paramsInBody));
     parmas.parameters = [];

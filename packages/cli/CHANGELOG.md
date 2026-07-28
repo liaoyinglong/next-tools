@@ -1,5 +1,12 @@
 # @dune2/cli
 
+## 1.2.7
+
+### Patch Changes
+
+- 0d2180f: Replace `json-schema-to-typescript` with `@fumari/json-schema-ts` for API type generation.
+- b98ce4a: Flatten object schemas referenced by query parameters when generating request types.
+
 ## 1.2.6
 
 ### Patch Changes
@@ -11,6 +18,7 @@
 ### Patch Changes
 
 - a1bd65b: perf(generateApi): 大幅提升 API 生成速度
+
   - 编译类型时只挂载可达的 `$ref` 定义，替代原来把整份 `components`/`definitions` 挂到每个 schema 上的做法，避免 `json-schema-to-typescript` 每次都全量遍历类型图
   - 关闭 `compile` 内置的 prettier 格式化（生成后统一由 `codeFormatterCmd` 格式化）
 

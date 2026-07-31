@@ -43,7 +43,7 @@
     "typecheck": "vitest run --typecheck.only"
   },
   "dependencies": {
-    "bignumber.js": "^9.3.1",
+    "bignumber.js": "^11.1.5",
     "es-toolkit": "catalog:",
     "js-cookie": "^3.0.5",
     "store2": "^2.14.3"

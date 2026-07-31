@@ -21,6 +21,7 @@ export class Numbro {
   static RoundingMode = RoundingMode;
   static BN = BigNumber.clone({
     ROUNDING_MODE: BigNumber.ROUND_DOWN,
+    STRICT: false,
   });
   bigNumber: BigNumber;
 

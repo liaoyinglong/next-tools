@@ -222,8 +222,8 @@ importers:
   packages/tools:
     dependencies:
       bignumber.js:
-        specifier: ^9.3.1
-        version: 9.3.1
+        specifier: ^11.1.5
+        version: 11.1.5
       es-toolkit:
         specifier: 'catalog:'
         version: 1.44.0
@@ -2410,8 +2410,8 @@ packages:
     resolution: {integrity: sha512-pbnl5XzGBdrFU/wT4jqmJVPn2B6UHPBOhzMQkY/SPUPB6QtUXtmBHBIwCbXJol93mOpGMnQyP/+BB19q04xj7g==}
     engines: {node: '>=4'}
 
-  bignumber.js@9.3.1:
-    resolution: {integrity: sha512-Ko0uX15oIUS7wJ3Rb30Fs6SkVbLmPBAKdlm7q9+ak9bbIeFf0MwuBsQV6z7+X768/cHsfg+WlysDWJcmthjsjQ==}
+  bignumber.js@11.1.5:
+    resolution: {integrity: sha512-6WmzCNtUnfKpbozq+hOgWaZMMzORmYBwF1xZScyoIX3QRYWeKTtxxwDOW5tIz7C9BdjkIYHGTcelCLkXg0mndw==}
 
   birpc@4.0.0:
     resolution: {integrity: sha512-LShSxJP0KTmd101b6DRyGBj57LZxSDYWKitQNW/mi8GRMvZb078Uf9+pveax1DrVL89vm7mWe+TovdI/UDOuPw==}
@@ -6106,7 +6106,7 @@ snapshots:
     dependencies:
       is-windows: 1.0.2
 
-  bignumber.js@9.3.1: {}
+  bignumber.js@11.1.5: {}
 
   birpc@4.0.0: {}
 

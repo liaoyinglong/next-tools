@@ -1,7 +1,13 @@
 import { readFileSync } from 'fs';
 import { readdir } from 'fs/promises';
 import { join } from 'path';
-import { PluginItem, parseAsync, transformFromAstAsync } from '@babel/core';
+import {
+  type PluginItem,
+  parseAsync,
+  transformFromAstAsync,
+} from '@babel/core';
+import syntaxJsx from '@babel/plugin-syntax-jsx';
+import syntaxTypeScript from '@babel/plugin-syntax-typescript';
 import { format } from 'oxfmt';
 import { expect, it } from 'vitest';
 
@@ -33,12 +39,12 @@ async function fixture(dir: string, plugin: PluginItem | PluginItem[]) {
     sourceType: 'module',
     plugins: [
       [
-        require.resolve('@babel/plugin-syntax-typescript'),
+        syntaxTypeScript,
         {
-          isTSX: true,
-          allExtensions: true,
+          disallowAmbiguousJSXLike: false,
         },
       ],
+      syntaxJsx,
     ],
   });
   const res = await transformFromAstAsync(ast!, code, {

@@ -7,7 +7,7 @@ export default defineConfig([
     sourcemap: true,
     tsconfig: './tsconfig.json',
     dts: true,
-    format: ['esm', 'cjs'],
+    format: 'esm',
     entry: {
       index: 'src/index.ts',
       createStore: 'src/createStore/index.ts',

@@ -8,7 +8,7 @@ import type {
   OptionalMemberExpression,
   VariableDeclarator,
 } from '@babel/types';
-import t from '@babel/types';
+import * as t from '@babel/types';
 import { handleSelectorArgument } from './shared';
 
 /**

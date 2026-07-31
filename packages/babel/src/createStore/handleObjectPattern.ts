@@ -1,7 +1,31 @@
 import type { NodePath } from '@babel/traverse';
 import type { VariableDeclarator } from '@babel/types';
-import t from '@babel/types';
+import * as t from '@babel/types';
 import { handleSelectorArgument } from './shared';
+
+function objectPatternToExpression(
+  pattern: t.ObjectPattern,
+  path: NodePath,
+): t.ObjectExpression {
+  return t.objectExpression(
+    pattern.properties.map((property) => {
+      if (t.isRestElement(property)) {
+        if (!t.isIdentifier(property.argument)) {
+          throw path.buildCodeFrameError(
+            'Rest element in object pattern must be a simple identifier',
+          );
+        }
+        return t.spreadElement(t.cloneDeepWithoutLoc(property.argument));
+      }
+
+      const cloned = t.cloneDeepWithoutLoc(property);
+      if (t.isObjectPattern(cloned.value)) {
+        cloned.value = objectPatternToExpression(cloned.value, path);
+      }
+      return cloned;
+    }),
+  );
+}
 
 /**
  * 处理 store.useSnapshot() 的变量声明
@@ -38,30 +62,13 @@ export function handleObjectPattern(path: NodePath<VariableDeclarator>) {
   }
 
   // 进入主流程
-  // 进入主流程
   const selectorName = path.scope.generateUidIdentifier('selector_');
 
   // 创建 selector 函数，使用相同的解构模式
   const selector = t.functionDeclaration(
     selectorName,
     [t.cloneDeepWithoutLoc(id)],
-    t.blockStatement([
-      t.returnStatement(
-        t.objectExpression(
-          id.properties.map((v) => {
-            if (t.isRestElement(v)) {
-              if (!t.isIdentifier(v.argument)) {
-                throw path.buildCodeFrameError(
-                  'Rest element in object pattern must be a simple identifier',
-                );
-              }
-              return t.spreadElement(t.cloneDeepWithoutLoc(v.argument));
-            }
-            return t.cloneDeepWithoutLoc(v);
-          }),
-        ),
-      ),
-    ]),
+    t.blockStatement([t.returnStatement(objectPatternToExpression(id, path))]),
   );
 
   // 将 selector 函数提升到组件外部，使其更持久化

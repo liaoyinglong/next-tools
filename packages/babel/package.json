@@ -13,13 +13,11 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.mjs"
     },
     "./createStore": {
       "types": "./dist/createStore.d.mts",
-      "import": "./dist/createStore.mjs",
-      "require": "./dist/createStore.cjs"
+      "import": "./dist/createStore.mjs"
     },
     "./package.json": "./package.json"
   },
@@ -36,19 +34,23 @@
     "test:u": "vitest -u"
   },
   "dependencies": {
-    "@babel/types": "^7.29.0"
+    "@babel/types": "^8.0.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.2",
-    "@babel/generator": "^7.25.0",
-    "@babel/parser": "^7.26.5",
-    "@babel/plugin-syntax-typescript": "^7.28.6",
-    "@babel/traverse": "^7.25.3",
-    "@types/babel__core": "^7.20.1",
-    "@types/babel__generator": "^7.6.8",
-    "@types/babel__traverse": "^7.20.6",
+    "@babel/core": "^8.0.1",
+    "@babel/generator": "^8.0.0",
+    "@babel/parser": "^8.0.4",
+    "@babel/plugin-syntax-jsx": "^8.0.1",
+    "@babel/plugin-syntax-typescript": "^8.0.3",
+    "@babel/traverse": "^8.0.4",
     "@types/debug": "catalog:",
     "oxfmt": "catalog:",
     "tsdown": "catalog:"
+  },
+  "peerDependencies": {
+    "@babel/core": "^8.0.0"
+  },
+  "engines": {
+    "node": "^22.18.0 || >=24.11.0"
   }
 }

@@ -1,5 +1,5 @@
 import type { CallExpression } from '@babel/types';
-import t from '@babel/types';
+import * as t from '@babel/types';
 
 /**
  * 检查 selector 参数的返回值类型

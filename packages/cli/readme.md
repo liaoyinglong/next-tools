@@ -44,7 +44,6 @@ Commands:
 import { defineConfig } from '@dune2/cli';
 
 export default defineConfig({
-  i18n: [],
   api: [],
 });
 ```
@@ -62,4 +61,3 @@ export default defineConfig({
 工具会在项目根目录查找 `dune.config.ts` 配置文件，支持：
 
 - API 配置：Swagger 文档路径、输出目录等
-- 国际化配置：多语言支持相关配置

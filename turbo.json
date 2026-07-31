@@ -13,6 +13,9 @@
         "source.config.ts"
       ]
     },
+    "@dune2/tools#build": {
+      "outputs": []
+    },
     "test": {
       "dependsOn": ["build"],
       "outputs": [],

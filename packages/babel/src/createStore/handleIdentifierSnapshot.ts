@@ -262,7 +262,7 @@ function findMemberExpression(path: NodePath): MemberExpressionResult {
   let accessKey = '';
 
   while (current?.parentPath) {
-    const parent = current.parentPath;
+    const parent: NodePath = current.parentPath;
     const node = parent.node;
 
     if (

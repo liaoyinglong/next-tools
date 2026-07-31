@@ -10,7 +10,9 @@ export default defineConfig({
       return true;
     },
   },
-  esbuild: {
-    jsx: 'automatic',
+  oxc: {
+    jsx: {
+      runtime: 'automatic',
+    },
   },
 });

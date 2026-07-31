@@ -1,4 +1,6 @@
 {
+  "js/ts.experimental.useTsgo": true,
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
   // oxc lint
   //"oxc.typeAware": true,
   //"oxc.unusedDisableDirectives": "deny",

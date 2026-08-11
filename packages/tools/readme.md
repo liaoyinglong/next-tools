@@ -104,3 +104,9 @@ TypeScript utility types for better type safety.
 ```typescript
 import type { OptionalKeys, Overwrite, Print } from '@dune2/tools/shared';
 ```
+
+## Agent Skill
+
+This repository includes an Agent Skills-compatible guide for `@dune2/tools` at [`.agents/skills/dune2-tools`](../../.agents/skills/dune2-tools). It teaches coding agents to prefer the library's existing request/cache, storage, store, factory, field-map, and number utilities instead of reimplementing them.
+
+Install or expose that skill in your coding agent's project/user skill directory when working in repositories that depend on `@dune2/tools`.

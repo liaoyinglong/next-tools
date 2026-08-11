@@ -107,6 +107,16 @@ import type { OptionalKeys, Overwrite, Print } from '@dune2/tools/shared';
 
 ## Agent Skill
 
-This repository includes an Agent Skills-compatible guide for `@dune2/tools` at [`.agents/skills/dune2-tools`](../../.agents/skills/dune2-tools). It teaches coding agents to prefer the library's existing request/cache, storage, store, factory, field-map, and number utilities instead of reimplementing them.
+A consumer-facing Agent Skill is published from [`skills/dune2-tools`](../../skills/dune2-tools). Install it in a project that uses `@dune2/tools` so supported coding agents can discover the library's less-obvious APIs and prefer them over reimplementing equivalent helpers.
 
-Install or expose that skill in your coding agent's project/user skill directory when working in repositories that depend on `@dune2/tools`.
+```bash
+npx skills add liaoyinglong/next-tools --skill dune2-tools
+```
+
+Install it globally if you want the skill available across consumer projects:
+
+```bash
+npx skills add liaoyinglong/next-tools --skill dune2-tools -g
+```
+
+The skill is for **users of `@dune2/tools`**, not for contributing to this repository.

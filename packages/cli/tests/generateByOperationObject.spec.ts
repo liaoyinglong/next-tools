@@ -577,6 +577,46 @@ describe('api 生成', function () {
     },
   );
 
+  it('ignores invalid scalar enum values on an array query schema', async () => {
+    const result = await generate(
+      {
+        tags: ['Search'],
+        summary: '按状态搜索',
+        operationId: 'searchByStatuses',
+        parameters: [
+          {
+            name: 'statuses',
+            in: 'query',
+            required: false,
+            schema: {
+              type: 'array',
+              enum: ['OPEN', 'IN_PROGRESS', 'CLOSED'],
+              items: {
+                type: 'string',
+                enum: ['OPEN', 'IN_PROGRESS', 'CLOSED'],
+              },
+            },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'OK',
+            content: {
+              'application/json': {
+                schema: { type: 'object' },
+              },
+            },
+          },
+        },
+      } as never,
+      'get',
+    );
+
+    expect(result).toContain(
+      'statuses?: (\"OPEN\" | \"IN_PROGRESS\" | \"CLOSED\")[]',
+    );
+  });
+
   it.each([
     [
       'missing application/json schema',

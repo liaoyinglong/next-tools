@@ -262,13 +262,13 @@ function buildRefContext(
   return context;
 }
 
-function stripDefaultKeywordDeep(value: unknown) {
+function normalizeSchemaForGenerationDeep(value: unknown) {
   if (!value || typeof value !== 'object') {
     return;
   }
 
   if (Array.isArray(value)) {
-    value.forEach((item) => stripDefaultKeywordDeep(item));
+    value.forEach((item) => normalizeSchemaForGenerationDeep(item));
     return;
   }
 
@@ -277,7 +277,20 @@ function stripDefaultKeywordDeep(value: unknown) {
     delete record.default;
   }
 
-  Object.values(record).forEach((item) => stripDefaultKeywordDeep(item));
+  // Some Swagger generators copy an item's string enum onto its array schema.
+  // JSON Schema requires enum values there to be arrays; keep only valid values.
+  if (record.type === 'array' && Array.isArray(record.enum)) {
+    const arrayEnum = record.enum.filter(Array.isArray);
+    if (arrayEnum.length > 0) {
+      record.enum = arrayEnum;
+    } else {
+      delete record.enum;
+    }
+  }
+
+  Object.values(record).forEach((item) =>
+    normalizeSchemaForGenerationDeep(item),
+  );
 }
 
 export async function generateApi() {
@@ -373,7 +386,7 @@ export async function generateApi() {
       parsed = await parser.bundle(bundleInput, dereferenceConfig);
       // default 值经常和 type 不一致（例如 integer + ""），
       // 生成前统一移除，避免输出错误的类型或文档。
-      stripDefaultKeywordDeep(parsed);
+      normalizeSchemaForGenerationDeep(parsed);
       log.info(
         '解析 %s 成功，耗时 %dms',
         apiConfig.swaggerJSONPath,
@@ -698,7 +711,7 @@ async function compileRequestParams(
       : requestBodySchema || parameterSchema;
 
   if (schemaObject) {
-    stripDefaultKeywordDeep(schemaObject);
+    normalizeSchemaForGenerationDeep(schemaObject);
   }
 
   const finalSchema = schemaObject
@@ -761,7 +774,7 @@ async function compileResponseParams(
     pickSuccessResponse(operationObject.responses),
   );
   if (schemaObject) {
-    stripDefaultKeywordDeep(schemaObject);
+    normalizeSchemaForGenerationDeep(schemaObject);
   }
 
   const finalSchema = schemaObject

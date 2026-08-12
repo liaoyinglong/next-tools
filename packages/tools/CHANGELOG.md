@@ -1,5 +1,11 @@
 # @dune2/tools
 
+## 1.3.5
+
+### Patch Changes
+
+- fd56ba5: Upgrade bignumber.js to 11.1.5 while preserving Numbro's handling of invalid inputs, and publish the es-toolkit production dependency range as ^1.50.0.
+
 ## 1.3.4
 
 ### Patch Changes

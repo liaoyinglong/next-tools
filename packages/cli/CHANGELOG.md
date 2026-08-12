@@ -1,5 +1,12 @@
 # @dune2/cli
 
+## 1.2.8
+
+### Patch Changes
+
+- da1f9db: Handle malformed scalar enums on array schemas when generating API request types.
+- 5f5cf9c: Remove the obsolete i18n entry from the public `dune init` configuration template and publish the es-toolkit production dependency range as ^1.50.0.
+
 ## 1.2.7
 
 ### Patch Changes

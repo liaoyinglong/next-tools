@@ -1,5 +1,11 @@
 # @dune2/babel
 
+## 2.0.0
+
+### Major Changes
+
+- 380bc26: Upgrade the Babel integration to Babel 8 and publish ESM-only entry points.
+
 ## 1.0.4
 
 ### Patch Changes

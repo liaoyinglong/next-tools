@@ -22,6 +22,16 @@ import { useIsomorphicLayoutEffect } from '@dune2/tools/shared';
 
 > 说明：当前版本 `@dune2/tools` 的根入口（`@dune2/tools`）不提供稳定的聚合导出，推荐始终使用子路径导入以避免打包/类型问题。
 
+## Agent Skill
+
+如果你使用 Coding Agent 开发依赖 `@dune2/tools` 的项目，可以安装项目提供的 consumer Agent Skill。它会帮助 Agent 主动发现库里已有但容易被忽略的 API，并按 `rq / storage / store / factory / numbro` 任务领域只加载相关参考内容。
+
+```bash
+npx skills add liaoyinglong/next-tools --skill dune2-tools
+```
+
+详见：[Agent Skill](./agent-skill)
+
 ## 能力清单
 
 ### Factory（React 组件/Props 工具）

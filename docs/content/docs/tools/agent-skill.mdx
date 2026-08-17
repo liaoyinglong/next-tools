@@ -1,0 +1,117 @@
+---
+title: Agent Skill
+description: '为使用 @dune2/tools 的项目安装 Agent Skill，让 Coding Agent 更容易发现并复用库中已有的 API'
+---
+
+# Agent Skill
+
+`@dune2/tools` 提供一个面向**使用者项目**的 Agent Skill，用来帮助 Coding Agent 更准确地发现和复用库中已有的能力，而不是在业务项目里重复实现相同的抽象。
+
+这个 Skill 是给安装了 `@dune2/tools` 的应用使用的，**不是用于指导 Agent 开发 `next-tools` 仓库本身**。
+
+## 为什么需要 Skill
+
+只依赖 TypeScript 类型和普通文档时，Coding Agent 往往能发现最显眼的 API，但容易漏掉一些已经存在、却不一定会主动搜索到的能力，例如：
+
+- `RequestBuilder` 的缓存操作、`reqFields` / `resFields`、`createApi`
+- `createStorage` 自带的 `useValue()`、`subscribe()` 与跨标签页同步
+- `createStore.useShallowSnapshot()` 与 `snapshot()`
+- `createStateContext`、`mapProps`、`fieldsMap`
+- `numbro` 的精确计算和统一格式化能力
+
+没有这些上下文时，Agent 可能会重新写一套原生 TanStack Query、storage hook、Valtio/Context 封装、字段字符串或数字格式化逻辑。
+
+Skill 的目标就是在 Agent 开始实现之前，先提醒它：**检查 `@dune2/tools` 是否已经提供了对应能力。**
+
+## 安装
+
+在使用 `@dune2/tools` 的项目中安装：
+
+```bash
+npx skills add liaoyinglong/next-tools --skill dune2-tools
+```
+
+如果希望在多个项目中都可用，可以全局安装：
+
+```bash
+npx skills add liaoyinglong/next-tools --skill dune2-tools -g
+```
+
+安装完成后，支持 Agent Skills 的 Coding Agent 可以在匹配任务中加载这个 Skill。
+
+## Skill 如何组织
+
+Skill 的入口只负责能力选择和路由，详细 API 指南按任务领域拆分：
+
+```text
+skills/dune2-tools/
+├── SKILL.md
+└── references/
+    ├── rq.md
+    ├── storage.md
+    ├── store.md
+    ├── factory.md
+    └── numbro.md
+```
+
+Agent 应该只读取当前任务需要的 reference，而不是一次加载全部内容。
+
+| 任务 | 加载的 reference |
+| --- | --- |
+| API 请求、TanStack Query、缓存、生成 API | `rq.md` |
+| localStorage、sessionStorage、cookie | `storage.md` |
+| Valtio 状态管理 | `store.md` |
+| Context、props 适配、字段名工具 | `factory.md` |
+| 金额、汇率、精确计算、数字格式化 | `numbro.md` |
+
+这样可以减少与当前任务无关的上下文。例如，Agent 只是在处理金额格式化时，不需要同时读取 `RequestBuilder` 或 storage 的完整说明。
+
+## Agent 会优先考虑什么
+
+Skill 会引导 Agent 在 consumer project 中优先复用以下能力：
+
+- HTTP API：`RequestBuilder`
+- 非标准 HTTP 的异步调用但仍需要 Query 状态/缓存：`createApi`
+- 命令式请求：优先使用已有 API 的 `request(...)`
+- Query 缓存：使用对应 `RequestBuilder` 的 `prefetchQuery` / `fetchQuery` / `ensureQueryData` / `invalidateQuery` 等方法
+- 浏览器存储：`createStorage`
+- Cookie：`createCookieStorage`
+- 应用状态：`createStore`
+- 局部 React Context：`createStateContext`
+- Props 适配：`mapProps`
+- 类型安全字段名：`fieldsMap`、`reqFields`、`resFields`
+- 精确小数与格式化：`numbro`
+
+同时，Skill 会提醒 Agent 遵循项目已有的 request client、QueryClient、storage namespace、store 和生成 API 约定，而不是建立一套平行基础设施。
+
+## 关于 `requestWithConfig`
+
+`requestWithConfig(...)` 是一个特殊场景下的 escape hatch，**不建议作为普通 API 的默认调用方式**。
+
+常规请求优先使用：
+
+```ts
+await api.request(params);
+```
+
+只有当一个 endpoint 确实需要分别控制 query/body，或者必须传入特殊的 per-call request config，而 `request(...)` 无法自然表达时，再考虑 `requestWithConfig(...)`。
+
+## 推荐使用方式
+
+在 consumer project 中，Agent 处理一个需求时应该遵循类似下面的顺序：
+
+1. 确认项目已经依赖 `@dune2/tools`。
+2. 搜索项目中现有的 `@dune2/tools/*` 使用方式和生成 API。
+3. 根据任务类型只加载对应 reference。
+4. 优先使用已有 primitive，而不是重新实现相同功能。
+5. 保持项目已有的 request、cache、storage 和 state conventions。
+6. 只有库中确实没有对应能力时，才补充最小的本地实现。
+
+## 相关文档
+
+- [Tools 总览](./)
+- [RequestBuilder](./request-builder)
+- [createApi](./create-api)
+- [createStorage](./create-storage)
+- [Store](./store)
+- [Numbro](./numbro)

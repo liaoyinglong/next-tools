@@ -9,3 +9,5 @@
 - `getConfig` 在配置文件存在但加载失败（如语法错误）时直接抛出，而不是被吞掉后返回空配置；`normalizeConfig` 不再原地修改传入对象
 - 顶层 CLI 异常现在会打印错误并以退出码 1 结束
 - `generateApi` 限制并发为 10，兼容 requestBody 仅含 `multipart/form-data` 等 content 的接口
+- 远程 swagger 文档的自行 fetch 现在遵循 `dereferenceSwaggerConfig.resolve.http.timeout`（默认 30s）超时
+- `generateApi` 命令按职责拆分为 parseSwagger / requestCode / typeCompiler / formatter 等模块，`generateApiRequestCode` 与 `asyncLocalStorage` 的导出保持不变

@@ -46,9 +46,9 @@ cli.help();
     // You only need `await` when your command action returns a Promise
     await cli.runMatchedCommand();
   } catch (error) {
-    // Handle error here..
-    // e.g.
-    // console.error(error.stack)
-    // process.exit(1)
+    console.error(
+      error instanceof Error ? (error.stack ?? error.message) : error,
+    );
+    process.exit(1);
   }
 })();

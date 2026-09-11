@@ -1,22 +1,20 @@
-import path from 'path';
 import { ApiConfig, Config } from './types';
 export function normalizeConfig(config: Config): Config {
-  config.cwd ??= process.cwd();
-  config.cacheDir ??= path.join(config.cwd, 'node_modules/.cache/dune-cli');
+  const next: Config = { ...config };
 
   //#region api 配置标准化
-  config.api ??= [];
-  config.api = config.api.map(apiConfigNormalizer);
+  next.api = (next.api ?? []).map(apiConfigNormalizer);
   //#endregion
-  return config;
+  return next;
 }
-export function apiConfigNormalizer(item: ApiConfig) {
-  item.output ??= './src/apis';
-  item.RequestBuilderImportPath ??= `import { RequestBuilder } from '@dune2/tools/rq';`;
-  item.enableTs ??= true;
-  item.enabled ??= true;
-  item.codeFormatterCmd ??= 'oxfmt';
-  item.responseSchemaTransformer ??= (schema) =>
+export function apiConfigNormalizer(item: ApiConfig): ApiConfig {
+  const next: ApiConfig = { ...item };
+  next.output ??= './src/apis';
+  next.RequestBuilderImportPath ??= `import { RequestBuilder } from '@dune2/tools/rq';`;
+  next.enableTs ??= true;
+  next.enabled ??= true;
+  next.codeFormatterCmd ??= 'oxfmt';
+  next.responseSchemaTransformer ??= (schema) =>
     schema.properties?.data ?? schema;
-  return item;
+  return next;
 }

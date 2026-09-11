@@ -32,6 +32,9 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Release
+        # NODE_AUTH_TOKEN 为空是刻意的：发布走 npm trusted publishing（OIDC）。
+        # 依赖 workflow 级 `id-token: write` 权限和 setup-node 提供的
+        # npm >= 11.5（含 Node 24 自带版本）。不要在此处填入静态 token。
         run: NODE_AUTH_TOKEN="" pnpm run release
 
       - name: Commit and push tags

@@ -1,0 +1,11 @@
+---
+'@dune2/cli': major
+---
+
+清理未文档化的内部导出与遗留配置，收紧错误处理：
+
+- 移除主入口的 `letters`、`defaultJsonSorter` re-export（i18n 功能残留，无内部使用）
+- 移除 `Config.cacheDir` 字段（从未被使用）
+- `getConfig` 在配置文件存在但加载失败（如语法错误）时直接抛出，而不是被吞掉后返回空配置；`normalizeConfig` 不再原地修改传入对象
+- 顶层 CLI 异常现在会打印错误并以退出码 1 结束
+- `generateApi` 限制并发为 10，兼容 requestBody 仅含 `multipart/form-data` 等 content 的接口

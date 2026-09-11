@@ -8,8 +8,8 @@
     "dev": "vite dev",
     "build": "vite build",
     "start": "vite preview",
-    "test": "vitest",
-    "test:u": "vitest -u"
+    "test": "vitest run --passWithNoTests",
+    "test:u": "vitest -u --passWithNoTests"
   },
   "dependencies": {
     "@dune2/tools": "workspace:*",

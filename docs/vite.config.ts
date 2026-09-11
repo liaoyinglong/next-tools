@@ -22,7 +22,6 @@ export default defineConfig({
     react(),
   ],
   resolve: {
-    tsconfigPaths: true,
     alias: {
       tslib: 'tslib/tslib.es6.js',
     },

@@ -1,1 +1,1 @@
-export {};
+export { createStorePlugin } from './createStore';

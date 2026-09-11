@@ -31,9 +31,11 @@
     "test:u": "vitest -u"
   },
   "dependencies": {
-    "@ast-grep/napi": "^0.44.1"
+    "@ast-grep/napi": "^0.44.1",
+    "magic-string": "^0.30.17"
   },
   "devDependencies": {
+    "@dune2/test-utils": "workspace:*",
     "oxfmt": "catalog:",
     "tsdown": "catalog:",
     "vite": "catalog:"

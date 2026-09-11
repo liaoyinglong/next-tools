@@ -1,0 +1,13 @@
+{
+  "name": "@dune2/test-utils",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.35.0",
+    "vitest": "4.0.15"
+  }
+}

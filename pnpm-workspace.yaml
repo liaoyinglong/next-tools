@@ -2,11 +2,10 @@ packages:
   - 'packages/*'
   - 'example/*'
   - 'docs'
-onlyBuiltDependencies:
-  - lefthook
-  - sharp
-ignoredBuiltDependencies:
-  - esbuild
+allowBuilds:
+  esbuild: false
+  lefthook: true
+  sharp: true
 catalog:
   '@types/debug': ^4.1.7
   '@types/node': ^25

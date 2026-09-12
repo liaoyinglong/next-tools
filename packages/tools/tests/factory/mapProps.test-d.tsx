@@ -11,7 +11,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-function App(props: PropsWithChildren<Props>) {
+function App(_props: PropsWithChildren<Props>) {
   return null;
 }
 

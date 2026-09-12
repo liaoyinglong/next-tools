@@ -13,8 +13,7 @@ type OperationParams =
   | undefined
   | null
   | boolean
-  | bigint
-  | BigInt;
+  | bigint;
 
 export class Numbro {
   static rawBigNumber = BigNumber;

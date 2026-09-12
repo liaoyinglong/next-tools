@@ -103,8 +103,8 @@ export async function compileRequestParams(
             ]),
           ],
           properties: {
-            ...(requestBodySchema.properties || {}),
-            ...(parameterSchema.properties || {}),
+            ...requestBodySchema.properties,
+            ...parameterSchema.properties,
           },
         } satisfies OpenAPIV3.SchemaObject)
       : requestBodySchema || parameterSchema;

@@ -17,7 +17,6 @@ class DataMap {
   name = '';
   age = '0';
 }
-type A = typeof DataMap;
 
 const namespace = 'test';
 const storage = createCookieStorage({

@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+<<<<<<< HEAD
     "target": "ES2015",
     "sourceMap": true,
     "declaration": true,
@@ -8,8 +9,12 @@
     "noEmit": true,
     "moduleResolution": "bundler",
     "strictNullChecks": true,
+=======
+    "strict": true,
+    "types": ["node"],
+>>>>>>> 09ead9a (chore(ts): adopt TypeScript 7 and cover every file with a tsconfig)
     "stripInternal": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*", "tests/**/*", "tsdown.config.ts"],
+  "exclude": ["node_modules", "tests/**/fixtures"]
 }

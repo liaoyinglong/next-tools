@@ -14,6 +14,6 @@
 >>>>>>> 626043b (feat(ts): enable strict mode for cli, babel, vite packages)
     "stripInternal": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*", "tests/**/*", "tsdown.config.ts"],
+  "exclude": ["node_modules", "tests/**/fixtures"]
 }

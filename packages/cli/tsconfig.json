@@ -14,9 +14,10 @@
     "types": ["node"]
 =======
     "strict": true,
+    "types": ["node"],
     "stripInternal": true
 >>>>>>> 626043b (feat(ts): enable strict mode for cli, babel, vite packages)
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*", "tests/**/*", "tsdown.config.ts"],
+  "exclude": ["node_modules", "tests/**/fixtures"]
 }

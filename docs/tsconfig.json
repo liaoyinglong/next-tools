@@ -15,5 +15,10 @@
       "@/*": ["./src/*"],
       "collections/*": ["./.source/*"]
     }
+<<<<<<< HEAD
   }
+=======
+  },
+  "include": ["**/*.ts", "**/*.tsx", "content/**/*.js"]
+>>>>>>> 09ead9a (chore(ts): adopt TypeScript 7 and cover every file with a tsconfig)
 }

@@ -617,7 +617,7 @@ describe('api 生成', function () {
     );
 
     expect(result).toContain(
-      'statuses?: (\"OPEN\" | \"IN_PROGRESS\" | \"CLOSED\")[]',
+      'statuses?: ("OPEN" | "IN_PROGRESS" | "CLOSED")[]',
     );
   });
 

@@ -68,7 +68,7 @@ export async function parseSwagger(
   );
   const parser = new SwaggerParser();
 
-  const isRemoteUrl = /^https?:///.test(apiConfig.swaggerJSONPath);
+  const isRemoteUrl = /^https?:\/\//.test(apiConfig.swaggerJSONPath);
   const bundleInput = isRemoteUrl
     ? await fetchRemoteDocument(apiConfig.swaggerJSONPath, dereferenceConfig)
     : apiConfig.swaggerJSONPath;
@@ -77,7 +77,11 @@ export async function parseSwagger(
   // 生成前统一移除，避免输出错误的类型或文档。
   normalizeSchemaForGenerationDeep(parsed);
 
-  log.info('解析 %s 成功，耗时 %dms', apiConfig.swaggerJSONPath, Date.now() - startedAt);
+  log.info(
+    '解析 %s 成功，耗时 %dms',
+    apiConfig.swaggerJSONPath,
+    Date.now() - startedAt,
+  );
   return {
     parsed: parsed as OpenAPIV3.Document,
     parser,

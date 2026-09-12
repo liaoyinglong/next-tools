@@ -11,6 +11,6 @@
     "strict": true,
     "stripInternal": true
   },
-  "include": ["src/**/*", "tests/**/*", "tsdown.config.ts"],
-  "exclude": ["node_modules", "tests/**/fixtures"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

@@ -41,6 +41,8 @@ export function resolveOutputDir(cwd: string, output: string) {
 }
 
 function sanitizeOutputSegment(segment: string) {
+  // 文件名清洗需要匹配控制字符范围，属刻意用法
+  // oxlint-disable-next-line no-control-regex
   const sanitized = segment.replace(/[<>:"\\|?*\u0000-\u001F]/g, '_');
   return sanitized === '.' || sanitized === '..' || sanitized.length === 0
     ? '_'

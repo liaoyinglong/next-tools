@@ -1,14 +1,22 @@
+import { EventEmitter } from 'node:events';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { execMock } = vi.hoisted(() => ({ execMock: vi.fn() }));
+const { spawnMock } = vi.hoisted(() => ({ spawnMock: vi.fn() }));
 
 vi.mock('node:child_process', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node:child_process')>();
-  return { ...actual, exec: execMock };
+  return { ...actual, spawn: spawnMock };
 });
+
+// formatter 通过 spawn 运行，返回一个会发出 exit 事件的伪子进程
+const makeChild = (code: number, signal: string | null = null) => {
+  const child = new EventEmitter();
+  queueMicrotask(() => child.emit('exit', code, signal));
+  return child;
+};
 
 vi.mock('../src/shared/config', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../src/shared/config')>();
@@ -241,13 +249,11 @@ describe('runCodeFormatter', () => {
     config.codeFormatterCmd = undefined;
 
     await expect(runCodeFormatter(config)).resolves.toBe(true);
-    expect(execMock).not.toHaveBeenCalled();
+    expect(spawnMock).not.toHaveBeenCalled();
   });
 
   it('resolves true when the configured command succeeds', async () => {
-    execMock.mockImplementation((_cmd: string, cb: (e: null) => void) =>
-      cb(null),
-    );
+    spawnMock.mockImplementation(() => makeChild(0));
 
     const output = path.join(tmpDir, 'apis');
     const config = apiConfigNormalizer({
@@ -257,21 +263,36 @@ describe('runCodeFormatter', () => {
     });
 
     await expect(runCodeFormatter(config)).resolves.toBe(true);
-    expect(execMock).toHaveBeenCalledWith(
-      `fake-fmt "${output}"`,
-      expect.any(Function),
+    expect(spawnMock).toHaveBeenCalledWith(
+      'fake-fmt',
+      [output],
+      expect.objectContaining({ shell: false }),
     );
   });
 
   it('resolves false when the configured command fails', async () => {
-    execMock.mockImplementation((_cmd: string, cb: (e: Error) => void) =>
-      cb(new Error('boom')),
-    );
+    spawnMock.mockImplementation(() => makeChild(1));
 
     const config = apiConfigNormalizer({
       swaggerJSONPath: 'x.json',
       output: path.join(tmpDir, 'apis'),
       codeFormatterCmd: 'fake-fmt',
+    });
+
+    await expect(runCodeFormatter(config)).resolves.toBe(false);
+  });
+
+  it('resolves false when the configured command cannot be spawned', async () => {
+    spawnMock.mockImplementation(() => {
+      const child = new EventEmitter();
+      queueMicrotask(() => child.emit('error', new Error('ENOENT')));
+      return child;
+    });
+
+    const config = apiConfigNormalizer({
+      swaggerJSONPath: 'x.json',
+      output: path.join(tmpDir, 'apis'),
+      codeFormatterCmd: 'missing-fmt',
     });
 
     await expect(runCodeFormatter(config)).resolves.toBe(false);
@@ -293,11 +314,13 @@ describe('generateApi', () => {
       output,
       codeFormatterCmd: 'fake-fmt',
     });
-    vi.mocked(getConfig).mockResolvedValue({ api: [config] });
+    // 输出目录必须位于 config.cwd 内（resolveOutputDir 的包含性检查）
+    vi.mocked(getConfig).mockResolvedValue({
+      api: [config],
+      cwd: tmpDir,
+    } as never);
     vi.mocked(promptApiConfigEnable).mockResolvedValue([config]);
-    execMock.mockImplementation((_cmd: string, cb: (e: null) => void) =>
-      cb(null),
-    );
+    spawnMock.mockImplementation(() => makeChild(0));
 
     await generateApi();
 
@@ -305,7 +328,8 @@ describe('generateApi', () => {
     await expect(
       fs.access(path.join(output, 'users_search', 'get.ts')),
     ).resolves.toBeUndefined();
-    expect(execMock).toHaveBeenCalledTimes(1);
-    expect(execMock.mock.calls[0][0]).toBe(`fake-fmt "${output}"`);
+    expect(spawnMock).toHaveBeenCalledTimes(1);
+    expect(spawnMock.mock.calls[0][0]).toBe('fake-fmt');
+    expect(spawnMock.mock.calls[0][1]).toEqual([output]);
   });
 });

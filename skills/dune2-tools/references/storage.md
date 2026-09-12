@@ -49,7 +49,9 @@ function ThemeButton() {
   const theme = storage.theme.useValue();
 
   return (
-    <button onClick={() => storage.theme.set(theme === 'light' ? 'dark' : 'light')}>
+    <button
+      onClick={() => storage.theme.set(theme === 'light' ? 'dark' : 'light')}
+    >
       {theme}
     </button>
   );

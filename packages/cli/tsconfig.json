@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-<<<<<<< HEAD
     "target": "ES2015",
     "sourceMap": true,
     "declaration": true,
@@ -9,14 +8,10 @@
     "noEmit": true,
     "moduleResolution": "bundler",
     "strictNullChecks": true,
+    "strict": true,
     "stripInternal": true,
     "lib": ["es2017"],
     "types": ["node"]
-=======
-    "strict": true,
-    "types": ["node"],
-    "stripInternal": true
->>>>>>> 626043b (feat(ts): enable strict mode for cli, babel, vite packages)
   },
   "include": ["src/**/*", "tests/**/*", "tsdown.config.ts"],
   "exclude": ["node_modules", "tests/**/fixtures"]

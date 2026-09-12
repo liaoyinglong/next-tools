@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-<<<<<<< HEAD
     "target": "ES2020",
     "sourceMap": true,
     "declaration": true,
@@ -9,9 +8,7 @@
     "noEmit": true,
     "moduleResolution": "bundler",
     "strictNullChecks": true,
-=======
     "strict": true,
->>>>>>> 626043b (feat(ts): enable strict mode for cli, babel, vite packages)
     "stripInternal": true
   },
   "include": ["src/**/*", "tests/**/*", "tsdown.config.ts"],

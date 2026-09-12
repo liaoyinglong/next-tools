@@ -38,11 +38,8 @@ pnpm run test
 - `pnpm run build` - Build all @dune2/\* packages
 - `pnpm run build:docs` - Build the docs workspace
 - `pnpm run test` - Run tests for all @dune2/\* packages
-<<<<<<< HEAD
 - `pnpm run test:docs` - Run docs workspace tests
-=======
 - `pnpm run check:exports` - Check every package's exports map and type declarations (publint + attw)
->>>>>>> 2864ade (feat(example): add a runnable Next.js app for tools store/storage/rq)
 - `pnpm run release` - Run tests and publish new versions
 
 ## Examples

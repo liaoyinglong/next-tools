@@ -23,131 +23,28 @@ import type {
   PageData,
   QueryClientBasic,
   RequestBuilderOptions,
-  RequestConfig,
   UseSuspenseQueryOptions,
   UseQueryOptions,
 } from './options';
+import { RequestBuilderBase } from './RequestBuilder.base';
 
-export class RequestBuilder<Req = any, Res = any> {
-  constructor(public options: RequestBuilderOptions<Req, Res>) {
+export class RequestBuilder<Req = any, Res = any> extends RequestBuilderBase<
+  Req,
+  Res
+> {
+  constructor(options: RequestBuilderOptions<Req, Res>) {
+    super(options);
     this.defaultQueryFn = this.defaultQueryFn.bind(this);
-    this.request = this.request.bind(this);
-    this.requestWithConfig = this.requestWithConfig.bind(this);
-    this.options.method ??= 'get';
   }
 
-  //#region default requestFn
-  static requestFn: Basic['requestFn'] | null = null;
-  static setRequestFn(requestFn: Basic['requestFn'] | null) {
-    RequestBuilder.requestFn = requestFn;
-  }
-  //#endregion
-
+  /**
+   * 正常入口默认使用包内共享的 queryClient
+   * （react-server 入口保持基类的 null，需要显式注入）
+   */
   static queryClientFactory: (() => QueryClient) | null = () => queryClient;
-  static setQueryClientFactory(factory: (() => QueryClient) | null) {
-    RequestBuilder.queryClientFactory = factory;
-  }
-
-  /**
-   * 确保 queryClient 的存在
-   * 会依次从以下地方获取
-   * - options
-   * - 当前实例 options
-   * - RequestBuilder.queryClientFactory()
-   */
-  ensureQueryClient(options?: { queryClient?: QueryClient }) {
-    const queryClient =
-      options?.queryClient ??
-      this.options.queryClient ??
-      RequestBuilder.queryClientFactory?.();
-    if (!queryClient) {
-      throw new Error('queryClient is not defined');
-    }
-    return queryClient;
-  }
-
-  /**
-   * 针对 meta 做一些处理 返回值可以直接传给 rq 的 meta
-   */
-  private normalizeMeta(option?: Basic) {
-    return {
-      ...this.options.meta,
-      ...option?.meta,
-      requestFn: option?.requestFn,
-    };
-  }
-
-  /**
-   * 包装好的请求函数
-   * useQuery、useMutation 内部会调用这个
-   * 另外也可以直接调用这个函数来发送请求
-   * @param params 请求参数 默认会根据请求方法来放到 url 上或者 body 里
-   * @param config 请求的配置，一般不需要传，内部用
-   */
-  request<P extends Req, T = Res>(params?: P, config?: RequestConfig) {
-    const method = this.options.method!;
-    let data;
-    // 根据请求方法来放到 url 上或者 body 里
-    if (!['get', 'head', 'options'].includes(method)) {
-      data = params;
-      params = undefined;
-    }
-    return this.requestWithConfig<T>({
-      meta: this.options.meta,
-      ...config,
-      data,
-      params,
-    });
-  }
-
-  /**
-   * 常规情况下使用 request 方法就可以了
-   * 特殊情况，如：url 上有 query 参数，又需要传 body 参数
-   */
-  requestWithConfig<T = Res>(config: RequestConfig) {
-    const method = this.options.method!;
-    let { url } = this.options;
-    // 优先使用传入的 requestFn
-    // 其次使用实例化时候的 requestFn
-    let requestFn =
-      config.requestFn ?? this.options.requestFn ?? RequestBuilder.requestFn;
-    if (!requestFn) {
-      throw new Error('request function is not defined');
-    }
-    this.options.urlPathParams?.forEach((param) => {
-      let t = '';
-      //#region config.params || config.data 在 queryHash 之后不变的话，会保持同一个引用，这里需要做个浅拷贝，将引用打破
-      if (config.params?.[param]) {
-        config.params = { ...config.params };
-        t = config.params[param];
-        delete config.params[param];
-      } else if (config.data?.[param]) {
-        config.data = { ...config.data };
-        t = config.data[param];
-        delete config.data[param];
-      }
-      //#endregion
-      url = url.replace(`{${param}}`, t);
-    });
-    return requestFn<T>({
-      url,
-      method,
-      ...config,
-    });
-  }
 
   //#region query
 
-  /**
-   * 获取 queryKey
-   * 通常配置 react-query 的 queryKey
-   */
-  getQueryKey(params?: Req) {
-    if (typeof params === 'undefined') {
-      return [this.options.url, this.options.method];
-    }
-    return [this.options.url, this.options.method!, params] as const;
-  }
   async defaultQueryFn<T = Res>(ctx: QueryFunctionContext): Promise<T> {
     const queryKey = ctx.queryKey as [url: string, method: string, Req];
 

@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+<<<<<<< HEAD
     "target": "ES2015",
     "sourceMap": true,
     "declaration": true,
@@ -11,6 +12,10 @@
     "stripInternal": true,
     "lib": ["es2017"],
     "types": ["node"]
+=======
+    "strict": true,
+    "stripInternal": true
+>>>>>>> 626043b (feat(ts): enable strict mode for cli, babel, vite packages)
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

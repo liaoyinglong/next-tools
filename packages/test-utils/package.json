@@ -7,7 +7,7 @@
     ".": "./src/index.ts"
   },
   "devDependencies": {
-    "oxfmt": "^0.35.0",
-    "vitest": "4.0.15"
+    "oxfmt": "catalog:",
+    "vitest": "catalog:"
   }
 }

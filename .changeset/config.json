@@ -7,5 +7,10 @@
   "access": "public",
   "baseBranch": "develop",
   "updateInternalDependencies": "patch",
-  "ignore": ["next-tools-app"]
+  "ignore": ["next-tools-app"],
+  "format": "oxfmt",
+  "privatePackages": {
+    "version": true,
+    "tag": false
+  }
 }

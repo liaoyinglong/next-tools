@@ -7,7 +7,7 @@ const common: UserConfig = {
   tsconfig: './tsconfig.json',
   format: ['esm'],
   dts: true,
-  inlineOnly: false,
+  deps: { onlyBundle: false },
   checks: {
     pluginTimings: false,
   },

@@ -12,12 +12,12 @@ catalog:
   '@types/react': ^19.2.13
   '@types/react-dom': ^19.2.3
   es-toolkit: ^1.50.0
-  oxfmt: ^0.61.0
+  oxfmt: ^0.67.0
   react: ^19.2.8
   react-dom: ^19.2.8
-  tsdown: ^0.22.14
+  tsdown: ^0.23.0
   typescript: ^7.0.2
   vite: ^8.2.0
-  vitest: 4.1.10
+  vitest: 5.0.0
 minimumReleaseAgeExclude:
   - '@next/swc-win32-x64-msvc@16.3.5'

@@ -36,8 +36,8 @@
     "test:u": "vitest -u"
   },
   "dependencies": {
-    "@ast-grep/napi": "^0.44.1",
-    "magic-string": "^0.30.17"
+    "@ast-grep/napi": "^0.45.0",
+    "magic-string": "^1.3.1"
   },
   "devDependencies": {
     "@dune2/test-utils": "workspace:*",

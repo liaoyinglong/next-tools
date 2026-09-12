@@ -37,6 +37,10 @@ export function applyRules(
 ): void {
   const claimed: Array<[number, number]> = [];
   for (const { pattern, replace } of rules) {
+    // 这里刻意用字符串 matcher：@ast-grep/napi (0.40.5) 没有暴露预编译好的
+    // pattern 句柄 —— pattern(lang, src) 只返回 { rule, language } 包装对象，
+    // findAll 也不接受 SgNode 作为 matcher，实测与直接传字符串同速（native 侧
+    // 每次调用都会编译一次）。所以别再包一层"预编译"，它不会省下任何工作。
     for (const node of root.findAll(pattern)) {
       const { start, end } = node.range();
       if (claimed.some(([s, e]) => start.index < e && end.index > s)) continue;

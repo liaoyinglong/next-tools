@@ -203,6 +203,24 @@ describe('@dune2/vite plugin', () => {
     });
   });
 
+  it('transforms JSX-bearing .tsx through the Tsx grammar', async () => {
+    await expectFixture({
+      caseName: 'jsx-server',
+      id: '/abs/path/view.tsx',
+      inputFile: 'input.tsx',
+      expectedFile: 'output.tsx',
+    });
+  });
+
+  it('transforms JSX-bearing .js through the JavaScript grammar', async () => {
+    await expectFixture({
+      caseName: 'jsx-server',
+      id: '/abs/path/view.js',
+      inputFile: 'input.tsx',
+      expectedFile: 'output.tsx',
+    });
+  });
+
   it('supports environment resolver for different consumers', async () => {
     const options: Dune2ViteOptionsFactory = (environment) => {
       return { consumer: environment.config.consumer };

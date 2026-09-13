@@ -413,6 +413,9 @@ importers:
 
   packages/test-utils:
     devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.9.6
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0

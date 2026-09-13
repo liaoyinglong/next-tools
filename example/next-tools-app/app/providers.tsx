@@ -24,7 +24,8 @@ RequestBuilder.setRequestFn(async ({ url, method, params, data, signal }) => {
 });
 
 export function Providers({ children }: { children: ReactNode }) {
-  // 每个浏览器会话一个 QueryClient，避免请求之间串数据
+  // 不能用模块级单例：'use client' 组件也会 SSR，模块级 client 会被所有请求共享；
+  // 惰性初始化则避免每次 render 重建
   const [queryClient] = useState(() => new QueryClient());
 
   return (

@@ -22,8 +22,8 @@ export default defineConfig({
     react(),
   ],
   resolve: {
-    // dev 走 vite 的 resolver（默认 false），build 走 rolldown 会自带解析 tsconfig paths，
-    // 不开启的话 `@/*`、`collections/*` 在 dev 里解析不了
+    // dev 的 resolver 默认不读 tsconfig paths，`@/*`、`collections/*` 靠它才解析得到；
+    // build 走 rolldown 自带解析
     tsconfigPaths: true,
     alias: {
       tslib: 'tslib/tslib.es6.js',

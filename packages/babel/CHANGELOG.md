@@ -1,5 +1,17 @@
 # @dune2/babel
 
+## 2.1.0
+
+### Minor Changes
+
+- acbe3cc: - 修复 `.` 导出指向不存在的 `dist/index.d.ts` / `dist/index.js`，现在指向真实产物并 re-export `createStorePlugin`
+  - 为 CJS 消费者补充 `dist/*.d.cts` 类型条件
+  - 抽取两个 snapshot handler 中重复的 selector 提升与改写逻辑到 `shared.ts`，行为不变
+
+### Patch Changes
+
+- acbe3cc: 升级构建与运行时依赖：changesets 3、oxfmt 0.67、vitest 5、tsdown 0.23（`inlineOnly` 迁移为 `deps.onlyBundle`）、swagger-parser 13、@ast-grep/napi 0.45、magic-string 1、publint 0.3.24、@types/js-cookie 3.0.6。@dune2/cli 同时从 Babel 系类型生成器切换到 @fumari/json-schema-ts 的输出（数组 Items 描述会出现在文档注释中）。
+
 ## 2.0.0
 
 ### Major Changes

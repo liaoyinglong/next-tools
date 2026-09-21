@@ -1,5 +1,17 @@
 # @dune2/tools
 
+## 1.4.0
+
+### Minor Changes
+
+- acbe3cc: 补充包元数据：声明 `react` peerDependencies（`^18 || ^19`）与 `sideEffects: false`，完善 description/keywords。运行时代码无变化。
+
+  内部调整：`RequestBuilder` 的普通入口与 react-server 入口改为共享 `RequestBuilderBase`（请求构造、url 参数替换、queryKey 生成只有一份实现），对外 API 与运行时行为不变。
+
+### Patch Changes
+
+- acbe3cc: 升级构建与运行时依赖：changesets 3、oxfmt 0.67、vitest 5、tsdown 0.23（`inlineOnly` 迁移为 `deps.onlyBundle`）、swagger-parser 13、@ast-grep/napi 0.45、magic-string 1、publint 0.3.24、@types/js-cookie 3.0.6。@dune2/cli 同时从 Babel 系类型生成器切换到 @fumari/json-schema-ts 的输出（数组 Items 描述会出现在文档注释中）。
+
 ## 1.3.5
 
 ### Patch Changes

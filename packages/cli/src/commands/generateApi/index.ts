@@ -1,5 +1,4 @@
 import fs from 'node:fs/promises';
-import * as os from 'os';
 import path from 'path';
 import type { OpenAPIV3 } from 'openapi-types';
 import pMap from 'p-map';
@@ -14,17 +13,10 @@ import { generateApiRequestCode } from './requestCode';
 const log = createLogger('generateApi');
 
 const HTTP_METHODS = ['get', 'put', 'post', 'delete', 'patch'] as const;
+const CODEGEN_CONCURRENCY = 10;
 
 export { generateApiRequestCode } from './requestCode';
 export { asyncLocalStorage } from './context';
-
-function getCodegenConcurrency() {
-  const parallelism =
-    typeof os.availableParallelism === 'function'
-      ? os.availableParallelism()
-      : os.cpus().length;
-  return Math.max(1, parallelism - 1);
-}
 
 function isPathInside(parent: string, child: string) {
   const relative = path.relative(parent, child);
@@ -90,8 +82,6 @@ export async function generatePaths(
 
   let generatedCount = 0;
   let skippedCount = 0;
-  const codegenConcurrency = getCodegenConcurrency();
-
   await asyncLocalStorage.run(state, () =>
     pMap(
       pathEntries,
@@ -149,7 +139,7 @@ export async function generatePaths(
           log.info('路径 %s 未生成任何方法', url);
         }
       },
-      { concurrency: codegenConcurrency },
+      { concurrency: CODEGEN_CONCURRENCY },
     ),
   );
 

@@ -23,7 +23,7 @@ export const fieldsMap: any =
            * @param receiver Proxy 接收者
            * @returns 属性名的字符串表示
            */
-          get(target, p, receiver) {
+          get(_target, p) {
             return String(p);
           },
         },

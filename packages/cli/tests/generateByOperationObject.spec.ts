@@ -1,8 +1,10 @@
+import type { OpenAPIV3 } from 'openapi-types';
 import { describe, expect, it } from 'vitest';
 import {
   asyncLocalStorage,
   generateApiRequestCode,
 } from '../src/commands/generateApi';
+import type { ApiConfig } from '../src/shared/config';
 import { apiConfigNormalizer } from '../src/shared/config/normalizeConfig';
 
 const paramsInQuery = {
@@ -288,11 +290,11 @@ const paramsInBodyAndPath = {
   ],
 };
 
-const generate = (data, methods: string) => {
+const generate = (data: unknown, methods: string) => {
   return generateApiRequestCode({
     url: '/users',
     method: methods,
-    operationObject: data,
+    operationObject: data as OpenAPIV3.OperationObject,
     apiConfig: apiConfigNormalizer({
       swaggerJSONPath: '',
       swaggerUiUrl: '',
@@ -386,7 +388,7 @@ describe('api 生成', function () {
     expect(result).toMatchSnapshot();
   });
   it('支持 urlTransformer', async () => {
-    const f = (urlTransformer) => {
+    const f = (urlTransformer: ApiConfig['urlTransformer']) => {
       return generateApiRequestCode({
         url: '/users',
         method: 'get',
@@ -494,7 +496,9 @@ describe('api 生成', function () {
           if (!ref.startsWith('#/definitions/')) {
             throw new Error(`unexpected ref: ${ref}`);
           }
-          return definitions[ref.replace('#/definitions/', '')];
+          return (definitions as Record<string, unknown>)[
+            ref.replace('#/definitions/', '')
+          ];
         },
       },
     };
@@ -613,7 +617,7 @@ describe('api 生成', function () {
     );
 
     expect(result).toContain(
-      'statuses?: (\"OPEN\" | \"IN_PROGRESS\" | \"CLOSED\")[]',
+      'statuses?: ("OPEN" | "IN_PROGRESS" | "CLOSED")[]',
     );
   });
 

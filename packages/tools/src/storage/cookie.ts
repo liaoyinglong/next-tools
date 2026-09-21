@@ -50,9 +50,11 @@ class StorageHelper {
    * 设置为 undefined 时，会删除该 key
    */
   set(v: V, options?: CookieAttributes): void {
-    v === undefined
-      ? this.remove(options)
-      : this.store.set(this.key, v as never, options);
+    if (v === undefined) {
+      this.remove(options);
+    } else {
+      this.store.set(this.key, v as never, options);
+    }
   }
 
   remove(options?: CookieAttributes): void {

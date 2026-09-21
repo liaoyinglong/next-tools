@@ -54,7 +54,7 @@ export function createStore<
      * 监听状态变化
      */
     subscribe(fn: (state: S) => void) {
-      return subscribe(store, (ops) => {
+      return subscribe(store, () => {
         const state = api.getState();
         fn(state);
       });
@@ -93,4 +93,4 @@ export function createStore<
   return api;
 }
 
-type Action<S, T> = (payload: T) => any;
+type Action<_S, T> = (payload: T) => any;

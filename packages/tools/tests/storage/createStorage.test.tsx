@@ -18,7 +18,7 @@ function initStorage() {
 let storage = initStorage();
 
 describe('createStorage', () => {
-  beforeEach((v) => {
+  beforeEach(() => {
     storage = initStorage();
   });
 

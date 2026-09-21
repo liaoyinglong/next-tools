@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: ['develop']
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          # changeset status 需要与 PR 的 base commit 比较，浅克隆拿不到它
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Require a changeset
+        # 只对 PR 生效：改动了包却没有 changeset 时失败。
+        # 纯文档/CI 之类的改动如果确实不需要发布，用 `pnpm changeset add --empty`
+        # 加一个空 changeset。
+        if: github.event_name == 'pull_request'
+        run: pnpm exec changeset status --since=${{ github.event.pull_request.base.sha }}
+
+      - name: Build
+        run: pnpm run build
+        # TURBO_TOKEN / TURBO_TEAM 未配置时 turbo 自动落回本地缓存，不会报错；
+        # 在仓库 secrets 里配好后即启用远程缓存。
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+      - name: Test
+        run: pnpm run test
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+      - name: Check package exports
+        # publint + attw：校验 exports map / 类型声明与实际产物是否对得上
+        run: pnpm run check:exports
+
+      - name: Format check
+        run: pnpm run format:check

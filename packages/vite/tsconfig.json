@@ -8,8 +8,9 @@
     "noEmit": true,
     "moduleResolution": "bundler",
     "strictNullChecks": true,
+    "strict": true,
     "stripInternal": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*", "tests/**/*", "tsdown.config.ts"],
+  "exclude": ["node_modules", "tests/**/fixtures"]
 }

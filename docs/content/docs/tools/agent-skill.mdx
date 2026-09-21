@@ -56,13 +56,13 @@ skills/dune2-tools/
 
 Agent 应该只读取当前任务需要的 reference，而不是一次加载全部内容。
 
-| 任务 | 加载的 reference |
-| --- | --- |
-| API 请求、TanStack Query、缓存、生成 API | `rq.md` |
-| localStorage、sessionStorage、cookie | `storage.md` |
-| Valtio 状态管理 | `store.md` |
-| Context、props 适配、字段名工具 | `factory.md` |
-| 金额、汇率、精确计算、数字格式化 | `numbro.md` |
+| 任务                                     | 加载的 reference |
+| ---------------------------------------- | ---------------- |
+| API 请求、TanStack Query、缓存、生成 API | `rq.md`          |
+| localStorage、sessionStorage、cookie     | `storage.md`     |
+| Valtio 状态管理                          | `store.md`       |
+| Context、props 适配、字段名工具          | `factory.md`     |
+| 金额、汇率、精确计算、数字格式化         | `numbro.md`      |
 
 这样可以减少与当前任务无关的上下文。例如，Agent 只是在处理金额格式化时，不需要同时读取 `RequestBuilder` 或 storage 的完整说明。
 
@@ -109,9 +109,9 @@ await api.request(params);
 
 ## 相关文档
 
-- [Tools 总览](./)
-- [RequestBuilder](./request-builder)
-- [createApi](./create-api)
-- [createStorage](./create-storage)
-- [Store](./store)
-- [Numbro](./numbro)
+- [Tools 总览](/docs/tools)
+- [RequestBuilder](/docs/tools/request-builder)
+- [createApi](/docs/tools/create-api)
+- [createStorage](/docs/tools/create-storage)
+- [Store](/docs/tools/store)
+- [Numbro](/docs/tools/numbro)

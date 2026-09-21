@@ -42,7 +42,7 @@ export function mapProps<
 /**
  * 给组件添加默认props 或者 重写props
  */
-export function mapProps<C, P extends Record<any, any>>(
+export function mapProps<_C, P extends Record<any, any>>(
   BaseComponent: any,
   mapper: P | ((p: P) => P),
 ) {

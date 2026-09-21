@@ -80,10 +80,4 @@ export interface Config {
    * @internal
    */
   cwd?: string;
-
-  /**
-   * 默认是 node_modules/.cache/dune-cli
-   * @internal
-   */
-  cacheDir?: string;
 }

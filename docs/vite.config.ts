@@ -22,6 +22,8 @@ export default defineConfig({
     react(),
   ],
   resolve: {
+    // dev 的 resolver 默认不读 tsconfig paths，`@/*`、`collections/*` 靠它才解析得到；
+    // build 走 rolldown 自带解析
     tsconfigPaths: true,
     alias: {
       tslib: 'tslib/tslib.es6.js',

@@ -35,20 +35,20 @@ Do not load unrelated references merely because `@dune2/tools` is present.
 
 ## Choose the existing primitive first
 
-| Need | Prefer |
-| --- | --- |
-| HTTP API + TanStack Query | `RequestBuilder` from `@dune2/tools/rq` |
-| SDK/contract/worker/local async operation that still needs Query caching/status | `createApi` from `@dune2/tools/rq/createApi` |
-| Imperative request using an existing API definition | `api.request(...)` |
-| Prefetch/fetch/ensure/invalidate/refetch/read/write query cache | The matching `RequestBuilder` method |
-| Exceptional request needing separate query/body or per-call transport config | `requestWithConfig(...)`, only when `request(...)` cannot express it |
-| Typed request/response field names | `api.reqFields`, `api.resFields`, or `fieldsMap` |
-| localStorage/sessionStorage + typed defaults + React subscription | `createStorage` |
-| Client-readable string cookies | `createCookieStorage` |
-| Valtio state with typed actions/hooks | `createStore` |
-| React Context whose value is produced by a hook | `createStateContext` |
-| Adapt/default/enhance component props while preserving refs | `mapProps` |
-| Precise decimal arithmetic/formatting | `numbro` / `Numbro` |
+| Need                                                                            | Prefer                                                               |
+| ------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| HTTP API + TanStack Query                                                       | `RequestBuilder` from `@dune2/tools/rq`                              |
+| SDK/contract/worker/local async operation that still needs Query caching/status | `createApi` from `@dune2/tools/rq/createApi`                         |
+| Imperative request using an existing API definition                             | `api.request(...)`                                                   |
+| Prefetch/fetch/ensure/invalidate/refetch/read/write query cache                 | The matching `RequestBuilder` method                                 |
+| Exceptional request needing separate query/body or per-call transport config    | `requestWithConfig(...)`, only when `request(...)` cannot express it |
+| Typed request/response field names                                              | `api.reqFields`, `api.resFields`, or `fieldsMap`                     |
+| localStorage/sessionStorage + typed defaults + React subscription               | `createStorage`                                                      |
+| Client-readable string cookies                                                  | `createCookieStorage`                                                |
+| Valtio state with typed actions/hooks                                           | `createStore`                                                        |
+| React Context whose value is produced by a hook                                 | `createStateContext`                                                 |
+| Adapt/default/enhance component props while preserving refs                     | `mapProps`                                                           |
+| Precise decimal arithmetic/formatting                                           | `numbro` / `Numbro`                                                  |
 
 ## High-value rules
 

@@ -6,10 +6,10 @@ function init() {
   return createStore({
     state: { a: 1, b: 2, c: { name: 'hello' }, d: { name: 'world' } },
     actionsCreator: (state) => ({
-      setA: (b: number) => {
+      setA: (_b: number) => {
         state.a = 123;
       },
-      setB: (b: number) => {
+      setB: (_b: number) => {
         state.b = 123;
       },
       setCName: (name: string) => {

@@ -4,10 +4,10 @@ import { createStore } from '../../src/store';
 const store = createStore({
   state: { a: 1, b: 2, c: { name: 'hello' }, d: { name: 'world' } },
   actionsCreator: (state) => ({
-    setA: (b: number) => {
+    setA: (_b: number) => {
       state.a = 123;
     },
-    setB: (b: number) => {
+    setB: (_b: number) => {
       state.b = 123;
     },
     setC: (name: string) => {
@@ -19,14 +19,14 @@ const store = createStore({
 
 describe('zustand type', () => {
   it('normal actions should work', () => {
-    assertType<typeof store.actions.setA>((b: number) => {});
-    assertType<typeof store.actions.setB>((b: number) => {});
-    assertType<typeof store.actions.setC>((name: string) => {});
+    assertType<typeof store.actions.setA>((_b: number) => {});
+    assertType<typeof store.actions.setB>((_b: number) => {});
+    assertType<typeof store.actions.setC>((_name: string) => {});
   });
   it('useSnapshot should work', () => {
     const {
       //@ts-expect-error a 是 number 类型 , 没有 c 属性
-      a: { c },
+      a: { _c },
     } = store.useSnapshot();
     {
       const { c } = store.useSnapshot();
@@ -35,7 +35,7 @@ describe('zustand type', () => {
   });
 
   it('useShallowSnapshot should work', () => {
-    const a = store.useShallowSnapshot((s) => s.a);
+    const _a = store.useShallowSnapshot((s) => s.a);
 
     const d = store.useShallowSnapshot((s) => s.d);
     assertType<typeof d>({ name: '' });

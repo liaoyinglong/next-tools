@@ -5,7 +5,12 @@
   "fixed": [],
   "linked": [],
   "access": "public",
-  "baseBranch": "main",
+  "baseBranch": "develop",
   "updateInternalDependencies": "patch",
-  "ignore": []
+  "ignore": ["next-tools-app"],
+  "format": "oxfmt",
+  "privatePackages": {
+    "version": true,
+    "tag": false
+  }
 }

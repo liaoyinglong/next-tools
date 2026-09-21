@@ -39,7 +39,13 @@ pnpm run test
 - `pnpm run build:docs` - Build the docs workspace
 - `pnpm run test` - Run tests for all @dune2/\* packages
 - `pnpm run test:docs` - Run docs workspace tests
+- `pnpm run check:exports` - Check every package's exports map and type declarations (publint + attw)
 - `pnpm run release` - Run tests and publish new versions
+
+## Examples
+
+- [example/next-tools-app](./example/next-tools-app) — 可运行的 Next.js 示例，演示 `@dune2/tools` 的 store / storage / rq
+- [example/cli-api-gen](./example/cli-api-gen) — `@dune2/cli` 的本地演练目录（需要自己放入 swagger 文件）
 
 ## Documentation
 

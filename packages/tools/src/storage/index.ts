@@ -56,7 +56,11 @@ export class StorageHelper<V = any> {
       return;
     }
     this.currentValue = v;
-    v === undefined ? this.store.remove(this.key) : this.store.set(this.key, v);
+    if (v === undefined) {
+      this.store.remove(this.key);
+    } else {
+      this.store.set(this.key, v);
+    }
     this.notifyListeners();
   }
 

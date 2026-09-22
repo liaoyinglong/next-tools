@@ -1,5 +1,12 @@
 # @dune2/tools
 
+## 1.4.1
+
+### Patch Changes
+
+- 7cdd20b: Publish compiled ESM output and type declarations for reliable package exports.
+- 0149706: Declare `@dune2/tools` as an ES module package.
+
 ## 1.4.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@dune2/tools",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "React utilities: react-query request builder, storage, valtio store, number formatting",
   "keywords": [
     "numbro",

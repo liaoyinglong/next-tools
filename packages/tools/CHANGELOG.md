@@ -1,5 +1,11 @@
 # @dune2/tools
 
+## 1.4.2
+
+### Patch Changes
+
+- b00beff: Compile JSX with React's automatic JSX runtime.
+
 ## 1.4.1
 
 ### Patch Changes

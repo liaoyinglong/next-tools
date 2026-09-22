@@ -19,6 +19,7 @@
   "files": [
     "src"
   ],
+  "type": "module",
   "sideEffects": false,
   "exports": {
     "./factory/*": "./src/factory/*.tsx",

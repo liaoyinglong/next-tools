@@ -17,32 +17,62 @@
     "directory": "packages/tools"
   },
   "files": [
-    "src"
+    "dist"
   ],
   "type": "module",
   "sideEffects": false,
   "exports": {
-    "./factory/*": "./src/factory/*.tsx",
-    "./numbro": "./src/numbro/index.ts",
-    "./rq": {
-      "react-server": "./src/rq/index.react-server.ts",
-      "import": "./src/rq/index.ts",
-      "require": "./src/rq/index.ts"
+    "./factory/*": {
+      "types": "./dist/factory/*.d.ts",
+      "import": "./dist/factory/*.js"
     },
-    "./rq/*": "./src/rq/*.ts",
-    "./shared": "./src/shared/index.ts",
-    "./shared/*": "./src/shared/*.ts",
-    "./storage": "./src/storage/index.ts",
-    "./storage/*": "./src/storage/*.ts",
-    "./store": "./src/store/index.ts",
+    "./numbro": {
+      "types": "./dist/numbro.d.ts",
+      "import": "./dist/numbro.js"
+    },
+    "./rq": {
+      "react-server": {
+        "types": "./dist/rq/index.react-server.d.ts",
+        "import": "./dist/rq/index.react-server.js"
+      },
+      "types": "./dist/rq/index.d.ts",
+      "import": "./dist/rq/index.js"
+    },
+    "./rq/*": {
+      "types": "./dist/rq/*.d.ts",
+      "import": "./dist/rq/*.js"
+    },
+    "./shared": {
+      "types": "./dist/shared/index.d.ts",
+      "import": "./dist/shared/index.js"
+    },
+    "./shared/*": {
+      "types": "./dist/shared/*.d.ts",
+      "import": "./dist/shared/*.js"
+    },
+    "./storage": {
+      "types": "./dist/storage/index.d.ts",
+      "import": "./dist/storage/index.js"
+    },
+    "./storage/*": {
+      "types": "./dist/storage/*.d.ts",
+      "import": "./dist/storage/*.js"
+    },
+    "./store": {
+      "types": "./dist/store/index.d.ts",
+      "import": "./dist/store/index.js"
+    },
     "./package.json": "./package.json",
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
   },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "build": "tsc --diagnostics",
+    "build": "tsdown --clean",
     "lint": "tsc --diagnostics",
     "test": "vitest run --typecheck",
     "test:u": "vitest -u",
@@ -61,6 +91,7 @@
     "@types/react": "^19.2.13",
     "happy-dom": "^20.5.3",
     "react": "catalog:",
+    "tsdown": "catalog:",
     "valtio": "^2.3.0"
   },
   "peerDependencies": {

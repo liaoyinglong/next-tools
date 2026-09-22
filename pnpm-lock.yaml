@@ -456,6 +456,9 @@ importers:
       react:
         specifier: 'catalog:'
         version: 19.3.0
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.0(@arethetypeswrong/core@0.18.5)(publint@0.3.24)(typescript@7.0.2)
       valtio:
         specifier: ^2.3.0
         version: 2.3.2(@types/react@19.3.0)(react@19.3.0)

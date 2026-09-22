@@ -14,7 +14,7 @@
       ]
     },
     "@dune2/tools#build": {
-      "outputs": []
+      "outputs": ["dist/**"]
     },
     "test": {
       "dependsOn": ["build"],

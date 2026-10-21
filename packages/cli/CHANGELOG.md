@@ -1,5 +1,11 @@
 # @dune2/cli
 
+## 2.0.1
+
+### Patch Changes
+
+- b19679d: Fix request body type generation when an operation has only header or cookie parameters, or an empty parameters list. Preserve array and scalar body types instead of replacing them with an empty object type.
+
 ## 2.0.0
 
 ### Major Changes

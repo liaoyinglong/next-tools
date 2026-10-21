@@ -23,6 +23,11 @@ export default defineConfig({
       swaggerUiUrl: 'http://localhost:3000/swagger',
     },
     {
+      output: './src/apis/d',
+      swaggerJSONPath: './src/swagger/d.json',
+      swaggerUiUrl: 'http://localhost:3000/swagger',
+    },
+    {
       output: './src/apis/swagger',
       swaggerJSONPath: './src/swagger/swagger.json',
       swaggerUiUrl: 'http://localhost:3000/swagger',

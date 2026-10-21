@@ -53,9 +53,18 @@ jobs:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Lint
+        run: pnpm run lint
+
       - name: Check package exports
         # publint + attw：校验 exports map / 类型声明与实际产物是否对得上
         run: pnpm run check:exports
+
+      - name: Typecheck the Next.js example
+        run: pnpm --filter next-tools-app run typecheck
 
       - name: Format check
         run: pnpm run format:check

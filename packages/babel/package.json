@@ -30,7 +30,7 @@
     "build": "tsdown --clean --splitting",
     "build-fast": "pnpm run build --no-dts",
     "dev": "pnpm run build-fast --watch",
-    "lint": "tsc --diagnostics --noEmit",
+    "typecheck": "tsc --diagnostics --noEmit",
     "test": "vitest run",
     "test:u": "vitest -u"
   },

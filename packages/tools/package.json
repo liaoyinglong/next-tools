@@ -73,10 +73,10 @@
   },
   "scripts": {
     "build": "tsdown --clean",
-    "lint": "tsc --diagnostics",
     "test": "vitest run --typecheck",
+    "test:types": "vitest run --typecheck.only",
     "test:u": "vitest -u",
-    "typecheck": "vitest run --typecheck.only"
+    "typecheck": "tsc --diagnostics"
   },
   "dependencies": {
     "bignumber.js": "^11.1.5",

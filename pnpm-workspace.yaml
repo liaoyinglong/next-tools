@@ -19,5 +19,9 @@ catalog:
   typescript: ^7.0.2
   vite: ^8.2.0
   vitest: 5.0.0
+# 依赖发布满 1 天后再安装，降低供应链投毒风险。
+minimumReleaseAge: 1440
+# Next.js 的 SWC 平台包会先于其他包发布，锁版本时需要豁免等待期，
+# 否则全新安装会因 release age 检查失败。
 minimumReleaseAgeExclude:
   - '@next/swc-win32-x64-msvc@16.3.5'

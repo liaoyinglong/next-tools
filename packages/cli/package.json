@@ -36,7 +36,7 @@
   "scripts": {
     "build": "tsdown --splitting --clean",
     "dev": "pnpm run build --watch",
-    "lint": "tsc --diagnostics --noEmit",
+    "typecheck": "tsc --diagnostics --noEmit",
     "test": "vitest run",
     "test:u": "vitest -u"
   },

@@ -27,7 +27,7 @@
         "src/**/*.test.ts"
       ]
     },
-    "lint": {
+    "typecheck": {
       "outputs": [],
       "inputs": [
         "$TURBO_DEFAULT$",

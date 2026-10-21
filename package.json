@@ -1,12 +1,11 @@
 {
-  "name": "some-tools",
+  "name": "next-tools",
   "version": "1.0.0",
   "private": true,
   "description": "",
   "keywords": [],
   "license": "MIT",
   "author": "liaoyinglong",
-  "main": "index.js",
   "scripts": {
     "build": "turbo run build --filter=\"@dune2/*\"",
     "changeset": "changeset",
@@ -21,7 +20,10 @@
     "test:packages": "turbo run test --filter=\"@dune2/*\"",
     "test:docs": "turbo run test --filter=docs",
     "lint": "oxlint packages docs example --deny-warnings",
-    "check:attw": "pnpm -r --filter \"./packages/*\" exec attw --pack . --profile esm-only",
+    "typecheck": "turbo run typecheck --filter=\"@dune2/*\"",
+    "check:attw": "pnpm run check:attw:esm && pnpm run check:attw:node16",
+    "check:attw:esm": "pnpm -r --filter \"./packages/*\" exec attw --pack . --profile esm-only",
+    "check:attw:node16": "pnpm --filter @dune2/vite exec attw --pack . --profile node16",
     "check:exports": "pnpm run check:publint && pnpm run check:attw",
     "check:publint": "pnpm -r --filter \"./packages/*\" exec publint"
   },

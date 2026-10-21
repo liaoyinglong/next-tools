@@ -92,7 +92,9 @@ export async function compileRequestParams(
     : void 0;
 
   const schemaObject =
-    requestBodySchema && parameterSchema
+    requestBodySchema &&
+    parameterSchema &&
+    Object.keys(parameterSchema.properties).length > 0
       ? ({
           ...requestBodySchema,
           type: 'object',

@@ -313,6 +313,109 @@ describe('api 生成', function () {
     expect(result).toMatchSnapshot();
   });
 
+  it.each([
+    ['absent', undefined],
+    ['empty', []],
+    ['header-only', [{ name: 'ZD-CUSTOMER', in: 'header' }]],
+    ['cookie-only', [{ name: 'session', in: 'cookie' }]],
+  ])('preserves an array body with %s parameters', async (_, parameters) => {
+    const result = await generate(
+      {
+        ...paramsInBody,
+        parameters,
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  required: ['id'],
+                  properties: { id: { type: 'integer' } },
+                },
+              },
+            },
+          },
+          required: true,
+        },
+      },
+      'post',
+    );
+
+    expect(result).toContain('export type Req = {\n  id: number;\n}[];');
+    expect(result).toContain('id: number');
+    expect(result).not.toContain('export type Req = Record<string, unknown>');
+  });
+
+  it('preserves the referenced array body of updateGasConfig', async () => {
+    const requestSchema: OpenAPIV3.SchemaObject = {
+      type: 'object',
+      required: ['id', 'hotEnableGasFeeStation', 'coldGasMultiplier'],
+      properties: {
+        id: { type: 'integer' },
+        hotEnableGasFeeStation: { type: 'boolean' },
+        coldGasMultiplier: { type: 'integer' },
+      },
+    };
+    const parsed: OpenAPIV3.Document = {
+      openapi: '3.0.0',
+      info: { title: 'Gas config regression', version: '1.0.0' },
+      paths: {},
+      components: { schemas: { UpdateGasConfigRequest: requestSchema } },
+    };
+    const result = await asyncLocalStorage.run(
+      { parsed, parser: {} as never },
+      () =>
+        generateApiRequestCode({
+          url: '/v2/customers/u/gas-configs',
+          method: 'post',
+          operationObject: {
+            operationId: 'updateGasConfig',
+            parameters: [{ name: 'ZD-CUSTOMER', in: 'header' }],
+            requestBody: {
+              required: true,
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'array',
+                    items: {
+                      $ref: '#/components/schemas/UpdateGasConfigRequest',
+                    },
+                  },
+                },
+              },
+            },
+            responses: paramsInBody.responses as OpenAPIV3.ResponsesObject,
+          },
+          apiConfig: apiConfigNormalizer({
+            swaggerJSONPath: '',
+            swaggerUiUrl: '',
+          }),
+        }),
+    );
+
+    expect(result).toContain('export type Req = UpdateGasConfigRequest[];');
+    expect(result).toContain('export interface UpdateGasConfigRequest');
+    expect(result).toContain('hotEnableGasFeeStation: boolean');
+    expect(result).toContain('coldGasMultiplier: number');
+    expect(result).not.toContain('export type Req = Record<string, unknown>');
+  });
+
+  it('preserves a scalar body with header-only parameters', async () => {
+    const result = await generate(
+      {
+        ...paramsInBody,
+        parameters: [{ name: 'Authorization', in: 'header' }],
+        requestBody: {
+          content: { 'application/json': { schema: { type: 'string' } } },
+        },
+      },
+      'post',
+    );
+
+    expect(result).toContain('export type Req = string;');
+  });
+
   it('参数同时在 body 和 path 里', async function () {
     const result = await generate(paramsInBodyAndPath, 'put');
     expect(result).toContain(`urlPathParams: ["id"]`);

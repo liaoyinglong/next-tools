@@ -4,8 +4,8 @@
   "private": true,
   "description": "",
   "keywords": [],
-  "license": "ISC",
-  "author": "",
+  "license": "MIT",
+  "author": "liaoyinglong",
   "main": "index.js",
   "scripts": {
     "build": "turbo run build --filter=\"@dune2/*\"",

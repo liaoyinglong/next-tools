@@ -50,3 +50,7 @@ pnpm run test
 ## Documentation
 
 The [docs](./docs) folder contains a Vite + TanStack Start + Fumadocs site with examples and API references for all tools.
+
+## License
+
+[MIT](./LICENSE) © liaoyinglong

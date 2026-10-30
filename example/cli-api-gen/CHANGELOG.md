@@ -1,5 +1,15 @@
 # cli-api-gen
 
+## 1.0.21
+
+### Patch Changes
+
+- Updated dependencies [8426a31]
+- Updated dependencies [d213541]
+- Updated dependencies [f5770cb]
+  - @dune2/cli@2.0.2
+  - @dune2/tools@1.5.0
+
 ## 1.0.20
 
 ### Patch Changes

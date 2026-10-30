@@ -1,6 +1,6 @@
 ---
 title: Tools 总览
-description: '@dune2/tools 提供的运行时工具与类型工具概览（factory / storage / rq / store / numbro / shared）'
+description: '@dune2/tools 提供的运行时工具与类型工具概览（factory / storage / rq / store / reducer / numbro / shared）'
 ---
 
 # Tools 总览
@@ -13,6 +13,7 @@ import { createApi } from '@dune2/tools/rq/createApi';
 import { createStorage, createStorageHelper } from '@dune2/tools/storage';
 import { createCookieStorage } from '@dune2/tools/storage/cookie';
 import { createStore, snapshot } from '@dune2/tools/store';
+import { defineReducer } from '@dune2/tools/reducer';
 import { numbro, Numbro, RoundingMode } from '@dune2/tools/numbro';
 import { createStateContext } from '@dune2/tools/factory/createStateContext';
 import { mapProps } from '@dune2/tools/factory/mapProps';
@@ -78,6 +79,12 @@ npx skills add liaoyinglong/next-tools --skill dune2-tools
   - 详见：[Store](./store)
 - **snapshot**：re-export 自 valtio，将 Proxy 对象转换为普通对象
   - 典型场景：将 `useSnapshot` 返回的 Proxy 值安全传递给子组件
+
+### Reducer（组件内局部状态）
+
+- **defineReducer**：类似 `useImmerReducer`，但用 action map 代替 switch，action 内直接修改 draft，payload 类型自动推导
+  - 典型场景：单个组件内结构较深的局部状态，`useState` 写不可变更新太繁琐时
+  - 详见：[Reducer](./reducer)
 
 ### Numbro（精确数值处理）
 

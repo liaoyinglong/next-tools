@@ -28,6 +28,7 @@ export default defineConfig({
     'shared/OptionalKeys': 'src/shared/OptionalKeys.ts',
     'shared/Overwrite': 'src/shared/Overwrite.ts',
     'shared/Print': 'src/shared/Print.ts',
+    'reducer/index': 'src/reducer/index.ts',
     'storage/index': 'src/storage/index.ts',
     'storage/cookie': 'src/storage/cookie.ts',
     'store/index': 'src/store/index.ts',

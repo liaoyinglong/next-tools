@@ -1,0 +1,138 @@
+---
+title: Reducer 工具
+description: 基于 React useReducer + immer 的组件内局部 reducer，action 内直接修改 draft，类型自动推导
+---
+
+# Reducer 工具
+
+`defineReducer` 定义一个组件内使用的局部 reducer，作用类似 `use-immer` 的 `useImmerReducer`：
+
+- 用 action map 代替 `switch (action.type)`，不需要写 action 类型联合
+- action 内直接修改 `draft`，由 immer 生成不可变的新状态（普通冻结对象，可放心传给子组件或第三方库）
+- payload 类型从 action 签名自动推导
+
+## 安装
+
+`immer` 是可选的 peer 依赖，使用本模块时需要自行安装：
+
+```bash
+pnpm add immer
+```
+
+## 导入
+
+```typescript
+import { defineReducer } from '@dune2/tools/reducer';
+```
+
+## 基本用法
+
+```tsx
+type Status = 'idle' | 'ready';
+
+const profileReducer = defineReducer({
+  state: () => ({
+    user: { profile: { name: '' } },
+    status: 'idle' as Status,
+    errors: [] as string[],
+  }),
+  actions: {
+    updateProfile(draft, name: string) {
+      draft.user.profile.name = name;
+      draft.status = 'ready';
+    },
+    clearErrors(draft) {
+      draft.errors = [];
+    },
+  },
+});
+
+function Profile() {
+  const [state, actions] = profileReducer.useReducer();
+  return (
+    <input
+      value={state.user.profile.name}
+      onChange={(e) => actions.updateProfile(e.target.value)}
+    />
+  );
+}
+```
+
+## 配置说明
+
+- `state`：初始状态**工厂函数**。每次调用 `useReducer` 都会生成一份独立的状态
+- `actions`：`(draft, payload?) => void | S | Promise<void | S>`
+  - 第一个参数是可直接修改的 `draft`，第二个参数（可选）是 payload
+  - 返回 `void`：原地修改
+  - 返回完整的新 state：整体替换（不在新 state 中的 key 会被删除）
+
+## useReducer
+
+```typescript
+const [state, actions] = profileReducer.useReducer(initOverride?);
+```
+
+- `initOverride`：`Partial<S>`，浅合并到 `state()` 的结果上，便于同一个定义复用到不同实例
+- `state`：当前状态快照（只读）
+- `actions`：去掉 `draft` 参数后的 action，**引用稳定**，可放心放进 `useEffect` 依赖或传给 `memo` 组件
+
+## 整体替换
+
+```typescript
+const reducer = defineReducer({
+  state: () => ({ count: 0, items: [] as string[] }),
+  actions: {
+    reset() {
+      return { count: 0, items: [] };
+    },
+  },
+});
+```
+
+## 异步流程
+
+immer 的 `draft` 在 action 结束后即失效，因此 **action 不支持 async**（类型上会报错）。异步逻辑放在组件或 effect 中，按步骤调用同步 action：
+
+```typescript
+const reducer = defineReducer({
+  state: () => ({ loading: false, name: '' }),
+  actions: {
+    start(draft) {
+      draft.loading = true;
+    },
+    done(draft, name: string) {
+      draft.loading = false;
+      draft.name = name;
+    },
+  },
+});
+
+async function load(id: string) {
+  actions.start();
+  actions.done(await fetchName(id));
+}
+```
+
+## 与 createStore 的区别
+
+|              | `defineReducer`                        | `createStore`                        |
+| ------------ | -------------------------------------- | ------------------------------------ |
+| **作用域**   | 单个组件内，每次调用独立一份状态       | 全局单例                             |
+| **定义方式** | `actions: { name(draft, payload) {} }` | `actionsCreator: (state) => ({...})` |
+| **调试注册** | 不注册到 `window.__stores2`            | 注册到 `window.__stores2`            |
+| **底层实现** | React `useReducer` + immer             | valtio proxy                         |
+| **async**    | 不支持，异步逻辑放在组件中             | action 内可直接 `await`              |
+
+需要在子树内共享时，用 [createStateContext](./create-state-context) 包一层；需要全局共享时，使用 [Store](./store)。
+
+## 类型支持
+
+```typescript
+// ✅ 类型安全
+actions.updateProfile('Leon');
+actions.clearErrors();
+
+// ❌ 类型错误
+actions.updateProfile(1); // Argument of type 'number' is not assignable to parameter of type 'string'
+actions.clearErrors(1); // Expected 0 arguments, but got 1
+```

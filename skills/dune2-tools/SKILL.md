@@ -17,7 +17,7 @@ Use the library's existing abstractions instead of rebuilding them with raw TanS
 
 1. Confirm the consumer project depends on `@dune2/tools` in its package manifest or lockfile.
 2. Search the consumer codebase for existing `@dune2/tools/*` imports and generated API modules before adding a new abstraction.
-3. Prefer the package's subpath exports. **Do not expect runtime utilities from `@dune2/tools` root**; import from paths such as `@dune2/tools/rq`, `@dune2/tools/storage`, `@dune2/tools/store`, `@dune2/tools/numbro`, or `@dune2/tools/factory/*`.
+3. Prefer the package's subpath exports. **Do not expect runtime utilities from `@dune2/tools` root**; import from paths such as `@dune2/tools/rq`, `@dune2/tools/storage`, `@dune2/tools/store`, `@dune2/tools/reducer`, `@dune2/tools/numbro`, or `@dune2/tools/factory/*`.
 4. Match the application's existing request client, query client, namespaces, store conventions, and generated API patterns instead of introducing parallel infrastructure.
 5. Read only the reference relevant to the current task.
 
@@ -27,7 +27,7 @@ Load references progressively instead of reading every API guide up front:
 
 - API requests, TanStack Query, cache operations, generated APIs, SDK/worker async operations: [references/rq.md](references/rq.md)
 - localStorage, sessionStorage, React persistence subscriptions, cookies: [references/storage.md](references/storage.md)
-- Valtio application state, snapshots, selectors, subscriptions: [references/store.md](references/store.md)
+- Valtio application state, snapshots, selectors, subscriptions, component-local reducers: [references/store.md](references/store.md)
 - React Context factories, prop adapters, typed field names: [references/factory.md](references/factory.md)
 - Precise decimal arithmetic, currency/percentage/number formatting: [references/numbro.md](references/numbro.md)
 
@@ -46,6 +46,7 @@ Do not load unrelated references merely because `@dune2/tools` is present.
 | localStorage/sessionStorage + typed defaults + React subscription               | `createStorage`                                                      |
 | Client-readable string cookies                                                  | `createCookieStorage`                                                |
 | Valtio state with typed actions/hooks                                           | `createStore`                                                        |
+| Component-local state with mutable-style typed actions (useImmerReducer-like)   | `defineReducer` from `@dune2/tools/reducer`                          |
 | React Context whose value is produced by a hook                                 | `createStateContext`                                                 |
 | Adapt/default/enhance component props while preserving refs                     | `mapProps`                                                           |
 | Precise decimal arithmetic/formatting                                           | `numbro` / `Numbro`                                                  |

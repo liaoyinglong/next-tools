@@ -42,6 +42,10 @@
       "types": "./dist/rq/*.d.ts",
       "import": "./dist/rq/*.js"
     },
+    "./reducer": {
+      "types": "./dist/reducer/index.d.ts",
+      "import": "./dist/reducer/index.js"
+    },
     "./shared": {
       "types": "./dist/shared/index.d.ts",
       "import": "./dist/shared/index.js"
@@ -90,13 +94,20 @@
     "@types/js-cookie": "3.0.6",
     "@types/react": "^19.2.13",
     "happy-dom": "^20.5.3",
+    "immer": "^11.2.9",
     "react": "catalog:",
     "tsdown": "catalog:",
     "valtio": "^2.3.0"
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5",
+    "immer": "^10.0.0 || ^11.0.0",
     "react": "^18.0.0 || ^19.0.0",
     "valtio": "^2.3.0"
+  },
+  "peerDependenciesMeta": {
+    "immer": {
+      "optional": true
+    }
   }
 }

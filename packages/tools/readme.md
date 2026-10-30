@@ -85,6 +85,30 @@ const counterStore = createStore({
 const { count } = counterStore.useSnapshot();
 ```
 
+### Reducer
+
+Component-local reducer with mutable-style actions, built on React `useReducer` + immer (optional peer dependency).
+
+```typescript
+import { defineReducer } from '@dune2/tools/reducer';
+
+const counterReducer = defineReducer({
+  state: () => ({ count: 0 }),
+  actions: {
+    increment: (draft) => {
+      draft.count++;
+    },
+    add: (draft, amount: number) => {
+      draft.count += amount;
+    },
+  },
+});
+
+// Use in components
+const [state, actions] = counterReducer.useReducer();
+actions.add(2);
+```
+
 ### Numbro
 
 BigNumber.js wrapper for precise number formatting and calculations.

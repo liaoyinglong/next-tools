@@ -4,7 +4,7 @@
 
 pnpm workspaces + Turborepo monorepo（`@dune2` scope）：
 
-- `@dune2/tools` — React 工具库：react-query 请求构建器、storage、valtio store、数字格式化
+- `@dune2/tools` — React 工具库：react-query 请求构建器、storage、valtio store、组件内 reducer、数字格式化
 - `@dune2/cli` — 从 Swagger/OpenAPI 生成 TypeScript API 客户端的 CLI
 - `@dune2/babel` — 基于 AST 的 store 生成 Babel 工具
 - `@dune2/vite` — Vite 插件（ast-grep 变换）

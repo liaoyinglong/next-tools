@@ -106,3 +106,29 @@ When a consumer project already uses `createStore`:
 3. Use `useSnapshot()` for normal tracked component reads.
 4. Prefer `useShallowSnapshot()` or `snapshot()` when ordinary values must cross component/library boundaries.
 5. Use `getState()`/`subscribe()` outside React rather than inventing another synchronization layer.
+
+## Component-local reducer
+
+For state owned by a single component, use `defineReducer` instead of a global `createStore` or adding `immer`/`use-immer`:
+
+```typescript
+import { defineReducer } from '@dune2/tools/reducer';
+
+const formReducer = defineReducer({
+  state: () => ({ user: { name: '' }, errors: [] as string[] }),
+  actions: {
+    setName(draft, name: string) {
+      draft.user.name = name;
+    },
+    reset() {
+      return { user: { name: '' }, errors: [] }; // returning a value replaces the whole state
+    },
+  },
+});
+
+const [state, actions] = formReducer.useReducer({ errors: [] });
+```
+
+- Each `useReducer()` call owns independent state; to share it, wrap it with `createStateContext` or use `createStore`.
+- `actions` is referentially stable. Actions must be synchronous (immer drafts are revoked afterwards); run async flows in the component and call actions step by step.
+- Requires `immer` installed in the consumer project (optional peer dependency).

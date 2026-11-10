@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { queryClient } from '../../src/rq/defaultQueryClient';
 import { RequestBuilder } from '../../src/rq/RequestBuilder';
 import { RequestBuilder as RequestBuilderRSC } from '../../src/rq/RequestBuilder.react-server';
@@ -156,5 +156,61 @@ describe('RequestBuilder react-server 入口', () => {
     // 正常入口的静态配置不会串到 react-server 入口
     RequestBuilder.setQueryClientFactory(() => queryClient);
     expect(() => api.ensureQueryClient()).toThrow('queryClient is not defined');
+  });
+});
+
+describe('RequestBuilder 缓存方法（基于 queryClient.query）', () => {
+  const createApi = (requestFn: Mock<(...args: any[]) => any>) =>
+    new RequestBuilder<{ id: string }, { id: string }>({
+      url: '/items',
+      method: 'get',
+      requestFn,
+    });
+
+  it('fetchQuery 返回数据，数据过期时重新请求', async () => {
+    const client = new QueryClient();
+    const requestFn = vi.fn().mockResolvedValue({ id: '1' });
+    const api = createApi(requestFn);
+
+    await expect(
+      api.fetchQuery({ id: '1' }, { queryClient: client }),
+    ).resolves.toEqual({ id: '1' });
+    await api.fetchQuery({ id: '1' }, { queryClient: client });
+    expect(requestFn).toHaveBeenCalledTimes(2);
+  });
+
+  it('prefetchQuery 写入缓存，返回 undefined，并吞掉错误', async () => {
+    const client = new QueryClient();
+    const requestFn = vi.fn().mockResolvedValue({ id: '1' });
+    const api = createApi(requestFn);
+
+    await expect(
+      api.prefetchQuery({ id: '1' }, { queryClient: client }),
+    ).resolves.toBeUndefined();
+    expect(api.getQueryData({ id: '1' }, { queryClient: client })).toEqual({
+      id: '1',
+    });
+
+    const failing = createApi(vi.fn().mockRejectedValue(new Error('boom')));
+    await expect(
+      failing.prefetchQuery({ id: '2' }, { queryClient: client }),
+    ).resolves.toBeUndefined();
+  });
+
+  it('ensureQueryData 有缓存时直接返回，即使数据已过期', async () => {
+    const client = new QueryClient();
+    const requestFn = vi.fn().mockResolvedValue({ id: 'fresh' });
+    const api = createApi(requestFn);
+
+    api.setQueryData({ id: '1' }, { id: 'cached' }, { queryClient: client });
+    await expect(
+      api.ensureQueryData({ id: '1' }, { queryClient: client, staleTime: 0 }),
+    ).resolves.toEqual({ id: 'cached' });
+    expect(requestFn).not.toHaveBeenCalled();
+
+    await expect(
+      api.ensureQueryData({ id: '2' }, { queryClient: client }),
+    ).resolves.toEqual({ id: 'fresh' });
+    expect(requestFn).toHaveBeenCalledTimes(1);
   });
 });

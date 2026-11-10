@@ -9,6 +9,7 @@ import type {
   UseMutationOptions,
 } from '@tanstack/react-query';
 import {
+  noop,
   useInfiniteQuery,
   useMutation,
   useQuery,
@@ -97,22 +98,17 @@ export class RequestBuilder<Req = any, Res = any> extends RequestBuilderBase<
    * @see https://tanstack.com/query/v4/docs/guides/prefetching
    */
   prefetchQuery(params?: Req, options?: FetchQueryOptions<Res>) {
-    const queryClient = this.ensureQueryClient(options);
-    return queryClient.prefetchQuery({
-      queryKey: this.getQueryKey(params),
-      queryFn: this.defaultQueryFn,
-      ...options,
-      meta: this.normalizeMeta(options),
-    });
+    // 与 fetchQuery 相同，但吞掉结果和错误（等价于已废弃的 queryClient.prefetchQuery）
+    return this.fetchQuery(params, options).then(noop).catch(noop);
   }
 
   /**
    * 用来请求接口
-   * @see https://tanstack.com/query/v4/docs/react/reference/QueryClient#queryclientfetchquery
+   * @see https://tanstack.com/query/v5/docs/reference/QueryClient#queryclientquery
    */
   fetchQuery(params?: Req, options?: FetchQueryOptions<Res>) {
     const queryClient = this.ensureQueryClient(options);
-    return queryClient.fetchQuery({
+    return queryClient.query({
       queryKey: this.getQueryKey(params),
       queryFn: this.defaultQueryFn,
       ...options,
@@ -158,10 +154,12 @@ export class RequestBuilder<Req = any, Res = any> extends RequestBuilderBase<
    */
   ensureQueryData(params?: Req, option?: FetchQueryOptions<Res>) {
     const queryClient = this.ensureQueryClient(option);
-    return queryClient.ensureQueryData({
+    // 等价于已废弃的 queryClient.ensureQueryData：有缓存直接返回，没有才请求
+    return queryClient.query({
       queryKey: this.getQueryKey(params),
       queryFn: this.defaultQueryFn,
       ...option,
+      staleTime: 'static',
       meta: this.normalizeMeta(option),
     });
   }

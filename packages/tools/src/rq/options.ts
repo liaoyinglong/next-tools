@@ -1,7 +1,7 @@
 import type {
   DefaultError,
   QueryClient,
-  FetchQueryOptions as RQFetchQueryOptions,
+  QueryExecuteOptions,
   UseMutationOptions,
   useSuspenseQuery,
   useQuery,
@@ -67,9 +67,9 @@ export interface UseSuspenseQueryOptions<TQueryFnData, TData = TQueryFnData>
     OmitMetaAndPartial<RawUseSuspenseQueryOptions<TQueryFnData, TData>>,
     Basic {}
 
-// 透传给 ensureQueryData / fetchQuery / prefetchQuery 等
+// 透传给 ensureQueryData / fetchQuery / prefetchQuery 等（底层统一走 queryClient.query）
 export interface FetchQueryOptions<T>
-  extends OmitMetaAndPartial<RQFetchQueryOptions<T>>, Basic, QueryClientBasic {}
+  extends OmitMetaAndPartial<QueryExecuteOptions<T>>, Basic, QueryClientBasic {}
 
 export interface RequestBuilderOptions<Req, Res>
   extends Basic, QueryClientBasic {

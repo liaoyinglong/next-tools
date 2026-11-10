@@ -1,6 +1,6 @@
 # Store APIs
 
-Use this reference for application state built with `createStore`, Valtio snapshots, selectors, subscriptions, and safely passing store data to other components or libraries.
+Use this reference for application state built with `createStore`, Valtio snapshots, selectors, subscriptions, safely passing store data to other components or libraries, and component-local state built with `defineReducer`.
 
 ## Import
 
@@ -121,7 +121,7 @@ const formReducer = defineReducer({
       draft.user.name = name;
     },
     reset() {
-      return { user: { name: '' }, errors: [] }; // returning a value replaces the whole state
+      return { user: { name: '' }, errors: [] }; // returning a value replaces the whole state; keys missing from it are removed
     },
   },
 });
@@ -129,6 +129,7 @@ const formReducer = defineReducer({
 const [state, actions] = formReducer.useReducer({ errors: [] });
 ```
 
+- `useReducer(initOverride?)` shallow-merges `initOverride` onto the result of `state()`.
 - Each `useReducer()` call owns independent state; to share it, wrap it with `createStateContext` or use `createStore`.
 - `actions` is referentially stable. Actions must be synchronous (immer drafts are revoked afterwards); run async flows in the component and call actions step by step.
 - Requires `immer` installed in the consumer project (optional peer dependency).

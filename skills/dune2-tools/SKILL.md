@@ -1,6 +1,6 @@
 ---
 name: dune2-tools
-description: Guide coding agents working in applications that consume @dune2/tools. Use when @dune2/tools is installed and the task involves API requests or TanStack Query, browser/cookie storage, Valtio state, React Context factories, prop adapters, typed field names, or precise decimal formatting/calculation. Prefer the library's existing APIs over rebuilding equivalent helpers.
+description: Guide coding agents working in applications that consume @dune2/tools. Use when @dune2/tools is installed and the task involves API requests or TanStack Query, browser/cookie storage, Valtio state, component-local reducer state (useImmerReducer-like, immer drafts), React Context factories, prop adapters, typed field names, or precise decimal formatting/calculation. Prefer the library's existing APIs over rebuilding equivalent helpers.
 license: ISC
 metadata:
   package: '@dune2/tools'

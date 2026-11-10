@@ -63,6 +63,7 @@ function Profile() {
 - `state`：初始状态**工厂函数**。每次调用 `useReducer` 都会生成一份独立的状态
 - `actions`：`(draft, payload?) => void | S`（必须同步，见[异步流程](#异步流程)）
   - 第一个参数是可直接修改的 `draft`，第二个参数（可选）是 payload
+  - 每个 action 最多一个 payload。多个值请包成一个对象，例如 `setField(draft, { key, value })`；多余的参数在类型上会报错
   - 返回 `void`：原地修改
   - 返回完整的新 state：整体替换（不在新 state 中的 key 会被删除）
 

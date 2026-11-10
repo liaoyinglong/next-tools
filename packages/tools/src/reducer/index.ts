@@ -9,11 +9,21 @@ import { useReducer, useState } from 'react';
 type ActionDefinition<S> = (draft: Draft<S>, payload: any) => S | void;
 
 /**
+ * 运行时只转发一个 payload，因此 draft 之后的参数只保留第一个
+ * - 多余的可选参数 / rest 参数在调用处会报类型错误，避免静默丢参
+ */
+type PayloadArgs<P extends unknown[]> = P extends []
+  ? []
+  : P extends [unknown, ...unknown[]]
+    ? [payload: P[0]]
+    : [payload?: P[0]];
+
+/**
  * 去掉 draft 参数后的 action，调用时只需传 payload
  */
 type BoundActions<A> = {
   [K in keyof A]: A[K] extends (draft: any, ...args: infer P) => any
-    ? (...args: P) => void
+    ? (...args: PayloadArgs<P>) => void
     : never;
 };
 

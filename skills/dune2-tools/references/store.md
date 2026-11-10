@@ -131,5 +131,6 @@ const [state, actions] = formReducer.useReducer({ errors: [] });
 
 - `useReducer(initOverride?)` shallow-merges `initOverride` onto the result of `state()`.
 - Each `useReducer()` call owns independent state; to share it, wrap it with `createStateContext` or use `createStore`.
+- Each action takes at most one payload after `draft`; pass multiple values as one object, e.g. `setField(draft, { key, value })`.
 - `actions` is referentially stable. Actions must be synchronous (immer drafts are revoked afterwards); run async flows in the component and call actions step by step.
 - Requires `immer` installed in the consumer project (optional peer dependency).

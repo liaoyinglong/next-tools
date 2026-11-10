@@ -40,6 +40,44 @@ describe('defineReducer types', () => {
     actions.inc(1);
   });
 
+  it('keeps only the first payload', () => {
+    const multi = defineReducer({
+      state: () => ({ a: '', b: '' }),
+      actions: {
+        setOptional(draft, key: string, value?: string) {
+          draft.a = key;
+          draft.b = value ?? '';
+        },
+        setRest(draft, ...keys: string[]) {
+          draft.a = keys.join();
+        },
+        setMaybe(draft, key?: string) {
+          draft.a = key ?? '';
+        },
+      },
+    });
+    const [, actions] = multi.useReducer();
+    expectTypeOf(actions.setOptional).toEqualTypeOf<(key: string) => void>();
+    expectTypeOf(actions.setRest).toEqualTypeOf<(key?: string) => void>();
+    expectTypeOf(actions.setMaybe).toEqualTypeOf<(key?: string) => void>();
+    // @ts-expect-error 运行时只转发第一个 payload，多个值请包成一个对象
+    actions.setOptional('k', 'v');
+    // @ts-expect-error 运行时只转发第一个 payload
+    actions.setRest('x', 'y');
+  });
+
+  it('rejects required extra parameters', () => {
+    defineReducer({
+      state: () => ({ a: '' }),
+      actions: {
+        // @ts-expect-error action 最多接收一个 payload
+        set(draft, key: string, value: string) {
+          draft.a = key + value;
+        },
+      },
+    });
+  });
+
   it('initOverride is a partial state', () => {
     assertType(reducer.useReducer({ count: 1 }));
     // @ts-expect-error count 必须是 number

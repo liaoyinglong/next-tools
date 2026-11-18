@@ -166,6 +166,18 @@ export default defineConfig({
 - **默认值**: `true`
 - **描述**: 是否启用 TypeScript，`true` 生成 `.ts` 文件，`false` 生成 `.js` 文件
 
+#### `enableZod`
+
+- **类型**: `boolean`
+- **默认值**: `false`
+- **描述**: 是否为请求参数（`Req`）在文件顶层具名导出 Zod v4 校验 schema（如 `getUserApiReqSchema`，加 `/*#__PURE__*/` 标记支持 tree-shaking，并通过 `satisfies z.ZodType<...Req>` 保持与静态类型一致）。仅在 `enableTs` 为 `true` 且接口存在请求参数时生成，不生成 `.describe()`。
+
+#### `compatibleNumberString`
+
+- **类型**: `boolean | { req?: boolean; res?: boolean }`
+- **默认值**: `false`
+- **描述**: 是否将 `number` / `integer` 字段兼容为 `number | string`（用于防止大整数精度丢失或兼容表单字符串输入）。传 `{ req: true }` 可仅放宽请求侧；开启 `enableZod` 时会对应生成 `z.union([z.number()..., z.string().regex(...)])`。注：不处理数字枚举。
+
 #### `RequestBuilderImportPath`
 
 - **类型**: `string`

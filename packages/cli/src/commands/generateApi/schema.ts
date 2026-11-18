@@ -1,5 +1,96 @@
 import type { OpenAPIV3 } from 'openapi-types';
+import type { ApiConfig } from '../../shared/config';
 import type { ParsedDocument } from './context';
+
+export function isCompatibleNumberStringEnabled(
+  option: ApiConfig['compatibleNumberString'],
+  target: 'req' | 'res',
+): boolean {
+  if (!option) return false;
+  if (typeof option === 'boolean') return option;
+  return Boolean(option[target]);
+}
+
+function decodePointerSegment(segment: string) {
+  return segment.replace(/~1/g, '/').replace(/~0/g, '~');
+}
+
+export function resolveJsonPointer(root: unknown, ref: string): unknown {
+  if (!ref.startsWith('#/')) return undefined;
+  const parts = ref.slice(2).split('/').map(decodePointerSegment);
+  let cur: unknown = root;
+  for (const part of parts) {
+    if (!cur || typeof cur !== 'object') return undefined;
+    cur = (cur as Record<string, unknown>)[part];
+  }
+  return cur;
+}
+
+export function cloneSchemaDeep<T>(
+  value: T,
+  seen = new WeakMap<object, unknown>(),
+): T {
+  if (!value || typeof value !== 'object') {
+    return value;
+  }
+  if (seen.has(value)) {
+    return seen.get(value) as T;
+  }
+  if (Array.isArray(value)) {
+    const arr: unknown[] = [];
+    seen.set(value, arr);
+    for (const item of value) {
+      arr.push(cloneSchemaDeep(item, seen));
+    }
+    return arr as T;
+  }
+  const cloned: Record<string, unknown> = {};
+  seen.set(value, cloned);
+  for (const [k, v] of Object.entries(value)) {
+    cloned[k] = cloneSchemaDeep(v, seen);
+  }
+  return cloned as T;
+}
+
+/**
+ * 将非枚举的 `number` / `integer` 字段扩宽为 `['number', 'string']`，
+ * 仅作用于克隆后的临时 schema，避免污染共享的 Swagger 解析结果。
+ * 注：不处理数字枚举（按约定不会出现数字枚举）。
+ */
+export function widenNumberToStringDeep(
+  value: unknown,
+  seen = new WeakSet<object>(),
+) {
+  if (!value || typeof value !== 'object' || seen.has(value)) {
+    return;
+  }
+  seen.add(value);
+
+  if (Array.isArray(value)) {
+    value.forEach((item) => widenNumberToStringDeep(item, seen));
+    return;
+  }
+
+  const record = value as Record<string, unknown>;
+  if (!Array.isArray(record.enum)) {
+    if (record.type === 'number' || record.type === 'integer') {
+      record.type = ['number', 'string'];
+    } else if (
+      Array.isArray(record.type) &&
+      (record.type.includes('number') || record.type.includes('integer'))
+    ) {
+      const normalized = record.type.map((item) =>
+        item === 'integer' ? 'number' : item,
+      );
+      if (!normalized.includes('string')) {
+        normalized.push('string');
+      }
+      record.type = Array.from(new Set(normalized));
+    }
+  }
+
+  Object.values(record).forEach((item) => widenNumberToStringDeep(item, seen));
+}
 
 function isJsonContentType(contentType: string) {
   const mediaType = contentType.split(';', 1)[0].trim().toLowerCase();

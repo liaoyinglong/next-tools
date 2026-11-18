@@ -6,11 +6,15 @@ import type { ApiConfig } from '../../shared/config';
 import { asyncLocalStorage } from './context';
 import {
   buildRefContext,
+  cloneSchemaDeep,
   getRequestBodySchema,
+  isCompatibleNumberStringEnabled,
   normalizeSchemaForGenerationDeep,
   pickJsonMedia,
   pickSuccessResponse,
+  widenNumberToStringDeep,
 } from './schema';
+import { compileZodSchema } from './zodCompiler';
 
 const log = createLogger('generateApi');
 
@@ -19,6 +23,7 @@ const log = createLogger('generateApi');
  */
 export async function compileRequestParams(
   operationObject: OpenAPIV3.OperationObject,
+  apiConfig?: ApiConfig,
 ) {
   const store = asyncLocalStorage.getStore();
   const requestBodySchemaOrRef = getRequestBodySchema(
@@ -120,9 +125,24 @@ export async function compileRequestParams(
     : void 0;
 
   let code = '';
+  let zodCode: string | undefined;
+  let zodHelpers: string[] = [];
+  const compatReqNumber = isCompatibleNumberStringEnabled(
+    apiConfig?.compatibleNumberString,
+    'req',
+  );
+
   if (finalSchema) {
     try {
-      code = generate(finalSchema as never, {
+      const tsSchema = compatReqNumber
+        ? (() => {
+            const cloned = cloneSchemaDeep(finalSchema);
+            widenNumberToStringDeep(cloned);
+            return cloned;
+          })()
+        : finalSchema;
+
+      code = generate(tsSchema as never, {
         name: 'Req',
       });
     } catch (e) {
@@ -133,10 +153,20 @@ export async function compileRequestParams(
         operationId: operationObject.operationId,
       });
     }
+
+    if (apiConfig?.enableZod) {
+      const compiledZod = compileZodSchema(finalSchema, {
+        compatibleNumberString: compatReqNumber,
+      });
+      zodCode = compiledZod?.code;
+      zodHelpers = compiledZod?.helpers ?? [];
+    }
   }
 
   return {
     code: code || 'export type Req = any;',
+    zodCode,
+    zodHelpers,
   };
 }
 
@@ -201,9 +231,22 @@ export async function compileResponseParams(
     : void 0;
 
   let code = '';
+  const compatResNumber = isCompatibleNumberStringEnabled(
+    apiConfig.compatibleNumberString,
+    'res',
+  );
+
   if (finalSchema) {
     try {
-      code = generate(finalSchema as never, {
+      const tsSchema = compatResNumber
+        ? (() => {
+            const cloned = cloneSchemaDeep(finalSchema);
+            widenNumberToStringDeep(cloned);
+            return cloned;
+          })()
+        : finalSchema;
+
+      code = generate(tsSchema as never, {
         name: 'Res',
       });
     } catch (e) {

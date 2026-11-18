@@ -40,6 +40,26 @@ export interface ApiConfig {
   enableTs?: boolean;
 
   /**
+   * 是否为请求参数（Req）生成 Zod v4 校验 schema（顶层具名导出，支持 tree-shaking）。
+   * 仅在 `enableTs` 为 `true` 且接口存在请求参数时生成；不生成 `.describe()`。
+   * @default false
+   */
+  enableZod?: boolean;
+
+  /**
+   * 是否将 `number` / `integer` 类型兼容为 `number | string`（防大整数精度丢失或表单字符串输入）。
+   * 不处理数字枚举（默认按普通枚举或原类型处理）。
+   * 支持传 `boolean` 同时控制请求与响应，或传 `{ req?: boolean; res?: boolean }` 分别控制。
+   * @default false
+   */
+  compatibleNumberString?:
+    | boolean
+    | {
+        req?: boolean;
+        res?: boolean;
+      };
+
+  /**
    * 响应 schema 转换，默认提取 data 字段，没有 data 时保留原 schema。
    * 保留原 schema 时，oneOf / anyOf 的响应分支会分别解析并转换。
    * @default (schema) => schema.properties?.data ?? schema

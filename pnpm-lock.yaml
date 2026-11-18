@@ -305,6 +305,12 @@ importers:
       '@dune2/tools':
         specifier: workspace:*
         version: link:../../packages/tools
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      zod:
+        specifier: ^4
+        version: 4.6.2
 
   example/next-tools-app:
     dependencies:

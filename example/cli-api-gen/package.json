@@ -7,6 +7,8 @@
   },
   "dependencies": {
     "@dune2/cli": "workspace:*",
-    "@dune2/tools": "workspace:*"
+    "@dune2/tools": "workspace:*",
+    "oxfmt": "catalog:",
+    "zod": "^4"
   }
 }

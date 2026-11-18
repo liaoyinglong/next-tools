@@ -26,6 +26,11 @@ export default defineConfig({
       output: './src/apis/d',
       swaggerJSONPath: './src/swagger/d.json',
       swaggerUiUrl: 'http://localhost:3000/swagger',
+      enableZod: true,
+      compatibleNumberString: {
+        req: true,
+        res: true,
+      },
     },
     {
       output: './src/apis/swagger',

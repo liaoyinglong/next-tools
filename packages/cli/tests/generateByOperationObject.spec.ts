@@ -482,6 +482,213 @@ describe('api 生成', function () {
     expect(result).not.toContain('request: UaePassRequestDataRequest');
   });
 
+  it.each(['oneOf', 'anyOf'] as const)(
+    'unwraps data in referenced %s response alternatives',
+    async (composition) => {
+      const schemas: Record<string, OpenAPIV3.SchemaObject> = {
+        ApiResultPage: {
+          type: 'object',
+          properties: {
+            code: { type: 'string' },
+            data: { $ref: '#/components/schemas/Page' },
+          },
+        },
+        ApiResultProduct: {
+          type: 'object',
+          properties: {
+            code: { type: 'string' },
+            data: { $ref: '#/components/schemas/Product' },
+          },
+        },
+        Page: {
+          type: 'object',
+          required: ['records'],
+          properties: {
+            records: {
+              type: 'array',
+              items: { $ref: '#/components/schemas/Product' },
+            },
+          },
+        },
+        Product: {
+          type: 'object',
+          required: ['id', 'data'],
+          properties: { id: { type: 'integer' }, data: { type: 'string' } },
+        },
+      };
+      const parsed: OpenAPIV3.Document = {
+        openapi: '3.0.0',
+        info: { title: 'Response union regression', version: '1.0.0' },
+        paths: {},
+        components: { schemas },
+      };
+      const result = await asyncLocalStorage.run(
+        {
+          parsed,
+          parser: {
+            $refs: {
+              get: (ref: string) => {
+                const schema =
+                  schemas[ref.replace('#/components/schemas/', '')];
+                if (!schema)
+                  throw new Error('Unexpected schema reference: ' + ref);
+                return schema;
+              },
+            },
+          } as never,
+        },
+        () =>
+          generate(
+            {
+              responses: {
+                '200': {
+                  description: 'OK',
+                  content: {
+                    '*/*': {
+                      schema: {
+                        [composition]: [
+                          { $ref: '#/components/schemas/ApiResultPage' },
+                          { $ref: '#/components/schemas/ApiResultProduct' },
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+            } as never,
+            'get',
+          ),
+      );
+
+      expect(result).toContain('export type Res = Page | Product;');
+      expect(result).toContain('data: string');
+      expect(result).toContain('records: Product[]');
+      expect(result).toContain('id: number');
+      expect(result).not.toContain('ApiResult');
+      expect(result).not.toContain('code:');
+      expect(result).not.toContain('data?:');
+      expect(result).not.toContain('export type Res = any');
+    },
+  );
+
+  it.each(['oneOf', 'anyOf'] as const)(
+    'preserves nested payload data in inline %s alternatives',
+    async (composition) => {
+      const result = await generate(
+        {
+          responses: {
+            '200': {
+              description: 'OK',
+              content: {
+                'application/json': {
+                  schema: {
+                    [composition]: [
+                      {
+                        type: 'object',
+                        properties: {
+                          code: { type: 'string' },
+                          data: {
+                            type: 'object',
+                            required: ['data', 'id'],
+                            properties: {
+                              data: { type: 'string' },
+                              id: { type: 'integer' },
+                            },
+                          },
+                        },
+                      },
+                      { type: 'string' },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+        'get',
+      );
+
+      expect(result).toContain('data: string');
+      expect(result).toContain('id: number');
+      expect(result).toContain('| string');
+      expect(result).not.toContain('code:');
+    },
+  );
+
+  it('leaves payload alternatives unchanged after extracting data', async () => {
+    const result = await generate(
+      {
+        responses: {
+          '200': {
+            description: 'OK',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    code: { type: 'string' },
+                    data: {
+                      oneOf: [
+                        {
+                          type: 'object',
+                          required: ['data'],
+                          properties: { data: { type: 'string' } },
+                        },
+                        { type: 'integer' },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      'get',
+    );
+
+    expect(result).toContain('data: string');
+    expect(result).toContain('| number');
+    expect(result).not.toContain('code:');
+  });
+
+  it('applies a custom transformer to response alternatives', async () => {
+    const result = await generateApiRequestCode({
+      url: '/users',
+      method: 'get',
+      apiConfig: apiConfigNormalizer({
+        swaggerJSONPath: '',
+        responseSchemaTransformer: (schema) =>
+          schema.properties?.result ?? schema,
+      }),
+      operationObject: {
+        responses: {
+          '200': {
+            description: 'OK',
+            content: {
+              'application/json': {
+                schema: {
+                  oneOf: [
+                    {
+                      type: 'object',
+                      properties: { result: { type: 'string' } },
+                    },
+                    {
+                      type: 'object',
+                      properties: { result: { type: 'integer' } },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    expect(result).toContain('export type Res = string | number;');
+  });
+
   it('参数或响应为空', async () => {
     let parmas = JSON.parse(JSON.stringify(paramsInBody));
     parmas.parameters = [];

@@ -40,7 +40,8 @@ export interface ApiConfig {
   enableTs?: boolean;
 
   /**
-   * 响应的scheme转换，默认获取获取 data 字段，取不到回退到 scheme
+   * 响应 schema 转换，默认提取 data 字段，没有 data 时保留原 schema。
+   * 保留原 schema 时，oneOf / anyOf 的响应分支会分别解析并转换。
    * @default (schema) => schema.properties?.data ?? schema
    */
   responseSchemaTransformer?: (schema: OpenAPIV3.SchemaObject) => any;

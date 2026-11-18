@@ -151,8 +151,9 @@ export async function compileResponseParams(
       | OpenAPIV3.ReferenceObject
       | OpenAPIV3.ResponseObject
       | OpenAPIV3.MediaTypeObject
+      | OpenAPIV3.SchemaObject
       | undefined,
-  ) {
+  ): OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject | undefined {
     if (!arg) return;
 
     if ('content' in arg) {
@@ -163,11 +164,28 @@ export async function compileResponseParams(
       return resolveSchema(arg.schema as never);
     }
 
-    let schema = apiConfig.responseSchemaTransformer!(arg as never) as
+    if ('$ref' in arg) {
+      return resolveSchema(store?.parser.$refs.get(arg.$ref) as never);
+    }
+    const schema = apiConfig.responseSchemaTransformer!(arg as never) as
       | OpenAPIV3.ReferenceObject
       | OpenAPIV3.SchemaObject;
-    if ('$ref' in schema) {
-      return resolveSchema(store?.parser.$refs.get(schema.$ref) as never);
+    // Transform response alternatives, not nested payload schemas. If the
+    // transformer extracted data (or replaced the schema), its result is final.
+    if (
+      schema === arg &&
+      !('$ref' in schema) &&
+      (schema.oneOf || schema.anyOf)
+    ) {
+      return {
+        ...schema,
+        ...(schema.oneOf && {
+          oneOf: schema.oneOf.map((branch) => resolveSchema(branch)!),
+        }),
+        ...(schema.anyOf && {
+          anyOf: schema.anyOf.map((branch) => resolveSchema(branch)!),
+        }),
+      };
     }
     return schema;
   }

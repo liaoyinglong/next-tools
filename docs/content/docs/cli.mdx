@@ -182,7 +182,7 @@ export default defineConfig({
 
 - **类型**: `(schema: OpenAPI.SchemaObject) => any`
 - **默认值**: `(schema) => schema.properties?.data ?? schema`
-- **描述**: 响应数据模式转换器，用于提取响应数据的实际结构
+- **描述**: 响应数据模式转换器，用于提取响应数据的实际结构。响应使用 `oneOf` / `anyOf` 时，若转换器保留原 schema，生成器会解析各分支的引用，并分别调用转换器。默认提取每个分支的 `data`，没有 `data` 的分支保留原结构。提取后的数据内部不会再次解包。
 
 #### `urlTransformer`
 

@@ -1,5 +1,11 @@
 # @dune2/cli
 
+## 2.1.1
+
+### Patch Changes
+
+- dc55e5b: fix(cli): 自动抽离单文件内重复的 Zod 子表达式，并兼容处理 OpenAPI `pattern` 中的内联正则标志
+
 ## 2.1.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @dune2/cli
 
+## 2.1.0
+
+### Minor Changes
+
+- df826bb: feat(cli): 新增 `enableZod` 与 `compatibleNumberString` 配置项，支持按需生成可 tree-shaking 的 Zod v4 请求校验 schema 及 `number | string` 兼容类型
+
 ## 2.0.3
 
 ### Patch Changes

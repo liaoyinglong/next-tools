@@ -1,5 +1,12 @@
 # @dune2/cli
 
+## 2.2.0
+
+### Minor Changes
+
+- 0cf1b31: feat(cli): 将 `enableZod` 替换为轻量 `enableEnums` 配置，支持在文件顶层具名导出扁平化的 `ReqEnums` / `ResEnums` 常量对象并支持 tree-shaking
+- 3759192: feat(cli): 新增 `uppercaseEnums` 配置项，支持将字符串枚举统一转为全大写（同步作用于 TS 类型与 `ReqEnums` / `ResEnums`）
+
 ## 2.1.1
 
 ### Patch Changes

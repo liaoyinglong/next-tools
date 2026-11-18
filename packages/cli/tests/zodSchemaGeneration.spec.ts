@@ -333,18 +333,128 @@ describe('compileZodSchema edge cases', () => {
     });
 
     expect(code).toContain(
-      'const _intCompat = /*#__PURE__*/ z.union([z.number().int(), z.string().regex(/^-?\\d+$/)]);',
-    );
-    expect(code).toContain('id: _intCompat');
-    expect(code).toContain('orgId: _intCompat');
-    expect(code).toContain(
-      'const _numString = /*#__PURE__*/ z.string().regex(/^-?\\d+(\\.\\d+)?$/);',
+      'const _z0 = /*#__PURE__*/ z.string().regex(/^-?\\d+(\\.\\d+)?$/);',
     );
     expect(code).toContain(
-      'minAmount: z.union([z.number().min(0), _numString]).optional()',
+      'const _z1 = /*#__PURE__*/ z.union([z.number().int(), z.string().regex(/^-?\\d+$/)]);',
+    );
+    expect(code).toContain('id: _z1');
+    expect(code).toContain('orgId: _z1');
+    expect(code).toContain(
+      'minAmount: z.union([z.number().min(0), _z0]).optional()',
     );
     expect(code).toContain(
-      'maxAmount: z.union([z.number().min(1), _numString]).optional()',
+      'maxAmount: z.union([z.number().min(1), _z0]).optional()',
     );
+  });
+
+  it('extracts _intString when unconstrained and constrained integers appear together (e.g. pageNum + pageSize)', async () => {
+    const paginatedOp: OpenAPIV3.OperationObject = {
+      summary: '分页查询',
+      parameters: [
+        {
+          name: 'pageNum',
+          in: 'query',
+          schema: { type: 'integer' },
+        },
+        {
+          name: 'pageSize',
+          in: 'query',
+          schema: { type: 'integer', maximum: 100 },
+        },
+      ],
+      responses: { '200': { description: 'OK' } },
+    };
+
+    const code = await runWithOperation(paginatedOp, {
+      method: 'get',
+      apiConfig: {
+        enableZod: true,
+        compatibleNumberString: { req: true },
+      },
+    });
+
+    expect(code).toContain(
+      'const _z0 = /*#__PURE__*/ z.string().regex(/^-?\\d+$/);',
+    );
+    expect(code).toContain(
+      'pageNum: z.union([z.number().int(), _z0]).optional()',
+    );
+    expect(code).toContain(
+      'pageSize: z.union([z.number().int().max(100), _z0]).optional()',
+    );
+    expect(code.match(/regex\(\/\^-\?\\d\+\$\/\)/g)).toHaveLength(1);
+  });
+
+  it('extracts outermost repeated expressions including .optional() and arbitrary schemas', async () => {
+    const productOp: OpenAPIV3.OperationObject = {
+      summary: '创建商品',
+      requestBody: {
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              required: ['primaryStatus'],
+              properties: {
+                weight: { type: 'number', minimum: 0 },
+                length: { type: 'number', minimum: 0 },
+                height: { type: 'number', minimum: 0 },
+                width: { type: 'number', minimum: 0 },
+                primaryStatus: { type: 'string', enum: ['ON', 'OFF'] },
+                backupStatus: { type: 'string', enum: ['ON', 'OFF'] },
+                fallbackStatus: { type: 'string', enum: ['ON', 'OFF'] },
+              },
+            },
+          },
+        },
+      },
+      responses: { '200': { description: 'OK' } },
+    };
+
+    const code = await runWithOperation(productOp, {
+      apiConfig: {
+        enableZod: true,
+        compatibleNumberString: { req: true },
+      },
+    });
+
+    expect(code).toContain(
+      'const _z2 = /*#__PURE__*/ z.union([z.number().min(0), z.string().regex(/^-?\\d+(\\.\\d+)?$/)]).optional();',
+    );
+    expect(code).toContain('weight: _z2');
+    expect(code).toContain('length: _z2');
+    expect(code).toContain('height: _z2');
+    expect(code).toContain('width: _z2');
+
+    expect(code).toContain('const _z0 = /*#__PURE__*/ z.enum(["ON", "OFF"]);');
+    expect(code).toContain('const _z1 = /*#__PURE__*/ _z0.optional();');
+    expect(code).toContain('primaryStatus: _z0');
+    expect(code).toContain('backupStatus: _z1');
+    expect(code).toContain('fallbackStatus: _z1');
+  });
+
+  it('converts leading PCRE inline flags like (?i) to JS RegExp flags and skips invalid JS patterns', () => {
+    const schema = {
+      type: 'object',
+      required: ['currency', 'broken'],
+      properties: {
+        currency: {
+          type: 'string',
+          pattern: '(?i)aed',
+        },
+        broken: {
+          type: 'string',
+          pattern: '(?u)[unclosed',
+        },
+      },
+    };
+
+    const result = compileZodSchema(schema);
+    expect(result?.code).toContain(
+      'currency: z.string().regex(new RegExp("aed", "i"))',
+    );
+    expect(result?.code).toContain('broken: z.string()');
+    expect(result?.code).not.toContain('(?i)');
+    expect(result?.code).not.toContain('(?u)');
   });
 });

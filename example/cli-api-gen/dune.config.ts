@@ -16,6 +16,11 @@ export default defineConfig({
       output: './src/apis/ayshei-admin',
       swaggerJSONPath: './src/swagger/ayshei-admin.json',
       swaggerUiUrl: 'http://localhost:3000/swagger',
+      enableEnums: true,
+      compatibleNumberString: {
+        req: true,
+        res: true,
+      },
     },
     {
       output: './src/apis/wma',
@@ -27,6 +32,7 @@ export default defineConfig({
       swaggerJSONPath: './src/swagger/d.json',
       swaggerUiUrl: 'http://localhost:3000/swagger',
       enableEnums: true,
+      uppercaseEnums: true,
       compatibleNumberString: {
         req: true,
         res: true,

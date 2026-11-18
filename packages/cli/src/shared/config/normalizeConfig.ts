@@ -13,6 +13,7 @@ export function apiConfigNormalizer(item: ApiConfig): ApiConfig {
   next.RequestBuilderImportPath ??= `import { RequestBuilder } from '@dune2/tools/rq';`;
   next.enableTs ??= true;
   next.enableEnums ??= false;
+  next.uppercaseEnums ??= false;
   next.compatibleNumberString ??= false;
   next.enabled ??= true;
   next.codeFormatterCmd ??= 'oxfmt';

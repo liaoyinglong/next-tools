@@ -1,9 +1,13 @@
 import type { OpenAPIV3 } from 'openapi-types';
-import type { ApiConfig } from '../../shared/config';
 import type { ParsedDocument } from './context';
 
-export function isCompatibleNumberStringEnabled(
-  option: ApiConfig['compatibleNumberString'],
+export type TargetOption =
+  | boolean
+  | { req?: boolean; res?: boolean }
+  | undefined;
+
+export function isTargetOptionEnabled(
+  option: TargetOption,
   target: 'req' | 'res',
 ): boolean {
   if (!option) return false;
@@ -90,6 +94,33 @@ export function widenNumberToStringDeep(
   }
 
   Object.values(record).forEach((item) => widenNumberToStringDeep(item, seen));
+}
+
+/**
+ * 将 schema 中字符串枚举值统一转为全大写，仅作用于克隆后的临时 schema。
+ */
+export function uppercaseEnumsDeep(
+  value: unknown,
+  seen = new WeakSet<object>(),
+) {
+  if (!value || typeof value !== 'object' || seen.has(value)) {
+    return;
+  }
+  seen.add(value);
+
+  if (Array.isArray(value)) {
+    value.forEach((item) => uppercaseEnumsDeep(item, seen));
+    return;
+  }
+
+  const record = value as Record<string, unknown>;
+  if (Array.isArray(record.enum)) {
+    record.enum = record.enum.map((item) =>
+      typeof item === 'string' ? item.toUpperCase() : item,
+    );
+  }
+
+  Object.values(record).forEach((item) => uppercaseEnumsDeep(item, seen));
 }
 
 function isJsonContentType(contentType: string) {

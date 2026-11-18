@@ -53,6 +53,19 @@ export interface ApiConfig {
       };
 
   /**
+   * 是否将字符串枚举值统一转为全大写（兜底后端 Swagger 枚举大小写不规范的情况）。
+   * 会同步作用于生成的 TS 联合类型与 `ReqEnums` / `ResEnums` 常量。
+   * 支持传 `boolean` 同时控制请求与响应，或传 `{ req?: boolean; res?: boolean }` 分别控制。
+   * @default false
+   */
+  uppercaseEnums?:
+    | boolean
+    | {
+        req?: boolean;
+        res?: boolean;
+      };
+
+  /**
    * 是否将 `number` / `integer` 类型兼容为 `number | string`（防大整数精度丢失或表单字符串输入）。
    * 不处理数字枚举（默认按普通枚举或原类型处理）。
    * 支持传 `boolean` 同时控制请求与响应，或传 `{ req?: boolean; res?: boolean }` 分别控制。

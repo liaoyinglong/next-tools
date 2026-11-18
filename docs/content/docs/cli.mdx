@@ -172,6 +172,12 @@ export default defineConfig({
 - **默认值**: `false`
 - **描述**: 是否在文件顶层具名导出扁平化的枚举常量对象（如 `getUserApiReqEnums`、`getUserApiResEnums`，`as const`），脱离 `namespace` 以支持 tree-shaking。嵌套字段按扁平驼峰命名（如 `filter.status` → `filterStatus`）。仅在 `enableTs` 为 `true` 且存在枚举时生成。
 
+#### `uppercaseEnums`
+
+- **类型**: `boolean | { req?: boolean; res?: boolean }`
+- **默认值**: `false`
+- **描述**: 是否将字符串枚举值统一转为全大写（兜底后端 Swagger 枚举大小写不规范的情况），会同步作用于 TS 联合类型与 `ReqEnums` / `ResEnums` 常量。
+
 #### `compatibleNumberString`
 
 - **类型**: `boolean | { req?: boolean; res?: boolean }`

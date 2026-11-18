@@ -4,19 +4,48 @@ import type { OpenAPIV3 } from 'openapi-types';
 import { createLogger } from '../../shared';
 import type { ApiConfig } from '../../shared/config';
 import { asyncLocalStorage } from './context';
-import { compileEnumObject, isEnumsEnabled } from './enumCompiler';
+import { compileEnumObject } from './enumCompiler';
 import {
   buildRefContext,
   cloneSchemaDeep,
   getRequestBodySchema,
-  isCompatibleNumberStringEnabled,
+  isTargetOptionEnabled,
   normalizeSchemaForGenerationDeep,
   pickJsonMedia,
   pickSuccessResponse,
+  uppercaseEnumsDeep,
   widenNumberToStringDeep,
 } from './schema';
 
 const log = createLogger('generateApi');
+
+function prepareTargetSchema<T extends object>(
+  finalSchema: T,
+  apiConfig: ApiConfig | undefined,
+  target: 'req' | 'res',
+): T {
+  const compatNumber = isTargetOptionEnabled(
+    apiConfig?.compatibleNumberString,
+    target,
+  );
+  const uppercaseEnums = isTargetOptionEnabled(
+    apiConfig?.uppercaseEnums,
+    target,
+  );
+
+  if (!compatNumber && !uppercaseEnums) {
+    return finalSchema;
+  }
+
+  const cloned = cloneSchemaDeep(finalSchema);
+  if (compatNumber) {
+    widenNumberToStringDeep(cloned);
+  }
+  if (uppercaseEnums) {
+    uppercaseEnumsDeep(cloned);
+  }
+  return cloned;
+}
 
 /**
  * 这个方法还不完善，只能处理简单的请求参数
@@ -126,22 +155,11 @@ export async function compileRequestParams(
 
   let code = '';
   let enumsCode: string | undefined;
-  const compatReqNumber = isCompatibleNumberStringEnabled(
-    apiConfig?.compatibleNumberString,
-    'req',
-  );
 
   if (finalSchema) {
+    const targetSchema = prepareTargetSchema(finalSchema, apiConfig, 'req');
     try {
-      const tsSchema = compatReqNumber
-        ? (() => {
-            const cloned = cloneSchemaDeep(finalSchema);
-            widenNumberToStringDeep(cloned);
-            return cloned;
-          })()
-        : finalSchema;
-
-      code = generate(tsSchema as never, {
+      code = generate(targetSchema as never, {
         name: 'Req',
       });
     } catch (e) {
@@ -153,8 +171,8 @@ export async function compileRequestParams(
       });
     }
 
-    if (isEnumsEnabled(apiConfig?.enableEnums, 'req')) {
-      enumsCode = compileEnumObject(finalSchema);
+    if (isTargetOptionEnabled(apiConfig?.enableEnums, 'req')) {
+      enumsCode = compileEnumObject(targetSchema);
     }
   }
 
@@ -226,22 +244,11 @@ export async function compileResponseParams(
 
   let code = '';
   let enumsCode: string | undefined;
-  const compatResNumber = isCompatibleNumberStringEnabled(
-    apiConfig.compatibleNumberString,
-    'res',
-  );
 
   if (finalSchema) {
+    const targetSchema = prepareTargetSchema(finalSchema, apiConfig, 'res');
     try {
-      const tsSchema = compatResNumber
-        ? (() => {
-            const cloned = cloneSchemaDeep(finalSchema);
-            widenNumberToStringDeep(cloned);
-            return cloned;
-          })()
-        : finalSchema;
-
-      code = generate(tsSchema as never, {
+      code = generate(targetSchema as never, {
         name: 'Res',
       });
     } catch (e) {
@@ -253,8 +260,8 @@ export async function compileResponseParams(
       });
     }
 
-    if (isEnumsEnabled(apiConfig.enableEnums, 'res')) {
-      enumsCode = compileEnumObject(finalSchema);
+    if (isTargetOptionEnabled(apiConfig.enableEnums, 'res')) {
+      enumsCode = compileEnumObject(targetSchema);
     }
   } else {
     log.error('responseSchemaTransformer 返回值为空，请检查');

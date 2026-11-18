@@ -1,17 +1,7 @@
 import { camelCase } from 'es-toolkit';
-import type { ApiConfig } from '../../shared/config';
 import { resolveJsonPointer } from './schema';
 
 const VALID_IDENTIFIER_RE = /^[a-zA-Z_$][0-9a-zA-Z_$]*$/;
-
-export function isEnumsEnabled(
-  option: ApiConfig['enableEnums'],
-  target: 'req' | 'res',
-): boolean {
-  if (!option) return false;
-  if (typeof option === 'boolean') return option;
-  return Boolean(option[target]);
-}
 
 function formatPropertyKey(key: string): string {
   return VALID_IDENTIFIER_RE.test(key) ? key : JSON.stringify(key);

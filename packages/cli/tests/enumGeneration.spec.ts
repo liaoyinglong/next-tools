@@ -249,6 +249,63 @@ describe('enableEnums & compatibleNumberString', () => {
     expect(bothCode).toContain('id: number | string;');
     expect(bothCode).toContain('total?: number | string;');
   });
+
+  it('uppercases string enum values for both TS types and ReqEnums/ResEnums when uppercaseEnums is enabled', async () => {
+    const lowercaseOp: OpenAPIV3.OperationObject = {
+      summary: '小写枚举兜底',
+      parameters: [
+        {
+          name: 'status',
+          in: 'query',
+          schema: {
+            type: 'string',
+            enum: ['active', 'archived'],
+          },
+        },
+      ],
+      responses: {
+        '200': {
+          description: 'OK',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  state: {
+                    type: 'string',
+                    enum: ['draft', 'published'],
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const reqOnlyCode = await runWithOperation(lowercaseOp, {
+      method: 'get',
+      apiConfig: {
+        enableEnums: true,
+        uppercaseEnums: { req: true },
+      },
+    });
+    expect(reqOnlyCode).toContain('status?: "ACTIVE" | "ARCHIVED";');
+    expect(reqOnlyCode).toContain('status: ["ACTIVE", "ARCHIVED"],');
+    expect(reqOnlyCode).toContain('state?: "draft" | "published";');
+    expect(reqOnlyCode).toContain('state: ["draft", "published"],');
+
+    const bothCode = await runWithOperation(lowercaseOp, {
+      method: 'get',
+      apiConfig: {
+        enableEnums: true,
+        uppercaseEnums: true,
+      },
+    });
+    expect(bothCode).toContain('status?: "ACTIVE" | "ARCHIVED";');
+    expect(bothCode).toContain('state?: "DRAFT" | "PUBLISHED";');
+    expect(bothCode).toContain('state: ["DRAFT", "PUBLISHED"],');
+  });
 });
 
 describe('compileEnumObject edge cases', () => {

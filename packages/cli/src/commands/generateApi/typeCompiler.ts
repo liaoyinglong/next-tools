@@ -4,6 +4,7 @@ import type { OpenAPIV3 } from 'openapi-types';
 import { createLogger } from '../../shared';
 import type { ApiConfig } from '../../shared/config';
 import { asyncLocalStorage } from './context';
+import { compileEnumObject, isEnumsEnabled } from './enumCompiler';
 import {
   buildRefContext,
   cloneSchemaDeep,
@@ -14,7 +15,6 @@ import {
   pickSuccessResponse,
   widenNumberToStringDeep,
 } from './schema';
-import { compileZodSchema } from './zodCompiler';
 
 const log = createLogger('generateApi');
 
@@ -125,8 +125,7 @@ export async function compileRequestParams(
     : void 0;
 
   let code = '';
-  let zodCode: string | undefined;
-  let zodHelpers: string[] = [];
+  let enumsCode: string | undefined;
   const compatReqNumber = isCompatibleNumberStringEnabled(
     apiConfig?.compatibleNumberString,
     'req',
@@ -154,19 +153,14 @@ export async function compileRequestParams(
       });
     }
 
-    if (apiConfig?.enableZod) {
-      const compiledZod = compileZodSchema(finalSchema, {
-        compatibleNumberString: compatReqNumber,
-      });
-      zodCode = compiledZod?.code;
-      zodHelpers = compiledZod?.helpers ?? [];
+    if (isEnumsEnabled(apiConfig?.enableEnums, 'req')) {
+      enumsCode = compileEnumObject(finalSchema);
     }
   }
 
   return {
     code: code || 'export type Req = any;',
-    zodCode,
-    zodHelpers,
+    enumsCode,
   };
 }
 
@@ -231,6 +225,7 @@ export async function compileResponseParams(
     : void 0;
 
   let code = '';
+  let enumsCode: string | undefined;
   const compatResNumber = isCompatibleNumberStringEnabled(
     apiConfig.compatibleNumberString,
     'res',
@@ -257,9 +252,16 @@ export async function compileResponseParams(
         operationId: operationObject.operationId,
       });
     }
+
+    if (isEnumsEnabled(apiConfig.enableEnums, 'res')) {
+      enumsCode = compileEnumObject(finalSchema);
+    }
   } else {
     log.error('responseSchemaTransformer 返回值为空，请检查');
   }
 
-  return code ? code : 'export type Res = any;';
+  return {
+    code: code || 'export type Res = any;',
+    enumsCode,
+  };
 }

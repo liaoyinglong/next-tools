@@ -40,11 +40,17 @@ export interface ApiConfig {
   enableTs?: boolean;
 
   /**
-   * 是否为请求参数（Req）生成 Zod v4 校验 schema（顶层具名导出，支持 tree-shaking）。
-   * 仅在 `enableTs` 为 `true` 且接口存在请求参数时生成；不生成 `.describe()`。
+   * 是否在文件顶层生成扁平化的枚举常量对象（`${name}ReqEnums` / `${name}ResEnums`，`as const`），
+   * 脱离 `namespace` 以支持 tree-shaking。仅在 `enableTs` 为 `true` 且存在枚举时生成。
+   * 支持传 `boolean` 同时控制请求与响应，或传 `{ req?: boolean; res?: boolean }` 分别控制。
    * @default false
    */
-  enableZod?: boolean;
+  enableEnums?:
+    | boolean
+    | {
+        req?: boolean;
+        res?: boolean;
+      };
 
   /**
    * 是否将 `number` / `integer` 类型兼容为 `number | string`（防大整数精度丢失或表单字符串输入）。

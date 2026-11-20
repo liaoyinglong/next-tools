@@ -1,27 +1,22 @@
 import type {
   DefaultError,
-  InfiniteData,
   InvalidateOptions,
   QueryClient,
   QueryFunctionContext,
   RefetchOptions,
-  UseInfiniteQueryOptions,
   UseMutationOptions,
 } from '@tanstack/react-query';
 import {
   noop,
-  useInfiniteQuery,
   useMutation,
   useQuery,
   useSuspenseQuery,
 } from '@tanstack/react-query';
-import { useDebugValue, useMemo } from 'react';
 import { fieldsMap, type FieldsMap } from '../factory/fieldsMap';
 import { queryClient } from './defaultQueryClient';
 import type {
   Basic,
   FetchQueryOptions,
-  PageData,
   QueryClientBasic,
   RequestBuilderOptions,
   UseSuspenseQueryOptions,
@@ -162,63 +157,6 @@ export class RequestBuilder<Req = any, Res = any> extends RequestBuilderBase<
       staleTime: 'static',
       meta: this.normalizeMeta(option),
     });
-  }
-  //#endregion
-  //#region useInfiniteQuery
-  useInfiniteQuery(
-    params?: Req,
-    options?: UseInfiniteQueryOptions<Res, DefaultError, InfiniteData<Res>> &
-      Basic,
-  ) {
-    // @ts-expect-error 后续处理类型问题
-    const pageSize = params?.pageSize ?? 10;
-    const res = useInfiniteQuery({
-      queryFn: (ctx) => {
-        // @ts-expect-error 后续处理类型问题
-        const { pageNum, ...rest } = ctx.queryKey[2];
-        return this.request(
-          {
-            ...rest,
-            pageNum: ctx.pageParam ?? pageNum ?? 1,
-          },
-          {
-            ...ctx.meta,
-            signal: ctx.signal,
-            requestFn: options?.requestFn,
-          },
-        );
-      },
-      initialPageParam: 1,
-      queryKey: this.getQueryKey(params),
-      getNextPageParam: (_lastPage, _allPages) => {
-        let lastPage = _lastPage as PageData;
-        let allPages = _allPages as PageData[];
-        // 如果最后一页的数据不满足 pageSize，说明没有下一页了
-        if (lastPage.result.length < pageSize) {
-          return undefined;
-        }
-        return allPages.length + 1;
-      },
-      ...options,
-      meta: this.normalizeMeta(options),
-    });
-
-    const rawData = res.data;
-
-    const data = useMemo(() => {
-      return (
-        rawData?.pages.flatMap((page) => {
-          const pageData = page as PageData;
-          return pageData.result;
-        }) ?? []
-      );
-    }, [rawData]);
-
-    type Data<T> = T extends PageData ? T['result'] : T;
-
-    const result = { ...res, data: data as Data<Res>, rawData };
-    useDebugValue(result);
-    return result;
   }
   //#endregion
 

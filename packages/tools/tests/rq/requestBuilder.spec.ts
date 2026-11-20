@@ -139,7 +139,6 @@ describe('RequestBuilder react-server 入口', () => {
       api.getQueryData,
       api.setQueryData,
       api.ensureQueryData,
-      api.useInfiniteQuery,
       api.defaultQueryFn,
     ]) {
       expect(method).toThrow('This method is not supported in RSC');

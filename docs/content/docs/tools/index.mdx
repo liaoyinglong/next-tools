@@ -61,7 +61,7 @@ npx skills add liaoyinglong/next-tools --skill dune2-tools
 
 ### RQ（TanStack Query / 请求层封装）
 
-- **RequestBuilder**：面向“一个 endpoint”的类型安全请求构建器，内置 `useQuery/useMutation/useInfiniteQuery` 与缓存操作封装
+- **RequestBuilder**：面向“一个 endpoint”的类型安全请求构建器，内置 `useQuery/useMutation` 与缓存操作封装
   - 典型场景：与 `@dune2/cli generateApi` 生成的 API 代码搭配使用；或者手写少量 API 时统一请求模式
   - 详见：[RequestBuilder](./request-builder)
 - **createApi**：为“非 HTTP/非通用 requestFn”的异步函数快速创建一个可用的 `RequestBuilder`（仍能享受 rq 的缓存/状态）

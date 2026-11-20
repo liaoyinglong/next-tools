@@ -56,7 +56,6 @@ export class RequestBuilder<Req = any, Res = any> extends RequestBuilderBase<
    */
   setQueryData = throwErrorInRSC;
   ensureQueryData = throwErrorInRSC;
-  useInfiniteQuery = throwErrorInRSC;
 
   getMutationFn = throwErrorInRSC;
   useMutation = throwErrorInRSC;

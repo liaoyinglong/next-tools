@@ -141,38 +141,6 @@ function CreateUserForm() {
 }
 ```
 
-### useInfiniteQuery - 无限滚动分页
-
-```tsx
-function InfiniteUserList() {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    userApi.useInfiniteQuery(
-      { pageSize: 20 },
-      {
-        getNextPageParam: (lastPage, pages) => {
-          return lastPage.hasMore ? pages.length + 1 : undefined;
-        },
-      },
-    );
-
-  if (isLoading) return <div>Loading...</div>;
-
-  return (
-    <div>
-      {data?.map((user) => (
-        <div key={user.id}>{user.name}</div>
-      ))}
-
-      {hasNextPage && (
-        <button onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
-          {isFetchingNextPage ? 'Loading more...' : 'Load More'}
-        </button>
-      )}
-    </div>
-  );
-}
-```
-
 ## 缓存管理
 
 ### 预取数据
@@ -541,7 +509,6 @@ interface RequestBuilderOptions<Req, Res> {
 
 - `useQuery<T = Res>(params?: Req, options?: UseQueryOptions<T>)`
 - `useSuspenseQuery<T = Res>(params?: Req, options?: UseSuspenseQueryOptions<T>)`
-- `useInfiniteQuery(params?: Req, options?: UseInfiniteQueryOptions<Res>)`
 - `useMutation(options?: UseMutationOptions<Res, unknown, Req>)`
 
 #### 缓存管理
@@ -674,7 +641,7 @@ const userApi = new BaseApi<UserRequest, UserResponse>({
 
 **RSC 中调用以下方法会抛出错误：**
 
-- 所有 Hooks：`useQuery`、`useSuspenseQuery`、`useMutation`、`useInfiniteQuery`
+- 所有 Hooks：`useQuery`、`useSuspenseQuery`、`useMutation`
 - 所有缓存方法：`prefetchQuery`、`fetchQuery`、`invalidateQuery`、`getQueryData`、`setQueryData` 等
 
 ```typescript

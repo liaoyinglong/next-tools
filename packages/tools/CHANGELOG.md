@@ -1,5 +1,11 @@
 # @dune2/tools
 
+## 2.0.1
+
+### Patch Changes
+
+- ca9f6e7: 修复 `RequestParts.query` 类型为 `object`，允许 `interface` 类型的 `Req` 直接在 `toRequest: (query) => ({ query })` 中返回。
+
 ## 2.0.0
 
 ### Major Changes

@@ -71,6 +71,12 @@ export interface UseSuspenseQueryOptions<TQueryFnData, TData = TQueryFnData>
 export interface FetchQueryOptions<T>
   extends OmitMetaAndPartial<QueryExecuteOptions<T>>, Basic, QueryClientBasic {}
 
+export interface RequestParts {
+  path?: Record<string, string | number>;
+  query?: Record<string, unknown>;
+  body?: unknown;
+}
+
 export interface RequestBuilderOptions<Req, Res>
   extends Basic, QueryClientBasic {
   /**
@@ -78,10 +84,14 @@ export interface RequestBuilderOptions<Req, Res>
    * @default "get"
    */
   method?: HttpMethod;
-  // 请求路径
+  // 请求路径，path 参数从模板中的 {x} 自动提取
   url: string;
-  // url path 上的参数 , /prefunding-order/{id} 中的 id
-  urlPathParams?: string[];
+
+  /**
+   * 将扁平的请求输入映射到 path / query / body。
+   * 省略时按默认规则处理：从 url 模板提取 {x} 作为 path，其余放到默认位置（get/head/options 为 query，其他为 body）。
+   */
+  toRequest?: (input: Req) => RequestParts;
 
   // 透传给 useQuery 的 options
   useQueryOptions?: Partial<RawUseQueryOptions<Res>>;
@@ -93,7 +103,11 @@ export interface RequestBuilderOptions<Req, Res>
   useMutationOptions?: UseMutationOptions<Res, unknown, Req>;
 }
 
-export type RequestConfig = Basic & RequestFnParams;
+export type RequestConfig = Basic &
+  RequestFnParams & {
+    /** URL path 模板参数，仅用于 requestWithConfig */
+    path?: Record<string, string | number>;
+  };
 
 export type PageData<T = any> = {
   total?: number;

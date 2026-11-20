@@ -34,12 +34,11 @@ const userApi = new RequestBuilder<UserRequest, UserResponse>({
   method: 'get',
 });
 
-// 带路径参数
+// 带路径参数（自动从 url 模板提取 {userId}）
 const userDetailApi = new RequestBuilder<UserDetailRequest, UserDetailResponse>(
   {
     url: '/api/users/{userId}',
     method: 'get',
-    urlPathParams: ['userId'],
   },
 );
 
@@ -265,25 +264,45 @@ async function handleRequest(req: Request) {
 }
 ```
 
-### 路径参数处理
+### 参数映射与 `toRequest`
+
+不配置 `toRequest` 时，`RequestBuilder` 按默认规则分发参数：
+
+- 从 `url` 模板中的 `{x}` 自动提取 path 参数，并用 `encodeURIComponent` 编码替换；缺失、值为 `null`/`undefined` 或出现模板外字段时会抛错。
+- 其余字段放到默认位置：`get` / `head` / `options` 放入 `params`（query），其他方法放入 `data`（body）；剩余为空时不设置。
 
 ```tsx
-// 定义带路径参数的 API
+// 符合默认规则时无需写 toRequest
 const userDetailApi = new RequestBuilder<
-  { userId: string; includeProfile: boolean },
+  { userId: string; includeProfile?: boolean },
   UserDetailResponse
 >({
   url: '/api/users/{userId}',
   method: 'get',
-  urlPathParams: ['userId'],
 });
 
-// 使用时会自动替换路径参数
 const response = await userDetailApi.request({
   userId: '123',
   includeProfile: true,
 });
 // 实际请求: GET /api/users/123?includeProfile=true
+```
+
+当请求需要同时包含 path / query / body，或非 GET 请求只传 query 时，通过 `toRequest` 显式映射：
+
+```tsx
+const createOrderApi = new RequestBuilder<
+  { shopId: string; dryRun?: boolean; sku: string; count: number },
+  Order
+>({
+  url: '/shops/{shopId}/orders',
+  method: 'post',
+  toRequest: ({ shopId, dryRun, ...body }) => ({
+    path: { shopId },
+    query: { dryRun },
+    body,
+  }),
+});
 ```
 
 ### 元数据和中间件
@@ -350,13 +369,11 @@ const createUserApi = new RequestBuilder<Omit<User, 'id'>, User>({
 const updateUserApi = new RequestBuilder<User, User>({
   url: '/api/users/{id}',
   method: 'put',
-  urlPathParams: ['id'],
 });
 
 const deleteUserApi = new RequestBuilder<{ id: string }, void>({
   url: '/api/users/{id}',
   method: 'delete',
-  urlPathParams: ['id'],
 });
 
 // 使用示例
@@ -486,10 +503,16 @@ function FileUpload() {
 ### RequestBuilder 构造函数
 
 ```tsx
+interface RequestParts {
+  path?: Record<string, string | number>;
+  query?: Record<string, unknown>;
+  body?: unknown;
+}
+
 interface RequestBuilderOptions<Req, Res> {
   url: string;
   method?: 'get' | 'post' | 'put' | 'delete' | 'patch' | 'head' | 'options';
-  urlPathParams?: string[];
+  toRequest?: (input: Req) => RequestParts;
   queryClient?: QueryClient;
   requestFn?: (config: RequestConfig) => Promise<Res>;
   meta?: Record<string, any>;

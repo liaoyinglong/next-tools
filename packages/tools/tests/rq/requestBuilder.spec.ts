@@ -44,12 +44,11 @@ describe('RequestBuilder 请求构造', () => {
     );
   });
 
-  it('urlPathParams 从参数里取值填进 url，且不改动调用方对象', async () => {
+  it('从 url 模板自动提取 path 参数填进 url，且不改动调用方对象', async () => {
     const requestFn = vi.fn().mockResolvedValue({});
     const api = new RequestBuilder({
       url: '/users/{id}/pets/{petId}',
       method: 'get',
-      urlPathParams: ['id', 'petId'],
       requestFn,
     });
 
@@ -110,7 +109,6 @@ describe('RequestBuilder react-server 入口', () => {
     const api = new RequestBuilderRSC({
       url: '/orders/{id}',
       method: 'post',
-      urlPathParams: ['id'],
       requestFn,
     });
 

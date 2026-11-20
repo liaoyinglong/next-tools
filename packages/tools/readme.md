@@ -58,7 +58,6 @@ import { RequestBuilder } from '@dune2/tools/rq';
 const userApi = new RequestBuilder({
   url: '/api/users/{id}',
   method: 'get',
-  urlPathParams: ['id'],
 });
 
 // Use in components

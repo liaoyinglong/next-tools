@@ -505,7 +505,7 @@ function FileUpload() {
 ```tsx
 interface RequestParts {
   path?: Record<string, string | number>;
-  query?: Record<string, unknown>;
+  query?: object;
   body?: unknown;
 }
 

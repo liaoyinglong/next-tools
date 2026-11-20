@@ -73,7 +73,7 @@ export interface FetchQueryOptions<T>
 
 export interface RequestParts {
   path?: Record<string, string | number>;
-  query?: Record<string, unknown>;
+  query?: object;
   body?: unknown;
 }
 

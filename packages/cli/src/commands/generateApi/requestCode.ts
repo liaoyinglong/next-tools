@@ -2,6 +2,10 @@ import * as os from 'os';
 import { camelCase } from 'es-toolkit';
 import type { OpenAPIV3 } from 'openapi-types';
 import type { ApiConfig } from '../../shared/config';
+import {
+  generateToRequestCode,
+  parseRequestParameters,
+} from './requestParameters';
 import { compileRequestParams, compileResponseParams } from './typeCompiler';
 
 /**
@@ -11,9 +15,13 @@ export async function generateApiRequestCode(options: {
   url: string;
   method: string;
   operationObject: OpenAPIV3.OperationObject;
+  pathItemParameters?: (
+    | OpenAPIV3.ParameterObject
+    | OpenAPIV3.ReferenceObject
+  )[];
   apiConfig: ApiConfig;
 }): Promise<string> {
-  const { method, operationObject, apiConfig } = options;
+  const { method, operationObject, pathItemParameters, apiConfig } = options;
 
   const url = (() => {
     if (typeof apiConfig.urlTransformer === 'string') {
@@ -42,18 +50,15 @@ export async function generateApiRequestCode(options: {
     requestBuilderName = `_${requestBuilderName}`;
   }
 
-  //#region url 上参数 例如 /api/v1/users/{userId}
-  const urlPathParams = getUrlPathParams(
-    (operationObject.parameters as never) ?? [],
+  const parsedParams = parseRequestParameters(
+    operationObject,
+    pathItemParameters,
   );
-  const urlPathParamsCode = urlPathParams.length
-    ? `urlPathParams: ${JSON.stringify(urlPathParams)},`
-    : '';
-  //#endregion
+  const toRequestCode = generateToRequestCode(parsedParams, method);
 
   const [requestParamsTypeCode, responseParamsTypeCode] = apiConfig.enableTs
     ? await Promise.all([
-        compileRequestParams(operationObject, apiConfig),
+        compileRequestParams(operationObject, apiConfig, parsedParams),
         compileResponseParams(operationObject, apiConfig),
       ])
     : [undefined, undefined];
@@ -71,15 +76,14 @@ export async function generateApiRequestCode(options: {
   ].filter(Boolean);
 
   // builder 代码
-  let builderCode = `\
-export const ${requestBuilderName} = new RequestBuilder({
-  url: '${url}',
-  method: '${method}',
-  ${urlPathParamsCode}
-  ${apiConfig.queryClientImportPath ? 'queryClient,' : ''}
-});`
-    // 移除空行
-    .replace(/,\n\s*}/, ',' + os.EOL + '}');
+  const builderFields = [
+    `  url: '${url}',`,
+    `  method: '${method}',`,
+    toRequestCode && `  ${toRequestCode}`,
+    apiConfig.queryClientImportPath && '  queryClient,',
+  ].filter(Boolean);
+
+  let builderCode = `export const ${requestBuilderName} = new RequestBuilder({\n${builderFields.join('\n')}\n});`;
   if (apiConfig.enableTs) {
     builderCode = builderCode.replace(
       'new RequestBuilder(',
@@ -109,10 +113,4 @@ export namespace ${requestBuilderName} {
   }
 
   return code.join(os.EOL);
-}
-
-function getUrlPathParams(parameters: OpenAPIV3.ParameterObject[]) {
-  return parameters
-    .filter((item) => item.in === 'path')
-    .map((item) => item.name);
 }

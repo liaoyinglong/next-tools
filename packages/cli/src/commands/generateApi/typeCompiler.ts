@@ -1,14 +1,16 @@
 import { generate } from '@fumari/json-schema-ts';
-import { isPlainObject } from 'es-toolkit';
 import type { OpenAPIV3 } from 'openapi-types';
 import { createLogger } from '../../shared';
 import type { ApiConfig } from '../../shared/config';
 import { asyncLocalStorage } from './context';
 import { compileEnumObject } from './enumCompiler';
 import {
+  parseRequestParameters,
+  type ParsedRequestParameters,
+} from './requestParameters';
+import {
   buildRefContext,
   cloneSchemaDeep,
-  getRequestBodySchema,
   isTargetOptionEnabled,
   normalizeSchemaForGenerationDeep,
   pickJsonMedia,
@@ -18,6 +20,11 @@ import {
 } from './schema';
 
 const log = createLogger('generateApi');
+
+const NON_JSON_BODY_SENTINELS = {
+  FormData: '__DUNE_TS_TYPE_FORMDATA__',
+  unknown: '__DUNE_TS_TYPE_UNKNOWN__',
+} as const;
 
 function prepareTargetSchema<T extends object>(
   finalSchema: T,
@@ -47,103 +54,99 @@ function prepareTargetSchema<T extends object>(
   return cloned;
 }
 
+function replaceNonJsonSentinels(code: string): string {
+  return code
+    .replace(
+      new RegExp(`['"]${NON_JSON_BODY_SENTINELS.FormData}['"]`, 'g'),
+      'FormData',
+    )
+    .replace(
+      new RegExp(`['"]${NON_JSON_BODY_SENTINELS.unknown}['"]`, 'g'),
+      'unknown',
+    );
+}
+
+function withDescription(
+  schema: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject,
+  description?: string,
+): OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject {
+  return description && !('$ref' in schema)
+    ? { ...schema, description }
+    : schema;
+}
+
 /**
- * 这个方法还不完善，只能处理简单的请求参数
+ * 基于已解析的请求参数（path / query / body）编译 Req 类型与枚举常量
  */
 export async function compileRequestParams(
   operationObject: OpenAPIV3.OperationObject,
   apiConfig?: ApiConfig,
+  parsedParams?: ParsedRequestParameters,
 ) {
   const store = asyncLocalStorage.getStore();
-  const requestBodySchemaOrRef = getRequestBodySchema(
-    operationObject.requestBody,
-  );
+  const parsed = parsedParams ?? parseRequestParameters(operationObject);
+  const hasPathOrQuery = parsed.path.length > 0 || parsed.query.length > 0;
 
-  const parameterSchema = (() => {
-    if (!operationObject.parameters) {
-      return;
-    }
-    const extraProperties = {};
-    const extraRequired: string[] = [];
-    const parameters: OpenAPIV3.ParameterObject[] = [];
-    (operationObject.parameters as OpenAPIV3.ParameterObject[]).forEach(
-      (item) => {
-        if (!['query', 'path'].includes(item.in)) {
-          return;
-        }
-
-        const schema =
-          item.schema && '$ref' in item.schema
-            ? (store?.parser.$refs.get(
-                item.schema.$ref,
-              ) as OpenAPIV3.SchemaObject)
-            : item.schema;
-        if (schema && 'type' in schema && schema.type === 'object') {
-          // swagger get 请求上有些参数是 object 类型（也可能通过 $ref 引用），应该拍平
-          Object.assign(extraProperties, schema.properties || {});
-          extraRequired.push(...(schema.required || []));
-        } else {
-          parameters.push(item);
-        }
-      },
-    );
-    // 必填参数中忽略 分页相关的参数
-    const required = parameters
-      .filter(
-        (p) => p.required && !['pageNum', 'pageSize', 'count'].includes(p.name),
-      )
-      .map((p) => p.name);
-    required.push(...extraRequired);
-    const properties = Object.fromEntries(
-      parameters
-        // 后端 swagger 可能出现没有 schema 的情况，这里过滤掉
-        .filter((p) => !!p.schema)
-        .map((p) => {
-          const schema = p.schema;
-          return [
-            p.name,
-            {
-              ...schema,
-              description: p.description,
-              // enum: schema.enum ?? [],
-            },
-          ];
-        }),
-    );
+  if (!hasPathOrQuery && parsed.body.kind === 'non-json') {
     return {
-      required,
-      type: 'object',
-      properties: { ...properties, ...extraProperties },
-    } satisfies OpenAPIV3.SchemaObject;
-  })();
+      code: `export type Req = ${parsed.body.tsType};`,
+      enumsCode: undefined,
+    };
+  }
 
-  const requestBodySchema = isPlainObject(requestBodySchemaOrRef)
-    ? '$ref' in requestBodySchemaOrRef
-      ? (store?.parser.$refs.get(
-          requestBodySchemaOrRef.$ref,
-        ) as OpenAPIV3.SchemaObject)
-      : requestBodySchemaOrRef
-    : void 0;
+  let schemaObject:
+    | OpenAPIV3.SchemaObject
+    | OpenAPIV3.ReferenceObject
+    | undefined;
+  let hasNonJsonBodySentinel = false;
 
-  const schemaObject =
-    requestBodySchema &&
-    parameterSchema &&
-    Object.keys(parameterSchema.properties).length > 0
-      ? ({
-          ...requestBodySchema,
-          type: 'object',
-          required: [
-            ...new Set([
-              ...(requestBodySchema.required || []),
-              ...(parameterSchema.required || []),
-            ]),
-          ],
-          properties: {
-            ...requestBodySchema.properties,
-            ...parameterSchema.properties,
-          },
-        } satisfies OpenAPIV3.SchemaObject)
-      : requestBodySchema || parameterSchema;
+  if (!hasPathOrQuery) {
+    if (parsed.body.kind === 'object' || parsed.body.kind === 'wrapped') {
+      schemaObject = parsed.body.schema;
+    }
+  } else {
+    const properties: Record<
+      string,
+      OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject
+    > = {};
+    const required: string[] = [];
+
+    if (parsed.body.kind === 'object') {
+      Object.assign(properties, parsed.body.schema.properties ?? {});
+      required.push(...(parsed.body.schema.required ?? []));
+    } else if (parsed.body.kind === 'wrapped') {
+      properties.body = parsed.body.schema;
+      if (parsed.body.required) required.push('body');
+    } else if (parsed.body.kind === 'non-json') {
+      if (parsed.body.tsType === 'string') {
+        properties.body = { type: 'string' };
+      } else {
+        hasNonJsonBodySentinel = true;
+        properties.body = {
+          type: 'string',
+          enum: [NON_JSON_BODY_SENTINELS[parsed.body.tsType]],
+        };
+      }
+      if (parsed.body.required) required.push('body');
+    }
+
+    for (const q of parsed.query) {
+      properties[q.name] = withDescription(q.schema, q.description);
+      if (q.required) required.push(q.name);
+    }
+    for (const p of parsed.path) {
+      properties[p.alias] = withDescription(p.schema, p.description);
+      if (p.required) required.push(p.alias);
+    }
+
+    if (Object.keys(properties).length > 0) {
+      schemaObject = {
+        type: 'object',
+        required: Array.from(new Set(required)),
+        properties,
+      } satisfies OpenAPIV3.SchemaObject;
+    }
+  }
 
   if (schemaObject) {
     normalizeSchemaForGenerationDeep(schemaObject);
@@ -162,6 +165,9 @@ export async function compileRequestParams(
       code = generate(targetSchema as never, {
         name: 'Req',
       });
+      if (hasNonJsonBodySentinel) {
+        code = replaceNonJsonSentinels(code);
+      }
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
       log.error('生成请求参数类型失败，请检查 %o', {
@@ -172,7 +178,20 @@ export async function compileRequestParams(
     }
 
     if (isTargetOptionEnabled(apiConfig?.enableEnums, 'req')) {
-      enumsCode = compileEnumObject(targetSchema);
+      const enumTarget =
+        hasNonJsonBodySentinel &&
+        'properties' in targetSchema &&
+        targetSchema.properties
+          ? {
+              ...targetSchema,
+              properties: Object.fromEntries(
+                Object.entries(targetSchema.properties).filter(
+                  ([k]) => k !== 'body',
+                ),
+              ),
+            }
+          : targetSchema;
+      enumsCode = compileEnumObject(enumTarget);
     }
   }
 

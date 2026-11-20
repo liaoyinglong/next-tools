@@ -107,6 +107,7 @@ export async function generatePaths(
                 url: url,
                 method: method,
                 operationObject: operationObject,
+                pathItemParameters: pathItemObject.parameters,
                 apiConfig,
               });
               const outputPath = resolveOperationOutputPath({

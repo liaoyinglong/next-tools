@@ -417,8 +417,17 @@ describe('api 生成', function () {
   });
 
   it('参数同时在 body 和 path 里', async function () {
-    const result = await generate(paramsInBodyAndPath, 'put');
-    expect(result).toContain(`urlPathParams: ["id"]`);
+    const result = await generateApiRequestCode({
+      url: '/users/{id}',
+      method: 'put',
+      operationObject: paramsInBodyAndPath as OpenAPIV3.OperationObject,
+      apiConfig: apiConfigNormalizer({
+        swaggerJSONPath: '',
+        swaggerUiUrl: '',
+      }),
+    });
+    expect(result).not.toContain('urlPathParams');
+    expect(result).not.toContain('toRequest');
     expect(result).toContain('id: string');
     expect(result).toContain('pageNum: number');
   });

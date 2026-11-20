@@ -344,34 +344,40 @@ export namespace apiV1UsersGetApi {
     };
     message: string;
   }
-
-  export type ResultItem = Res['data']['list'][0];
 }
 ```
 
 ### 特殊功能
 
-#### 路径参数处理
+#### 参数映射与 `toRequest`
 
-对于包含路径参数的 API（如 `/api/v1/users/{userId}`），CLI 会自动生成 `urlPathParams` 配置：
+对于符合默认规则的 API（如 `GET /api/v1/users/{userId}`、`PUT /api/v1/users/{userId}` 带对象 body），`RequestBuilder` 会自动从 `url` 模板中提取 `{userId}` 并把其余字段放到默认位置，CLI 不会生成多余配置：
 
 ```typescript
-export const apiV1UsersUserIdGetApi = new RequestBuilder({
+export const apiV1UsersUserIdGetApi = new RequestBuilder<
+  apiV1UsersUserIdGetApi.Req,
+  apiV1UsersUserIdGetApi.Res
+>({
   url: '/api/v1/users/{userId}',
   method: 'get',
-  urlPathParams: ['userId'],
 });
 ```
 
-#### 分页接口支持
-
-CLI 会自动识别分页接口并生成额外的类型定义：
+当接口存在非默认参数位置（如非 GET 请求带 query、path/query/body 混合、非对象 body 与 path/query 共存，或 path 与 query/body 重名改名为 `pathXxx`）时，CLI 会生成 `toRequest` 显式映射：
 
 ```typescript
-export namespace apiV1UsersGetApi {
-  // ... 其他类型定义
-  export type ResultItem = Res['data']['list'][0]; // 分页数据项类型
-}
+export const shopsShopIdOrdersPostApi = new RequestBuilder<
+  shopsShopIdOrdersPostApi.Req,
+  shopsShopIdOrdersPostApi.Res
+>({
+  url: '/shops/{shopId}/orders',
+  method: 'post',
+  toRequest: ({ shopId, dryRun, ...body }) => ({
+    path: { shopId },
+    query: { dryRun },
+    body,
+  }),
+});
 ```
 
 ## 使用示例

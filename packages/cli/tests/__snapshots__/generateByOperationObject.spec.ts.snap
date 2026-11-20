@@ -138,8 +138,7 @@ export const usersPostApi = new RequestBuilder<usersPostApi.Req, usersPostApi.Re
 });
 
 export namespace usersPostApi {
- export type Req = Record<string, unknown>;
-
+ export type Req = any;
  
  export type Res = any;
 };"

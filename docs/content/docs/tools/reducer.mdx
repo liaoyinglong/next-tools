@@ -124,7 +124,7 @@ async function load(id: string) {
 | **底层实现** | React `useReducer` + immer             | valtio proxy                         |
 | **async**    | 不支持，异步逻辑放在组件中             | action 内可直接 `await`              |
 
-需要在子树内共享时，用 [createStateContext](./create-state-context) 包一层；需要全局共享时，使用 [Store](./store)。
+需要在子树内共享时，用 [createStateContext](/docs/tools/create-state-context) 包一层；需要全局共享时，使用 [Store](/docs/tools/store)。
 
 ## 类型支持
 
